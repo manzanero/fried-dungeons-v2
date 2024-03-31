@@ -1,0 +1,208 @@
+[gd_scene load_steps=6 format=3 uid="uid://b0plnb6bswbdy"]
+
+[ext_resource type="Script" path="res://asserts/map/floor_3d/wall/wall_point/wall_point.gd" id="1_awbn3"]
+[ext_resource type="Theme" uid="uid://wdhwb87x2roh" path="res://resources/themes/pixel_ui_theme/PixelTheme_sky.tres" id="1_ejwbb"]
+[ext_resource type="Theme" uid="uid://bbmp4uwlx25jx" path="res://resources/themes/pixel_ui_theme/PixelTheme_paper.tres" id="3_ynq5r"]
+[ext_resource type="Theme" uid="uid://dopunvp7uxup1" path="res://resources/themes/pixel_ui_theme/PixelTheme_blood.tres" id="4_db22y"]
+[ext_resource type="Theme" uid="uid://ve0n5o7lvu14" path="res://resources/themes/pixel_ui_theme/PixelTheme_nature.tres" id="4_oyja7"]
+
+[node name="WallPoint" type="Control"]
+auto_translate_mode = 1
+layout_mode = 3
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+mouse_filter = 2
+theme = ExtResource("1_ejwbb")
+script = ExtResource("1_awbn3")
+
+[node name="Button" type="Button" parent="."]
+unique_name_in_owner = true
+auto_translate_mode = 1
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+
+[node name="Label" type="Label" parent="Button"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.0
+offset_top = -15.0
+offset_right = 7.0
+offset_bottom = 11.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "1"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Options" type="Control" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="AddAfter" type="Button" parent="Options"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 10.0
+offset_top = -8.0
+offset_right = 26.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme = ExtResource("3_ynq5r")
+
+[node name="Label" type="Label" parent="Options/AddAfter"]
+auto_translate_mode = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.0
+offset_top = -15.0
+offset_right = 7.0
+offset_bottom = 11.0
+grow_horizontal = 2
+grow_vertical = 2
+text = ">"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="AddBefore" type="Button" parent="Options"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -26.0
+offset_top = -8.0
+offset_right = -10.0
+offset_bottom = 8.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme = ExtResource("3_ynq5r")
+
+[node name="Label" type="Label" parent="Options/AddBefore"]
+auto_translate_mode = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.0
+offset_top = -15.0
+offset_right = 7.0
+offset_bottom = 11.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "<"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="DeleteButton" type="Button" parent="Options"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.0
+offset_top = -26.0
+offset_right = 8.0
+offset_bottom = -10.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme = ExtResource("4_oyja7")
+
+[node name="Label" type="Label" parent="Options/DeleteButton"]
+auto_translate_mode = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.0
+offset_top = -15.0
+offset_right = 7.0
+offset_bottom = 11.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "-"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="BreakButton" type="Button" parent="Options"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+custom_minimum_size = Vector2(16, 16)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -8.0
+offset_top = 10.0
+offset_right = 8.0
+offset_bottom = 26.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+theme = ExtResource("4_db22y")
+
+[node name="Label" type="Label" parent="Options/BreakButton"]
+auto_translate_mode = 1
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -5.0
+offset_top = -15.0
+offset_right = 7.0
+offset_bottom = 11.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "||"
+horizontal_alignment = 1
+vertical_alignment = 1

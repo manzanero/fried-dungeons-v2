@@ -1,0 +1,27 @@
+[gd_scene load_steps=5 format=3 uid="uid://brb0es6i3e5ai"]
+
+[ext_resource type="Script" path="res://asserts/map/floor_3d/viewport_3d/viewport_3d.gd" id="1_klpx2"]
+[ext_resource type="PackedScene" uid="uid://c7kw2qqn2s7gb" path="res://asserts/map/floor_3d/viewport_3d/floor_2d/floor_2d.tscn" id="2_rjc1x"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_f84fu"]
+subdivide_width = 100
+subdivide_depth = 100
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_jffbv"]
+resource_local_to_scene = true
+transparency = 4
+heightmap_scale = 16.0
+
+[node name="Viewport3D" type="MeshInstance3D"]
+mesh = SubResource("PlaneMesh_f84fu")
+skeleton = NodePath("../../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_jffbv")
+script = ExtResource("1_klpx2")
+
+[node name="SubViewport" type="SubViewport" parent="."]
+disable_3d = true
+transparent_bg = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(256, 256)
+
+[node name="Floor2D" parent="SubViewport" instance=ExtResource("2_rjc1x")]
