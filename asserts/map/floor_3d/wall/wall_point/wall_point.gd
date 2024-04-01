@@ -11,6 +11,7 @@ signal broken(wall_point : WallPoint)
 
 var wall : Wall
 
+
 var position_3d : Vector3 :
 	set(value):
 		position_3d = value
@@ -61,9 +62,13 @@ func _ready():
 
 func _on_canvas_layer_visibility_changed():
 	if wall.canvas_layer.visible:
+		wall.line_renderer_3d.visible = true
+		wall.line_renderer_3d.disabled = false
 		Utils.safe_connect(Game.camera.changed, _on_changed)
 		Utils.safe_connect(get_viewport().size_changed, _on_changed)
 	else:
+		wall.line_renderer_3d.visible = false
+		wall.line_renderer_3d.disabled = true
 		options.visible = false
 		Utils.safe_disconnect(Game.camera.changed, _on_changed)
 		Utils.safe_disconnect(get_viewport().size_changed, _on_changed)
@@ -72,6 +77,8 @@ func _on_canvas_layer_visibility_changed():
 func _on_changed():
 	visible = not Game.camera.eyes.is_position_behind(position_3d)
 	position = Game.camera.eyes.unproject_position(position_3d + Vector3.UP * 0.001)  # x axis points cannot be unproject
+	if len(wall.line_renderer_3d.points) > index:
+		wall.line_renderer_3d.points[index] = position_3d
 	
 	await get_tree().process_frame  # deletion of point need one frame to process
 	label.text = str(index)

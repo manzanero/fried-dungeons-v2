@@ -1,11 +1,15 @@
-[gd_scene load_steps=10 format=3 uid="uid://dua75cywy3bao"]
+[gd_scene load_steps=13 format=3 uid="uid://dua75cywy3bao"]
 
 [ext_resource type="Script" path="res://asserts/map/floor_3d/wall/wall.gd" id="1_8fylx"]
+[ext_resource type="Material" uid="uid://djjx4fo15sd14" path="res://asserts/map/floor_3d/wall/wall_line_renderer_material.tres" id="2_5yc85"]
 [ext_resource type="Texture2D" uid="uid://cn0b7xxcmi6rw" path="res://resources/textures/texture_atlas.png" id="2_ki3mq"]
 [ext_resource type="Theme" uid="uid://bbmp4uwlx25jx" path="res://resources/themes/pixel_ui_theme/PixelTheme_paper.tres" id="3_tnkq0"]
+[ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="5_70oql"]
 
 [sub_resource type="Curve3D" id="Curve3D_kyr6i"]
 resource_local_to_scene = true
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_lwcqi"]
 
 [sub_resource type="NoiseTexture2D" id="NoiseTexture2D_w1pmj"]
 
@@ -43,6 +47,21 @@ script = ExtResource("1_8fylx")
 
 [node name="Path3D" type="Path3D" parent="."]
 curve = SubResource("Curve3D_kyr6i")
+
+[node name="LineRenderer3D" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+material_override = ExtResource("2_5yc85")
+cast_shadow = 0
+ignore_occlusion_culling = true
+gi_mode = 0
+mesh = SubResource("ImmediateMesh_lwcqi")
+script = ExtResource("5_70oql")
+points = Array[Vector3]([])
+start_thickness = 0.01
+end_thickness = 0.01
+draw_caps = false
+draw_crners = false
+tile_texture = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
 material_override = SubResource("StandardMaterial3D_syqsy")

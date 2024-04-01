@@ -33,7 +33,7 @@ var new_rotation: Vector3
 var new_position: Vector3
 var offset_move: Vector2
 var offset_wheel: int
-var floor_level: float = 1.0
+var floor_level: float = 0.75
 var zoom: float = 1.0
 
 var is_operated : bool
@@ -55,7 +55,7 @@ func _ready():
 
 func _process(delta):
 	if is_rotate:
-		new_rotation += Vector3(-offset_move.y * rot_y_speed, offset_move.x * rot_x_speed, 0)
+		new_rotation += Vector3(-offset_move.y * rot_y_speed, -offset_move.x * rot_x_speed, 0)
 		new_rotation.x = clamp(new_rotation.x, deg_to_rad(min_rot_x), deg_to_rad(max_rot_x))
 
 	if is_move:

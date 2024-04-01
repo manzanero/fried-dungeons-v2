@@ -5,6 +5,7 @@
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_i6ync"]
 ground_bottom_color = Color(0, 0, 0, 1)
+ground_curve = 6.27667e-05
 
 [sub_resource type="Sky" id="Sky_byel7"]
 sky_material = SubResource("ProceduralSkyMaterial_i6ync")
@@ -13,6 +14,7 @@ sky_material = SubResource("ProceduralSkyMaterial_i6ync")
 background_mode = 2
 sky = SubResource("Sky_byel7")
 ambient_light_source = 1
+reflected_light_source = 1
 
 [sub_resource type="BoxMesh" id="BoxMesh_lfl1g"]
 size = Vector3(2, 2, 2)
@@ -36,7 +38,6 @@ init_z = 0.0
 move_speed = 0.1
 rot_x_speed = 0.008
 rot_y_speed = 0.008
-max_rot_x = -35.0
 max_zoom = 1000.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]

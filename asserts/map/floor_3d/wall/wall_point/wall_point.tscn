@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=3 uid="uid://b0plnb6bswbdy"]
+[gd_scene load_steps=5 format=3 uid="uid://b0plnb6bswbdy"]
 
 [ext_resource type="Script" path="res://asserts/map/floor_3d/wall/wall_point/wall_point.gd" id="1_awbn3"]
 [ext_resource type="Theme" uid="uid://wdhwb87x2roh" path="res://resources/themes/pixel_ui_theme/PixelTheme_sky.tres" id="1_ejwbb"]
-[ext_resource type="Theme" uid="uid://bbmp4uwlx25jx" path="res://resources/themes/pixel_ui_theme/PixelTheme_paper.tres" id="3_ynq5r"]
 [ext_resource type="Theme" uid="uid://dopunvp7uxup1" path="res://resources/themes/pixel_ui_theme/PixelTheme_blood.tres" id="4_db22y"]
 [ext_resource type="Theme" uid="uid://ve0n5o7lvu14" path="res://resources/themes/pixel_ui_theme/PixelTheme_nature.tres" id="4_oyja7"]
 
@@ -79,7 +78,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
-theme = ExtResource("3_ynq5r")
+theme = ExtResource("4_oyja7")
 
 [node name="Label" type="Label" parent="Options/AddAfter"]
 auto_translate_mode = 1
@@ -115,7 +114,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
-theme = ExtResource("3_ynq5r")
+theme = ExtResource("4_oyja7")
 
 [node name="Label" type="Label" parent="Options/AddBefore"]
 auto_translate_mode = 1
@@ -151,7 +150,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
-theme = ExtResource("4_oyja7")
+theme = ExtResource("4_db22y")
 
 [node name="Label" type="Label" parent="Options/DeleteButton"]
 auto_translate_mode = 1
@@ -167,7 +166,7 @@ offset_right = 7.0
 offset_bottom = 11.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "-"
+text = "><"
 horizontal_alignment = 1
 vertical_alignment = 1
 
@@ -203,6 +202,6 @@ offset_right = 7.0
 offset_bottom = 11.0
 grow_horizontal = 2
 grow_vertical = 2
-text = "||"
+text = "<>"
 horizontal_alignment = 1
 vertical_alignment = 1

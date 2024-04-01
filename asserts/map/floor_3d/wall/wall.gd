@@ -43,6 +43,7 @@ var atlas_image := Image.new()
 @onready var collider := %CollisionShape3D as CollisionShape3D
 @onready var canvas_layer := $CanvasLayer as CanvasLayer
 @onready var points_parent := %Points as Control
+@onready var line_renderer_3d = %LineRenderer3D as LineRenderer
 
 
 func init(_floor_3d):
@@ -56,11 +57,12 @@ func _ready():
 	curve_changed.connect(_on_curve_changed)
 	edit_mode_started.connect(_on_edit_mode_started)
 	edit_mode_ended.connect(_on_edit_mode_ended)
-	collision.input_event.connect(_on_input_event)  #(camera:Node, event:InputEvent, position:Vector3, normal:Vector3, shape_idx:int)
+	collision.input_event.connect(_on_input_event)
 	
 	# set init state
 	is_editing = false
 	is_edit_mode = false
+	line_renderer_3d.points.clear()
 	
 
 func _process(_delta):
@@ -124,6 +126,7 @@ func _on_curve_changed():
 	
 	mesh_instance_3d.mesh = st.commit()
 	collider.shape = mesh_instance_3d.mesh.create_trimesh_shape()
+	line_renderer_3d.points.resize(curve.point_count)
 
 
 func _create_face(origin : Vector3, destiny : Vector3, index_offset : int, origin_offset := 0.0, destiny_offset := 1.0):
