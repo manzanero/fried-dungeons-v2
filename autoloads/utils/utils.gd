@@ -29,19 +29,27 @@ func v3i_to_str(v3i : Vector3i) -> String:
 	return "(%s, %s, %s)" % [v3i.x, v3i.y, v3i.z]
 
 
-func array_to_v3(array : Array) -> Vector3:
+func array3_to_v3(array : Array) -> Vector3:
 	return Vector3(array[0], array[1], array[2])
 
 
-func array_to_v3i(array : Array) -> Vector3i:
+func array2_to_v3(array : Array) -> Vector3:
+	return Vector3(array[0], 0, array[1])
+
+
+func array3_to_v3i(array : Array) -> Vector3i:
 	return Vector3i(array[0], array[1], array[2])
 
 
-func v3_to_array(v3 : Vector3) -> Array:
+func v3_to_array3(v3 : Vector3) -> Array:
 	return [snappedf(v3.x, 0.001), snappedf(v3.y, 0.001), snappedf(v3.z, 0.001)]
 
 
-func v3i_to_array(v3i : Vector3) -> Array:
+func v3_to_array2(v3 : Vector3) -> Array:
+	return [snappedf(v3.x, 0.001), snappedf(v3.z, 0.001)]
+
+
+func v3i_to_array3(v3i : Vector3) -> Array:
 	return [v3i.x, v3i.y, v3i.z]
 
 
@@ -67,32 +75,40 @@ func get_bitmask(x : int) -> int:
 	return int(pow(2, x - 1))
 
 
-func get_raycast_hit(space : Node3D, camera : Camera3D, raycast : PhysicsRayQueryParameters3D, collision_mask : int) -> Dictionary:
-	var ray_length = 1000
-	var mouse_pos = get_viewport().get_mouse_position()
-	var space_state = space.get_world_3d().direct_space_state
+func get_mouse_hit(camera : Camera3D, raycast : PhysicsRayQueryParameters3D, collision_mask : int) -> Dictionary:
+	var ray_length := 1000.0
+	var viewport := camera.get_viewport()
+	var mouse_pos := viewport.get_mouse_position()
+	if not viewport.get_visible_rect().has_point(mouse_pos):
+		return {}
+
+	var space_state := camera.get_world_3d().direct_space_state
 	raycast.from = camera.project_ray_origin(mouse_pos)
 	raycast.to = raycast.from + camera.project_ray_normal(mouse_pos) * ray_length
 	raycast.collision_mask = collision_mask
 	return space_state.intersect_ray(raycast)
 
 
-func loads_json(data):
-	var json = JSON.new()
+func loads_json(data : String) -> Dictionary:
+	var json := JSON.new()
 	json.parse(data)
-	var result = json.data
+	var result : Dictionary = json.data
 	if result == null:
 		printerr("JSON load failed on line %s: %s" % [json.get_error_line(), json.get_error_message()])
+		return {}
+		
 	return result
 
 
-func load_json(path : String):
+func load_json(path : String) -> Dictionary:
 	var file = FileAccess.open(path, FileAccess.READ)
 	var open_error := FileAccess.get_open_error()
 	if open_error:
 		printerr("error reading json: %s" % error_string(open_error))
-	var text = file.get_as_text()
-	var dict = loads_json(text)
+		return {}
+		
+	var text := file.get_as_text()
+	var dict := loads_json(text)
 	return dict
 
 

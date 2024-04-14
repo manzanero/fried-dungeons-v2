@@ -11,7 +11,7 @@ config_version=5
 [application]
 
 config/name="Fried Dungeons"
-run/main_scene="res://asserts/map/map.tscn"
+run/main_scene="res://assets/map/map.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
 
@@ -31,7 +31,7 @@ window/size/initial_screen=1
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/ConsoleGD/plugin.cfg", "res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/linepath2d/plugin.cfg")
+enabled=PackedStringArray("res://addons/ConsoleGD/plugin.cfg", "res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg")
 
 [input]
 
@@ -56,8 +56,28 @@ control={
 ]
 }
 
+[layer_names]
+
+3d_render/layer_1="ground"
+3d_render/layer_2="wall"
+3d_render/layer_3="ceilling"
+3d_render/layer_4="light"
+3d_render/layer_5="entity"
+3d_render/layer_6="object"
+
 [rendering]
 
-textures/canvas_textures/default_texture_filter=0
+textures/canvas_textures/default_texture_filter=3
 renderer/rendering_method="gl_compatibility"
 renderer/rendering_method.mobile="gl_compatibility"
+textures/default_filters/use_nearest_mipmap_filter=true
+textures/decals/filter=2
+textures/light_projectors/filter=2
+limits/opengl/max_renderable_lights=64
+limits/opengl/max_lights_per_object=64
+2d/snap/snap_2d_transforms_to_pixel=true
+2d/snap/snap_2d_vertices_to_pixel=true
+lights_and_shadows/positional_shadow/atlas_quadrant_0_subdiv=4
+lights_and_shadows/positional_shadow/atlas_quadrant_1_subdiv=4
+lights_and_shadows/positional_shadow/atlas_quadrant_2_subdiv=5
+lights_and_shadows/positional_shadow/atlas_quadrant_3_subdiv=6

@@ -1,0 +1,50 @@
+[gd_scene load_steps=9 format=3 uid="uid://dua75cywy3bao"]
+
+[ext_resource type="Script" path="res://assets/map/level/wall/wall.gd" id="1_8fylx"]
+[ext_resource type="Material" uid="uid://djjx4fo15sd14" path="res://assets/map/level/wall/wall_line_renderer_material.tres" id="2_5yc85"]
+[ext_resource type="Script" path="res://assets/map/level/wall/wall_generator.gd" id="2_jgfiy"]
+[ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="5_70oql"]
+[ext_resource type="Material" uid="uid://cljhgy0l8hiuo" path="res://assets/map/level/wall/wall_material.tres" id="5_quoby"]
+
+[sub_resource type="Curve3D" id="Curve3D_kyr6i"]
+resource_local_to_scene = true
+
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_pn26c"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_cbu2a"]
+resource_local_to_scene = true
+
+[node name="Wall" type="Node3D"]
+script = ExtResource("1_8fylx")
+
+[node name="WallGenerator" type="Node" parent="."]
+script = ExtResource("2_jgfiy")
+
+[node name="Path3D" type="Path3D" parent="."]
+curve = SubResource("Curve3D_kyr6i")
+
+[node name="LineRenderer3D" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+material_override = ExtResource("2_5yc85")
+cast_shadow = 0
+ignore_occlusion_culling = true
+gi_mode = 0
+mesh = SubResource("ImmediateMesh_pn26c")
+script = ExtResource("5_70oql")
+start_thickness = 0.01
+end_thickness = 0.01
+draw_caps = false
+draw_crners = false
+tile_texture = false
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+material_override = ExtResource("5_quoby")
+mesh = SubResource("ArrayMesh_cbu2a")
+
+[node name="StaticBody3D" type="StaticBody3D" parent="."]
+unique_name_in_owner = true
+collision_layer = 2
+collision_mask = 0
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+unique_name_in_owner = true
