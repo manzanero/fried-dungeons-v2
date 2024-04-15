@@ -3,6 +3,7 @@ extends Node3D
 
 
 signal changed()
+signal is_fps_enabled(value : bool)
 
 
 @export var init_x: float = 15
@@ -41,12 +42,13 @@ var floor_projection := Vector3.ZERO
 
 
 var _has_changed : bool
-var _cached_rotation : Vector3
+
 
 @onready var focus := $Focus as Marker3D
 @onready var pivot := $Focus/Pivot as Marker3D
 @onready var eyes := $Focus/Pivot/Camera3D as Camera3D
-@onready var marker := %Marker as ColorRect
+@onready var hit_marker_2d := %HitMarker2D as ColorRect
+@onready var hit_marker_3d := %HitMarker3D as MeshInstance3D
 
 
 func _ready():
@@ -55,7 +57,8 @@ func _ready():
 	new_rotation.y = deg_to_rad(init_rot_y)
 	new_rotation.z = 0
 	zoom = clamp(init_zoom, min_zoom, max_zoom)
-	marker.visible = false
+	hit_marker_2d.visible = false
+	hit_marker_3d.visible = true
 
 
 func _process(delta : float):
@@ -93,26 +96,29 @@ func _process(delta : float):
 			new_position += move_speed * (offset_move.y * transform_forward + offset_move.x * transform_left)
 			new_position.x = clampf(new_position.x, min_x, max_x)
 			new_position.z = clampf(new_position.z, min_z, max_z)
+			hit_marker_3d.visible = true
+		else:
+			hit_marker_3d.visible = false
 		
 	offset_mouse_move = Vector2.ZERO
 
 	# fov transition
-	if not is_fps and zoom < 1:
+	if not is_fps and zoom <= 0:
 		is_fps = true
 		fov = 60
-		#_cached_rotation = new_rotation
 		new_rotation.x = 0
 		zoom = 0
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-		marker.visible = true
+		hit_marker_2d.visible = true
+		is_fps_enabled.emit(true)
 	elif is_fps and zoom > 0:
 		is_fps = false
 		fov = 30
 		new_rotation.x = deg_to_rad(init_rot_x)
-		#new_rotation.y = _cached_rotation.y
 		zoom = init_zoom
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		marker.visible = false
+		hit_marker_2d.visible = false
+		is_fps_enabled.emit(false)
 	
 	# focus position
 	if not is_equal_approx(focus.position.y, floor_level):
@@ -142,6 +148,7 @@ func _process(delta : float):
 	
 	if _has_changed:
 		floor_projection = Vector3(eyes.global_position.x, 0, eyes.global_position.z)
+		hit_marker_3d.global_position = Vector3(focus.global_position.x, 0, focus.global_position.z)
 		_has_changed = false
 		changed.emit()
 

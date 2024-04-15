@@ -1,6 +1,19 @@
-[gd_scene load_steps=2 format=3 uid="uid://djn7mwvra11fw"]
+[gd_scene load_steps=4 format=3 uid="uid://djn7mwvra11fw"]
 
 [ext_resource type="Script" path="res://assets/camera/camera.gd" id="1_45b4q"]
+
+[sub_resource type="SphereMesh" id="SphereMesh_hp6ey"]
+radius = 0.031
+height = 0.063
+radial_segments = 16
+rings = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a8qb8"]
+render_priority = 9
+transparency = 1
+no_depth_test = true
+shading_mode = 0
+albedo_color = Color(0.498039, 0.498039, 0.498039, 0.498039)
 
 [node name="Camera" type="Node3D"]
 script = ExtResource("1_45b4q")
@@ -8,14 +21,15 @@ script = ExtResource("1_45b4q")
 [node name="Focus" type="Marker3D" parent="."]
 
 [node name="Pivot" type="Marker3D" parent="Focus"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Focus/Pivot"]
 fov = 30.0
+near = 0.1
+far = 200.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
-[node name="Marker" type="ColorRect" parent="CanvasLayer"]
+[node name="HitMarker2D" type="ColorRect" parent="CanvasLayer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(3, 3)
 anchors_preset = 8
@@ -26,3 +40,9 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="HitMarker3D" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("SphereMesh_hp6ey")
+surface_material_override/0 = SubResource("StandardMaterial3D_a8qb8")

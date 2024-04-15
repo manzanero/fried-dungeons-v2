@@ -4,8 +4,13 @@ extends Node3D
 
 var level : Level
 
+var target_position : Vector2
 var is_edit_mode : bool
-var is_editing : bool
+var is_editing : bool : 
+	set(value):
+		is_editing = value
+		if not value:
+			position = Utils.v2_to_v3(target_position)
 
 
 func init(_level : Level, position_2d : Vector2):
@@ -18,7 +23,7 @@ func init(_level : Level, position_2d : Vector2):
 
 func _process(delta : float):
 	if is_editing:
-		var position_hovered = level.position_hovered
+		target_position = level.position_hovered
 		if not Input.is_key_pressed(KEY_CTRL):
-			position_hovered = position_hovered.snapped(Game.SNAPPING_QUARTER)
-		position = lerp(position, Utils.v2_to_v3(position_hovered), 10 * delta)
+			target_position = target_position.snapped(Game.SNAPPING_QUARTER)
+		position = lerp(position, Utils.v2_to_v3(target_position), 10 * delta)

@@ -3,11 +3,10 @@
 [resource]
 resource_local_to_scene = true
 render_priority = 9
-transparency = 4
 depth_draw_mode = 2
 no_depth_test = true
 shading_mode = 0
 specular_mode = 2
 disable_ambient_light = true
 disable_fog = true
-albedo_color = Color(1, 1, 1, 0.25098)
+albedo_color = Color(0, 0, 0, 1)
