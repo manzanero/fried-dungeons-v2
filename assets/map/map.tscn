@@ -10,6 +10,7 @@
 
 [node name="Map" type="Node3D"]
 script = ExtResource("1_jrnr7")
+ambient_light = 1.0
 
 [node name="Loader" type="Node" parent="."]
 script = ExtResource("2_l8wwe")
@@ -28,14 +29,12 @@ environment = ExtResource("4_okbi2")
 
 [node name="Points" type="Control" parent="CanvasLayer"]
 unique_name_in_owner = true
-auto_translate_mode = 1
 layout_mode = 3
 anchors_preset = 0
 theme = ExtResource("4_1lesj")
 
 [node name="PointOptions" type="Control" parent="CanvasLayer"]
 unique_name_in_owner = true
-auto_translate_mode = 1
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -47,7 +46,6 @@ grow_vertical = 2
 
 [node name="AddAfter" type="Button" parent="CanvasLayer/PointOptions"]
 unique_name_in_owner = true
-auto_translate_mode = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15
@@ -64,7 +62,6 @@ size_flags_vertical = 8
 theme = ExtResource("5_mdj24")
 
 [node name="Label" type="Label" parent="CanvasLayer/PointOptions/AddAfter"]
-auto_translate_mode = 1
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -83,7 +80,6 @@ vertical_alignment = 1
 
 [node name="AddBefore" type="Button" parent="CanvasLayer/PointOptions"]
 unique_name_in_owner = true
-auto_translate_mode = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15
@@ -100,7 +96,6 @@ size_flags_vertical = 8
 theme = ExtResource("5_mdj24")
 
 [node name="Label" type="Label" parent="CanvasLayer/PointOptions/AddBefore"]
-auto_translate_mode = 1
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -119,7 +114,6 @@ vertical_alignment = 1
 
 [node name="DeleteButton" type="Button" parent="CanvasLayer/PointOptions"]
 unique_name_in_owner = true
-auto_translate_mode = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15
@@ -136,7 +130,6 @@ size_flags_vertical = 8
 theme = ExtResource("6_6ihmm")
 
 [node name="Label" type="Label" parent="CanvasLayer/PointOptions/DeleteButton"]
-auto_translate_mode = 1
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -155,7 +148,6 @@ vertical_alignment = 1
 
 [node name="BreakButton" type="Button" parent="CanvasLayer/PointOptions"]
 unique_name_in_owner = true
-auto_translate_mode = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15
@@ -172,7 +164,6 @@ size_flags_vertical = 8
 theme = ExtResource("6_6ihmm")
 
 [node name="Label" type="Label" parent="CanvasLayer/PointOptions/BreakButton"]
-auto_translate_mode = 1
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5

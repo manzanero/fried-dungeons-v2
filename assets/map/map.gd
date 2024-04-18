@@ -14,7 +14,8 @@ var selected_level : Level
 @export var ambient_light := 0.0 :
 	set(value):
 		ambient_light = value
-		environment.ambient_light_color = ambient_color * ambient_light
+		if environment:
+			environment.ambient_light_color = ambient_color * ambient_light
 
 @onready var loader := $Loader as Loader
 @onready var levels_parent := $Levels as Node3D
@@ -134,5 +135,5 @@ func _input(event):
 	Game.handled_input = true
 
 
-func _unhandled_input(event):
+func _unhandled_input(_event):
 	Game.handled_input = false

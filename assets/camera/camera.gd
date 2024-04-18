@@ -3,7 +3,7 @@ extends Node3D
 
 
 signal changed()
-signal is_fps_enabled(value : bool)
+signal fps_enabled(value : bool)
 
 
 @export var init_x: float = 15
@@ -25,16 +25,23 @@ signal is_fps_enabled(value : bool)
 @export var max_rot_x: float = 90
 @export var min_zoom: float = 0
 @export var max_zoom: float = 100
+@export var is_ortogonal : bool = false : 
+	set(value):
+		is_ortogonal = value
+		if eyes:
+			if is_ortogonal:
+				eyes.projection = Camera3D.PROJECTION_ORTHOGONAL
+			else:
+				eyes.projection = Camera3D.PROJECTION_PERSPECTIVE
 
-var is_operated : bool
 var is_fps : bool
 var is_mouse_visible := true
-var is_action: bool
-var is_move: bool
+var is_windows_focused := true
+var offset_mouse_move: Vector2
 var is_rotate: bool
+var is_move: bool
 var new_rotation: Vector3
 var new_position: Vector3
-var offset_mouse_move: Vector2
 var floor_level: float = 0.5
 var zoom: float = 1.0
 var fov: float = 30.0
@@ -49,6 +56,7 @@ var _has_changed : bool
 @onready var eyes := $Focus/Pivot/Camera3D as Camera3D
 @onready var hit_marker_2d := %HitMarker2D as ColorRect
 @onready var hit_marker_3d := %HitMarker3D as MeshInstance3D
+@onready var hit_marker_3d_material := hit_marker_3d.get_surface_override_material(0) as StandardMaterial3D
 
 
 func _ready():
@@ -59,6 +67,7 @@ func _ready():
 	zoom = clamp(init_zoom, min_zoom, max_zoom)
 	hit_marker_2d.visible = false
 	hit_marker_3d.visible = true
+	eyes.projection = Camera3D.PROJECTION_ORTHOGONAL if is_ortogonal else Camera3D.PROJECTION_PERSPECTIVE
 
 
 func _process(delta : float):
@@ -86,19 +95,17 @@ func _process(delta : float):
 			var effective_max_rot_x := 90.0 if is_fps else max_rot_x
 			new_rotation.x = clampf(new_rotation.x, deg_to_rad(effective_min_rot_x), deg_to_rad(effective_max_rot_x))
 		else:
-			new_rotation.x = clamp(new_rotation.x, deg_to_rad(min_rot_x), deg_to_rad(max_rot_x))
+			new_rotation.x = clampf(new_rotation.x, deg_to_rad(min_rot_x), deg_to_rad(max_rot_x))
+			new_rotation.x = snappedf(minf(new_rotation.x, -PI / 8), PI / 8)
 			new_rotation.y = snappedf(new_rotation.y, PI / 4)
 
 		if is_move:
 			var transform_forward := Vector3.FORWARD.rotated(Vector3.UP, focus.rotation.y)
 			var transform_left := Vector3.LEFT.rotated(Vector3.UP, focus.rotation.y)
-			var offset_move := offset_mouse_move * (0.005 + zoom * 0.001)
+			var offset_move := offset_mouse_move * (0.005 + zoom * 0.002)
 			new_position += move_speed * (offset_move.y * transform_forward + offset_move.x * transform_left)
 			new_position.x = clampf(new_position.x, min_x, max_x)
 			new_position.z = clampf(new_position.z, min_z, max_z)
-			hit_marker_3d.visible = true
-		else:
-			hit_marker_3d.visible = false
 		
 	offset_mouse_move = Vector2.ZERO
 
@@ -110,15 +117,15 @@ func _process(delta : float):
 		zoom = 0
 		Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		hit_marker_2d.visible = true
-		is_fps_enabled.emit(true)
-	elif is_fps and zoom > 0:
+		fps_enabled.emit(true)
+	if is_fps and zoom > 0:
 		is_fps = false
 		fov = 30
 		new_rotation.x = deg_to_rad(init_rot_x)
 		zoom = init_zoom
 		Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		hit_marker_2d.visible = false
-		is_fps_enabled.emit(false)
+		fps_enabled.emit(false)
 	
 	# focus position
 	if not is_equal_approx(focus.position.y, floor_level):
@@ -137,9 +144,15 @@ func _process(delta : float):
 		_has_changed = true
 
 	# zoom
-	if not is_equal_approx(eyes.position.z, zoom):
-		eyes.position.z = lerpf(eyes.position.z, zoom, 10 * delta)
-		_has_changed = true
+	if is_ortogonal:
+		if not is_equal_approx(eyes.size, zoom):
+			eyes.position.z = 2 + zoom * 2
+			eyes.size = lerpf(eyes.size, zoom, 10 * delta)
+			_has_changed = true
+	else:
+		if not is_equal_approx(eyes.position.z, zoom):
+			eyes.position.z = lerpf(eyes.position.z, zoom, 10 * delta)
+			_has_changed = true
 		
 	# fov
 	if not is_equal_approx(eyes.fov, fov):
@@ -147,10 +160,15 @@ func _process(delta : float):
 		_has_changed = true
 	
 	if _has_changed:
-		floor_projection = Vector3(eyes.global_position.x, 0, eyes.global_position.z)
-		hit_marker_3d.global_position = Vector3(focus.global_position.x, 0, focus.global_position.z)
 		_has_changed = false
+		floor_projection = Vector3(eyes.global_position.x, 0, eyes.global_position.z)
+		const color = Color(0.75, 0.75, 0.75, 0.5)
+		hit_marker_3d_material.albedo_color = hit_marker_3d_material.albedo_color.lerp(color, 10 * delta)
+		hit_marker_3d.global_position = Vector3(focus.global_position.x, 0, focus.global_position.z)
 		changed.emit()
+	else:
+		const color = Color(0.75, 0.75, 0.75, 0)
+		hit_marker_3d_material.albedo_color = hit_marker_3d_material.albedo_color.lerp(color, 10 * delta)
 
 
 func _input(event):
@@ -167,9 +185,6 @@ func _input(event):
 				is_rotate = false
 			if event.button_index == MOUSE_BUTTON_RIGHT:
 				is_move = false
-				
-			if not is_rotate and not is_move:
-				is_operated = false
 	
 	elif event is InputEventKey:
 		if event.keycode == KEY_ESCAPE and event.pressed and is_fps:
@@ -178,21 +193,19 @@ func _input(event):
 
 func _unhandled_input(event):
 	if event is InputEventMouseButton:
-		if event.is_pressed():
+		if event.is_pressed() and is_windows_focused:
 			if event.button_index == MOUSE_BUTTON_MIDDLE:
-				is_operated = true
 				is_rotate = true
 				is_move = false
 			if event.button_index == MOUSE_BUTTON_RIGHT:
-				is_operated = true
 				is_rotate = false
 				is_move = true
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 				zoom -= zoom_step * (1 + zoom * 0.1)
-				zoom = clamp(zoom, min_zoom, max_zoom)
+				zoom = maxf(zoom, 1) if is_ortogonal else maxf(zoom, min_zoom)
 			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 				zoom += zoom_step * (1 + zoom * 0.1)
-				zoom = clamp(zoom, min_zoom, max_zoom)
+				zoom = minf(zoom, max_zoom)
 
 
 func _notification(what : int):
@@ -201,3 +214,8 @@ func _notification(what : int):
 			is_mouse_visible = false
 		NOTIFICATION_WM_MOUSE_ENTER:
 			is_mouse_visible = true
+		NOTIFICATION_APPLICATION_FOCUS_OUT:
+			is_windows_focused = false
+		NOTIFICATION_APPLICATION_FOCUS_IN:
+			is_windows_focused = true
+		

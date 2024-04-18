@@ -73,12 +73,6 @@ func _create_face(origin : Vector3, destiny : Vector3, index_offset : int, origi
 	]
 	var uvs := _get_uvs(origin_offset, destiny_offset)
 	var normal := Plane(vertices[0], vertices[1], vertices[2]).normal
-	#var normals := [
-		#Vector3.DOWN,
-		#Vector3.DOWN,
-		#Vector3.UP,
-		#Vector3.UP,
-	#]
 
 	for i in range(4):
 		st.set_uv(uvs[i])

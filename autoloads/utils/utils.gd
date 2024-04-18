@@ -10,11 +10,11 @@ func v3_to_v2(v3 : Vector3) -> Vector2:
 
 
 func v3_to_v2i(v3 : Vector3) -> Vector2i:
-	return Vector2i(floor(v3.x), floor(v3.z))
+	return Vector2i(floori(v3.x), floori(v3.z))
 
 
 func v2_to_v2i(v2 : Vector2) -> Vector2i:
-	return Vector2i(floor(v2.x), floor(v2.y))
+	return Vector2i(floori(v2.x), floori(v2.y))
 
 
 func v3_to_v3i(v3 : Vector3) -> Vector3i:
@@ -29,16 +29,16 @@ func v3i_to_str(v3i : Vector3i) -> String:
 	return "(%s, %s, %s)" % [v3i.x, v3i.y, v3i.z]
 
 
-func array3_to_v3(array : Array) -> Vector3:
+func array3_to_v3(array : Array[float]) -> Vector3:
 	return Vector3(array[0], array[1], array[2])
 
 
-func array2_to_v3(array : Array) -> Vector3:
+func array2_to_v3(array : Array[float]) -> Vector3:
 	return Vector3(array[0], 0, array[1])
 
 
-func array3_to_v3i(array : Array) -> Vector3i:
-	return Vector3i(array[0], array[1], array[2])
+func array3_to_v3i(array : Array[float]) -> Vector3i:
+	return Vector3i(floori(array[0]), floori(array[1]), floori(array[2]))
 
 
 func v3_to_array3(v3 : Vector3) -> Array:
@@ -75,16 +75,23 @@ func get_bitmask(x : int) -> int:
 	return int(pow(2, x - 1))
 
 
-func get_mouse_hit(camera : Camera3D, raycast : PhysicsRayQueryParameters3D, collision_mask : int) -> Dictionary:
+func get_mouse_hit(camera : Camera3D, from_center : bool, raycast : PhysicsRayQueryParameters3D, collision_mask : int) -> Dictionary:
 	var ray_length := 1000.0
-	var viewport := camera.get_viewport()
-	var mouse_pos := viewport.get_mouse_position()
-	if not viewport.get_visible_rect().has_point(mouse_pos):
-		return {}
-
 	var space_state := camera.get_world_3d().direct_space_state
-	raycast.from = camera.project_ray_origin(mouse_pos)
-	raycast.to = raycast.from + camera.project_ray_normal(mouse_pos) * ray_length
+	
+	if from_center:
+		raycast.from = camera.global_position
+		raycast.to = -camera.global_basis.z * ray_length
+			
+	else:
+		var viewport := camera.get_viewport()
+		var mouse_pos := viewport.get_mouse_position()
+		if not viewport.get_visible_rect().has_point(mouse_pos):
+			return {}
+			
+		raycast.from = camera.project_ray_origin(mouse_pos)
+		raycast.to = raycast.from + camera.project_ray_normal(mouse_pos) * ray_length
+		
 	raycast.collision_mask = collision_mask
 	return space_state.intersect_ray(raycast)
 
@@ -92,7 +99,7 @@ func get_mouse_hit(camera : Camera3D, raycast : PhysicsRayQueryParameters3D, col
 func loads_json(data : String) -> Dictionary:
 	var json := JSON.new()
 	json.parse(data)
-	var result : Dictionary = json.data
+	var result := json.data as Dictionary
 	if result == null:
 		printerr("JSON load failed on line %s: %s" % [json.get_error_line(), json.get_error_message()])
 		return {}
@@ -116,7 +123,7 @@ func dumps_json(data) -> String:
 	return JSON.stringify(data, "", false)
 
 
-func dump_json(path : String, data):
+func dump_json(path : String, data : Dictionary) -> void:
 	var json_string := dumps_json(data)
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	var open_error := FileAccess.get_open_error()
@@ -125,5 +132,5 @@ func dump_json(path : String, data):
 	file.store_line(json_string)
 
 
-func make_dirs(path : String):
+func make_dirs(path : String) -> void:
 	DirAccess.make_dir_recursive_absolute(path)

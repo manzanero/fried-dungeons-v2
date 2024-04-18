@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Fried Dungeons"
 run/main_scene="res://assets/map/map.tscn"
-config/features=PackedStringArray("4.3", "Forward Plus")
+config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
 [autoload]
@@ -25,11 +25,14 @@ Console="*res://addons/ConsoleGD/scripts/console.gd"
 
 [display]
 
+window/size/viewport_width=960
+window/size/viewport_height=540
 window/size/initial_position_type=2
 window/size/initial_position=Vector2i(1, 1)
 window/size/initial_screen=1
-window/stretch/mode="viewport"
+window/stretch/mode="canvas_items"
 window/stretch/aspect="keep_height"
+window/dpi/allow_hidpi=false
 
 [editor_plugins]
 
@@ -54,7 +57,7 @@ shift_left_click={
 }
 control={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194326,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194326,"key_label":0,"unicode":0,"echo":false,"script":null)
 ]
 }
 
@@ -75,11 +78,6 @@ renderer/rendering_method.mobile="gl_compatibility"
 textures/default_filters/use_nearest_mipmap_filter=true
 textures/decals/filter=2
 textures/light_projectors/filter=2
-limits/opengl/max_renderable_lights=64
-limits/opengl/max_lights_per_object=64
+limits/opengl/max_lights_per_object=32
 2d/snap/snap_2d_transforms_to_pixel=true
 2d/snap/snap_2d_vertices_to_pixel=true
-lights_and_shadows/positional_shadow/atlas_quadrant_0_subdiv=6
-lights_and_shadows/positional_shadow/atlas_quadrant_1_subdiv=6
-lights_and_shadows/positional_shadow/atlas_quadrant_2_subdiv=6
-lights_and_shadows/positional_shadow/atlas_quadrant_3_subdiv=6

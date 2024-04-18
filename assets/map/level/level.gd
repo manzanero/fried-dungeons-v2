@@ -48,7 +48,7 @@ func init(_map : Map):
 	#)
 
 
-func _physics_process(delta):
+func _physics_process(_delta):
 	_process_ground_hitted()
 	_process_ceilling_hitted()
 	_process_light_selection()
@@ -61,8 +61,8 @@ func _physics_process(delta):
 func _process_wall_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
-		
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, floor_ray, Game.WALL_BITMASK)
+	
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.WALL_BITMASK)
 	if hit_info:
 		var wall_hitted := hit_info["collider"].get_parent() as Wall
 		wall_hitted.is_edit_mode = not wall_hitted.is_edit_mode
@@ -72,7 +72,7 @@ func _process_light_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
 		
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, floor_ray, Game.LIGHT_BITMASK)
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.LIGHT_BITMASK)
 	if hit_info:
 		var light_hitted := hit_info["collider"].get_parent() as Light
 		light_hitted.is_edit_mode = not light_hitted.is_edit_mode
@@ -102,7 +102,7 @@ func _process_entity_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
 		
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, floor_ray, Game.ENTITY_BITMASK)
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.ENTITY_BITMASK)
 	if hit_info:
 		var entity_hitted := hit_info["collider"].get_parent() as Entity
 		entity_hitted.is_edit_mode = not entity_hitted.is_edit_mode
@@ -133,7 +133,7 @@ func _process_ground_hitted():
 		return
 		
 	is_ground_hovered = false
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, floor_ray, Game.GROUND_BITMASK)
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.GROUND_BITMASK)
 	if hit_info:
 		position_hovered = Utils.v3_to_v2(hit_info["position"]).snapped(Game.PIXEL)
 		tile_hovered = Utils.v2_to_v2i(position_hovered)
@@ -145,7 +145,7 @@ func _process_ceilling_hitted():
 	if not Input.is_action_pressed("left_click"):
 		return
 	
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, floor_ray, Game.CEILLING_BITMASK)
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.CEILLING_BITMASK)
 	if hit_info:
 		ceilling_hovered = Utils.v3_to_v2(hit_info["position"]).snapped(Game.PIXEL)
 

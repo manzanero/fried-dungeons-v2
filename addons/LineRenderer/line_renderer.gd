@@ -3,7 +3,7 @@ class_name LineRenderer
 extends MeshInstance3D
 
 @export var disabled: bool = false:
-	set(new_disabled): disabled = new_disabled
+	set(new_disabled): disabled = new_disabled; visible = not new_disabled
 @export var points: Array[Vector3] = [Vector3(0,0,0),Vector3(0,5,0)]:
 	set(new_points): points = new_points
 @export var start_thickness:float = 0.1:

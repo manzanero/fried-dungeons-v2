@@ -4,11 +4,21 @@ extends Node3D
 signal curve_changed()
 
 
-var material_index := 0
-var material_seed := 0
+@export var material_index := 0
+@export var material_seed := 0
+@export var material : StandardMaterial3D
+@export var shadow_to_opacity := true :
+	set(value):
+		shadow_to_opacity = value
+		if mesh_instance_3d:
+			if value:
+				material = preload("res://assets/map/level/wall/wall_material.tres")
+			else:
+				material = preload("res://assets/map/level/wall/wall_material_first_pass.tres")
+			mesh_instance_3d.material_override = material
 
 var level : Level
-var points : Array[WallPoint]
+var points : Array[WallPoint] = []
 
 var selected_point : WallPoint
 var edited_point : WallPoint
@@ -31,18 +41,16 @@ func init(_level : Level, _material_index : int, _material_seed : int):
 	material_index = _material_index
 	material_seed = _material_seed
 	level.walls_parent.add_child(self)
-	points = []
-	is_editing = false
-	is_edit_mode = false
-	line_renderer_3d.visible = false
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
+	mesh_instance_3d.material_override = material
 	name = "Wall"
 	return self
 
 
 func _ready():
 	curve_changed.connect(wall_generator._on_curve_changed)
+	Game.camera.fps_enabled.connect(_on_camera_fps_ennabled)
 	
 
 func _process(_delta):
@@ -68,7 +76,6 @@ func _set_edit_mode(value : bool):
 				wall.is_edit_mode = false
 
 		level.selected_wall = self
-		line_renderer_3d.visible = true
 		line_renderer_3d.disabled = false
 		Utils.safe_connect(Game.camera.changed, _on_viewport_changed)
 		Utils.safe_connect(get_viewport().size_changed, _on_viewport_changed)
@@ -80,13 +87,16 @@ func _set_edit_mode(value : bool):
 		selected_point = null
 		
 		level.selected_wall = null
-		line_renderer_3d.visible = false
 		line_renderer_3d.disabled = true
 		Utils.safe_disconnect(Game.camera.changed, _on_viewport_changed)
 		Utils.safe_disconnect(get_viewport().size_changed, _on_viewport_changed)
 		for point in points:
 			point.visible = false
 	
+
+func _on_camera_fps_ennabled(value : bool):
+	shadow_to_opacity = not value
+
 
 func _on_viewport_changed():
 	for point in points:
@@ -145,14 +155,14 @@ func break_point(broken_wall_point : WallPoint):
 	var index := broken_wall_point.index
 	
 	if index > 0:
-		var new_wall := Game.wall_scene.instantiate().init(level, material_index, material_seed) as Wall
+		var new_wall : Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed)
 		for point in points.slice(0, index + 1):
 			new_wall.add_point(Utils.v3_to_v2(point.position_3d))
 
 		new_wall.is_edit_mode = true
 
 	if index < curve.point_count:
-		var new_wall := Game.wall_scene.instantiate().init(level, material_index, material_seed) as Wall
+		var new_wall : Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed)
 		for point in points.slice(index):
 			new_wall.add_point(Utils.v3_to_v2(point.position_3d))
 

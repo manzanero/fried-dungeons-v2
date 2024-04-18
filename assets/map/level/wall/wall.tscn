@@ -3,7 +3,7 @@
 [ext_resource type="Script" path="res://assets/map/level/wall/wall.gd" id="1_8fylx"]
 [ext_resource type="Script" path="res://assets/map/level/wall/wall_generator.gd" id="2_jgfiy"]
 [ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="5_70oql"]
-[ext_resource type="Material" uid="uid://cljhgy0l8hiuo" path="res://assets/map/level/wall/wall_material.tres" id="5_quoby"]
+[ext_resource type="Material" uid="uid://dnn6n7mk4yue" path="res://assets/map/level/wall/wall_material.tres" id="5_quoby"]
 
 [sub_resource type="Curve3D" id="Curve3D_kyr6i"]
 resource_local_to_scene = true
@@ -21,13 +21,14 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.498039, 0.498039, 0.498039, 0.498039)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_yk2wv"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_6jdci"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_cbu2a"]
 resource_local_to_scene = true
 
 [node name="Wall" type="Node3D"]
 script = ExtResource("1_8fylx")
+material = ExtResource("5_quoby")
 
 [node name="WallGenerator" type="Node" parent="."]
 script = ExtResource("2_jgfiy")
@@ -41,10 +42,11 @@ material_override = SubResource("StandardMaterial3D_1ar7b")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_yk2wv")
+mesh = SubResource("ImmediateMesh_6jdci")
 script = ExtResource("5_70oql")
 start_thickness = 0.016
 end_thickness = 0.016
+draw_crners = false
 tile_texture = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]

@@ -26,13 +26,18 @@ func load_donjon_json_file(json_file_path):
 	level.rect = Rect2i(0, 0, len_x, len_z)
 	
 	#floors[0] = MRPAS.new(Vector2(len_x, len_z))
+	seed(0)
 	
-	var random_var : int = range(4).pick_random()
 	#var void_index : int = 18
 	var void_index : int = 63
-	var ground_index : int = 6
+	#var ground_index : int = 6
+	#var door_index : int = 2
+	#var wall_index : int = 7
+	
+	#var void_index : int = 24
+	var ground_index : int = 24
 	var door_index : int = 2
-	var wall_index : int = 7
+	var wall_index : int = 1
 	
 	# ground
 	for x in range(len_x):
@@ -41,6 +46,7 @@ func load_donjon_json_file(json_file_path):
 			var cell_is_wall = int(donjon_code) in [0, 16]
 			var cell_is_door = int(donjon_code) in [131076]
 			
+			var random_var : int = range(4).pick_random()
 			if cell_is_wall:
 				tile_map.set_cell(0, Vector2i(x, z), 0, Vector2i(random_var, void_index), 0)
 			elif cell_is_door:
@@ -61,11 +67,12 @@ func load_donjon_json_file(json_file_path):
 			var is_wall_down = cell_is_wall_up and not cell_is_wall_down
 			var is_wall_up = cell_is_wall_down and not cell_is_wall_up
 			
+			var random_var : int = range(1000).pick_random()
 			if is_wall_down:
 				if wall_last_point:
 					wall.set_point(wall_last_point, Vector2(x + 1, z))
 				else:
-					wall = Game.wall_scene.instantiate().init(level, wall_index, 0)
+					wall = Game.wall_scene.instantiate().init(level, wall_index, random_var)
 					wall.add_point(Vector2(x, z))
 					wall_last_point = wall.add_point(Vector2(x + 1, z))
 			
@@ -73,7 +80,7 @@ func load_donjon_json_file(json_file_path):
 				if wall_last_point:
 					wall.set_point(wall_last_point, Vector2(x + 1, z))
 				else:
-					wall = Game.wall_scene.instantiate().init(level, wall_index, 0)
+					wall = Game.wall_scene.instantiate().init(level, wall_index, random_var)
 					wall_last_point = wall.add_point(Vector2(x + 1, z))
 					wall.add_point(Vector2(x, z))
 					
@@ -93,11 +100,12 @@ func load_donjon_json_file(json_file_path):
 			var is_wall_left = cell_is_wall_right and not cell_is_wall_left
 			var is_wall_right = cell_is_wall_left and not cell_is_wall_right
 			
+			var random_var : int = range(1000).pick_random()
 			if is_wall_left:
 				if wall_last_point:
 					wall.set_point(wall_last_point, Vector2(x, z + 1))
 				else:
-					wall = Game.wall_scene.instantiate().init(level, wall_index, 0)
+					wall = Game.wall_scene.instantiate().init(level, wall_index, random_var)
 					wall.add_point(Vector2(x, z))
 					wall_last_point = wall.add_point(Vector2(x, z + 1))
 			
@@ -105,7 +113,7 @@ func load_donjon_json_file(json_file_path):
 				if wall_last_point:
 					wall.set_point(wall_last_point, Vector2(x, z + 1))
 				else:
-					wall = Game.wall_scene.instantiate().init(level, wall_index, 0)
+					wall = Game.wall_scene.instantiate().init(level, wall_index, random_var)
 					wall_last_point = wall.add_point(Vector2(x, z + 1))
 					wall.add_point(Vector2(x, z))
 					
