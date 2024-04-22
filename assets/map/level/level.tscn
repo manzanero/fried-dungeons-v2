@@ -1,7 +1,13 @@
-[gd_scene load_steps=5 format=3 uid="uid://54qydkhvxv4n"]
+[gd_scene load_steps=8 format=3 uid="uid://54qydkhvxv4n"]
 
 [ext_resource type="Script" path="res://assets/map/level/level.gd" id="1_jdpmt"]
-[ext_resource type="PackedScene" uid="uid://brb0es6i3e5ai" path="res://assets/map/level/viewport_3d/viewport_3d.tscn" id="2_5ycee"]
+[ext_resource type="Material" uid="uid://4rv85ap1ia4c" path="res://assets/map/level/viewport_3d/viewport_3d_material.tres" id="2_43kle"]
+[ext_resource type="Script" path="res://assets/map/level/viewport_3d/viewport_3d.gd" id="3_6m262"]
+[ext_resource type="PackedScene" uid="uid://c7kw2qqn2s7gb" path="res://assets/map/level/viewport_3d/floor_2d/floor_2d.tscn" id="4_4yvlj"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_f84fu"]
+subdivide_width = 100
+subdivide_depth = 100
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_ujds0"]
 
@@ -13,22 +19,38 @@ script = ExtResource("1_jdpmt")
 
 [node name="Ground" type="Node3D" parent="."]
 
-[node name="Viewport3D" parent="Ground" instance=ExtResource("2_5ycee")]
+[node name="Viewport3D" type="MeshInstance3D" parent="Ground"]
 unique_name_in_owner = true
+mesh = SubResource("PlaneMesh_f84fu")
+skeleton = NodePath("../../..")
+surface_material_override/0 = ExtResource("2_43kle")
+script = ExtResource("3_6m262")
+
+[node name="SubViewport" type="SubViewport" parent="Ground/Viewport3D"]
+disable_3d = true
+transparent_bg = true
+use_hdr_2d = true
+canvas_item_default_texture_filter = 0
+size = Vector2i(256, 256)
+
+[node name="Floor2D" parent="Ground/Viewport3D/SubViewport" instance=ExtResource("4_4yvlj")]
 
 [node name="GroundCollider" type="StaticBody3D" parent="Ground"]
 unique_name_in_owner = true
+collision_layer = 16777216
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/GroundCollider"]
 shape = SubResource("WorldBoundaryShape3D_ujds0")
 
-[node name="CeillingCollider" type="StaticBody3D" parent="Ground"]
+[node name="Ceilling" type="Node3D" parent="."]
+
+[node name="CeillingCollider" type="StaticBody3D" parent="Ceilling"]
 unique_name_in_owner = true
-collision_layer = 4
+collision_layer = 67108864
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/CeillingCollider"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ceilling/CeillingCollider"]
 shape = SubResource("WorldBoundaryShape3D_h6tfn")
 
 [node name="Walls" type="Node3D" parent="."]

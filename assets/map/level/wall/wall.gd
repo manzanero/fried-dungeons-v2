@@ -4,8 +4,20 @@ extends Node3D
 signal curve_changed()
 
 
-@export var material_index := 0
-@export var material_seed := 0
+@export var material_index := 0 :
+	set(value):
+		material_index = value
+		curve_changed.emit()
+@export var material_seed := 0 :
+	set(value):
+		material_seed = value
+		curve_changed.emit()
+@export var material_layer := 1 :
+	set(value):
+		material_layer = value
+		if collision:
+			collision.set_collision_layer_value(material_layer, false)
+			collision.set_collision_layer_value(value, true)
 @export var material : StandardMaterial3D
 @export var shadow_to_opacity := true :
 	set(value):
@@ -36,10 +48,14 @@ var is_editing : bool
 @onready var collider := %CollisionShape3D as CollisionShape3D
 
 
-func init(_level : Level, _material_index : int, _material_seed : int):
+func init(_level : Level,
+		_material_index := material_index,
+		_material_seed := material_seed,
+		_material_layer := material_layer):
 	level = _level
 	material_index = _material_index
 	material_seed = _material_seed
+	material_layer = _material_layer
 	level.walls_parent.add_child(self)
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
@@ -49,9 +65,9 @@ func init(_level : Level, _material_index : int, _material_seed : int):
 
 
 func _ready():
-	curve_changed.connect(wall_generator._on_curve_changed)
 	Game.camera.fps_enabled.connect(_on_camera_fps_ennabled)
-	
+	collision.set_collision_layer_value(material_layer, true)
+
 
 func _process(_delta):
 	_process_wall_edit()
@@ -63,7 +79,7 @@ func _process_wall_edit():
 		# change end of the wall
 		var point_position := level.position_hovered
 		if not Input.is_key_pressed(KEY_CTRL):
-			point_position = point_position.snapped(Game.SNAPPING_HALF)
+			point_position = point_position.snapped(Game.PIXEL_SNAPPING_HALF)
 		set_point(edited_point, point_position)
 
 
@@ -83,6 +99,7 @@ func _set_edit_mode(value : bool):
 			point.changed.emit()
 			
 	else:
+		is_editing = false
 		level.map.point_options.visible = false
 		selected_point = null
 		

@@ -12,6 +12,10 @@ var atlas_image := Image.new()
 @onready var wall := $".." as Wall
 
 
+func _ready() -> void:
+	wall.curve_changed.connect(_on_curve_changed)
+
+
 func _on_curve_changed():
 	seed(wall.material_seed)
 	st.clear()
@@ -62,7 +66,7 @@ func _on_curve_changed():
 		wall.line_renderer_3d.points[index] = curve.get_point_position(index)
 	for point in wall.points:
 		point.changed.emit()
-
+	
 
 func _create_face(origin : Vector3, destiny : Vector3, index_offset : int, origin_offset := 0.0, destiny_offset := 1.0):
 	var vertices : PackedVector3Array = [

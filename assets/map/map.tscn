@@ -10,7 +10,7 @@
 
 [node name="Map" type="Node3D"]
 script = ExtResource("1_jrnr7")
-ambient_light = 1.0
+ambient_light = 0.2
 
 [node name="Loader" type="Node" parent="."]
 script = ExtResource("2_l8wwe")
@@ -18,8 +18,8 @@ script = ExtResource("2_l8wwe")
 [node name="Levels" type="Node3D" parent="."]
 
 [node name="Camera" parent="." instance=ExtResource("2_ty8om")]
-init_x = 24.0
-init_z = 24.0
+init_x = 23.5
+init_z = 23.5
 max_rot_x = 0.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]

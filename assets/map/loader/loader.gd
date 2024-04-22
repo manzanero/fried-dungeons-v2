@@ -29,22 +29,22 @@ func load_donjon_json_file(json_file_path):
 	seed(0)
 	
 	#var void_index : int = 18
-	var void_index : int = 63
+	#var void_index : int = 63
 	#var ground_index : int = 6
 	#var door_index : int = 2
 	#var wall_index : int = 7
 	
-	#var void_index : int = 24
+	var void_index : int = 24
 	var ground_index : int = 24
 	var door_index : int = 2
-	var wall_index : int = 1
+	var wall_index : int = 21
 	
 	# ground
 	for x in range(len_x):
 		for z in range(len_z): 
-			var donjon_code = cells_data[z][x]
-			var cell_is_wall = int(donjon_code) in [0, 16]
-			var cell_is_door = int(donjon_code) in [131076]
+			var donjon_code : float = cells_data[z][x]
+			var cell_is_wall := int(donjon_code) in [0, 16]
+			var cell_is_door := int(donjon_code) in [131076]
 			
 			var random_var : int = range(4).pick_random()
 			if cell_is_wall:
@@ -56,14 +56,14 @@ func load_donjon_json_file(json_file_path):
 	
 	# horizontal walls
 	for z in range(len_z):
-		var wall : Wall = null
-		var wall_last_point : WallPoint = null
+		var wall : Wall
+		var wall_last_point : WallPoint
 		
 		for x in range(1, len_x): 
-			var donjon_code_down = cells_data[z][x]
-			var donjon_code_up = cells_data[z - 1][x]
-			var cell_is_wall_down = int(donjon_code_down) in [0, 16]
-			var cell_is_wall_up = int(donjon_code_up) in [0, 16]
+			var donjon_code_down : float = cells_data[z][x]
+			var donjon_code_up : float = cells_data[z - 1][x]
+			var cell_is_wall_down := int(donjon_code_down) in [0, 16]
+			var cell_is_wall_up := int(donjon_code_up) in [0, 16]
 			var is_wall_down = cell_is_wall_up and not cell_is_wall_down
 			var is_wall_up = cell_is_wall_down and not cell_is_wall_up
 			
@@ -97,9 +97,9 @@ func load_donjon_json_file(json_file_path):
 			var donjon_code_right : float = cells_data[z][x]
 			var cell_is_wall_left := int(donjon_code_left) in [0, 16]
 			var cell_is_wall_right := int(donjon_code_right) in [0, 16]
-			var is_wall_left = cell_is_wall_right and not cell_is_wall_left
-			var is_wall_right = cell_is_wall_left and not cell_is_wall_right
-			
+			var is_wall_left := cell_is_wall_right and not cell_is_wall_left
+			var is_wall_right := cell_is_wall_left and not cell_is_wall_right
+
 			var random_var : int = range(1000).pick_random()
 			if is_wall_left:
 				if wall_last_point:
@@ -108,7 +108,7 @@ func load_donjon_json_file(json_file_path):
 					wall = Game.wall_scene.instantiate().init(level, wall_index, random_var)
 					wall.add_point(Vector2(x, z))
 					wall_last_point = wall.add_point(Vector2(x, z + 1))
-			
+
 			elif is_wall_right:
 				if wall_last_point:
 					wall.set_point(wall_last_point, Vector2(x, z + 1))
@@ -116,7 +116,7 @@ func load_donjon_json_file(json_file_path):
 					wall = Game.wall_scene.instantiate().init(level, wall_index, random_var)
 					wall_last_point = wall.add_point(Vector2(x, z + 1))
 					wall.add_point(Vector2(x, z))
-					
+
 			else:
 				wall_last_point = null
 	
@@ -126,8 +126,8 @@ func load_donjon_json_file(json_file_path):
 	for x in range(len_x):
 		for z in range(len_z):
 			var donjon_code = cells_data[z][x]
-			var cell_is_wall = int(donjon_code) in [0, 16]
-			var cell_is_door = int(donjon_code) in [131076]
+			var cell_is_wall := int(donjon_code) in [0, 16]
+			var cell_is_door := int(donjon_code) in [131076]
 			
 			light_counter -= 1
 			if light_counter < 0 and not cell_is_wall and not cell_is_door:

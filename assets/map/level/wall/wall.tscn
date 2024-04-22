@@ -21,7 +21,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.498039, 0.498039, 0.498039, 0.498039)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_6jdci"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_3dcax"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_cbu2a"]
 resource_local_to_scene = true
@@ -42,7 +42,7 @@ material_override = SubResource("StandardMaterial3D_1ar7b")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_6jdci")
+mesh = SubResource("ImmediateMesh_3dcax")
 script = ExtResource("5_70oql")
 start_thickness = 0.016
 end_thickness = 0.016
@@ -55,7 +55,7 @@ mesh = SubResource("ArrayMesh_cbu2a")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]
 unique_name_in_owner = true
-collision_layer = 2
+collision_layer = 33554432
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]

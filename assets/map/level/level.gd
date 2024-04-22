@@ -21,10 +21,21 @@ var tile_hovered : Vector2i
 var selected_wall : Wall
 var selected_light : Light
 var selected_entity : Entity
+var follower_entity : Entity :
+	set(value):
+		if follower_entity:
+			follower_entity.sprite_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		follower_entity = value
+		if follower_entity:
+			follower_entity.sprite_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+			follower_entity.is_edit_mode = false
+			Game.camera.target.global_position = follower_entity.global_position
+			Game.camera.is_fps = true
+			
 var active_lights : Array[Light] = []
 
 
-var floor_ray := PhysicsRayQueryParameters3D.new()
+var level_ray := PhysicsRayQueryParameters3D.new()
 
 
 @onready var viewport_3d := %Viewport3D as Viewport3D
@@ -40,7 +51,12 @@ func init(_map : Map):
 	return self
 
 
-#func _ready():
+func _ready():
+	Game.camera.changed.connect(_on_camera_changed)
+	Game.camera.fps_enabled.connect(func (value):
+		if not value:
+			follower_entity = null
+	)
 	
 	#ground_hitted.connect(func():
 		#if is_ground_hovered:
@@ -55,6 +71,7 @@ func _physics_process(_delta):
 	_process_light_movement()
 	_process_entity_selection()
 	_process_entity_movement()
+	_process_entity_follow()
 	_process_wall_selection()
 
 
@@ -62,7 +79,7 @@ func _process_wall_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
 	
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.WALL_BITMASK)
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.WALL_BITMASK)
 	if hit_info:
 		var wall_hitted := hit_info["collider"].get_parent() as Wall
 		wall_hitted.is_edit_mode = not wall_hitted.is_edit_mode
@@ -72,16 +89,29 @@ func _process_light_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
 		
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.LIGHT_BITMASK)
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.LIGHT_BITMASK)
 	if hit_info:
 		var light_hitted := hit_info["collider"].get_parent() as Light
-		light_hitted.is_edit_mode = not light_hitted.is_edit_mode
-		if light_hitted.is_edit_mode:
-			selected_light = light_hitted
-		else:
-			selected_light = null
-			
+		
+		light_hitted.is_edit_mode = true
+		selected_light = light_hitted
+		for light in lights_parent.get_children():
+			if light != light_hitted:
+				light.is_edit_mode = false
+		
+		selected_entity = null
+		for entity in entities_parent.get_children():
+			entity.is_edit_mode = false
+		
+		selected_wall = null
+		for wall in walls_parent.get_children():
+			wall.is_edit_mode = false
+		
 		Game.handled_input = true
+
+	elif selected_light:
+		selected_light.is_edit_mode = false
+		selected_light = null
 
 
 func _process_light_movement():
@@ -92,48 +122,67 @@ func _process_light_movement():
 		selected_light.is_editing = true
 	else:
 		selected_light.is_editing = false
-		
-		# Remove this when light have edit form
-		selected_light.is_edit_mode = false
-		selected_light = null
 
 
 func _process_entity_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
-		
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.ENTITY_BITMASK)
+	
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
 	if hit_info:
 		var entity_hitted := hit_info["collider"].get_parent() as Entity
-		entity_hitted.is_edit_mode = not entity_hitted.is_edit_mode
-		if entity_hitted.is_edit_mode:
-			selected_entity = entity_hitted
-		else:
-			selected_entity = null
-			
+		
+		selected_light = null
+		for light in lights_parent.get_children():
+			light.is_edit_mode = false
+
+		entity_hitted.is_edit_mode = true
+		selected_entity = entity_hitted
+		for entity in entities_parent.get_children():
+			if entity != entity_hitted:
+				entity.is_edit_mode = false
+		
+		selected_wall = null
+		for wall in walls_parent.get_children():
+			wall.is_edit_mode = false
+		
 		Game.handled_input = true
+	
+	elif selected_entity: 
+		selected_entity.is_edit_mode = false
+		selected_entity = null
 
 
 func _process_entity_movement():
 	if not selected_entity:
 		return
 		
-	if Input.is_action_pressed("left_click"):
+	if Input.is_action_just_pressed("left_click"):
 		selected_entity.is_editing = true
-	else:
+	elif Input.is_action_just_released("left_click"):
 		selected_entity.is_editing = false
+
+
+func _process_entity_follow():
+	if not selected_entity:
+		return
 		
-		# Remove this when entity have edit form
-		selected_entity.is_edit_mode = false
+	if Input.is_action_just_pressed("shift_left_click"):
+		follower_entity = selected_entity
 		selected_entity = null
-		
+
+
+func _on_camera_changed():
+	if follower_entity:
+		follower_entity.global_position = Game.camera.hint_3d.global_position
+
 
 func _process_ground_hitted():
+	is_ground_hovered = false
 	if not Input.is_action_pressed("left_click"):
 		return
 		
-	is_ground_hovered = false
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.GROUND_BITMASK)
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.GROUND_BITMASK)
 	if hit_info:
 		position_hovered = Utils.v3_to_v2(hit_info["position"]).snapped(Game.PIXEL)
 		tile_hovered = Utils.v2_to_v2i(position_hovered)
@@ -145,7 +194,7 @@ func _process_ceilling_hitted():
 	if not Input.is_action_pressed("left_click"):
 		return
 	
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, floor_ray, Game.CEILLING_BITMASK)
+	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.CEILLING_BITMASK)
 	if hit_info:
 		ceilling_hovered = Utils.v3_to_v2(hit_info["position"]).snapped(Game.PIXEL)
 

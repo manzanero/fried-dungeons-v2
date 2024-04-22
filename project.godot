@@ -69,6 +69,18 @@ control={
 3d_render/layer_4="light"
 3d_render/layer_5="entity"
 3d_render/layer_6="object"
+3d_physics/layer_1="earth"
+3d_physics/layer_2="water"
+3d_physics/layer_3="flame"
+3d_physics/layer_4="force"
+3d_physics/layer_17="entity"
+3d_physics/layer_18="light"
+3d_physics/layer_19="object"
+3d_physics/layer_20="area"
+3d_physics/layer_25="ground"
+3d_physics/layer_26="wall"
+3d_physics/layer_27="ceilling"
+3d_physics/layer_28="selector"
 
 [rendering]
 

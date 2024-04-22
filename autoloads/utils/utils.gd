@@ -75,6 +75,14 @@ func get_bitmask(x : int) -> int:
 	return int(pow(2, x - 1))
 
 
+func get_hit(from : Node3D, to_point : Vector3, raycast : PhysicsRayQueryParameters3D, collision_mask : int) -> Dictionary:
+	var space_state := from.get_world_3d().direct_space_state
+	raycast.from = from.global_position
+	raycast.to = to_point
+	raycast.collision_mask = collision_mask
+	return space_state.intersect_ray(raycast)
+
+
 func get_mouse_hit(camera : Camera3D, from_center : bool, raycast : PhysicsRayQueryParameters3D, collision_mask : int) -> Dictionary:
 	var ray_length := 1000.0
 	var space_state := camera.get_world_3d().direct_space_state

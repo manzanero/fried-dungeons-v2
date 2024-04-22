@@ -58,22 +58,12 @@ func init_test_data():
 	loader.load_donjon_json_file("res://resources/maps/small/small.json")
 	
 	#var level := Game.level_scene.instantiate().init(self) as Level
-	#
 	#var wall := Game.wall_scene.instantiate().init(level) as Wall
 	#wall.add_point(Vector2(0, 2))
 	#wall.add_point(Vector2(0, 0))
 	#wall.add_point(Vector2(6, 0))
 	#wall.add_point(Vector2(6, 2))
 	##wall.is_edit_mode = true
-	#
-	#var wall2 := Game.wall_scene.instantiate().init(level) as Wall
-	#wall2.add_point(Vector2(0, 3))
-	#wall2.add_point(Vector2(0, 4))
-	#wall2.add_point(Vector2(6, 4))
-	#wall2.add_point(Vector2(6, 3))
-	##wall2.is_edit_mode = true
-	#
-	##light.position = Vector3(3, 1, 3)
 
 
 func _on_add_after_button_down():
@@ -132,7 +122,7 @@ func _input(event):
 			if event.keycode == KEY_F5:
 				get_tree().reload_current_scene()
 	
-	Game.handled_input = true
+	Game.handled_input = true  # prevents deselect the wall when click the point in the part on the wall
 
 
 func _unhandled_input(_event):

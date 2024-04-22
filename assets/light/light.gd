@@ -46,14 +46,17 @@ var id : String :
 			omni_light_3d.light_color = value
 
 var target_position : Vector2
-var is_edit_mode : bool
-var is_editing : bool : 
+var is_edit_mode : bool :
 	set(value):
-		is_editing = value
+		is_edit_mode = value
 		if value:
 			line_renderer_3d.disabled = false
 		else:
 			line_renderer_3d.disabled = true
+var is_editing : bool : 
+	set(value):
+		is_editing = value
+		if not value:
 			position = Utils.v2_to_v3(target_position)
 
 
@@ -93,7 +96,7 @@ func _process(delta : float):
 	if is_editing:
 		target_position = level.ceilling_hovered
 		if not Input.is_key_pressed(KEY_CTRL):
-			target_position = target_position.snapped(Game.SNAPPING_QUARTER)
+			target_position = target_position.snapped(Game.PIXEL_SNAPPING_QUARTER)
 		position = lerp(position, Utils.v2_to_v3(target_position), 10 * delta)
 
 
