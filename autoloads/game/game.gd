@@ -1,10 +1,10 @@
 extends Node
 
-const PIXEL_SIZE := 0.0625
-const PIXEL := Vector2.ONE * PIXEL_SIZE
-const VOXEL := Vector3.ONE * PIXEL_SIZE
-const SNAPPING_HALF := PIXEL_SIZE * 8
-const SNAPPING_QUARTER := PIXEL_SIZE * 4
+const U := 0.0625
+const PIXEL := Vector2.ONE * U
+const VOXEL := Vector3.ONE * U
+const SNAPPING_HALF := U * 8
+const SNAPPING_QUARTER := U * 4
 const PIXEL_SNAPPING_HALF := PIXEL * 8
 const PIXEL_SNAPPING_QUARTER := PIXEL * 4
 const VOXEL_SNAPPING_HALF := VOXEL * 8

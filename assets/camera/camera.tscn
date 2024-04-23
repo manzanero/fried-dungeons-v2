@@ -49,13 +49,6 @@ fov = 30.0
 near = 0.031
 far = 200.0
 
-[node name="Hint3D" type="MeshInstance3D" parent="Focus"]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-mesh = SubResource("SphereMesh_hp6ey")
-skeleton = NodePath("../..")
-surface_material_override/0 = SubResource("StandardMaterial3D_a8qb8")
-
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 
 [node name="HitMarker2D" type="ColorRect" parent="CanvasLayer"]
@@ -69,3 +62,9 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+
+[node name="Hint3D" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("SphereMesh_hp6ey")
+surface_material_override/0 = SubResource("StandardMaterial3D_a8qb8")

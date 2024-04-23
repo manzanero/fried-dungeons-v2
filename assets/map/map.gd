@@ -9,7 +9,8 @@ var selected_level : Level
 @export var ambient_color := Color.WHITE :
 	set(value):
 		ambient_color = value
-		environment.ambient_light_color = ambient_color * ambient_light
+		if environment:
+			environment.ambient_light_color = ambient_color * ambient_light
 		
 @export var ambient_light := 0.0 :
 	set(value):
@@ -55,7 +56,7 @@ func _ready():
 
 
 func init_test_data():
-	loader.load_donjon_json_file("res://resources/maps/small/small.json")
+	loader.load_donjon_json_file("res://resources/maps/small/small_alt.json")
 	
 	#var level := Game.level_scene.instantiate().init(self) as Level
 	#var wall := Game.wall_scene.instantiate().init(level) as Wall

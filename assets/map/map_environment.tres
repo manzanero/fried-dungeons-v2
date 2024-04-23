@@ -5,7 +5,5 @@ background_mode = 1
 ambient_light_source = 2
 ambient_light_color = Color(0.497474, 0.497474, 0.497474, 1)
 reflected_light_source = 1
-glow_hdr_scale = 0.86
-glow_hdr_luminance_cap = 15.3
 fog_light_color = Color(0, 0, 0, 1)
 adjustment_brightness = 7.45

@@ -57,6 +57,11 @@ func _ready():
 		if not value:
 			follower_entity = null
 	)
+
+
+func _on_camera_changed():
+	if follower_entity:
+		follower_entity.global_position = Game.camera.hint_3d.global_position
 	
 	#ground_hitted.connect(func():
 		#if is_ground_hovered:
@@ -82,8 +87,26 @@ func _process_wall_selection():
 	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.WALL_BITMASK)
 	if hit_info:
 		var wall_hitted := hit_info["collider"].get_parent() as Wall
-		wall_hitted.is_edit_mode = not wall_hitted.is_edit_mode
-
+		
+		selected_light = null
+		for light in lights_parent.get_children():
+			light.is_edit_mode = false
+		
+		selected_entity = null
+		for entity in entities_parent.get_children():
+			entity.is_edit_mode = false
+			
+		wall_hitted.is_edit_mode = true
+		selected_wall = wall_hitted
+		for wall in walls_parent.get_children():
+			if wall != wall_hitted:
+				wall.is_edit_mode = false
+				
+	elif selected_wall:
+		selected_wall.is_edit_mode = false
+		selected_wall = null
+	
+	print(1)
 
 func _process_light_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
@@ -170,11 +193,6 @@ func _process_entity_follow():
 	if Input.is_action_just_pressed("shift_left_click"):
 		follower_entity = selected_entity
 		selected_entity = null
-
-
-func _on_camera_changed():
-	if follower_entity:
-		follower_entity.global_position = Game.camera.hint_3d.global_position
 
 
 func _process_ground_hitted():

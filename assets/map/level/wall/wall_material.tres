@@ -13,8 +13,11 @@ bump_strength = 19.5
 noise = SubResource("FastNoiseLite_u4k2e")
 
 [resource]
-transparency = 4
-blend_mode = 1
+transparency = 2
+alpha_scissor_threshold = 0.1
+alpha_antialiasing_mode = 1
+alpha_antialiasing_edge = 0.5
+depth_draw_mode = 1
 specular_mode = 2
 albedo_texture = ExtResource("1_v8k04")
 metallic = 0.8
@@ -27,7 +30,6 @@ heightmap_scale = 16.0
 heightmap_texture = SubResource("NoiseTexture2D_676j7")
 subsurf_scatter_strength = 1.0
 subsurf_scatter_skin_mode = true
-backlight_enabled = true
 backlight = Color(1, 1, 1, 1)
 refraction_scale = -0.11
 texture_filter = 2

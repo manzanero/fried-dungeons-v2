@@ -36,21 +36,19 @@ func load_donjon_json_file(json_file_path):
 	
 	var void_index : int = 24
 	var ground_index : int = 24
-	var door_index : int = 2
-	var wall_index : int = 21
+	var door_index : int = 3
+	var wall_index : int = 1
+	var portcullis_index : int = 5
 	
 	# ground
 	for x in range(len_x):
 		for z in range(len_z): 
 			var donjon_code : float = cells_data[z][x]
 			var cell_is_wall := int(donjon_code) in [0, 16]
-			var cell_is_door := int(donjon_code) in [131076]
 			
 			var random_var : int = range(4).pick_random()
 			if cell_is_wall:
 				tile_map.set_cell(0, Vector2i(x, z), 0, Vector2i(random_var, void_index), 0)
-			elif cell_is_door:
-				tile_map.set_cell(0, Vector2i(x, z), 0, Vector2i(random_var, door_index), 0)
 			else:
 				tile_map.set_cell(0, Vector2i(x, z), 0, Vector2i(random_var, ground_index), 0)
 	
@@ -152,6 +150,92 @@ func load_donjon_json_file(json_file_path):
 				var entity_position := Vector2(x + 0.5, z + 0.5)
 				var _entity : Entity = Game.entity_scene.instantiate().init(level, entity_position)
 				entity_counter = entity_frecuency
+	
+	# doors
+	for x in range(len_x):
+		for z in range(len_z): 
+			var donjon_code : float = cells_data[z][x]
+			var donjon_code_down : float = cells_data[z - 1][x]
+			var cell_is_door := int(donjon_code) in [131076]
+			var cell_is_arch := int(donjon_code) in [65540]
+			var cell_is_portcullis := int(donjon_code) in [2097156]
+			var cell_down_is_wall := int(donjon_code_down) in [0, 16]
+			
+			if cell_is_door:
+				if cell_down_is_wall:
+					_create_north_door(level, Vector2(x, z), door_index, wall_index)
+				else:
+					_create_west_door(level, Vector2(x, z), door_index, wall_index)
+			elif cell_is_arch:
+				if cell_down_is_wall:
+					_create_north_arch(level, Vector2(x, z), wall_index)
+				else:
+					_create_west_arch(level, Vector2(x, z), wall_index)
+			elif cell_is_portcullis:
+				if cell_down_is_wall:
+					_create_north_portcullis(level, Vector2(x, z), portcullis_index)
+				else:
+					_create_west_portcullis(level, Vector2(x, z), portcullis_index)
+
+
+func _get_global_grid_points(offset: Vector2, local_grid_points: PackedVector2Array) -> PackedVector2Array:
+	const U = 1.0 / 16.0
+	var global_points : PackedVector2Array = []
+	for point in local_grid_points:
+		global_points.append(offset + U * point)
+	return global_points
+	
+
+const DOOR_WALLS: Array[Array] = [
+	[[4, 0], [4, 4], [12, 4], [12, 0]],
+	[[12, 16], [12, 12], [4, 12], [4, 16]],
+	[[6, 4], [6, 12]],
+	[[10, 12], [10, 4]],
+]
+
+const ARCH_WALLS: Array[Array] = [
+	[[4, 0], [4, 4], [12, 4], [12, 0]],
+	[[12, 16], [12, 12], [4, 12], [4, 16]],
+]
+
+const PORTCULLIS_WALLS: Array[Array] = [
+	[[8, 0], [8, 16]],
+	[[10, 16], [10, 0]],
+]
+
+func _create_north_door(level, offset, door_index, wall_index):
+	var walls_points := Utils.aaa2_to_apv2(DOOR_WALLS).map(func (x): return _get_global_grid_points(offset, x))
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[0])
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[1])
+	Game.wall_scene.instantiate().init(level, door_index).add_points(walls_points[2])
+	Game.wall_scene.instantiate().init(level, door_index).add_points(walls_points[3])
+
+func _create_west_door(level, offset, door_index, wall_index):
+	var walls_points := Utils.aaa2_to_atpv2(DOOR_WALLS).map(func (x): return _get_global_grid_points(offset, x))
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[0])
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[1])
+	Game.wall_scene.instantiate().init(level, door_index).add_points(walls_points[2])
+	Game.wall_scene.instantiate().init(level, door_index).add_points(walls_points[3])
+
+func _create_north_arch(level, offset, wall_index):
+	var walls_points := Utils.aaa2_to_apv2(ARCH_WALLS).map(func (x): return _get_global_grid_points(offset, x))
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[0])
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[1])
+
+func _create_west_arch(level, offset, wall_index):
+	var walls_points := Utils.aaa2_to_atpv2(ARCH_WALLS).map(func (x): return _get_global_grid_points(offset, x))
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[0])
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[1])
+
+func _create_north_portcullis(level, offset, wall_index):
+	var walls_points := Utils.aaa2_to_apv2(PORTCULLIS_WALLS).map(func (x): return _get_global_grid_points(offset, x))
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[0])
+	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[1])
+
+func _create_west_portcullis(level, offset, portcullis_index):
+	var walls_points := Utils.aaa2_to_atpv2(PORTCULLIS_WALLS).map(func (x): return _get_global_grid_points(offset, x))
+	Game.wall_scene.instantiate().init(level, portcullis_index).add_points(walls_points[0])
+	Game.wall_scene.instantiate().init(level, portcullis_index).add_points(walls_points[1])
 	
 	
 #func _load_fried_json_file(json_file_path):

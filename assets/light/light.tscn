@@ -16,7 +16,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.75, 0.75, 0.75, 0.5)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_ouc7j"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_7uqrj"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_3dj65"]
 radial_segments = 16
@@ -55,7 +55,7 @@ material_override = SubResource("StandardMaterial3D_aqxnx")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_ouc7j")
+mesh = SubResource("ImmediateMesh_7uqrj")
 script = ExtResource("3_dc0qo")
 start_thickness = 0.031
 end_thickness = 0.031

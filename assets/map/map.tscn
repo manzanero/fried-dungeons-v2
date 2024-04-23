@@ -10,7 +10,7 @@
 
 [node name="Map" type="Node3D"]
 script = ExtResource("1_jrnr7")
-ambient_light = 0.2
+ambient_light = 0.24
 
 [node name="Loader" type="Node" parent="."]
 script = ExtResource("2_l8wwe")

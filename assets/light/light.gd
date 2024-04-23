@@ -107,6 +107,6 @@ func _process(delta : float):
 func serialize():
 	var serialized_light := {}
 	serialized_light["id"] = id
-	serialized_light["position"] = Utils.v3_to_array2(position)
+	serialized_light["position"] = Utils.v3_to_a2(position)
 	serialized_light["color"] = Utils.color_to_string(color)
 	return serialized_light

@@ -29,28 +29,61 @@ func v3i_to_str(v3i : Vector3i) -> String:
 	return "(%s, %s, %s)" % [v3i.x, v3i.y, v3i.z]
 
 
-func array3_to_v3(array : Array[float]) -> Vector3:
+func a3_to_v3(array : Array) -> Vector3:
 	return Vector3(array[0], array[1], array[2])
 
 
-func array2_to_v3(array : Array[float]) -> Vector3:
+func a2_to_v3(array : Array) -> Vector3:
 	return Vector3(array[0], 0, array[1])
 
 
-func array3_to_v3i(array : Array[float]) -> Vector3i:
+func a2_to_v2(array : Array) -> Vector2:
+	return Vector2(array[0], array[1])
+
+
+func a3_to_v3i(array : Array[float]) -> Vector3i:
 	return Vector3i(floori(array[0]), floori(array[1]), floori(array[2]))
 
 
-func v3_to_array3(v3 : Vector3) -> Array:
+func v3_to_a3(v3 : Vector3) -> Array[float]:
 	return [snappedf(v3.x, 0.001), snappedf(v3.y, 0.001), snappedf(v3.z, 0.001)]
 
 
-func v3_to_array2(v3 : Vector3) -> Array:
+func v3_to_a2(v3: Vector3) -> Array[float]:
 	return [snappedf(v3.x, 0.001), snappedf(v3.z, 0.001)]
 
 
-func v3i_to_array3(v3i : Vector3) -> Array:
+func v3i_to_a3i(v3i: Vector3i) -> Array[int]:
 	return [v3i.x, v3i.y, v3i.z]
+	
+
+func aa2_to_pv2(array: Array) -> PackedVector2Array:
+	var pv2: PackedVector2Array = []
+	for item in array:
+		pv2.append(a2_to_v2(item))
+	return pv2
+	
+
+func aa2_to_tpv2(array: Array) -> PackedVector2Array:
+	var pv2: PackedVector2Array = []
+	for item in array:
+		pv2.append(a2_to_v2([item[1], item[0]]))
+	pv2.reverse()
+	return pv2
+	
+
+func aaa2_to_apv2(array: Array) -> Array[PackedVector2Array]:
+	var apv2: Array[PackedVector2Array] = []
+	for item in array:
+		apv2.append(aa2_to_pv2(item))
+	return apv2
+	
+
+func aaa2_to_atpv2(array: Array) -> Array[PackedVector2Array]:
+	var apv2: Array[PackedVector2Array] = []
+	for item in array:
+		apv2.append(aa2_to_tpv2(item))
+	return apv2
 
 
 func color_to_string(color : Color) -> String:

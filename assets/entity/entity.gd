@@ -10,9 +10,6 @@ var level: Level
 var target_position: Vector3
 var is_edit_mode: bool : set = _set_edit_mode
 var is_editing: bool : set = _set_editing
-#var following: Node3D
-
-var entity_ray := PhysicsRayQueryParameters3D.new()
 
 
 @onready var selector_mesh_instance_3d: MeshInstance3D = %SelectorMeshInstance3D
@@ -48,7 +45,7 @@ func _physics_process(delta: float) -> void:
 	
 	const input_velocity: float = 1000
 	var vector_to_target := target_position - position
-	if vector_to_target.distance_to(Vector3.ZERO) > Game.PIXEL_SIZE / 64.0:
+	if vector_to_target.distance_to(Vector3.ZERO) > Game.U / 64.0:
 		var distance_to_target := vector_to_target.length()
 		var direction_to_target := vector_to_target.normalized()
 		var velocity_to_target := clampf(delta * distance_to_target * input_velocity, 0, 10)
