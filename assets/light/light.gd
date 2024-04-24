@@ -79,7 +79,7 @@ func init(_level : Level, position_2d : Vector2, _range_radius := range_radius, 
 	active = _active
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
-	line_renderer_3d.points.append_array([Vector3.ZERO, Vector3.UP * 0.5])
+	line_renderer_3d.points.append_array([Vector3.ZERO, Vector3.UP * 0.75])
 	name = "Light"
 	return self
 

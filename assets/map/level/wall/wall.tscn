@@ -1,10 +1,10 @@
-[gd_scene load_steps=13 format=3 uid="uid://dua75cywy3bao"]
+[gd_scene load_steps=10 format=3 uid="uid://dua75cywy3bao"]
 
 [ext_resource type="Script" path="res://assets/map/level/wall/wall.gd" id="1_8fylx"]
 [ext_resource type="Script" path="res://assets/map/level/wall/wall_generator.gd" id="2_jgfiy"]
-[ext_resource type="Texture2D" uid="uid://cn0b7xxcmi6rw" path="res://resources/textures/texture_atlas.png" id="5_4egs7"]
+[ext_resource type="Material" uid="uid://chuqphygfyh38" path="res://assets/map/level/wall/wall_material_front.tres" id="2_xik8p"]
 [ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="5_70oql"]
-[ext_resource type="Material" uid="uid://dnn6n7mk4yue" path="res://assets/map/level/wall/wall_material.tres" id="5_quoby"]
+[ext_resource type="Material" uid="uid://syt6b7hl7nmv" path="res://assets/map/level/wall/wall_material_back.tres" id="5_tfg12"]
 
 [sub_resource type="Curve3D" id="Curve3D_kyr6i"]
 resource_local_to_scene = true
@@ -22,37 +22,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.498039, 0.498039, 0.498039, 0.498039)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_fjtpk"]
-
-[sub_resource type="FastNoiseLite" id="FastNoiseLite_u4k2e"]
-
-[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_676j7"]
-width = 14
-height = 17
-generate_mipmaps = false
-as_normal_map = true
-bump_strength = 19.5
-noise = SubResource("FastNoiseLite_u4k2e")
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_86vjw"]
-blend_mode = 1
-cull_mode = 2
-specular_mode = 2
-albedo_texture = ExtResource("5_4egs7")
-metallic = 0.8
-metallic_specular = 0.0
-roughness = 0.0
-clearcoat = 0.8
-clearcoat_roughness = 0.65
-anisotropy = -1.0
-heightmap_scale = 16.0
-heightmap_texture = SubResource("NoiseTexture2D_676j7")
-subsurf_scatter_strength = 1.0
-subsurf_scatter_skin_mode = true
-backlight_enabled = true
-backlight = Color(1, 1, 1, 1)
-refraction_scale = -0.11
-texture_filter = 2
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_6ybvg"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_cbu2a"]
 resource_local_to_scene = true
@@ -60,7 +30,7 @@ resource_local_to_scene = true
 [node name="Wall" type="Node3D"]
 script = ExtResource("1_8fylx")
 material_index = 5
-material = ExtResource("5_quoby")
+material = ExtResource("2_xik8p")
 
 [node name="WallGenerator" type="Node" parent="."]
 script = ExtResource("2_jgfiy")
@@ -74,7 +44,7 @@ material_override = SubResource("StandardMaterial3D_1ar7b")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_fjtpk")
+mesh = SubResource("ImmediateMesh_6ybvg")
 script = ExtResource("5_70oql")
 start_thickness = 0.016
 end_thickness = 0.016
@@ -82,8 +52,8 @@ draw_crners = false
 tile_texture = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-material_override = ExtResource("5_quoby")
-material_overlay = SubResource("StandardMaterial3D_86vjw")
+material_override = ExtResource("2_xik8p")
+material_overlay = ExtResource("5_tfg12")
 mesh = SubResource("ArrayMesh_cbu2a")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]

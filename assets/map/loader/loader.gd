@@ -25,14 +25,7 @@ func load_donjon_json_file(json_file_path):
 	var len_z = cells_data.size()
 	level.rect = Rect2i(0, 0, len_x, len_z)
 	
-	#floors[0] = MRPAS.new(Vector2(len_x, len_z))
-	seed(0)
-	
-	#var void_index : int = 18
-	#var void_index : int = 63
-	#var ground_index : int = 6
-	#var door_index : int = 2
-	#var wall_index : int = 7
+	#floors[0] = MRPAS.new(Vector2(len_x, len_z) m
 	
 	var void_index : int = 24
 	var ground_index : int = 24
@@ -187,15 +180,15 @@ func _get_global_grid_points(offset: Vector2, local_grid_points: PackedVector2Ar
 	
 
 const DOOR_WALLS: Array[Array] = [
-	[[4, 0], [4, 4], [12, 4], [12, 0]],
-	[[12, 16], [12, 12], [4, 12], [4, 16]],
-	[[6, 4], [6, 12]],
-	[[10, 12], [10, 4]],
+	[[6, 0], [6, 4], [10, 4], [10, 0]],
+	[[10, 16], [10, 12], [6, 12], [6, 16]],
+	[[7, 4], [7, 12]],
+	[[9, 12], [9, 4]],
 ]
 
 const ARCH_WALLS: Array[Array] = [
-	[[4, 0], [4, 4], [12, 4], [12, 0]],
-	[[12, 16], [12, 12], [4, 12], [4, 16]],
+	[[6, 0], [6, 4], [10, 4], [10, 0]],
+	[[10, 16], [10, 12], [6, 12], [6, 16]],
 ]
 
 const PORTCULLIS_WALLS: Array[Array] = [

@@ -19,15 +19,6 @@ signal curve_changed()
 			collision.set_collision_layer_value(material_layer, false)
 			collision.set_collision_layer_value(value, true)
 @export var material : StandardMaterial3D
-#@export var shadow_to_opacity := true :
-	#set(value):
-		#shadow_to_opacity = value
-		#if mesh_instance_3d:
-			#if value:
-				#material = preload("res://assets/map/level/wall/wall_material.tres")
-			#else:
-				#material = preload("res://assets/map/level/wall/wall_material_first_pass.tres")
-			#mesh_instance_3d.material_override = material
 
 var level : Level
 var points : Array[WallPoint] = []
@@ -65,7 +56,6 @@ func init(_level : Level,
 
 
 func _ready():
-	#Game.camera.fps_enabled.connect(_on_camera_fps_ennabled)
 	collision.set_collision_layer_value(material_layer, true)
 
 
@@ -102,10 +92,6 @@ func _set_edit_mode(value : bool):
 		Utils.safe_disconnect(get_viewport().size_changed, _on_viewport_changed)
 		for point in points:
 			point.visible = false
-	
-
-#func _on_camera_fps_ennabled(value : bool):
-	#shadow_to_opacity = not value
 
 
 func _on_viewport_changed():

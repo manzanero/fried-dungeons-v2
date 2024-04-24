@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://ex7a2viuaamy"]
+[gd_scene load_steps=10 format=3 uid="uid://ex7a2viuaamy"]
 
 [ext_resource type="Script" path="res://assets/entity/entity.gd" id="1_scptp"]
 [ext_resource type="Texture2D" uid="uid://crmobcm0up3ug" path="res://resources/entity_textures/monsters/undead/undead_102.png" id="2_4djgx"]
 [ext_resource type="Material" uid="uid://wpp4uasvesgt" path="res://assets/entity/entity_material.tres" id="3_dr6wh"]
+[ext_resource type="Material" uid="uid://bwjdpdqce7h5j" path="res://assets/entity/entity_base_material.tres" id="3_ng8ik"]
 [ext_resource type="SphereMesh" uid="uid://djpa5djoxbvsd" path="res://assets/entity/entity_base_mesh.tres" id="3_q4myc"]
 
 [sub_resource type="TorusMesh" id="TorusMesh_y6rpp"]
@@ -37,6 +38,7 @@ script = ExtResource("1_scptp")
 cast_shadow = 0
 mesh = ExtResource("3_q4myc")
 skeleton = NodePath("../..")
+surface_material_override/0 = ExtResource("3_ng8ik")
 
 [node name="SelectorMeshInstance3D" type="MeshInstance3D" parent="Base"]
 unique_name_in_owner = true

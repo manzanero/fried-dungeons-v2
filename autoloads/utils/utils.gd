@@ -134,6 +134,7 @@ func get_mouse_hit(camera : Camera3D, from_center : bool, raycast : PhysicsRayQu
 		raycast.to = raycast.from + camera.project_ray_normal(mouse_pos) * ray_length
 		
 	raycast.collision_mask = collision_mask
+	#raycast.hit_back_faces = false
 	return space_state.intersect_ray(raycast)
 
 

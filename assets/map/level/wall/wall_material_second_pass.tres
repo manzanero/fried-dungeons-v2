@@ -1,9 +1,0 @@
-[gd_resource type="StandardMaterial3D" load_steps=2 format=3 uid="uid://bxe15ab27rb0q"]
-
-[ext_resource type="Texture2D" uid="uid://cn0b7xxcmi6rw" path="res://resources/textures/texture_atlas.png" id="1_ruoms"]
-
-[resource]
-transparency = 4
-blend_mode = 1
-albedo_texture = ExtResource("1_ruoms")
-texture_filter = 2

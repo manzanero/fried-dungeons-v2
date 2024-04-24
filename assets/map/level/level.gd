@@ -105,8 +105,7 @@ func _process_wall_selection():
 	elif selected_wall:
 		selected_wall.is_edit_mode = false
 		selected_wall = null
-	
-	print(1)
+		
 
 func _process_light_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
