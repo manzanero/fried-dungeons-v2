@@ -34,6 +34,6 @@ var wall_point_scene = load("res://assets/map/level/wall/wall_point/wall_point.t
 var light_scene = load("res://assets/light/light.tscn") as PackedScene
 var entity_scene = load("res://assets/entity/entity.tscn") as PackedScene
 
-
+var world_seed := 0
 var camera : Camera
 var handled_input : bool

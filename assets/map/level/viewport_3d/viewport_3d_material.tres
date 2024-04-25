@@ -15,8 +15,7 @@ noise = SubResource("FastNoiseLite_0kbu1")
 [resource]
 specular_mode = 2
 vertex_color_use_as_albedo = true
-albedo_color = Color(0.5, 0.5, 0.5, 1)
-metallic = 0.8
+albedo_color = Color(0.25, 0.25, 0.25, 1)
 normal_scale = -16.0
 ao_light_affect = 0.55
 heightmap_scale = 16.0

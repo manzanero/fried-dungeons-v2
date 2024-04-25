@@ -57,6 +57,7 @@ func _ready():
 
 func init_test_data():
 	loader.load_donjon_json_file("res://resources/maps/small/small_alt.json")
+	#loader.load_donjon_json_file("res://resources/maps/medium/medium.json")
 	
 	#var level := Game.level_scene.instantiate().init(self) as Level
 	#var wall := Game.wall_scene.instantiate().init(level) as Wall

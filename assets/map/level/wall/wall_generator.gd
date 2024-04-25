@@ -18,6 +18,7 @@ func _ready() -> void:
 
 func _on_curve_changed():
 	seed(wall.material_seed)
+	
 	st.clear()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
 	

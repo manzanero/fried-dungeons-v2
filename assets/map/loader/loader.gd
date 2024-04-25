@@ -6,6 +6,7 @@ extends Node
 
 
 func load_donjon_json_file(json_file_path):
+	seed(Game.world_seed)
 	print("Loading donjon map: " + json_file_path)
 
 	var map_data := Utils.load_json(json_file_path)

@@ -14,12 +14,10 @@ noise = SubResource("FastNoiseLite_u4k2e")
 
 [resource]
 blend_mode = 1
-cull_mode = 2
+cull_mode = 1
 specular_mode = 2
+albedo_color = Color(0.25, 0.25, 0.25, 1)
 albedo_texture = ExtResource("1_ocmp4")
-metallic = 0.9
-metallic_specular = 0.0
-roughness = 0.0
 clearcoat = 0.8
 clearcoat_roughness = 0.65
 anisotropy = -1.0
