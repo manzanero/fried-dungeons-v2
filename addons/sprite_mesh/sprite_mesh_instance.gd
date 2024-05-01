@@ -15,9 +15,9 @@ const GreedyAlgorithm = preload("./scripts/greedy_algorithm.gd")
 
 @export_group("Mesh Properties")
 ## Depth of the mesh, measured in pixels.
-@export_range(0, 128, 0.01, "suffix:px") var depth := 1.0: set = set_depth
+@export_range(0, 128, 0.001, "suffix:px") var depth := 1.0: set = set_depth
 ## The size of one pixel's width on the sprite to scale it in 3D.
-@export_range(0, 128, 0.01, "suffix:m") var pixel_size := 0.01: set = set_pixel_size
+@export_range(0, 128, 0.001, "suffix:m") var pixel_size := 0.01: set = set_pixel_size
 ## If [code]true[/code], mesh can be seen from the back as well, if [code]false[/code], it is
 ## invisible when looking at it from behind.
 @export var double_sided := true: set = set_double_sided

@@ -19,8 +19,12 @@ var rect : Rect2 :
 func _ready():
 	
 	# Viewports cannot start with texture
-	var mesh_material := get_surface_override_material(0) as StandardMaterial3D
-	mesh_material.albedo_texture = viewport.get_texture()
+	#var mesh_material := get_surface_override_material(0) as StandardMaterial3D
+	#mesh_material.albedo_texture = viewport.get_texture()
+	
+	var mesh_material: ShaderMaterial = get_surface_override_material(0)
+	mesh_material.set_shader_parameter("texture_albedo", viewport.get_texture())
+
 	
 	rect_changed.connect(_on_rect_changed)
 	

@@ -14,7 +14,8 @@ var is_editing: bool : set = _set_editing
 
 @onready var selector_mesh_instance_3d: MeshInstance3D = %SelectorMeshInstance3D
 @onready var body: Node3D = $Body
-@onready var sprite_3d: Sprite3D = $Body/Sprite3D
+#@onready var sprite_3d: Sprite3D = $Body/Sprite3D
+@onready var sprite_mesh: SpriteMeshInstance = $Body/SpriteMeshInstance
 
 
 func init(_level: Level, position_2d: Vector2):

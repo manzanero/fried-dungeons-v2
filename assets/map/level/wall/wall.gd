@@ -15,9 +15,10 @@ signal curve_changed()
 @export var material_layer := 1 :
 	set(value):
 		material_layer = value
-		if collision:
+		if is_inside_tree():
 			collision.set_collision_layer_value(material_layer, false)
 			collision.set_collision_layer_value(value, true)
+			
 @export var material : StandardMaterial3D
 
 var level : Level
@@ -50,7 +51,7 @@ func init(_level : Level,
 	level.walls_parent.add_child(self)
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
-	mesh_instance_3d.material_override = material
+	#mesh_instance_3d.material_override = material
 	name = "Wall"
 	return self
 

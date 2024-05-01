@@ -127,9 +127,6 @@ func load_donjon_json_file(json_file_path):
 				var _light : Light = Game.light_scene.instantiate().init(level, light_position)
 				light_counter = light_frecuency
 	
-	#map.ambient_light = 0.5
-	map.ambient_light = 0
-	
 	# entities
 	var entity_frecuency := 50
 	var entity_counter := entity_frecuency

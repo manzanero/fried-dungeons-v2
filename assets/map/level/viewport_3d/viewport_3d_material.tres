@@ -13,9 +13,12 @@ bump_strength = 1.0
 noise = SubResource("FastNoiseLite_0kbu1")
 
 [resource]
+render_priority = -1
+transparency = 2
+alpha_scissor_threshold = 0.1
+alpha_antialiasing_mode = 0
 specular_mode = 2
-vertex_color_use_as_albedo = true
-albedo_color = Color(0.25, 0.25, 0.25, 1)
+albedo_color = Color(0.33, 0.33, 0.33, 1)
 normal_scale = -16.0
 ao_light_affect = 0.55
 heightmap_scale = 16.0

@@ -26,7 +26,7 @@ signal fps_enabled(value : bool)
 @export var max_rot_x: float = 90
 @export var min_zoom: float = 0
 @export var max_zoom: float = 100
-@export var fp_fov: float = 60
+@export var fp_fov: float = 75
 @export var tp_fov: float = 30
 @export var is_ortogonal : bool = false : 
 	set(value):

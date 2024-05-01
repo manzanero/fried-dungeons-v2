@@ -1,7 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://54qydkhvxv4n"]
+[gd_scene load_steps=11 format=3 uid="uid://54qydkhvxv4n"]
 
 [ext_resource type="Script" path="res://assets/map/level/level.gd" id="1_jdpmt"]
-[ext_resource type="Material" uid="uid://4rv85ap1ia4c" path="res://assets/map/level/viewport_3d/viewport_3d_material.tres" id="2_43kle"]
+[ext_resource type="Shader" path="res://assets/map/level/wall/materials/ground_next.gdshader" id="2_gm41o"]
 [ext_resource type="Script" path="res://assets/map/level/viewport_3d/viewport_3d.gd" id="3_6m262"]
 [ext_resource type="PackedScene" uid="uid://c7kw2qqn2s7gb" path="res://assets/map/level/viewport_3d/floor_2d/floor_2d.tscn" id="4_4yvlj"]
 
@@ -9,7 +9,18 @@
 subdivide_width = 100
 subdivide_depth = 100
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_ajd5n"]
+render_priority = -1
+shader = ExtResource("2_gm41o")
+shader_parameter/albedo = Color(0.33, 0.33, 0.33, 1)
+
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_ujds0"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_2cw34"]
+size = Vector2(1000, 1000)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j55m5"]
+albedo_color = Color(0, 0, 0, 1)
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_h6tfn"]
 plane = Plane(0, 1, 0, 1)
@@ -23,7 +34,7 @@ script = ExtResource("1_jdpmt")
 unique_name_in_owner = true
 mesh = SubResource("PlaneMesh_f84fu")
 skeleton = NodePath("../../..")
-surface_material_override/0 = ExtResource("2_43kle")
+surface_material_override/0 = SubResource("ShaderMaterial_ajd5n")
 script = ExtResource("3_6m262")
 
 [node name="SubViewport" type="SubViewport" parent="Ground/Viewport3D"]
@@ -44,6 +55,13 @@ collision_mask = 0
 shape = SubResource("WorldBoundaryShape3D_ujds0")
 
 [node name="Ceilling" type="Node3D" parent="."]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ceilling"]
+transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 1, 0)
+layers = 4
+cast_shadow = 3
+mesh = SubResource("PlaneMesh_2cw34")
+surface_material_override/0 = SubResource("StandardMaterial3D_j55m5")
 
 [node name="CeillingCollider" type="StaticBody3D" parent="Ceilling"]
 unique_name_in_owner = true

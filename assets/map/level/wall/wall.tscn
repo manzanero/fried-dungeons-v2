@@ -2,18 +2,16 @@
 
 [ext_resource type="Script" path="res://assets/map/level/wall/wall.gd" id="1_8fylx"]
 [ext_resource type="Script" path="res://assets/map/level/wall/wall_generator.gd" id="2_jgfiy"]
-[ext_resource type="Material" uid="uid://chuqphygfyh38" path="res://assets/map/level/wall/wall_material_front.tres" id="2_xik8p"]
+[ext_resource type="Material" uid="uid://clywb03l5sixi" path="res://assets/map/level/wall/materials/front.tres" id="4_uwf0c"]
 [ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="5_70oql"]
-[ext_resource type="Material" uid="uid://syt6b7hl7nmv" path="res://assets/map/level/wall/wall_material_back.tres" id="5_tfg12"]
+[ext_resource type="Material" uid="uid://dxpyjh03moe17" path="res://assets/map/level/wall/materials/back.tres" id="5_p44x4"]
 
 [sub_resource type="Curve3D" id="Curve3D_kyr6i"]
 resource_local_to_scene = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_1ar7b"]
-render_priority = 9
-transparency = 3
-alpha_hash_scale = 1.0
-alpha_antialiasing_mode = 0
+render_priority = 2
+transparency = 4
 depth_draw_mode = 2
 no_depth_test = true
 shading_mode = 0
@@ -22,7 +20,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.498039, 0.498039, 0.498039, 0.498039)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_w4mq8"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_rreig"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_cbu2a"]
 resource_local_to_scene = true
@@ -30,7 +28,6 @@ resource_local_to_scene = true
 [node name="Wall" type="Node3D"]
 script = ExtResource("1_8fylx")
 material_index = 5
-material = ExtResource("2_xik8p")
 
 [node name="WallGenerator" type="Node" parent="."]
 script = ExtResource("2_jgfiy")
@@ -44,7 +41,7 @@ material_override = SubResource("StandardMaterial3D_1ar7b")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_w4mq8")
+mesh = SubResource("ImmediateMesh_rreig")
 script = ExtResource("5_70oql")
 start_thickness = 0.016
 end_thickness = 0.016
@@ -52,8 +49,9 @@ draw_crners = false
 tile_texture = false
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
-material_override = ExtResource("2_xik8p")
-material_overlay = ExtResource("5_tfg12")
+layers = 2
+material_override = ExtResource("4_uwf0c")
+material_overlay = ExtResource("5_p44x4")
 mesh = SubResource("ArrayMesh_cbu2a")
 
 [node name="StaticBody3D" type="StaticBody3D" parent="."]

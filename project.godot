@@ -21,7 +21,6 @@ DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
 Utils="*res://autoloads/utils/utils.gd"
 Game="*res://autoloads/game/game.gd"
 Debug="*res://autoloads/debug/debug.gd"
-Console="*res://addons/ConsoleGD/scripts/console.gd"
 
 [display]
 
@@ -36,7 +35,7 @@ window/dpi/allow_hidpi=false
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/ConsoleGD/plugin.cfg", "res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg")
+enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/sprite_mesh/plugin.cfg")
 
 [input]
 
@@ -85,11 +84,27 @@ control={
 [rendering]
 
 textures/canvas_textures/default_texture_filter=3
-renderer/rendering_method="gl_compatibility"
-renderer/rendering_method.mobile="gl_compatibility"
+lights_and_shadows/directional_shadow/soft_shadow_filter_quality=0
+lights_and_shadows/positional_shadow/soft_shadow_filter_quality=0
 textures/default_filters/use_nearest_mipmap_filter=true
 textures/decals/filter=2
 textures/light_projectors/filter=2
-limits/opengl/max_lights_per_object=32
+limits/opengl/max_renderable_lights=64
+limits/opengl/max_lights_per_object=64
 2d/snap/snap_2d_transforms_to_pixel=true
 2d/snap/snap_2d_vertices_to_pixel=true
+
+[shader_globals]
+
+is_master_view={
+"type": "bool",
+"value": false
+}
+has_ambient_light={
+"type": "bool",
+"value": false
+}
+wall_atlas={
+"type": "sampler2D",
+"value": "res://resources/textures/texture_atlas.png"
+}

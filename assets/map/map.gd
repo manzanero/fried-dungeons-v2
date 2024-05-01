@@ -2,21 +2,36 @@ class_name Map
 extends Node3D
 
 
+signal master_view_enabled(value : bool)
+
+
+@export var is_master := false
+@export var master_ambient_light := 0.5
+@export var ambient_light := 0.0
+@export var is_master_view := false :
+	set(value):
+		is_master_view = value
+		RenderingServer.global_shader_parameter_set("is_master_view", value)
+		master_view_enabled.emit(value)
+
+@export var current_ambient_color := Color.WHITE :
+	set(value):
+		current_ambient_color = value
+		if is_inside_tree():
+			environment.ambient_light_color = current_ambient_color * current_ambient_light
+		
+@export var current_ambient_light := 0.0 :
+	set(value):
+		current_ambient_light = value
+		RenderingServer.global_shader_parameter_set("has_ambient_light", value > 0.001)
+		if is_inside_tree():
+			environment.ambient_light_color = current_ambient_color * current_ambient_light
+
+
 var label := "none"
 var cells := {}
 var selected_level : Level
 
-@export var ambient_color := Color.WHITE :
-	set(value):
-		ambient_color = value
-		if environment:
-			environment.ambient_light_color = ambient_color * ambient_light
-		
-@export var ambient_light := 0.0 :
-	set(value):
-		ambient_light = value
-		if environment:
-			environment.ambient_light_color = ambient_color * ambient_light
 
 @onready var loader := $Loader as Loader
 @onready var levels_parent := $Levels as Node3D
@@ -42,6 +57,8 @@ func _ready():
 #	DebugMenu.style = DebugMenu.Style.VISIBLE_DETAILED
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	#DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+	
+	camera.fps_enabled.connect(_on_camera_fps_enabled)
 
 	add_after_button.button_down.connect(_on_add_after_button_down)
 	add_after_button.button_up.connect(_on_add_after_button_up)
@@ -52,21 +69,30 @@ func _ready():
 	
 	point_options.visible = false
 	
+	# player type settings
+	is_master_view = is_master
+	current_ambient_light = master_ambient_light if is_master else ambient_light
+	
 	init_test_data()
 
 
 func init_test_data():
 	loader.load_donjon_json_file("res://resources/maps/small/small_alt.json")
 	#loader.load_donjon_json_file("res://resources/maps/medium/medium.json")
-	
-	#var level := Game.level_scene.instantiate().init(self) as Level
-	#var wall := Game.wall_scene.instantiate().init(level) as Wall
-	#wall.add_point(Vector2(0, 2))
-	#wall.add_point(Vector2(0, 0))
-	#wall.add_point(Vector2(6, 0))
-	#wall.add_point(Vector2(6, 2))
-	##wall.is_edit_mode = true
 
+
+func _on_camera_fps_enabled(value: bool):
+	if is_master:
+		is_master_view = true
+		current_ambient_light = ambient_light if value else master_ambient_light
+	else:
+		is_master_view = value
+		current_ambient_light = ambient_light
+
+
+#########
+# walls #
+#########
 
 func _on_add_after_button_down():
 	var wall := selected_level.selected_wall

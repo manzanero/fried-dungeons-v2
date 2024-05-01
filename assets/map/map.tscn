@@ -10,6 +10,7 @@
 
 [node name="Map" type="Node3D"]
 script = ExtResource("1_jrnr7")
+is_master = true
 
 [node name="Loader" type="Node" parent="."]
 script = ExtResource("2_l8wwe")
@@ -17,9 +18,23 @@ script = ExtResource("2_l8wwe")
 [node name="Levels" type="Node3D" parent="."]
 
 [node name="Camera" parent="." instance=ExtResource("2_ty8om")]
-init_x = 23.5
-init_z = 23.5
+init_x = 17.5
+init_z = 15.5
 max_rot_x = 0.0
+
+[node name="OmniLight3D" type="OmniLight3D" parent="Camera/Focus" index="1"]
+process_priority = 1
+process_physics_priority = 1
+light_color = Color(0, 0, 0, 1)
+light_indirect_energy = 0.0
+light_volumetric_fog_energy = 0.0
+light_specular = 1.0
+light_cull_mask = 4293918751
+shadow_enabled = true
+shadow_bias = 0.05
+shadow_blur = 0.0
+omni_range = 32.0
+omni_attenuation = 1e-05
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
 environment = ExtResource("4_okbi2")
@@ -184,3 +199,5 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[editable path="Camera"]

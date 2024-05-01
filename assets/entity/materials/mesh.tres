@@ -1,0 +1,10 @@
+[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://cxyi188e3a3cw"]
+
+[ext_resource type="Shader" path="res://assets/entity/materials/mesh.gdshader" id="1_ncjcp"]
+[ext_resource type="Texture2D" uid="uid://crmobcm0up3ug" path="res://resources/entity_textures/monsters/undead/undead_102.png" id="2_svd56"]
+
+[resource]
+render_priority = 0
+shader = ExtResource("1_ncjcp")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/texture_albedo = ExtResource("2_svd56")

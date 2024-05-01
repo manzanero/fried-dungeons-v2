@@ -24,10 +24,12 @@ var selected_entity : Entity
 var follower_entity : Entity :
 	set(value):
 		if follower_entity:
-			follower_entity.sprite_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+			#follower_entity.sprite_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+			follower_entity.sprite_mesh.visible = true
 		follower_entity = value
 		if follower_entity:
-			follower_entity.sprite_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+			#follower_entity.sprite_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+			follower_entity.sprite_mesh.visible = false
 			follower_entity.is_edit_mode = false
 			Game.camera.target.global_position = follower_entity.global_position
 			Game.camera.is_fps = true

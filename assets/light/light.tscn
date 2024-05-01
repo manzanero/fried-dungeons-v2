@@ -4,11 +4,8 @@
 [ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="3_dc0qo"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_aqxnx"]
-render_priority = 9
-transparency = 3
-alpha_hash_scale = 1.0
-alpha_antialiasing_mode = 0
-depth_draw_mode = 2
+render_priority = 2
+transparency = 4
 no_depth_test = true
 shading_mode = 0
 specular_mode = 2
@@ -16,7 +13,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.75, 0.75, 0.75, 0.5)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_bqj0o"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_pitwr"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_3dj65"]
 radial_segments = 16
@@ -24,7 +21,7 @@ rings = 8
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_fp4lq"]
 resource_local_to_scene = true
-render_priority = 1
+render_priority = 2
 transparency = 1
 no_depth_test = true
 shading_mode = 0
@@ -32,6 +29,7 @@ albedo_color = Color(0, 0, 0, 1)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0sd7k"]
 resource_local_to_scene = true
+render_priority = 1
 cull_mode = 1
 no_depth_test = true
 shading_mode = 0
@@ -55,7 +53,7 @@ material_override = SubResource("StandardMaterial3D_aqxnx")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_bqj0o")
+mesh = SubResource("ImmediateMesh_pitwr")
 script = ExtResource("3_dc0qo")
 start_thickness = 0.031
 end_thickness = 0.125

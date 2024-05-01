@@ -86,10 +86,15 @@ func init(_level : Level, position_2d : Vector2, _range_radius := range_radius, 
 
 func _ready():
 	Game.camera.fps_enabled.connect(_on_camera_fps_enabled)
+	level.map.master_view_enabled.connect(_on_master_view_enabled)
 
 
 func _on_camera_fps_enabled(value : bool):
-	body.visible = not value
+	body.visible = false if value else level.map.is_master_view
+
+
+func _on_master_view_enabled(value : bool):
+	body.visible = value
 	
 
 func _process(delta : float):
