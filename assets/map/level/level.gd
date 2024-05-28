@@ -24,11 +24,9 @@ var selected_entity : Entity
 var follower_entity : Entity :
 	set(value):
 		if follower_entity:
-			#follower_entity.sprite_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 			follower_entity.sprite_mesh.visible = true
 		follower_entity = value
 		if follower_entity:
-			#follower_entity.sprite_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 			follower_entity.sprite_mesh.visible = false
 			follower_entity.is_edit_mode = false
 			Game.camera.target.global_position = follower_entity.global_position
@@ -41,6 +39,7 @@ var level_ray := PhysicsRayQueryParameters3D.new()
 
 
 @onready var viewport_3d := %Viewport3D as Viewport3D
+@onready var ceilling_mesh_instance_3d: MeshInstance3D = $Ceilling/MeshInstance3D
 @onready var walls_parent := %Walls as Node3D
 @onready var lights_parent := %Lights as Node3D
 @onready var entities_parent := %Entities as Node3D
@@ -56,9 +55,13 @@ func init(_map : Map):
 func _ready():
 	Game.camera.changed.connect(_on_camera_changed)
 	Game.camera.fps_enabled.connect(func (value):
-		if not value:
+		if value:
+			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		else:
+			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 			follower_entity = null
 	)
+	ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 
 
 func _on_camera_changed():
@@ -85,7 +88,10 @@ func _physics_process(_delta):
 func _process_wall_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
-	
+		
+	if not UI.selected_map_tab.is_mouse_over:
+		return
+
 	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.WALL_BITMASK)
 	if hit_info:
 		var wall_hitted := hit_info["collider"].get_parent() as Wall
@@ -104,13 +110,18 @@ func _process_wall_selection():
 			if wall != wall_hitted:
 				wall.is_edit_mode = false
 				
-	elif selected_wall:
+		Game.handled_input = true
+				
+	elif is_instance_valid(selected_wall):
 		selected_wall.is_edit_mode = false
 		selected_wall = null
 		
 
 func _process_light_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
+		return
+		
+	if not UI.selected_map_tab.is_mouse_over:
 		return
 		
 	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.LIGHT_BITMASK)
@@ -133,7 +144,7 @@ func _process_light_selection():
 		
 		Game.handled_input = true
 
-	elif selected_light:
+	elif is_instance_valid(selected_light):
 		selected_light.is_edit_mode = false
 		selected_light = null
 
@@ -142,14 +153,18 @@ func _process_light_movement():
 	if not selected_light:
 		return
 		
-	if Input.is_action_pressed("left_click"):
+	if Input.is_action_just_pressed("left_click") and UI.selected_map_tab.is_mouse_over:
 		selected_light.is_editing = true
-	else:
+		
+	elif Input.is_action_just_released("left_click"):
 		selected_light.is_editing = false
 
 
 func _process_entity_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
+		return
+		
+	if not UI.selected_map_tab.is_mouse_over:
 		return
 	
 	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
@@ -162,26 +177,30 @@ func _process_entity_selection():
 
 		entity_hitted.is_edit_mode = true
 		selected_entity = entity_hitted
-		for entity in entities_parent.get_children():
+		for entity: Entity in entities_parent.get_children():
 			if entity != entity_hitted:
 				entity.is_edit_mode = false
+				
+		UI.tab_properties.element_selected = entity_hitted
 		
 		selected_wall = null
-		for wall in walls_parent.get_children():
+		for wall: Wall in walls_parent.get_children():
 			wall.is_edit_mode = false
 		
 		Game.handled_input = true
 	
-	elif selected_entity: 
+	elif is_instance_valid(selected_entity): 
 		selected_entity.is_edit_mode = false
 		selected_entity = null
+		
+		UI.tab_properties.element_selected = null
 
 
 func _process_entity_movement():
 	if not selected_entity:
 		return
 		
-	if Input.is_action_just_pressed("left_click"):
+	if Input.is_action_just_pressed("left_click") and UI.selected_map_tab.is_mouse_over:
 		selected_entity.is_editing = true
 	elif Input.is_action_just_released("left_click"):
 		selected_entity.is_editing = false

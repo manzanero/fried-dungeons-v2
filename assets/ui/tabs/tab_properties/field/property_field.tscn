@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://boiuirawcqx84"]
+
+[ext_resource type="Script" path="res://assets/ui/tabs/tab_properties/field/property_field.gd" id="1_a3754"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ue04p"]
+content_margin_left = 8.0
+content_margin_right = 4.0
+draw_center = false
+border_color = Color(0.105882, 0.113725, 0.121569, 1)
+
+[node name="PropertyField" type="PanelContainer"]
+custom_minimum_size = Vector2(0, 31)
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_ue04p")
+script = ExtResource("1_a3754")
+
+[node name="H" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "Title"
+vertical_alignment = 1

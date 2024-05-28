@@ -3,8 +3,9 @@
 [ext_resource type="Script" path="res://assets/camera/camera.gd" id="1_45b4q"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_edg4s"]
+margin = 0.001
 height = 1.0
-radius = 0.062
+radius = 0.249
 
 [sub_resource type="SphereMesh" id="SphereMesh_hp6ey"]
 radius = 0.063
@@ -47,7 +48,7 @@ shape = SubResource("CylinderShape3D_edg4s")
 [node name="Camera3D" type="Camera3D" parent="Focus/Pivot"]
 fov = 30.0
 near = 0.031
-far = 200.0
+far = 255.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
 

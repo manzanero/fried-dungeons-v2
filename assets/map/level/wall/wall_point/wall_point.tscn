@@ -4,7 +4,6 @@
 [ext_resource type="Theme" uid="uid://wdhwb87x2roh" path="res://resources/themes/pixel_ui_theme/PixelTheme_sky.tres" id="1_ejwbb"]
 
 [node name="WallPoint" type="Control"]
-auto_translate_mode = 1
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5
@@ -20,7 +19,6 @@ script = ExtResource("1_awbn3")
 
 [node name="Button" type="Button" parent="."]
 unique_name_in_owner = true
-auto_translate_mode = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15

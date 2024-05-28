@@ -6,24 +6,29 @@ signal master_view_enabled(value : bool)
 
 
 @export var is_master := false
-@export var master_ambient_light := 0.5
+
+@export var title := "Untitled"
 @export var ambient_light := 0.0
+@export var ambient_color := Color.WHITE
+@export var master_ambient_light := 0.5
+@export var master_ambient_color := Color.WHITE
+
 @export var is_master_view := false :
 	set(value):
 		is_master_view = value
 		RenderingServer.global_shader_parameter_set("is_master_view", value)
 		master_view_enabled.emit(value)
-
-@export var current_ambient_color := Color.WHITE :
-	set(value):
-		current_ambient_color = value
-		if is_inside_tree():
-			environment.ambient_light_color = current_ambient_color * current_ambient_light
 		
 @export var current_ambient_light := 0.0 :
 	set(value):
 		current_ambient_light = value
 		RenderingServer.global_shader_parameter_set("has_ambient_light", value > 0.001)
+		if is_inside_tree():
+			environment.ambient_light_color = current_ambient_color * current_ambient_light
+
+@export var current_ambient_color := Color.WHITE :
+	set(value):
+		current_ambient_color = value
 		if is_inside_tree():
 			environment.ambient_light_color = current_ambient_color * current_ambient_light
 
@@ -52,13 +57,13 @@ var selected_level : Level
 func _ready():
 	Game.camera = camera
 
-	#DebugMenu.style = DebugMenu.Style.HIDDEN
-	DebugMenu.style = DebugMenu.Style.VISIBLE_COMPACT
+	DebugMenu.style = DebugMenu.Style.HIDDEN
+	#DebugMenu.style = DebugMenu.Style.VISIBLE_COMPACT
 #	DebugMenu.style = DebugMenu.Style.VISIBLE_DETAILED
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	#DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
 	
-	camera.fps_enabled.connect(_on_camera_fps_enabled)
+	#camera.fps_enabled.connect(_on_camera_fps_enabled)
 
 	add_after_button.button_down.connect(_on_add_after_button_down)
 	add_after_button.button_up.connect(_on_add_after_button_up)
@@ -81,13 +86,13 @@ func init_test_data():
 	#loader.load_donjon_json_file("res://resources/maps/medium/medium.json")
 
 
-func _on_camera_fps_enabled(value: bool):
-	if is_master:
-		is_master_view = true
-		current_ambient_light = ambient_light if value else master_ambient_light
-	else:
-		is_master_view = value
-		current_ambient_light = ambient_light
+#func _on_camera_fps_enabled(value: bool):
+	#if is_master:
+		#is_master_view = true
+		#current_ambient_light = ambient_light if value else master_ambient_light
+	#else:
+		#is_master_view = value
+		#current_ambient_light = ambient_light
 
 
 #########
@@ -99,6 +104,7 @@ func _on_add_after_button_down():
 	var point := wall.selected_point
 	var new_point = wall.add_point(selected_level.position_hovered, point.index + 1)
 	wall.edit_point(new_point)
+	Game.handled_input = true
 
 	
 func _on_add_after_button_up():
@@ -113,6 +119,7 @@ func _on_add_before_button_down():
 	var point := wall.selected_point
 	var new_point = wall.add_point(selected_level.position_hovered, point.index)
 	wall.edit_point(new_point)
+	Game.handled_input = true
 
 	
 func _on_add_before_button_up():
@@ -126,12 +133,14 @@ func _on_delete_button_down():
 	var wall := selected_level.selected_wall
 	wall.remove_point(wall.selected_point)
 	wall.select_point(null)
+	Game.handled_input = true
 	
 
 func _on_break_button_down():
 	var wall := selected_level.selected_wall
 	wall.break_point(wall.selected_point)
 	wall.select_point(null)
+	Game.handled_input = true
 	
 	
 #########
@@ -149,9 +158,3 @@ func _input(event):
 					
 			if event.keycode == KEY_F5:
 				get_tree().reload_current_scene()
-	
-	Game.handled_input = true  # prevents deselect the wall when click the point in the part on the wall
-
-
-func _unhandled_input(_event):
-	Game.handled_input = false

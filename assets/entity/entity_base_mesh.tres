@@ -3,7 +3,6 @@
 [resource]
 resource_local_to_scene = true
 radius = 0.25
-height = 0.063
+height = 0.125
 radial_segments = 16
 rings = 7
-is_hemisphere = true

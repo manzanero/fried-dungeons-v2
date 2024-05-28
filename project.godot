@@ -11,8 +11,9 @@ config_version=5
 [application]
 
 config/name="Fried Dungeons"
-run/main_scene="res://assets/map/map.tscn"
+run/main_scene="res://assets/game_manager/game_manager.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
+run/max_fps=240
 config/icon="res://icon.svg"
 
 [autoload]
@@ -21,21 +22,24 @@ DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
 Utils="*res://autoloads/utils/utils.gd"
 Game="*res://autoloads/game/game.gd"
 Debug="*res://autoloads/debug/debug.gd"
+UI="*res://assets/ui/ui.tscn"
 
 [display]
 
 window/size/viewport_width=960
 window/size/viewport_height=540
+window/size/mode=2
 window/size/initial_position_type=2
-window/size/initial_position=Vector2i(1, 1)
 window/size/initial_screen=1
-window/stretch/mode="canvas_items"
-window/stretch/aspect="keep_height"
-window/dpi/allow_hidpi=false
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/sprite_mesh/plugin.cfg")
+enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/dice_syntax/plugin.cfg", "res://addons/sprite_mesh/plugin.cfg")
+
+[gui]
+
+theme/default_font_subpixel_positioning=0
+theme/lcd_subpixel_layout=0
 
 [input]
 
@@ -56,7 +60,7 @@ shift_left_click={
 }
 control={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":4194326,"key_label":0,"unicode":0,"echo":false,"script":null)
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194326,"physical_keycode":0,"key_label":0,"unicode":0,"echo":false,"script":null)
 ]
 }
 
@@ -91,6 +95,7 @@ textures/decals/filter=2
 textures/light_projectors/filter=2
 limits/opengl/max_renderable_lights=64
 limits/opengl/max_lights_per_object=64
+environment/defaults/default_clear_color=Color(0.113725, 0.133333, 0.160784, 1)
 2d/snap/snap_2d_transforms_to_pixel=true
 2d/snap/snap_2d_vertices_to_pixel=true
 

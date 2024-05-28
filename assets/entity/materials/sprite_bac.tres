@@ -14,4 +14,3 @@ roughness = 0.0
 backlight_enabled = true
 backlight = Color(1, 1, 0.992157, 1)
 texture_filter = 2
-billboard_mode = 2

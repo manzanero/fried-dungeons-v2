@@ -3,6 +3,7 @@
 [ext_resource type="Shader" path="res://assets/entity/materials/base.gdshader" id="1_cyjxf"]
 
 [resource]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("1_cyjxf")
 shader_parameter/albedo = Color(1, 0, 0, 1)

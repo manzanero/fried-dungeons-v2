@@ -129,7 +129,9 @@ func load_donjon_json_file(json_file_path):
 	
 	# entities
 	var entity_frecuency := 50
+	var eye_entity_frecuency := 10
 	var entity_counter := entity_frecuency
+	var eye_entity_counter := eye_entity_frecuency
 	for x in range(len_x): 
 		for z in range(len_z):
 			var donjon_code = cells_data[z][x]
@@ -139,8 +141,15 @@ func load_donjon_json_file(json_file_path):
 			entity_counter -= 1
 			if entity_counter < 0 and not cell_is_wall and not cell_is_door:
 				var entity_position := Vector2(x + 0.5, z + 0.5)
-				var _entity : Entity = Game.entity_scene.instantiate().init(level, entity_position)
+				var entity : Entity = Game.entity_scene.instantiate().init(level, entity_position, {
+					"base_color": Color.RED
+				})
 				entity_counter = entity_frecuency
+				
+				eye_entity_counter -= 1
+				if eye_entity_counter < 0:
+					eye_entity_counter = eye_entity_frecuency
+					entity.eye.visible = true
 	
 	# doors
 	for x in range(len_x):
@@ -189,9 +198,13 @@ const ARCH_WALLS: Array[Array] = [
 	[[10, 16], [10, 12], [6, 12], [6, 16]],
 ]
 
+#const PORTCULLIS_WALLS: Array[Array] = [
+	#[[8, 0], [8, 16]],
+	#[[10, 16], [10, 0]],
+#]
+
 const PORTCULLIS_WALLS: Array[Array] = [
 	[[8, 0], [8, 16]],
-	[[10, 16], [10, 0]],
 ]
 
 func _create_north_door(level, offset, door_index, wall_index):
@@ -218,15 +231,15 @@ func _create_west_arch(level, offset, wall_index):
 	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[0])
 	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[1])
 
-func _create_north_portcullis(level, offset, wall_index):
+func _create_north_portcullis(level, offset, portcullis_index):
 	var walls_points := Utils.aaa2_to_apv2(PORTCULLIS_WALLS).map(func (x): return _get_global_grid_points(offset, x))
-	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[0])
-	Game.wall_scene.instantiate().init(level, wall_index).add_points(walls_points[1])
+	Game.wall_scene.instantiate().init(level, portcullis_index, 0, 1, true).add_points(walls_points[0])
+	#Game.wall_scene.instantiate().init(level, portcullis_index, 1, true).add_points(walls_points[1])
 
 func _create_west_portcullis(level, offset, portcullis_index):
 	var walls_points := Utils.aaa2_to_atpv2(PORTCULLIS_WALLS).map(func (x): return _get_global_grid_points(offset, x))
-	Game.wall_scene.instantiate().init(level, portcullis_index).add_points(walls_points[0])
-	Game.wall_scene.instantiate().init(level, portcullis_index).add_points(walls_points[1])
+	Game.wall_scene.instantiate().init(level, portcullis_index, 0, 1, true).add_points(walls_points[0])
+	#Game.wall_scene.instantiate().init(level, portcullis_index, 1, true).add_points(walls_points[1])
 	
 	
 #func _load_fried_json_file(json_file_path):

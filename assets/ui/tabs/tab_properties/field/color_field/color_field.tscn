@@ -1,0 +1,52 @@
+[gd_scene load_steps=6 format=3 uid="uid://bus8hgli0qkb3"]
+
+[ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://assets/ui/tabs/tab_properties/field/property_field.tscn" id="1_cjrsp"]
+[ext_resource type="Script" path="res://assets/ui/tabs/tab_properties/field/color_field/color_field.gd" id="2_3oo5e"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_plgpg"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_color = Color(0, 0, 0, 0)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+corner_detail = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dakbt"]
+content_margin_left = 9.0
+content_margin_top = 9.0
+content_margin_right = 9.0
+content_margin_bottom = 9.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_co4bn"]
+content_margin_left = 4.0
+content_margin_right = 4.0
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+
+[node name="ColorField" instance=ExtResource("1_cjrsp")]
+script = ExtResource("2_3oo5e")
+
+[node name="Panel" type="Panel" parent="H" index="1"]
+custom_minimum_size = Vector2(64, 24)
+layout_mode = 2
+size_flags_horizontal = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_plgpg")
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="H/Panel" index="0"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_dakbt")
+theme_override_styles/focus = SubResource("StyleBoxFlat_co4bn")
+flat = true

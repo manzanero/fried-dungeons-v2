@@ -1,7 +1,12 @@
 class_name Wall
 extends Node3D
 
+
 signal curve_changed()
+
+
+const BACK: Material = preload("res://assets/map/level/wall/materials/back.tres")
+const BACK_SOLID: Material = preload("res://assets/map/level/wall/materials/back_solid.tres")
 
 
 @export var material_index := 0 :
@@ -18,8 +23,17 @@ signal curve_changed()
 		if is_inside_tree():
 			collision.set_collision_layer_value(material_layer, false)
 			collision.set_collision_layer_value(value, true)
-			
-@export var material : StandardMaterial3D
+@export var two_sided := false :
+	set(value):
+		two_sided = value
+		if is_inside_tree():
+			if value:
+				mesh_instance_3d.material_overlay = BACK_SOLID
+				mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+			else:
+				mesh_instance_3d.material_overlay = BACK
+				mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+
 
 var level : Level
 var points : Array[WallPoint] = []
@@ -43,22 +57,23 @@ var is_editing : bool
 func init(_level : Level,
 		_material_index := material_index,
 		_material_seed := material_seed,
-		_material_layer := material_layer):
+		_material_layer := material_layer,
+		_two_sided := two_sided):
 	level = _level
 	material_index = _material_index
 	material_seed = _material_seed
 	material_layer = _material_layer
 	level.walls_parent.add_child(self)
+	two_sided = _two_sided
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
-	#mesh_instance_3d.material_override = material
 	name = "Wall"
 	return self
 
 
 func _ready():
 	collision.set_collision_layer_value(material_layer, true)
-
+	
 
 func _process(_delta):
 	_process_wall_edit()

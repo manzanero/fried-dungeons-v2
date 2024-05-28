@@ -6,8 +6,6 @@
 [ext_resource type="PackedScene" uid="uid://c7kw2qqn2s7gb" path="res://assets/map/level/viewport_3d/floor_2d/floor_2d.tscn" id="4_4yvlj"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_f84fu"]
-subdivide_width = 100
-subdivide_depth = 100
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ajd5n"]
 render_priority = -1
@@ -59,7 +57,6 @@ shape = SubResource("WorldBoundaryShape3D_ujds0")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ceilling"]
 transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 1, 0)
 layers = 4
-cast_shadow = 3
 mesh = SubResource("PlaneMesh_2cw34")
 surface_material_override/0 = SubResource("StandardMaterial3D_j55m5")
 

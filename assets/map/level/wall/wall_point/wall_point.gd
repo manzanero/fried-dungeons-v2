@@ -56,6 +56,7 @@ func _on_changed():
 func _on_button_down():
 	wall.select_point(null)
 	wall.edit_point(self)
+	Game.handled_input = true
 
 	
 func _on_button_up():

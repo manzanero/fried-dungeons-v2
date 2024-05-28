@@ -17,7 +17,6 @@ var id : String :
 		if omni_light_3d:
 			omni_light_3d.omni_range = value
 
-
 @export var active := true :
 	set(value):
 		active = value
@@ -37,7 +36,6 @@ var id : String :
 			level.active_lights.erase(self)
 			inner_material.albedo_color = Color.BLACK
 
-
 @export var color := Color.WHITE :
 	set(value):
 		color = value
@@ -45,6 +43,10 @@ var id : String :
 			outer_material.albedo_color = value
 			omni_light_3d.light_color = value
 
+var hidden := true :
+	set(value):
+		hidden = value
+		body.visible = not value
 var target_position : Vector2
 var is_edit_mode : bool :
 	set(value):
@@ -82,19 +84,6 @@ func init(_level : Level, position_2d : Vector2, _range_radius := range_radius, 
 	line_renderer_3d.points.append_array([Vector3.ZERO, Vector3.UP * 0.75])
 	name = "Light"
 	return self
-
-
-func _ready():
-	Game.camera.fps_enabled.connect(_on_camera_fps_enabled)
-	level.map.master_view_enabled.connect(_on_master_view_enabled)
-
-
-func _on_camera_fps_enabled(value : bool):
-	body.visible = false if value else level.map.is_master_view
-
-
-func _on_master_view_enabled(value : bool):
-	body.visible = value
 	
 
 func _process(delta : float):
@@ -103,6 +92,8 @@ func _process(delta : float):
 		if not Input.is_key_pressed(KEY_CTRL):
 			target_position = target_position.snapped(Game.PIXEL_SNAPPING_QUARTER)
 		position = lerp(position, Utils.v2_to_v3(target_position), 10 * delta)
+		
+	#omni_light_3d.position.y = 0.5 + 1. / 128. * (1 + sin(floor(Time.get_ticks_msec() / PI / 64)))
 
 
 ###############

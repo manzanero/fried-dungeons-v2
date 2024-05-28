@@ -102,6 +102,15 @@ func safe_connect(disconnect_signal : Signal, callabe : Callable):
 func safe_disconnect(connect_signal : Signal, callabe : Callable):
 	if connect_signal.is_connected(callabe):
 		connect_signal.disconnect(callabe)
+
+
+func safe_queue_free(node: Variant):
+	if is_instance_valid(node):
+		node.queue_free()
+		
+
+func dictionary() -> Dictionary:
+	return {}
 		
 
 func get_bitmask(x : int) -> int:
