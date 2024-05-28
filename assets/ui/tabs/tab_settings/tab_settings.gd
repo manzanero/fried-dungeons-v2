@@ -34,7 +34,7 @@ func _ready() -> void:
 	Game.camera.fps_enabled.connect(_on_camera_fps_enabled)
 	
 	# info
-	info_container.collapsable = true
+	info_container.collapsable = false
 	info_container.collapsed = false
 	title_edit.text_changed.connect(_on_info_edited.unbind(1))
 	

@@ -231,12 +231,14 @@ layout_mode = 2
 
 [node name="T" type="TabContainer" parent="MarginContainer/V/H/H/Middle"]
 clip_contents = true
-custom_minimum_size = Vector2(256, 128)
+custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 2
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
+
+[node name="Debug" parent="MarginContainer/V/H/H/Middle/T" instance=ExtResource("4_373g7")]
+layout_mode = 2
 
 [node name="Messages" type="Control" parent="MarginContainer/V/H/H/Middle/T"]
 visible = false
@@ -299,9 +301,6 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-
-[node name="Debug" parent="MarginContainer/V/H/H/Middle/T" instance=ExtResource("4_373g7")]
-layout_mode = 2
 
 [node name="Right" type="VSplitContainer" parent="MarginContainer/V/H"]
 custom_minimum_size = Vector2(256, 0)

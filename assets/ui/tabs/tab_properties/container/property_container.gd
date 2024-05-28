@@ -11,7 +11,7 @@ var container_name := "properties_container" :
 		container_name = value
 		properties_button.text = value.capitalize()
 		properties_button.tooltip_text = value
-var collapsable := false :
+var collapsable := true :
 	set(value):
 		collapsable = value
 		properties_button.visible = value

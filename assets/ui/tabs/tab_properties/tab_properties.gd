@@ -14,6 +14,7 @@ const FLOAT_FIELD := preload("res://assets/ui/tabs/tab_properties/field/float_fi
 
 var element_selected: Element : set = _set_element_selected
 var root_container: PropertyContainer
+var containers_tree := {}
 
 
 @onready var property_containers: VBoxContainer = %PropertyContainers
@@ -21,6 +22,7 @@ var root_container: PropertyContainer
 
 func _set_element_selected(value: Element):
 	Utils.safe_queue_free(root_container)
+	containers_tree.clear()
 	if not value:
 		if is_instance_valid(element_selected):
 			Debug.print_message(Debug.DEBUG, "Element \"%s\" unselected" % element_selected.name)
@@ -31,11 +33,14 @@ func _set_element_selected(value: Element):
 	
 	root_container = PROPERTY_CONTAINER.instantiate().init(property_containers)
 	root_container.container_name = element_selected.name
-	root_container.collapsable = true
+	root_container.collapsable = false
+	
 	var properties := element_selected.properties
-	var property_container := root_container
+	_make_containers_tree(properties)
+	
 	for property_name in properties:
 		var property: Element.Property = properties[property_name]
+		var property_container: PropertyContainer = containers_tree[property.container]
 		var field: PropertyField
 		match property.hint:
 			Element.Property.Hints.STRING:
@@ -49,6 +54,16 @@ func _set_element_selected(value: Element):
 			_:
 				Debug.print_message(Debug.ERROR, "Unkown type \"%s\" of property \"%s\"" % [typeof(property.value), property_name]) 
 		field.value_changed.connect(_on_field_value_changed)
+		
+
+func _make_containers_tree(properties: Dictionary):
+	containers_tree[""] = root_container
+	for property_name in properties:
+		var property: Element.Property = properties[property_name]
+		var container_name := property.container
+		if not containers_tree.has(container_name):
+			containers_tree[container_name] = PROPERTY_CONTAINER.instantiate().init(root_container)
+			containers_tree[container_name].container_name = container_name
 
 
 func _on_field_value_changed(property_name: String, new_value: Variant):

@@ -93,18 +93,18 @@ const BODY_SIZE = &"body_size"
 
 func _init_property_list():
 	var init_properties = [
-		[SHOW_LABEL, Property.Hints.BOOL, true],
-		[LABEL, Property.Hints.STRING, "Unknown"],
-		[SHOW_BASE, Property.Hints.BOOL, true],
-		[BASE_COLOR, Property.Hints.COLOR, Color.WHITE],
-		[BASE_SIZE, Property.Hints.FLOAT, 0.5],
-		[SHOW_BODY, Property.Hints.BOOL, true],
-		[BODY_SPRITE, Property.Hints.STRING, "None"],
-		[BODY_COLOR, Property.Hints.COLOR, Color.WHITE],
-		[BODY_SIZE, Property.Hints.FLOAT, 0.5],
+		["", SHOW_LABEL, Property.Hints.BOOL, true],
+		["", LABEL, Property.Hints.STRING, "Unknown"],
+		["base", SHOW_BASE, Property.Hints.BOOL, true],
+		["base", BASE_COLOR, Property.Hints.COLOR, Color.WHITE],
+		["base", BASE_SIZE, Property.Hints.FLOAT, 0.5],
+		["body", SHOW_BODY, Property.Hints.BOOL, true],
+		["body", BODY_SPRITE, Property.Hints.STRING, "None"],
+		["body", BODY_COLOR, Property.Hints.COLOR, Color.WHITE],
+		["body", BODY_SIZE, Property.Hints.FLOAT, 0.5],
 	]
 	for property_array in init_properties:
-		init_property(property_array[0], property_array[1], property_array[2])
+		init_property(property_array[0], property_array[1], property_array[2], property_array[3])
 
 
 func _on_property_changed(property_name: String, old_value: Variant, new_value: Variant) -> void:

@@ -9,8 +9,8 @@ signal property_changed(property_name: StringName, old_value: Variant, new_value
 @onready var elements: Node3D = $Elements
 
 
-func init_property(property_name: StringName, property_hint: StringName, default_value: Variant = null) -> void:
-	properties[property_name] = Property.new(property_hint, default_value)
+func init_property(container: String, property_name: StringName, property_hint: StringName, default_value: Variant = null) -> void:
+	properties[property_name] = Property.new(container, property_hint, default_value)
 
 
 func set_property_value(property_name: StringName, new_value: Variant) -> void:
@@ -39,12 +39,12 @@ func update_properties():
 class Property:
 	var hint: StringName
 	var value: Variant
-	var path: Variant
+	var container: String
 	
-	func _init(_hint: StringName, _value: Variant, _path := "/"):
+	func _init(_container: String, _hint: StringName, _value: Variant):
 		hint = _hint
 		value = _value
-		path = _path
+		container = _container
 
 	class Hints:
 		const BOOL = &"bool_hint"
