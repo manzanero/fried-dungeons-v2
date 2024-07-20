@@ -94,7 +94,7 @@ func _set_edit_mode(value : bool):
 	
 	if value:
 		line_renderer_3d.disabled = false
-		Utils.safe_connect(Game.camera.changed, _on_viewport_changed)
+		Utils.safe_connect(level.map.camera.changed, _on_viewport_changed)
 		Utils.safe_connect(get_viewport().size_changed, _on_viewport_changed)
 		for point in points:
 			point.changed.emit()
@@ -104,7 +104,7 @@ func _set_edit_mode(value : bool):
 		level.map.point_options.visible = false
 		selected_point = null
 		line_renderer_3d.disabled = true
-		Utils.safe_disconnect(Game.camera.changed, _on_viewport_changed)
+		Utils.safe_disconnect(level.map.camera.changed, _on_viewport_changed)
 		Utils.safe_disconnect(get_viewport().size_changed, _on_viewport_changed)
 		for point in points:
 			point.visible = false
@@ -115,7 +115,7 @@ func _on_viewport_changed():
 		point.changed.emit()
 	
 	if selected_point:
-		level.map.point_options.visible = not Game.camera.eyes.is_position_behind(selected_point.position_3d)
+		level.map.point_options.visible = not level.map.camera.eyes.is_position_behind(selected_point.position_3d)
 		level.map.point_options.position = selected_point.position
 
 
@@ -153,7 +153,7 @@ func remove_point(removed_wall_point : WallPoint):
 func select_point(selected_wall_point : WallPoint):
 	selected_point = selected_wall_point
 	if selected_point:
-		level.map.point_options.visible = not Game.camera.eyes.is_position_behind(selected_point.position_3d)
+		level.map.point_options.visible = not level.map.camera.eyes.is_position_behind(selected_point.position_3d)
 		level.map.point_options.position = selected_point.position
 	else:
 		level.map.point_options.visible = false

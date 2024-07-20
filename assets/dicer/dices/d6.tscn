@@ -1,0 +1,96 @@
+[gd_scene load_steps=7 format=3 uid="uid://dyx0xltoxiwu8"]
+
+[ext_resource type="Script" path="res://assets/dicer/dices/die.gd" id="1_cebix"]
+[ext_resource type="Material" uid="uid://ryj4lu80i7tb" path="res://resources/dice/dice_material.tres" id="2_6efqv"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tok8s"]
+friction = 0.8
+rough = true
+bounce = 0.2
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_laycf"]
+_surfaces = [{
+"aabb": AABB(-1, -1, -1, 2, 2, 2.00001),
+"format": 34896613377,
+"index_count": 36,
+"index_data": PackedByteArray(0, 0, 3, 0, 1, 0, 0, 0, 2, 0, 3, 0, 2, 0, 7, 0, 3, 0, 2, 0, 6, 0, 7, 0, 6, 0, 5, 0, 7, 0, 6, 0, 4, 0, 5, 0, 4, 0, 1, 0, 5, 0, 4, 0, 0, 0, 1, 0, 2, 0, 4, 0, 6, 0, 2, 0, 0, 0, 4, 0, 7, 0, 1, 0, 3, 0, 7, 0, 5, 0, 1, 0),
+"name": "Material.002",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 8,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 0, 0, 0, 0, 255, 255, 254, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 255, 255, 0, 0, 254, 255, 0, 0, 255, 255, 255, 255, 254, 255, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_qkwes"]
+resource_name = "d6_mesh_Cube_001"
+_surfaces = [{
+"aabb": AABB(-1, -1, -1, 2, 2, 2.00001),
+"attribute_data": PackedByteArray(50, 34, 118, 15, 10, 107, 50, 16, 192, 74, 78, 16, 229, 42, 118, 15, 27, 18, 19, 51, 96, 66, 78, 16, 215, 90, 159, 49, 87, 98, 50, 16, 192, 74, 208, 49, 215, 90, 76, 16, 27, 18, 110, 15, 96, 66, 208, 49, 50, 34, 67, 50, 10, 107, 1, 51, 36, 50, 77, 17, 229, 42, 67, 50, 4, 27, 19, 51, 134, 58, 77, 17, 130, 82, 159, 49, 87, 98, 1, 51, 36, 50, 213, 50, 130, 82, 76, 16, 4, 27, 110, 15, 134, 58, 213, 50),
+"format": 34896613399,
+"index_count": 36,
+"index_data": PackedByteArray(2, 0, 11, 0, 5, 0, 2, 0, 8, 0, 11, 0, 6, 0, 21, 0, 9, 0, 6, 0, 18, 0, 21, 0, 20, 0, 17, 0, 23, 0, 20, 0, 14, 0, 17, 0, 12, 0, 3, 0, 15, 0, 12, 0, 0, 0, 3, 0, 7, 0, 13, 0, 19, 0, 7, 0, 1, 0, 13, 0, 22, 0, 4, 0, 10, 0, 22, 0, 16, 0, 4, 0),
+"name": "Material.002",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray(0, 0, 0, 0, 254, 255, 255, 191, 0, 0, 0, 0, 254, 255, 84, 213, 0, 0, 0, 0, 254, 255, 84, 213, 0, 0, 255, 255, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 255, 191, 0, 0, 255, 255, 254, 255, 84, 213, 0, 0, 0, 0, 0, 0, 255, 255, 0, 0, 0, 0, 0, 0, 84, 213, 0, 0, 0, 0, 0, 0, 84, 213, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 255, 0, 0, 255, 191, 0, 0, 255, 255, 0, 0, 84, 213, 255, 255, 0, 0, 254, 255, 255, 191, 255, 255, 0, 0, 254, 255, 84, 213, 255, 255, 0, 0, 254, 255, 84, 213, 255, 255, 255, 255, 254, 255, 255, 191, 255, 255, 255, 255, 254, 255, 255, 191, 255, 255, 255, 255, 254, 255, 84, 213, 255, 255, 0, 0, 0, 0, 255, 255, 255, 255, 0, 0, 0, 0, 84, 213, 255, 255, 0, 0, 0, 0, 84, 213, 255, 255, 255, 255, 0, 0, 255, 255, 255, 255, 255, 255, 0, 0, 255, 191, 255, 255, 255, 255, 0, 0, 84, 213, 255, 255, 255, 255, 170, 42, 84, 213, 84, 85, 170, 170, 255, 255, 255, 255, 255, 255, 255, 127, 84, 85, 170, 170, 255, 127, 255, 255, 170, 42, 84, 213, 84, 85, 170, 170, 255, 127, 255, 255, 255, 255, 255, 127, 84, 85, 170, 170, 255, 255, 255, 255, 170, 42, 84, 213, 170, 42, 170, 42, 255, 255, 255, 255, 255, 255, 255, 127, 170, 42, 170, 42, 255, 127, 255, 255, 170, 42, 84, 213, 170, 42, 170, 42, 255, 127, 255, 255, 255, 255, 255, 127, 170, 42, 170, 42)
+}]
+blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_laycf")
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_qvjgq"]
+points = PackedVector3Array(1, 1, 0.999979, 1, 1, -1, -1, 1, 0.999979, 1, -1, 0.999979, 1, -1, -1, -1, 1, -1, -1, -1, 0.999979, -1, -1, -1)
+
+[node name="D6" type="RigidBody3D" groups=["die"]]
+collision_layer = 268435456
+collision_mask = 16777217
+physics_material_override = SubResource("PhysicsMaterial_tok8s")
+gravity_scale = 2.0
+center_of_mass_mode = 1
+script = ExtResource("1_cebix")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+layers = 64
+material_override = ExtResource("2_6efqv")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_qkwes")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.25, 0, 0, 0, 0.25, 0, 0, 0, 0.25, 0, 0, 0)
+shape = SubResource("ConvexPolygonShape3D_qvjgq")
+
+[node name="Raycasts" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(0.45, 0, 0, 0, 0.45, 0, 0, 0, 0.45, 0, 0, 0)
+
+[node name="1" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="2" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(1.19249e-08, 0, 1, 0, 1, 0, -1, 0, 1.19249e-08, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="3" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-1, 0, 8.74228e-08, 0, 1, 0, -8.74228e-08, 0, -1, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="4" type="RayCast3D" parent="Raycasts"]
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="5" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-4.37114e-08, 0, -1, 0, 1, 0, 1, 0, -4.37114e-08, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="6" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216

@@ -2,11 +2,6 @@
 
 [ext_resource type="Script" path="res://assets/camera/camera.gd" id="1_45b4q"]
 
-[sub_resource type="CylinderShape3D" id="CylinderShape3D_edg4s"]
-margin = 0.001
-height = 1.0
-radius = 0.249
-
 [sub_resource type="SphereMesh" id="SphereMesh_hp6ey"]
 radius = 0.063
 height = 0.125
@@ -20,39 +15,38 @@ no_depth_test = true
 shading_mode = 0
 albedo_color = Color(0.498039, 0.498039, 0.498039, 0.498039)
 
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_edg4s"]
+margin = 0.001
+height = 1.0
+radius = 0.249
+
 [node name="Camera" type="Node3D"]
 script = ExtResource("1_45b4q")
 init_x = 24.0
 init_z = 24.0
 
-[node name="Target" type="CharacterBody3D" parent="."]
-collision_layer = 0
-input_ray_pickable = false
-axis_lock_linear_y = true
-axis_lock_angular_x = true
-axis_lock_angular_y = true
-axis_lock_angular_z = true
-motion_mode = 1
-platform_on_leave = 2
-
-[node name="Eyes" type="Marker3D" parent="Target"]
-
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Target"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
-shape = SubResource("CylinderShape3D_edg4s")
-
 [node name="Focus" type="Marker3D" parent="."]
+unique_name_in_owner = true
+
+[node name="FocusHint3D" type="MeshInstance3D" parent="Focus"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.5, 0)
+mesh = SubResource("SphereMesh_hp6ey")
+skeleton = NodePath("../..")
+surface_material_override/0 = SubResource("StandardMaterial3D_a8qb8")
 
 [node name="Pivot" type="Marker3D" parent="Focus"]
+unique_name_in_owner = true
 
-[node name="Camera3D" type="Camera3D" parent="Focus/Pivot"]
+[node name="Eyes" type="Camera3D" parent="Focus/Pivot"]
+unique_name_in_owner = true
 fov = 30.0
 near = 0.031
 far = 255.0
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="CanvasLayer" type="CanvasLayer" parent="Focus/Pivot/Eyes"]
 
-[node name="HitMarker2D" type="ColorRect" parent="CanvasLayer"]
+[node name="FocusHint2D" type="ColorRect" parent="Focus/Pivot/Eyes/CanvasLayer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(3, 3)
 anchors_preset = 8
@@ -63,9 +57,23 @@ anchor_bottom = 0.5
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+metadata/_edit_use_anchors_ = true
 
-[node name="Hint3D" type="MeshInstance3D" parent="."]
+[node name="TargetPosition" type="CharacterBody3D" parent="."]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
-mesh = SubResource("SphereMesh_hp6ey")
-surface_material_override/0 = SubResource("StandardMaterial3D_a8qb8")
+collision_layer = 0
+input_ray_pickable = false
+axis_lock_linear_y = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
+motion_mode = 1
+platform_on_leave = 2
+
+[node name="TargetRotation" type="Marker3D" parent="TargetPosition"]
+unique_name_in_owner = true
+
+[node name="Collider" type="CollisionShape3D" parent="TargetPosition"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+shape = SubResource("CylinderShape3D_edg4s")

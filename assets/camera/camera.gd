@@ -1,10 +1,8 @@
 class_name Camera
 extends Node3D
 
-
 signal changed()
 signal fps_enabled(value : bool)
-
 
 @export var init_x: float = 15
 @export var init_z: float = 25
@@ -37,6 +35,16 @@ signal fps_enabled(value : bool)
 			else:
 				eyes.projection = Camera3D.PROJECTION_PERSPECTIVE
 
+@onready var target_position: CharacterBody3D = %TargetPosition
+@onready var target_rotation: Marker3D = %TargetRotation
+@onready var focus: Marker3D = %Focus
+@onready var pivot: Marker3D = %Pivot
+@onready var eyes: Camera3D = %Eyes
+@onready var focus_hint_2d: Control = %FocusHint2D
+@onready var focus_hint_3d: MeshInstance3D = %FocusHint3D
+@onready var focus_hint_3d_material: StandardMaterial3D = focus_hint_3d.get_surface_override_material(0)
+@onready var collider: CollisionShape3D = %Collider
+
 
 var is_operated := true
 var is_mouse_visible := true
@@ -54,44 +62,34 @@ var is_fps : bool :
 		is_fps = value
 		if value:
 			fov = fp_fov
-			target_eyes.rotation.x = 0
-			target.position.y = eyes_hight
+			target_rotation.rotation.x = 0
+			target_position.position.y = eyes_hight
 			zoom = 0
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 		else:
 			fov = tp_fov
-			target_eyes.rotation.x = deg_to_rad(init_rot_x)
+			target_rotation.rotation.x = deg_to_rad(init_rot_x)
 			zoom = init_zoom
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
-		hit_marker_2d.visible = value
-		collision_shape_3d.disabled = not value
-		hint_3d.visible = not value
+		focus_hint_2d.visible = value
+		collider.disabled = not value
+		focus_hint_3d.visible = not value
 		fps_enabled.emit(value)
 
 var _has_changed : bool
 
-@onready var target: CharacterBody3D = $Target
-@onready var target_eyes: Marker3D = $Target/Eyes
-@onready var focus: Marker3D = $Focus
-@onready var pivot: Marker3D = $Focus/Pivot
-@onready var eyes: Camera3D = $Focus/Pivot/Camera3D
-@onready var hit_marker_2d: ColorRect = %HitMarker2D
-@onready var hint_3d: MeshInstance3D = %Hint3D
-@onready var hint_3d_material: StandardMaterial3D = hint_3d.get_surface_override_material(0)
-@onready var collision_shape_3d: CollisionShape3D = $Target/CollisionShape3D
-
 
 func _ready():
-	target.position = Vector3(init_x, eyes_hight, init_z)
-	target_eyes.rotation.x = clampf(deg_to_rad(init_rot_x), deg_to_rad(min_rot_x), deg_to_rad(max_rot_x))
-	target_eyes.rotation.y = deg_to_rad(init_rot_y)
-	target_eyes.rotation.z = 0
-	focus.position = target.position
-	pivot.rotation = target_eyes.rotation
+	target_position.position = Vector3(init_x, eyes_hight, init_z)
+	target_rotation.rotation.x = clampf(deg_to_rad(init_rot_x), deg_to_rad(min_rot_x), deg_to_rad(max_rot_x))
+	target_rotation.rotation.y = deg_to_rad(init_rot_y)
+	target_rotation.rotation.z = 0
+	focus.position = target_position.position
+	pivot.rotation = target_rotation.rotation
 	zoom = clampf(init_zoom, min_zoom, max_zoom)
-	hit_marker_2d.visible = is_fps
-	hint_3d.visible = not is_fps
-	collision_shape_3d.disabled = not is_fps
+	focus_hint_2d.visible = is_fps
+	focus_hint_3d.visible = not is_fps
+	collider.disabled = not is_fps
 	eyes.projection = Camera3D.PROJECTION_ORTHOGONAL if is_ortogonal else Camera3D.PROJECTION_PERSPECTIVE
 
 
@@ -99,41 +97,41 @@ func _physics_process(delta: float) -> void:
 	if is_fps:
 		var offset_rot_x := offset_mouse_move.x * 0.004
 		var offset_rot_y := offset_mouse_move.y * 0.004
-		target_eyes.rotation += Vector3(-offset_rot_y * rot_y_speed, -offset_rot_x * rot_x_speed, 0)
-		target_eyes.rotation.x = clampf(target_eyes.rotation.x, deg_to_rad(-90), deg_to_rad(90))
+		target_rotation.rotation += Vector3(-offset_rot_y * rot_y_speed, -offset_rot_x * rot_x_speed, 0)
+		target_rotation.rotation.x = clampf(target_rotation.rotation.x, deg_to_rad(-90), deg_to_rad(90))
 			
 		if is_move:
-			var direction := Vector3.FORWARD.rotated(Vector3.UP, target_eyes.rotation.y)
-			target.velocity = direction * delta * move_speed * 100
+			var direction := Vector3.FORWARD.rotated(Vector3.UP, target_rotation.rotation.y)
+			target_position.velocity = direction * delta * move_speed * 100
 		else:
-			target.velocity = Vector3.ZERO
+			target_position.velocity = Vector3.ZERO
 	
 	else:
 		if is_rotate:
 			var offset_rot_x := offset_mouse_move.x * 0.008
 			var offset_rot_y := offset_mouse_move.y * 0.008
-			target_eyes.rotation += Vector3(-offset_rot_y * rot_y_speed, -offset_rot_x * rot_x_speed, 0)
+			target_rotation.rotation += Vector3(-offset_rot_y * rot_y_speed, -offset_rot_x * rot_x_speed, 0)
 			var effective_min_rot_x := -90.0 if is_fps else min_rot_x
 			var effective_max_rot_x := 90.0 if is_fps else max_rot_x
-			target_eyes.rotation.x = clampf(target_eyes.rotation.x, deg_to_rad(effective_min_rot_x), deg_to_rad(effective_max_rot_x))
+			target_rotation.rotation.x = clampf(target_rotation.rotation.x, deg_to_rad(effective_min_rot_x), deg_to_rad(effective_max_rot_x))
 		else:
-			target_eyes.rotation.x = clampf(target_eyes.rotation.x, deg_to_rad(min_rot_x), deg_to_rad(max_rot_x))
-			target_eyes.rotation.x = snappedf(minf(target_eyes.rotation.x, -PI / 8), PI / 8)
-			target_eyes.rotation.y = snappedf(target_eyes.rotation.y, PI / 4)
+			target_rotation.rotation.x = clampf(target_rotation.rotation.x, deg_to_rad(min_rot_x), deg_to_rad(max_rot_x))
+			target_rotation.rotation.x = snappedf(minf(target_rotation.rotation.x, -PI / 8), PI / 8)
+			target_rotation.rotation.y = snappedf(target_rotation.rotation.y, PI / 4)
 
 		if is_move:
 			var offset_move := Utils.v2_to_v3(-offset_mouse_move)
-			var velocity := offset_move.rotated(Vector3.UP, target_eyes.rotation.y)
-			target.velocity = velocity * delta * move_speed * (2 + zoom) * 8
+			var velocity := offset_move.rotated(Vector3.UP, target_rotation.rotation.y)
+			target_position.velocity = velocity * delta * move_speed * (2 + zoom) * 8
 		else:
-			target.velocity = Vector3.ZERO
+			target_position.velocity = Vector3.ZERO
 	
 	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
 	if input_dir and is_operated:
-		var direction := Vector3(input_dir.x, 0, input_dir.y).rotated(Vector3.UP, target_eyes.rotation.y)
-		target.velocity = direction * delta * (10 + zoom) * 20
+		var direction := Vector3(input_dir.x, 0, input_dir.y).rotated(Vector3.UP, target_rotation.rotation.y)
+		target_position.velocity = direction * delta * (10 + zoom) * 20
 		
-	target.move_and_slide()
+	target_position.move_and_slide()
 	offset_mouse_move = Vector2.ZERO
 
 
@@ -146,13 +144,13 @@ func _process(delta: float) -> void:
 		is_fps = false
 	
 	# focus position
-	if not focus.position.is_equal_approx(target.position):
-		focus.position = focus.position.lerp(target.position, swing_speed * delta)
+	if not focus.position.is_equal_approx(target_position.position):
+		focus.position = focus.position.lerp(target_position.position, swing_speed * delta)
 		_has_changed = true
 		
 	# pivot rotation
-	if not pivot.rotation.is_equal_approx(target_eyes.rotation):
-		pivot.rotation = pivot.rotation.lerp(target_eyes.rotation, swing_speed * delta)
+	if not pivot.rotation.is_equal_approx(target_rotation.rotation):
+		pivot.rotation = pivot.rotation.lerp(target_rotation.rotation, swing_speed * delta)
 		_has_changed = true
 
 	# zoom
@@ -175,12 +173,12 @@ func _process(delta: float) -> void:
 		_has_changed = false
 		floor_projection = Vector3(eyes.global_position.x, 0, eyes.global_position.z)
 		const color = Color(0.75, 0.75, 0.75, 0.5)
-		hint_3d_material.albedo_color = hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
-		hint_3d.global_position = Vector3(focus.global_position.x, 0, focus.global_position.z)
+		focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
+		#focus_hint_3d.global_position = Vector3(focus.global_position.x, 0, focus.global_position.z)
 		changed.emit()
 	else:
 		const color = Color(0.75, 0.75, 0.75, 0)
-		hint_3d_material.albedo_color = hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
+		focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
 
 
 func _input(event):

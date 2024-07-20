@@ -38,7 +38,8 @@ var cells := {}
 var selected_level : Level
 
 
-@onready var loader := $Loader as Loader
+@onready var loader: Loader = $Loader
+
 @onready var levels_parent := $Levels as Node3D
 @onready var camera := $Camera as Camera
 @onready var world_environment := $WorldEnvironment as WorldEnvironment
@@ -55,8 +56,6 @@ var selected_level : Level
 
 
 func _ready():
-	Game.camera = camera
-
 	DebugMenu.style = DebugMenu.Style.HIDDEN
 	#DebugMenu.style = DebugMenu.Style.VISIBLE_COMPACT
 #	DebugMenu.style = DebugMenu.Style.VISIBLE_DETAILED

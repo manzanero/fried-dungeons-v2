@@ -12,7 +12,8 @@ render_priority = -1
 shader = ExtResource("2_gm41o")
 shader_parameter/albedo = Color(0.33, 0.33, 0.33, 1)
 
-[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_ujds0"]
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_e5pg7"]
+points = PackedVector3Array(-1000, 0, -1000, 1000, 0, -1000, 1000, 0, 1000, -1000, 0, 1000, -1000, -1, -1000, 1000, -1, -1000, 1000, -1, 1000, -1000, -1, 1000)
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_2cw34"]
 size = Vector2(1000, 1000)
@@ -20,8 +21,8 @@ size = Vector2(1000, 1000)
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j55m5"]
 albedo_color = Color(0, 0, 0, 1)
 
-[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_h6tfn"]
-plane = Plane(0, 1, 0, 1)
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_qha6u"]
+points = PackedVector3Array(-1000, 1, -1000, 1000, 1, -1000, 1000, 1, 1000, -1000, 1, 1000, -1000, -1, -1000, 1000, -1, -1000, 1000, -1, 1000, -1000, -1, 1000)
 
 [node name="Level" type="Node3D"]
 script = ExtResource("1_jdpmt")
@@ -50,7 +51,7 @@ collision_layer = 16777216
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/GroundCollider"]
-shape = SubResource("WorldBoundaryShape3D_ujds0")
+shape = SubResource("ConvexPolygonShape3D_e5pg7")
 
 [node name="Ceilling" type="Node3D" parent="."]
 
@@ -66,7 +67,7 @@ collision_layer = 67108864
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ceilling/CeillingCollider"]
-shape = SubResource("WorldBoundaryShape3D_h6tfn")
+shape = SubResource("ConvexPolygonShape3D_qha6u")
 
 [node name="Walls" type="Node3D" parent="."]
 unique_name_in_owner = true

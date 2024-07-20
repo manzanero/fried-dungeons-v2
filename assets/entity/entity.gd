@@ -113,6 +113,7 @@ func _on_property_changed(property_name: String, old_value: Variant, new_value: 
 			pass
 		BASE_COLOR:
 			base_mesh_instance.get_surface_override_material(0).set_shader_parameter("albedo", new_value)
+			color = new_value
 			#var tween = get_tree().create_tween()
 			#tween.tween_property(base_mesh_instance, "albedo", new_value, 1)
 			#tween.tween_property(base_mesh_instance, "albedo", new_value, 1).set_trans(Tween.TRANS_SINE)

@@ -1,0 +1,92 @@
+[gd_scene load_steps=6 format=3 uid="uid://dgx7e3ptqw0gv"]
+
+[ext_resource type="Script" path="res://assets/dicer/dices/die.gd" id="1_nhfbc"]
+[ext_resource type="Material" uid="uid://ryj4lu80i7tb" path="res://resources/dice/dice_material.tres" id="2_uhc0x"]
+
+[sub_resource type="PhysicsMaterial" id="PhysicsMaterial_tok8s"]
+friction = 0.8
+rough = true
+bounce = 0.2
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_ueus3"]
+resource_name = "d8_mesh_MeshBody1_001"
+_surfaces = [{
+"aabb": AABB(-8.06483, -6.60402, -9.20861, 16.1297, 13.208, 18.4172),
+"attribute_data": PackedByteArray(36, 16, 16, 49, 59, 32, 77, 48, 33, 61, 66, 49, 205, 76, 188, 49, 228, 28, 182, 48, 74, 64, 119, 49, 187, 108, 251, 48, 137, 112, 58, 48, 116, 22, 200, 4, 132, 54, 18, 5, 129, 86, 22, 5, 119, 118, 181, 5, 156, 44, 139, 48, 231, 47, 48, 49, 251, 92, 220, 48, 64, 128, 125, 49, 88, 38, 101, 5, 150, 70, 136, 4, 165, 102, 1, 5, 119, 134, 171, 4, 67, 80, 208, 48, 28, 96, 218, 48, 33, 125, 97, 48, 19, 141, 139, 48),
+"format": 34896613399,
+"index_count": 24,
+"index_data": PackedByteArray(4, 0, 0, 0, 8, 0, 9, 0, 2, 0, 13, 0, 12, 0, 1, 0, 16, 0, 5, 0, 17, 0, 3, 0, 22, 0, 7, 0, 11, 0, 14, 0, 20, 0, 10, 0, 19, 0, 23, 0, 15, 0, 21, 0, 18, 0, 6, 0),
+"name": "Material.004",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 24,
+"vertex_data": PackedByteArray(167, 1, 5, 255, 171, 62, 108, 242, 167, 1, 5, 255, 171, 62, 60, 193, 167, 1, 5, 255, 171, 62, 107, 246, 167, 1, 5, 255, 171, 62, 226, 255, 255, 255, 96, 253, 131, 63, 108, 242, 255, 255, 96, 253, 131, 63, 226, 255, 255, 255, 96, 253, 131, 63, 238, 192, 255, 255, 96, 253, 131, 63, 99, 246, 255, 127, 0, 0, 0, 0, 108, 242, 255, 127, 0, 0, 0, 0, 107, 246, 255, 127, 0, 0, 0, 0, 249, 255, 255, 127, 0, 0, 0, 0, 99, 246, 0, 0, 158, 2, 123, 192, 60, 193, 0, 0, 158, 2, 123, 192, 107, 246, 0, 0, 158, 2, 123, 192, 249, 255, 0, 0, 158, 2, 123, 192, 154, 141, 255, 127, 255, 255, 255, 255, 60, 193, 255, 127, 255, 255, 255, 255, 226, 255, 255, 127, 255, 255, 255, 255, 238, 192, 255, 127, 255, 255, 255, 255, 154, 141, 87, 254, 249, 0, 83, 193, 249, 255, 87, 254, 249, 0, 83, 193, 238, 192, 87, 254, 249, 0, 83, 193, 99, 246, 87, 254, 249, 0, 83, 193, 154, 141, 122, 255, 36, 128, 192, 114, 173, 185, 141, 218, 46, 203, 26, 64, 55, 0, 122, 255, 36, 128, 26, 64, 55, 0, 88, 57, 144, 13, 81, 180, 60, 90, 122, 255, 36, 128, 141, 218, 46, 203, 94, 192, 173, 255, 81, 180, 60, 90, 192, 114, 173, 185, 141, 218, 46, 203, 94, 192, 173, 255, 192, 8, 141, 128, 192, 114, 173, 185, 26, 64, 55, 0, 88, 57, 144, 13, 192, 8, 141, 128, 94, 192, 173, 255, 88, 57, 144, 13, 81, 180, 60, 90, 192, 8, 141, 128)
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_nmty2"]
+points = PackedVector3Array(8.06483, 6.46826, -4.64036, -7.9622, 6.55359, -4.70165, -0.00157928, 6.60402, 9.20861, 7.95904, -6.55489, 4.69805, -0.00157928, -6.60402, -9.20861, -8.06483, -6.46956, 4.63856)
+
+[node name="D8" type="RigidBody3D" groups=["die"]]
+collision_layer = 268435456
+collision_mask = 16777217
+physics_material_override = SubResource("PhysicsMaterial_tok8s")
+gravity_scale = 2.0
+center_of_mass_mode = 1
+script = ExtResource("1_nhfbc")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0)
+layers = 64
+material_override = ExtResource("2_uhc0x")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_ueus3")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0)
+shape = SubResource("ConvexPolygonShape3D_nmty2")
+
+[node name="Raycasts" type="Node3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(0.35, 0, 0, 0, 0.35, 0, 0, 0, 0.35, 0, 0, 0)
+
+[node name="1" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-0.0154354, 0.916106, 0.400639, -0.351181, -0.380127, 0.855673, 0.936181, -0.127489, 0.327587, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="2" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(0.815729, -0.572832, 0.0803106, -0.351181, -0.380127, 0.855673, -0.459629, -0.726201, -0.511249, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="3" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(0.815705, 0.480989, -0.321364, 0.36655, -6.58386e-09, 0.930399, 0.447511, -0.876727, -0.176306, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="4" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="5" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="6" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-0.806928, -0.340662, -0.482512, -0.351181, -0.380127, 0.855673, -0.474911, 0.859915, 0.187101, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="7" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-0.808527, 0.494792, 0.318536, 0.36655, -1.73728e-08, 0.930399, 0.460353, 0.869012, -0.181366, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216
+
+[node name="8" type="RayCast3D" parent="Raycasts"]
+transform = Transform3D(-4.37114e-08, -1, 1.1729e-15, 0.36655, -1.60224e-08, 0.930399, -0.930399, 4.0669e-08, 0.36655, 0, 0, 0)
+target_position = Vector3(1, 0, 0)
+collision_mask = 16777216

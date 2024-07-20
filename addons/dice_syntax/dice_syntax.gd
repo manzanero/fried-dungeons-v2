@@ -5,13 +5,13 @@ class_name dice_syntax
 
 
 
-static func dice_parser(dice:String,regex:RegEx = RegEx.new())->Dictionary:
+static func dice_parser(dice:String,regex:RegEx = RegEx.new(), base_instance = null)->Dictionary:
 	var sm = preload('string_manip.gd')
 	var sdf = preload('single_dice_funs.gd')
 	var dh = preload('dice_helpers.gd')
 	var error = false
 	var msg = []
-	var dice_regex = '[0-9]*d[0-9]+[dksfro!<=>0-9lh]*'
+	var dice_regex = '[0-9]*d[0-9]+[dksfro/!<=>0-9lh]*'
 	
 	
 	regex.compile(dice_regex)
@@ -41,7 +41,7 @@ static func dice_parser(dice:String,regex:RegEx = RegEx.new())->Dictionary:
 	for i in range(dice_letters.size()):
 		test_out.append(1.0)
 	
-	expression.execute(test_out)
+	expression.execute(test_out, base_instance)
 	if expression.has_execute_failed() or expression.get_error_text()!='':
 		error = true
 		msg.append('Expression fails to execute')
@@ -62,7 +62,7 @@ static func dice_parser(dice:String,regex:RegEx = RegEx.new())->Dictionary:
 		'error':error,
 		'msg':msg}
 
-static func roll_parsed(rules:Dictionary, rng:RandomNumberGenerator = RandomNumberGenerator.new())->Dictionary:
+static func roll_parsed(rules:Dictionary, rng:RandomNumberGenerator = RandomNumberGenerator.new(), base_instance = null)->Dictionary:
 	var sdf = preload('single_dice_funs.gd')
 	var results:Array
 	var roll_sums:Array
@@ -73,19 +73,19 @@ static func roll_parsed(rules:Dictionary, rng:RandomNumberGenerator = RandomNumb
 		var result = sdf.base_rule_roller(rules.rules_array[i],rng)
 		results.append(result)
 		roll_sums.append(result.result)
-	
-	var sum = rules.dice_expression.execute(roll_sums)
+
+	var sum = rules.dice_expression.execute(roll_sums, base_instance)
 	
 	if error:
 		sum = 0
 	
 	return {'result':sum, 'rolls':results,'error': error, 'msg': msg}
 
-static func roll(dice:String, rng:RandomNumberGenerator = RandomNumberGenerator.new())->Dictionary:
-	var rules = dice_parser(dice)
-	return roll_parsed(rules,rng)
+static func roll(dice:String, rng:RandomNumberGenerator = RandomNumberGenerator.new(),regex = RegEx.new() ,base_instance = null)->Dictionary:
+	var rules = dice_parser(dice,regex,base_instance)
+	return roll_parsed(rules,rng,base_instance)
 
-static func parsed_dice_probs(rules, explode_depth:int=1)->Dictionary:
+static func parsed_dice_probs(rules, explode_depth:int=1, base_instance = null)->Dictionary:
 	var dh = preload('dice_helpers.gd')
 	var al = preload('array_logic.gd')
 	var sdf = preload('single_dice_funs.gd')
@@ -104,17 +104,17 @@ static func parsed_dice_probs(rules, explode_depth:int=1)->Dictionary:
 	
 	var processed_results = {}
 	for x in final_result.keys():
-		var new_key = rules.dice_expression.execute(x)
+		var new_key = rules.dice_expression.execute(x, base_instance)
 		dh.add_to_dict(processed_results,new_key,final_result[x])
 	
 	if final_result.size()==0:
-		processed_results[float(rules.dice_expression.execute())] = 1
+		processed_results[float(rules.dice_expression.execute([],base_instance))] = 1
 	
 	return processed_results
 
-static func dice_probs(dice:String,explode_depth:int=1,regex = RegEx.new())->Dictionary:
-	var rules = dice_parser(dice,regex)
-	return parsed_dice_probs(rules,explode_depth)
+static func dice_probs(dice:String,explode_depth:int=1,regex = RegEx.new(),base_instance = null)->Dictionary:
+	var rules = dice_parser(dice,regex,base_instance)
+	return parsed_dice_probs(rules,explode_depth,base_instance)
 
 
 static func expected_value(probs:Dictionary)->float:

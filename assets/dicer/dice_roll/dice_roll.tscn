@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://c6uklc6pry4wm"]
+
+[ext_resource type="Script" path="res://assets/dicer/dice_roll/dice_roll.gd" id="1_3i76n"]
+
+[node name="DiceRoll" type="Node3D"]
+script = ExtResource("1_3i76n")

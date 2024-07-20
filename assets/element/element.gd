@@ -5,6 +5,10 @@ extends CharacterBody3D
 signal property_changed(property_name: StringName, old_value: Variant, new_value: Variant)
 
 
+var label := "Unknown"
+var color := Color.BLUE
+var icon: Texture2D = null
+
 @export var properties := {}
 @onready var elements: Node3D = $Elements
 

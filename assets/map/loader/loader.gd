@@ -2,7 +2,7 @@ class_name Loader
 extends Node
 
 
-@onready var map := $".." as Map
+@onready var map: Map = $".."
 
 
 func load_donjon_json_file(json_file_path):

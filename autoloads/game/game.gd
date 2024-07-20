@@ -1,6 +1,17 @@
 extends Node
 
-const U := 0.0625
+
+var world_seed := randi_range(0, 999999)
+var player_name: String = 'Player'
+var player_color: Color = Color.RED
+var campaign_name: String = 'My Campaign'
+var ui: UI
+var handled_input : bool
+
+
+# Constants
+
+const U := 1.0 / 16.0
 const PIXEL := Vector2.ONE * U
 const VOXEL := Vector3.ONE * U
 const SNAPPING_HALF := U * 8
@@ -33,7 +44,3 @@ var wall_scene = load("res://assets/map/level/wall/wall.tscn") as PackedScene
 var wall_point_scene = load("res://assets/map/level/wall/wall_point/wall_point.tscn") as PackedScene
 var light_scene = load("res://assets/light/light.tscn") as PackedScene
 var entity_scene = load("res://assets/entity/entity.tscn") as PackedScene
-
-var world_seed := 0
-var camera : Camera
-var handled_input : bool

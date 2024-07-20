@@ -24,9 +24,10 @@ static func base_dice_parser(dice_string:String,regex:RegEx = RegEx.new())->Dict
 	'dice_count':0,
 	'success': [],
 	'fail': [],
+	'explode_depth': 0,
 	'sort':false
 	}
-	var valid_tokens = '[dksfr!<=>hl]'
+	var valid_tokens = '[dksfr/!<=>hl]'
 	dice_string = dice_string.to_lower()
 	var used_tokens:PackedInt64Array
 	
@@ -182,15 +183,23 @@ static func base_dice_parser(dice_string:String,regex:RegEx = RegEx.new())->Dict
 	# new explode rules
 	regex.compile('^![0-9]*$')
 	var explode_rules = sm.strs_detect_rg(tokens,regex)
+	
+	regex.compile("/")
+	var end_rules = sm.strs_detect_rg(tokens,regex)
+	
 	var explode:Array = []
 	var compound: Array = []
 	var compound_flag:bool = false
+	var depth_flag:bool = false
+	var explode_depth:Array = []
+	
+	
 	
 	for i in explode_rules:
 		used_tokens.append(i)
 		if tokens[i] == "!" and i + 1 in explode_rules and not compound_flag:
 			compound_flag = true
-		elif not compound_flag:
+		elif not compound_flag and i-1 not in end_rules:
 			var explode_token = tokens[i]
 			if i+1 in ranges and !sm.str_detect(explode_token,"[0-9]",regex):
 				used_tokens.append(i+1)
@@ -201,6 +210,22 @@ static func base_dice_parser(dice_string:String,regex:RegEx = RegEx.new())->Dict
 					rolling_rules['dice_side'],
 					regex,rolling_rules,
 					rolling_rules['dice_side']))
+		elif not compound_flag and i-1 in end_rules:
+			# /![number]
+			used_tokens.append(i-1)
+			var depth_token = tokens[i]
+			if i+1 in ranges and !sm.str_detect(depth_token,"[0-9]",regex):
+				used_tokens.append(i+1)
+				depth_token = depth_token + tokens[i+1]
+			
+			var depths = dh.range_determine(depth_token, 
+					rolling_rules['dice_side'],
+					regex,rolling_rules,
+					rolling_rules['dice_side'])
+			
+			dh.dice_error(depths.size()==1,"Explode depth must be set to a single integer", rolling_rules)
+			explode_depth.append_array(depths)
+			
 		elif compound_flag:
 			compound_flag = false
 			var compound_token = tokens[i]
@@ -214,6 +239,8 @@ static func base_dice_parser(dice_string:String,regex:RegEx = RegEx.new())->Dict
 					regex,rolling_rules,
 					rolling_rules['dice_side']))
 	
+	if explode_depth.size()>0:
+		rolling_rules['explode_depth'] = explode_depth.min()
 	rolling_rules['explode'] = explode
 	rolling_rules['compound'] = compound
 	
@@ -268,13 +295,17 @@ static func base_rule_roller(rolling_rules:Dictionary,rng:RandomNumberGenerator 
 	for i in to_reroll:
 		dice[i] = al.sample(possible_dice,1,rng)[0]
 	
+
 	
 	if rolling_rules.explode.size()>0:
 		var exploded_dice = []
 		for d in dice:
 			var x = d
 			exploded_dice.append(d)
-			while x in rolling_rules.explode:
+			var explode_count = 1
+			while x in rolling_rules.explode and \
+			(rolling_rules.explode_depth == 0 or explode_count<rolling_rules.explode_depth):
+				explode_count += 1
 				x = al.sample(possible_dice,1,rng)[0]
 				# if new roll is in the reroll once list, reroll
 				if x in rolling_rules.reroll_once:
@@ -287,7 +318,10 @@ static func base_rule_roller(rolling_rules:Dictionary,rng:RandomNumberGenerator 
 		for d in dice:
 			var com_result = d
 			var x = d
-			while x in rolling_rules.compound:
+			var explode_count = 1
+			while x in rolling_rules.compound and \
+			(rolling_rules.explode_depth == 0 or explode_count<rolling_rules.explode_depth):
+				explode_count += 1
 				x = al.sample(possible_dice,1,rng)[0]
 				if x in rolling_rules.reroll_once:
 					x = al.sample(possible_dice,1,rng)[0]
@@ -317,10 +351,10 @@ static func base_rule_roller(rolling_rules:Dictionary,rng:RandomNumberGenerator 
 		out['drop'] = drop
 		
 	if rolling_rules.drop_keep_specific.size()>0 and rolling_rules.drop_specific:
-		out['drop'].append(dice.filter(func(x):return x in rolling_rules.drop_keep_specific))
+		out['drop'].append_array(dice.filter(func(x):return x in rolling_rules.drop_keep_specific))
 		dice = dice.filter(func(x):return not x in rolling_rules.drop_keep_specific)
 	elif rolling_rules.drop_keep_specific.size()>0 and not rolling_rules.drop_specific:
-		out['drop'].append(dice.filter(func(x):return not x in rolling_rules.drop_keep_specific))
+		out['drop'].append_array(dice.filter(func(x):return not x in rolling_rules.drop_keep_specific))
 		dice = dice.filter(func(x):return x in rolling_rules.drop_keep_specific)
 	
 	out['dice'] = dice
@@ -328,7 +362,7 @@ static func base_rule_roller(rolling_rules:Dictionary,rng:RandomNumberGenerator 
 	if rolling_rules.success.size()>0 or rolling_rules.fail.size()>0:
 		var success = dice.filter(func(x):return x in rolling_rules.success)
 		var fail = dice.filter(func(x):return x in rolling_rules.fail)
-		out['result'] = success.size() - fail.size()
+		out['result'] = float(success.size() - fail.size())
 	else:
 		out['result'] = al.sum(dice)
 	
@@ -373,6 +407,11 @@ static func base_calc_rule_probs(rules:Dictionary,explode_depth:int = 3)->Dictio
 		new_probs[[x]] = probs[x] 
 	probs = new_probs
 	
+	if rules.explode_depth != 0:
+		print(explode_depth)
+		print(rules.explode_depth)
+		print(rules)
+		explode_depth = min(explode_depth,rules.explode_depth)
 	
 	if rules.explode.size()>0:
 		probs = dh.blow_up(probs,rules.explode, explode_depth)

@@ -1,0 +1,17 @@
+[gd_scene load_steps=2 format=3 uid="uid://blqaq77rrccln"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_vf2gd"]
+content_margin_left = 4.0
+content_margin_right = 8.0
+
+[node name="HistoyCommand" type="Button"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 25.0
+grow_horizontal = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxEmpty_vf2gd")
+theme_override_styles/hover = SubResource("StyleBoxEmpty_vf2gd")
+theme_override_styles/pressed = SubResource("StyleBoxEmpty_vf2gd")
+text = "/do something"
+alignment = 0

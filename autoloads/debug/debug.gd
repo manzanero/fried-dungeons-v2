@@ -10,19 +10,19 @@ const WARNING := 30
 const ERROR := 40
 const CRITICAL := 50
 
-const DEBUG_STR := "[color=blue][DEBUG][/color]"
-const INFO_STR := "[color=dark_green][INFO][/color]"
-const WARNING_STR := "[color=dark_goldenrod][WARNING ][/color]"
-const ERROR_STR := "[color=red][ERROR][/color]"
-const CRITICAL_STR := "[color=dark_red][CRITICAL][/color]"
+const DEBUG_STR := "[color=blue][b][DEBUG][/b][/color]"
+const INFO_STR := "[color=dark_green][b][INFO][/b][/color]"
+const WARNING_STR := "[color=dark_goldenrod][b][WARNING][/b][/color]"
+const ERROR_STR := "[color=red][b][ERROR][/b][/color]"
+const CRITICAL_STR := "[color=dark_red][b][CRITICAL][/b][/color]"
 
 var is_debug := true
 var level := INFO
 
 func print_message(debug_level: int, message: String):
 	if is_debug and debug_level >= level:
-		var time_str := "%s.%03d" % [Time.get_time_string_from_system(false), Time.get_ticks_msec() % 1000]
-		var time_str_color := "[color=dark_gray]%s[/color]" % time_str
+		var time_str := "[color=dark_gray]%s.%03d[/color]" % [
+			Time.get_time_string_from_system(false), Time.get_ticks_msec() % 1000]
 
 		var level_str: String
 		if debug_level <= DEBUG:
@@ -35,6 +35,7 @@ func print_message(debug_level: int, message: String):
 			level_str = ERROR_STR
 		else:
 			level_str = CRITICAL_STR
-			
-		print("%s %s" % [time_str, message])
-		send_message.emit("%s %s %s" % [time_str_color, level_str, message])
+		
+		var debug_str = "%s %s %s" % [time_str, level_str, message]
+		print_rich(debug_str)
+		send_message.emit(debug_str)

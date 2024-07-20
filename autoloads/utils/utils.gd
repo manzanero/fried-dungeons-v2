@@ -17,15 +17,24 @@ func v2_to_v2i(v2 : Vector2) -> Vector2i:
 	return Vector2i(floori(v2.x), floori(v2.y))
 
 
-func v3_to_v3i(v3 : Vector3) -> Vector3i:
-	return Vector3i(v3.floor())
+func v3_to_v3i(v3: Vector3) -> Vector3i:
+	return Vector3i(floori(v3.x), floori(v3.y), floori(v3.z))
+
+
+func v3i_to_html_color(v3i: Vector3i) -> String:
+	return Color8(clampi(v3i.x, 0, 255), clampi(v3i.y, 0, 255), clampi(v3i.z, 0, 255)).to_html(false)
 	
 	
-func v3_to_str(v3 : Vector3) -> String:
+func html_color_to_v3i(html_color: String) -> Vector3i:
+	var color := Color(html_color)
+	return Vector3i(int(color.r), int(color.g), int(color.b))
+	
+	
+func v3_to_pretty(v3 : Vector3) -> String:
 	return "(%s, %s, %s)" % [v3.x, v3.y, v3.z]
 	
 	
-func v3i_to_str(v3i : Vector3i) -> String:
+func v3i_to_pretty(v3i : Vector3i) -> String:
 	return "(%s, %s, %s)" % [v3i.x, v3i.y, v3i.z]
 
 
@@ -86,11 +95,11 @@ func aaa2_to_atpv2(array: Array) -> Array[PackedVector2Array]:
 	return apv2
 
 
-func color_to_string(color : Color) -> String:
+func color_to_html_color(color : Color) -> String:
 	return color.to_html()
 	
 	
-func string_to_color(string : String) -> Color:
+func html_color_to_color(string : String) -> Color:
 	return Color.html(string)
 
 
@@ -109,23 +118,22 @@ func safe_queue_free(node: Variant):
 		node.queue_free()
 		
 
-func dictionary() -> Dictionary:
-	return {}
-		
-
 func get_bitmask(x : int) -> int:
 	return int(pow(2, x - 1))
 
 
-func get_hit(from : Node3D, to_point : Vector3, raycast : PhysicsRayQueryParameters3D, collision_mask : int) -> Dictionary:
+func get_hit(from : Node3D, to_point : Vector3, raycast : PhysicsRayQueryParameters3D, 
+		collision_mask : int, hit_back_faces: bool = true) -> Dictionary:
 	var space_state := from.get_world_3d().direct_space_state
 	raycast.from = from.global_position
 	raycast.to = to_point
 	raycast.collision_mask = collision_mask
+	raycast.hit_back_faces = hit_back_faces
 	return space_state.intersect_ray(raycast)
 
 
-func get_mouse_hit(camera : Camera3D, from_center : bool, raycast : PhysicsRayQueryParameters3D, collision_mask : int) -> Dictionary:
+func get_mouse_hit(camera: Camera3D, from_center: bool, raycast: PhysicsRayQueryParameters3D, 
+		collision_mask: int, hit_back_faces: bool = true) -> Dictionary:
 	var ray_length := 1000.0
 	var space_state := camera.get_world_3d().direct_space_state
 	
@@ -143,7 +151,7 @@ func get_mouse_hit(camera : Camera3D, from_center : bool, raycast : PhysicsRayQu
 		raycast.to = raycast.from + camera.project_ray_normal(mouse_pos) * ray_length
 		
 	raycast.collision_mask = collision_mask
-	#raycast.hit_back_faces = false
+	raycast.hit_back_faces = hit_back_faces
 	return space_state.intersect_ray(raycast)
 
 

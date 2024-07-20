@@ -1,0 +1,863 @@
+[gd_scene load_steps=6 format=3 uid="uid://6pq2k4jg8hbv"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_messages/panel_dice/tab_messages_panel_dice.gd" id="1_5k1u0"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8jh3g"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 5.0
+bg_color = Color(0, 0, 0, 0.901961)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+corner_detail = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bheoc"]
+content_margin_left = 12.0
+content_margin_top = 4.0
+content_margin_right = 12.0
+content_margin_bottom = 4.0
+bg_color = Color(0.205117, 0.205117, 0.205117, 1)
+draw_center = false
+border_color = Color(0.105882, 0.113725, 0.121569, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3t1mb"]
+content_margin_left = 12.0
+content_margin_top = 4.0
+content_margin_right = 12.0
+content_margin_bottom = 4.0
+bg_color = Color(0.219608, 0.239216, 0.266667, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ptof3"]
+content_margin_left = 12.0
+content_margin_top = 4.0
+content_margin_right = 12.0
+content_margin_bottom = 4.0
+bg_color = Color(0.12549, 0.156863, 0.192157, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[node name="Dice" type="ScrollContainer"]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_8jh3g")
+vertical_scroll_mode = 3
+script = ExtResource("1_5k1u0")
+
+[node name="HBoxContainer" type="BoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+vertical = true
+
+[node name="OperatorButtons" type="GridContainer" parent="HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 8
+
+[node name="Op1" type="Button" parent="HBoxContainer/OperatorButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "("
+alignment = 0
+
+[node name="Op2" type="Button" parent="HBoxContainer/OperatorButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = ")"
+alignment = 0
+
+[node name="Op3" type="Button" parent="HBoxContainer/OperatorButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "+"
+alignment = 0
+
+[node name="Op4" type="Button" parent="HBoxContainer/OperatorButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "-"
+alignment = 0
+
+[node name="Op5" type="Button" parent="HBoxContainer/OperatorButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "*"
+alignment = 0
+
+[node name="Op6" type="Button" parent="HBoxContainer/OperatorButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "/"
+alignment = 0
+
+[node name="DiceButtons" type="GridContainer" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 10
+
+[node name="D0_1" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "1"
+alignment = 0
+
+[node name="D0_2" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "2"
+alignment = 0
+
+[node name="D0_3" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "3"
+alignment = 0
+
+[node name="D0_4" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "4"
+alignment = 0
+
+[node name="D0_5" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "5"
+alignment = 0
+
+[node name="D0_6" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "6"
+alignment = 0
+
+[node name="D0_7" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "7"
+alignment = 0
+
+[node name="D0_8" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "8"
+alignment = 0
+
+[node name="D0_9" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "9"
+alignment = 0
+
+[node name="D0_10" type="Button" parent="HBoxContainer/DiceButtons"]
+visible = false
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "10"
+alignment = 0
+
+[node name="D4_1" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "1d4"
+alignment = 0
+
+[node name="D4_2" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "2"
+alignment = 0
+
+[node name="D4_3" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "3"
+alignment = 0
+
+[node name="D4_4" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "4"
+alignment = 0
+
+[node name="D4_5" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "5"
+alignment = 0
+
+[node name="D4_6" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "6"
+alignment = 0
+
+[node name="D4_7" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "7"
+alignment = 0
+
+[node name="D4_8" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "8"
+alignment = 0
+
+[node name="D4_9" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "9"
+alignment = 0
+
+[node name="D4_10" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "10"
+alignment = 0
+
+[node name="D6_1" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "1d6"
+alignment = 0
+
+[node name="D6_2" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "2"
+alignment = 0
+
+[node name="D6_3" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "3"
+alignment = 0
+
+[node name="D6_4" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "4"
+alignment = 0
+
+[node name="D6_5" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "5"
+alignment = 0
+
+[node name="D6_6" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "6"
+alignment = 0
+
+[node name="D6_7" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "7"
+alignment = 0
+
+[node name="D6_8" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "8"
+alignment = 0
+
+[node name="D6_9" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "9"
+alignment = 0
+
+[node name="D6_10" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "10"
+alignment = 0
+
+[node name="D8_1" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "1d8"
+alignment = 0
+
+[node name="D8_2" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "2"
+alignment = 0
+
+[node name="D8_3" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "3"
+alignment = 0
+
+[node name="D8_4" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "4"
+alignment = 0
+
+[node name="D8_5" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "5"
+alignment = 0
+
+[node name="D8_6" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "6"
+alignment = 0
+
+[node name="D8_7" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "7"
+alignment = 0
+
+[node name="D8_8" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "8"
+alignment = 0
+
+[node name="D8_9" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "9"
+alignment = 0
+
+[node name="D8_10" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "10"
+alignment = 0
+
+[node name="D10_1" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "1d10"
+alignment = 0
+
+[node name="D10_2" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "2"
+alignment = 0
+
+[node name="D10_3" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "3"
+alignment = 0
+
+[node name="D10_4" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "4"
+alignment = 0
+
+[node name="D10_5" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "5"
+alignment = 0
+
+[node name="D10_6" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "6"
+alignment = 0
+
+[node name="D10_7" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "7"
+alignment = 0
+
+[node name="D10_8" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "8"
+alignment = 0
+
+[node name="D10_9" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "9"
+alignment = 0
+
+[node name="D10_10" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "10"
+alignment = 0
+
+[node name="D12_1" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "1d12"
+alignment = 0
+
+[node name="D12_2" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "2"
+alignment = 0
+
+[node name="D12_3" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "3"
+alignment = 0
+
+[node name="D12_4" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "4"
+alignment = 0
+
+[node name="D12_5" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "5"
+alignment = 0
+
+[node name="D12_6" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "6"
+alignment = 0
+
+[node name="D12_7" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "7"
+alignment = 0
+
+[node name="D12_8" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "8"
+alignment = 0
+
+[node name="D12_9" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "9"
+alignment = 0
+
+[node name="D12_10" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "10"
+alignment = 0
+
+[node name="D20_1" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "1d20"
+alignment = 0
+
+[node name="D20_2" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "2"
+alignment = 0
+
+[node name="D20_3" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "3"
+alignment = 0
+
+[node name="D20_4" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "4"
+alignment = 0
+
+[node name="D20_5" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "5"
+alignment = 0
+
+[node name="D20_6" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "6"
+alignment = 0
+
+[node name="D20_7" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "7"
+alignment = 0
+
+[node name="D20_8" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "8"
+alignment = 0
+
+[node name="D20_9" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "9"
+alignment = 0
+
+[node name="D20_10" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "10"
+alignment = 0
+
+[node name="D100_1" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "1d100"
+alignment = 0
+
+[node name="D100_2" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "2"
+alignment = 0
+
+[node name="D100_3" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "3"
+alignment = 0
+
+[node name="D100_4" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "4"
+alignment = 0
+
+[node name="D100_5" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "5"
+alignment = 0
+
+[node name="D100_6" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "6"
+alignment = 0
+
+[node name="D100_7" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "7"
+alignment = 0
+
+[node name="D100_8" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "8"
+alignment = 0
+
+[node name="D100_9" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "9"
+alignment = 0
+
+[node name="D100_10" type="Button" parent="HBoxContainer/DiceButtons"]
+layout_mode = 2
+focus_mode = 0
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+text = "10"
+alignment = 0

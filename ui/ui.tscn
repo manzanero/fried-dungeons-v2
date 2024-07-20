@@ -1,0 +1,270 @@
+[gd_scene load_steps=9 format=3 uid="uid://bn7uvkfq24dl4"]
+
+[ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
+[ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
+[ext_resource type="PackedScene" uid="uid://dfwkx5bxrpk35" path="res://assets/dicer/dicer.tscn" id="3_hqwy8"]
+[ext_resource type="PackedScene" uid="uid://b1i1ky18bbaqf" path="res://ui/tabs/tab_debug/tab_debug.tscn" id="4_g7vlm"]
+[ext_resource type="PackedScene" uid="uid://cd6g3qduls3n1" path="res://ui/tabs/tab_properties/tab_properties.tscn" id="5_groax"]
+[ext_resource type="PackedScene" uid="uid://dhbx748ct8awa" path="res://ui/tabs/tab_messages/tab_messages.tscn" id="6_r4wjl"]
+[ext_resource type="PackedScene" uid="uid://qg2jutjaad46" path="res://ui/tabs/tab_settings/tab_settings.tscn" id="7_cdf46"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2q8jd"]
+
+[node name="UI" type="Control"]
+custom_minimum_size = Vector2(768, 0)
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme = ExtResource("1_607li")
+script = ExtResource("2_axtiy")
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = 8
+
+[node name="V" type="VBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+
+[node name="PanelContainer" type="PanelContainer" parent="MarginContainer/V"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_2q8jd")
+
+[node name="MenuBar" type="MenuBar" parent="MarginContainer/V/PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+flat = true
+
+[node name="Campaing" type="PopupMenu" parent="MarginContainer/V/PanelContainer/MenuBar"]
+item_count = 4
+item_0/text = "Change..."
+item_0/id = 0
+item_1/text = "Reload"
+item_1/id = 1
+item_2/text = ""
+item_2/id = 3
+item_2/separator = true
+item_3/text = "Quit"
+item_3/id = 2
+
+[node name="Preferences" type="PopupMenu" parent="MarginContainer/V/PanelContainer/MenuBar"]
+item_count = 2
+item_0/text = "Layout..."
+item_0/id = 0
+item_1/text = "Style..."
+item_1/id = 1
+
+[node name="Help" type="PopupMenu" parent="MarginContainer/V/PanelContainer/MenuBar"]
+item_count = 3
+item_0/text = "Documentation"
+item_0/id = 0
+item_1/text = ""
+item_1/id = 2
+item_1/separator = true
+item_2/text = "About..."
+item_2/id = 1
+
+[node name="H" type="HBoxContainer" parent="MarginContainer/V/PanelContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+
+[node name="PlayButton" type="Button" parent="MarginContainer/V/PanelContainer/H"]
+layout_mode = 2
+text = "Play"
+
+[node name="PauseButton" type="Button" parent="MarginContainer/V/PanelContainer/H"]
+layout_mode = 2
+text = "Pause"
+
+[node name="StopButton" type="Button" parent="MarginContainer/V/PanelContainer/H"]
+layout_mode = 2
+text = "Stop"
+
+[node name="H" type="HSplitContainer" parent="MarginContainer/V"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="H" type="HSplitContainer" parent="MarginContainer/V/H"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 9.0
+theme_override_constants/separation = 0
+
+[node name="Left" type="VSplitContainer" parent="MarginContainer/V/H/H"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="P" type="Panel" parent="MarginContainer/V/H/H/Left"]
+custom_minimum_size = Vector2(256, 128)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="T" type="TabContainer" parent="MarginContainer/V/H/H/Left/P"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="Map" type="Control" parent="MarginContainer/V/H/H/Left/P/T"]
+layout_mode = 2
+
+[node name="Tree" type="Tree" parent="MarginContainer/V/H/H/Left/P/T/Map"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="P2" type="Panel" parent="MarginContainer/V/H/H/Left"]
+custom_minimum_size = Vector2(256, 128)
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="T" type="TabContainer" parent="MarginContainer/V/H/H/Left/P2"]
+clip_contents = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="World" type="Control" parent="MarginContainer/V/H/H/Left/P2/T"]
+layout_mode = 2
+
+[node name="Tree" type="Tree" parent="MarginContainer/V/H/H/Left/P2/T/World"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Resources" type="Control" parent="MarginContainer/V/H/H/Left/P2/T"]
+visible = false
+layout_mode = 2
+
+[node name="Tree" type="Tree" parent="MarginContainer/V/H/H/Left/P2/T/Resources"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="Middle" type="VSplitContainer" parent="MarginContainer/V/H/H"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 8.0
+theme_override_constants/separation = 0
+split_offset = 1000
+
+[node name="Container" type="Control" parent="MarginContainer/V/H/H/Middle"]
+layout_mode = 2
+
+[node name="TabMaps" type="TabContainer" parent="MarginContainer/V/H/H/Middle/Container"]
+unique_name_in_owner = true
+clip_contents = true
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/V/H/H/Middle/Container"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_top = 32.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/V/H/H/Middle/Container/AspectRatioContainer"]
+layout_mode = 2
+mouse_filter = 2
+stretch = true
+
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/V/H/H/Middle/Container/AspectRatioContainer/SubViewportContainer"]
+own_world_3d = true
+transparent_bg = true
+handle_input_locally = false
+size = Vector2i(199, 199)
+render_target_update_mode = 4
+
+[node name="Dicer" parent="MarginContainer/V/H/H/Middle/Container/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
+unique_name_in_owner = true
+
+[node name="T" type="TabContainer" parent="MarginContainer/V/H/H/Middle"]
+clip_contents = true
+custom_minimum_size = Vector2(256, 256)
+layout_mode = 2
+size_flags_vertical = 3
+drag_to_rearrange_enabled = true
+tabs_rearrange_group = 0
+
+[node name="Debug" parent="MarginContainer/V/H/H/Middle/T" instance=ExtResource("4_g7vlm")]
+layout_mode = 2
+
+[node name="Right" type="VSplitContainer" parent="MarginContainer/V/H"]
+custom_minimum_size = Vector2(256, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="Up" type="TabContainer" parent="MarginContainer/V/H/Right"]
+clip_contents = true
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 3
+drag_to_rearrange_enabled = true
+tabs_rearrange_group = 0
+
+[node name="Properties" parent="MarginContainer/V/H/Right/Up" instance=ExtResource("5_groax")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Down" type="TabContainer" parent="MarginContainer/V/H/Right"]
+clip_contents = true
+custom_minimum_size = Vector2(0, 128)
+layout_mode = 2
+size_flags_vertical = 3
+drag_to_rearrange_enabled = true
+tabs_rearrange_group = 0
+
+[node name="Messages" parent="MarginContainer/V/H/Right/Down" instance=ExtResource("6_r4wjl")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Settings" parent="MarginContainer/V/H/Right/Down" instance=ExtResource("7_cdf46")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2

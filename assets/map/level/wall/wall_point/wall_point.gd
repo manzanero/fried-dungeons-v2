@@ -45,8 +45,8 @@ func _on_changed():
 	if not wall.is_edit_mode:
 		return
 		
-	visible = not Game.camera.eyes.is_position_behind(position_3d)
-	position = Game.camera.eyes.unproject_position(position_3d + Vector3.UP * 0.001)  # x axis points cannot be unproject
+	visible = not wall.level.map.camera.eyes.is_position_behind(position_3d)
+	position = wall.level.map.camera.eyes.unproject_position(position_3d + Vector3.UP * 0.001)  # x axis points cannot be unproject
 
 	await get_tree().process_frame  # deletion of point need one frame to process
 	

@@ -53,8 +53,8 @@ func init(_map : Map):
 
 
 func _ready():
-	Game.camera.changed.connect(_on_camera_changed)
-	Game.camera.fps_enabled.connect(func (value):
+	map.camera.changed.connect(_on_camera_changed)
+	map.camera.fps_enabled.connect(func (value):
 		if value:
 			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 		else:
@@ -89,10 +89,10 @@ func _process_wall_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
 		
-	if not UI.selected_map_tab.is_mouse_over:
+	if not Game.ui.is_mouse_over_map_tab:
 		return
 
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.WALL_BITMASK)
+	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.WALL_BITMASK)
 	if hit_info:
 		var wall_hitted := hit_info["collider"].get_parent() as Wall
 		
@@ -121,10 +121,10 @@ func _process_light_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
 		
-	if not UI.selected_map_tab.is_mouse_over:
+	if not Game.ui.is_mouse_over_map_tab:
 		return
 		
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.LIGHT_BITMASK)
+	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.LIGHT_BITMASK)
 	if hit_info:
 		var light_hitted := hit_info["collider"].get_parent() as Light
 		
@@ -153,7 +153,7 @@ func _process_light_movement():
 	if not selected_light:
 		return
 		
-	if Input.is_action_just_pressed("left_click") and UI.selected_map_tab.is_mouse_over:
+	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
 		selected_light.is_editing = true
 		
 	elif Input.is_action_just_released("left_click"):
@@ -164,10 +164,10 @@ func _process_entity_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
 		
-	if not UI.selected_map_tab.is_mouse_over:
+	if not Game.ui.is_mouse_over_map_tab:
 		return
 	
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
+	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
 	if hit_info:
 		var entity_hitted := hit_info["collider"].get_parent() as Entity
 		
@@ -181,7 +181,7 @@ func _process_entity_selection():
 			if entity != entity_hitted:
 				entity.is_edit_mode = false
 				
-		UI.tab_properties.element_selected = entity_hitted
+		Game.ui.tab_properties.element_selected = entity_hitted
 		
 		selected_wall = null
 		for wall: Wall in walls_parent.get_children():
@@ -193,14 +193,14 @@ func _process_entity_selection():
 		selected_entity.is_edit_mode = false
 		selected_entity = null
 		
-		UI.tab_properties.element_selected = null
+		Game.ui.tab_properties.element_selected = null
 
 
 func _process_entity_movement():
 	if not selected_entity:
 		return
 		
-	if Input.is_action_just_pressed("left_click") and UI.selected_map_tab.is_mouse_over:
+	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
 		selected_entity.is_editing = true
 	elif Input.is_action_just_released("left_click"):
 		selected_entity.is_editing = false
@@ -220,7 +220,7 @@ func _process_ground_hitted():
 	if not Input.is_action_pressed("left_click"):
 		return
 		
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.GROUND_BITMASK)
+	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.GROUND_BITMASK)
 	if hit_info:
 		position_hovered = Utils.v3_to_v2(hit_info["position"]).snapped(Game.PIXEL)
 		tile_hovered = Utils.v2_to_v2i(position_hovered)
@@ -232,7 +232,7 @@ func _process_ceilling_hitted():
 	if not Input.is_action_pressed("left_click"):
 		return
 	
-	var hit_info = Utils.get_mouse_hit(Game.camera.eyes, Game.camera.is_fps, level_ray, Game.CEILLING_BITMASK)
+	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.CEILLING_BITMASK)
 	if hit_info:
 		ceilling_hovered = Utils.v3_to_v2(hit_info["position"]).snapped(Game.PIXEL)
 

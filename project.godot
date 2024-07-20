@@ -18,11 +18,10 @@ config/icon="res://icon.svg"
 
 [autoload]
 
-DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
 Utils="*res://autoloads/utils/utils.gd"
 Game="*res://autoloads/game/game.gd"
 Debug="*res://autoloads/debug/debug.gd"
-UI="*res://assets/ui/ui.tscn"
+DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
 
 [display]
 
@@ -38,6 +37,7 @@ enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/
 
 [gui]
 
+theme/custom="res://resources/themes/main/main_theme.tres"
 theme/default_font_subpixel_positioning=0
 theme/lcd_subpixel_layout=0
 
@@ -72,6 +72,7 @@ control={
 3d_render/layer_4="light"
 3d_render/layer_5="entity"
 3d_render/layer_6="object"
+3d_render/layer_7="die"
 3d_physics/layer_1="earth"
 3d_physics/layer_2="water"
 3d_physics/layer_3="flame"
@@ -84,6 +85,11 @@ control={
 3d_physics/layer_26="wall"
 3d_physics/layer_27="ceilling"
 3d_physics/layer_28="selector"
+3d_physics/layer_29="die"
+
+[physics]
+
+3d/physics_engine="JoltPhysics3D"
 
 [rendering]
 
