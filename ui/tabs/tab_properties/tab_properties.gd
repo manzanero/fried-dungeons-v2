@@ -20,15 +20,15 @@ var containers_tree := {}
 @onready var property_containers: VBoxContainer = %PropertyContainers
 
 
-func _set_element_selected(value: Element):
+func _set_element_selected(element: Element):
 	Utils.safe_queue_free(root_container)
 	containers_tree.clear()
-	if not value:
+	if not element:
 		if is_instance_valid(element_selected):
 			Debug.print_message(Debug.DEBUG, "Element \"%s\" unselected" % element_selected.name)
 		return
 		
-	element_selected = value
+	element_selected = element
 	Debug.print_message(Debug.INFO, "Element \"%s\" selected" % element_selected.name) 
 	
 	root_container = PROPERTY_CONTAINER.instantiate().init(property_containers)

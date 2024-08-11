@@ -8,9 +8,10 @@
 [ext_resource type="Theme" uid="uid://ve0n5o7lvu14" path="res://resources/themes/pixel_ui_theme/PixelTheme_nature.tres" id="5_mdj24"]
 [ext_resource type="Theme" uid="uid://dopunvp7uxup1" path="res://resources/themes/pixel_ui_theme/PixelTheme_blood.tres" id="6_6ihmm"]
 
-[node name="Map" type="Node3D"]
+[node name="Map" type="Node3D" node_paths=PackedStringArray("camera")]
 script = ExtResource("1_jrnr7")
 is_master = true
+camera = NodePath("Camera")
 is_master_view = true
 
 [node name="Loader" type="Node" parent="."]
@@ -200,3 +201,16 @@ layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="PreventsArtifactsInShader" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+light_color = Color(0, 0, 0, 1)
+light_energy = 0.0
+light_indirect_energy = 0.0
+light_volumetric_fog_energy = 0.0
+light_bake_mode = 0
+directional_shadow_mode = 0
+directional_shadow_fade_start = 0.0
+directional_shadow_max_distance = 0.0
+directional_shadow_pancake_size = 0.0
+sky_mode = 1

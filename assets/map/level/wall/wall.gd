@@ -85,7 +85,7 @@ func _process_wall_edit():
 		# change end of the wall
 		var point_position := level.position_hovered
 		if not Input.is_key_pressed(KEY_CTRL):
-			point_position = point_position.snapped(Game.PIXEL_SNAPPING_HALF)
+			point_position = point_position.snapped(Game.PIXEL_SNAPPING_QUARTER)
 		set_point(edited_point, point_position)
 
 
@@ -172,7 +172,7 @@ func break_point(broken_wall_point : WallPoint):
 	var index := broken_wall_point.index
 	
 	if index > 0:
-		var new_wall : Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed)
+		var new_wall : Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed, material_layer, two_sided)
 		for point in points.slice(0, index + 1):
 			new_wall.add_point(Utils.v3_to_v2(point.position_3d))
 
@@ -180,9 +180,11 @@ func break_point(broken_wall_point : WallPoint):
 		new_wall.is_edit_mode = true
 
 	if index < curve.point_count:
-		var new_wall : Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed)
+		var new_wall : Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed, material_layer, two_sided)
 		for point in points.slice(index):
 			new_wall.add_point(Utils.v3_to_v2(point.position_3d))
+		
+		new_wall.two_sided = level.selected_wall.two_sided
 
 	remove()
 
@@ -191,6 +193,84 @@ func remove():
 	queue_free()
 	for point in points:
 		point.queue_free()
+	
+	level.map.point_options.visible = false
+
+
+func reverse():
+	var new_wall: Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed, material_layer, two_sided)
+	points.reverse()
+	for point in points:
+		new_wall.add_point(Utils.v3_to_v2(point.position_3d))
+	
+	remove()
+	
+	
+func cut(a: Vector2, b: Vector2):
+	var segment_1_offset := curve.get_closest_offset(Utils.v2_to_v3(a))
+	var segment_2_offset := curve.get_closest_offset(Utils.v2_to_v3(b))
+	
+	if segment_1_offset > segment_2_offset:
+		var temp = a
+		a = b
+		b = temp
+		temp = segment_1_offset
+		segment_1_offset = segment_2_offset
+		segment_2_offset = temp
+	
+	var offset := 0.0
+	var index := 0
+	var point_1: Vector3
+	var point_2: Vector3
+	var delta := 0.0
+	
+	var wall_1 : Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed, material_layer, two_sided)
+	wall_1.add_point(Utils.v3_to_v2(curve.get_point_position(0)))
+	
+	for i in range(1, curve.point_count):
+		index = i
+		point_1 = curve.get_point_position(i - 1)
+		point_2 = curve.get_point_position(i)
+		delta = point_1.distance_to(point_2)
+		offset += delta
+		if offset < segment_1_offset:
+			wall_1.add_point(Utils.v3_to_v2(point_2))
+			continue
+		elif point_1.distance_to(Utils.v2_to_v3(a.snapped(Game.PIXEL))) > 0.031:
+			wall_1.add_point(a.snapped(Game.PIXEL))
+		break
+	
+	if wall_1.curve.point_count < 2:
+		wall_1.remove()
+		
+	var wall_2 : Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed, material_layer, two_sided)
+	wall_2.add_point(b.snapped(Game.PIXEL))
+	
+	# first point of 2nd wall may be in the same index
+	point_1 = Utils.v2_to_v3(b.snapped(Game.PIXEL))
+	point_2 = curve.get_point_position(index)
+	delta = point_1.distance_to(point_2)
+	
+	if offset > segment_2_offset and delta > 0.031:
+		wall_2.add_point(Utils.v3_to_v2(point_2))
+		
+	for i in range(index + 1, curve.point_count):
+		index = i
+		point_1 = curve.get_point_position(i - 1)
+		point_2 = curve.get_point_position(i)
+		delta = point_1.distance_to(point_2)
+		offset += delta
+		if offset > segment_2_offset and delta > 0.031:
+			wall_2.add_point(Utils.v3_to_v2(point_2))
+	
+	if curve.get_point_position(curve.point_count - 1).distance_to(Utils.v2_to_v3(b.snapped(Game.PIXEL))) < 0.031:
+		wall_2.remove()
+	
+	if wall_2.curve.point_count < 2:
+		wall_2.remove()
+	
+	remove()
+
 
 func get_point_by_index(index : int) -> WallPoint:
 	return points[index] if index < len(points) else null

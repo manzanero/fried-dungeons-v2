@@ -10,11 +10,11 @@ const WARNING := 30
 const ERROR := 40
 const CRITICAL := 50
 
-const DEBUG_STR := "[color=blue][b][DEBUG][/b][/color]"
-const INFO_STR := "[color=dark_green][b][INFO][/b][/color]"
-const WARNING_STR := "[color=dark_goldenrod][b][WARNING][/b][/color]"
-const ERROR_STR := "[color=red][b][ERROR][/b][/color]"
-const CRITICAL_STR := "[color=dark_red][b][CRITICAL][/b][/color]"
+const _DEBUG_STR := "[color=blue][b][DEBUG][/b][/color]"
+const _INFO_STR := "[color=dark_green][b][INFO][/b][/color]"
+const _WARNING_STR := "[color=dark_goldenrod][b][WARNING][/b][/color]"
+const _ERROR_STR := "[color=red][b][ERROR][/b][/color]"
+const _CRITICAL_STR := "[color=dark_red][b][CRITICAL][/b][/color]"
 
 var is_debug := true
 var level := INFO
@@ -26,15 +26,15 @@ func print_message(debug_level: int, message: String):
 
 		var level_str: String
 		if debug_level <= DEBUG:
-			level_str = DEBUG_STR
+			level_str = _DEBUG_STR
 		elif debug_level <= INFO:
-			level_str = INFO_STR
+			level_str = _INFO_STR
 		elif debug_level <= WARNING:
-			level_str = WARNING_STR
+			level_str = _WARNING_STR
 		elif debug_level <= ERROR:
-			level_str = ERROR_STR
+			level_str = _ERROR_STR
 		else:
-			level_str = CRITICAL_STR
+			level_str = _CRITICAL_STR
 		
 		var debug_str = "%s %s %s" % [time_str, level_str, message]
 		print_rich(debug_str)

@@ -7,7 +7,7 @@ extends Node
 
 func load_donjon_json_file(json_file_path):
 	seed(Game.world_seed)
-	print("Loading donjon map: " + json_file_path)
+	Debug.print_message(Debug.INFO, "Loading donjon map: " + json_file_path)
 
 	var map_data := Utils.load_json(json_file_path)
 	if not map_data:
@@ -26,13 +26,11 @@ func load_donjon_json_file(json_file_path):
 	var len_z = cells_data.size()
 	level.rect = Rect2i(0, 0, len_x, len_z)
 	
-	#floors[0] = MRPAS.new(Vector2(len_x, len_z) m
-	
-	var void_index : int = 24
-	var ground_index : int = 24
-	var door_index : int = 3
-	var wall_index : int = 1
-	var portcullis_index : int = 5
+	var void_index : int = 4
+	var ground_index : int = 2
+	var door_index : int = 16
+	var wall_index : int = 5
+	var portcullis_index : int = 7
 	
 	# ground
 	for x in range(len_x):

@@ -27,8 +27,9 @@ void light() {
 	if (is_master_view) {
 		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
 		ALPHA = alpha;
-	}
-	else {
+	} else if (LIGHT_IS_DIRECTIONAL) {
+		
+	} else {
 		
 		// if is in view for any viewer
 		if (ATTENUATION * SPECULAR_AMOUNT > 0.001)

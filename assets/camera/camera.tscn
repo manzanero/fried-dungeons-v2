@@ -41,8 +41,8 @@ unique_name_in_owner = true
 [node name="Eyes" type="Camera3D" parent="Focus/Pivot"]
 unique_name_in_owner = true
 fov = 30.0
-near = 0.031
-far = 255.0
+near = 0.1
+far = 1000.0
 
 [node name="CanvasLayer" type="CanvasLayer" parent="Focus/Pivot/Eyes"]
 

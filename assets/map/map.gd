@@ -6,6 +6,7 @@ signal master_view_enabled(value : bool)
 
 
 @export var is_master := false
+@export var camera: Camera
 
 @export var title := "Untitled"
 @export var ambient_light := 0.0
@@ -41,7 +42,6 @@ var selected_level : Level
 @onready var loader: Loader = $Loader
 
 @onready var levels_parent := $Levels as Node3D
-@onready var camera := $Camera as Camera
 @onready var world_environment := $WorldEnvironment as WorldEnvironment
 @onready var environment := world_environment.environment as Environment
 @onready var sky := environment.sky as Sky
@@ -140,20 +140,3 @@ func _on_break_button_down():
 	wall.break_point(wall.selected_point)
 	wall.select_point(null)
 	Game.handled_input = true
-	
-	
-#########
-# input #
-#########
-
-func _input(event):
-	if event is InputEventKey:
-		if event.is_pressed():
-			if event.keycode == KEY_F4:
-				if DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_ENABLED:
-					DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
-				else:
-					DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
-					
-			if event.keycode == KEY_F5:
-				get_tree().reload_current_scene()

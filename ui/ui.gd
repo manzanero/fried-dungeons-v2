@@ -4,9 +4,17 @@ extends Control
 @onready var tab_properties: TabProperties = %Properties
 @onready var tab_settings: TabSettings = %Settings
 @onready var tab_messages: TabMessages = %Messages
+@onready var tab_builder: TabBuilder = %Builder
 
+# center section
 @onready var map_tabs: TabContainer = %TabMaps
+@onready var build_border: Panel = %BuildBorder
 @onready var dicer: Dicer = %Dicer
+@onready var state_label_value: Label = %StateLabelValue
+@onready var down: Control = %Down
+@onready var minimize_down_button: Button = %MinimizeDownButton
+@onready var restore_down_button: Button = %RestoreDownButton
+
 
 var selected_map_tab: TabMap :
 	get:
@@ -20,6 +28,11 @@ var is_mouse_over_map_tab = true
 func _ready() -> void:
 	tab_settings.info_changed.connect(_on_info_changed)
 	tab_settings.ambient_changed.connect(_on_ambient_changed)
+	
+	minimize_down_button.pressed.connect(_on_minimize_down_pressed.bind(true))
+	restore_down_button.pressed.connect(_on_minimize_down_pressed.bind(false))
+
+	build_border.visible = false
 
 
 func _on_info_changed(title: String):
@@ -39,3 +52,9 @@ func _on_ambient_changed(master_view: bool, light: float, color: Color):
 		map.ambient_light = light
 		map.ambient_color = color
 
+
+func _on_minimize_down_pressed(minimize: bool):
+	minimize_down_button.visible = not minimize
+	restore_down_button.visible = minimize
+	down.visible = not minimize
+	

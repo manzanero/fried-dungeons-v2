@@ -48,4 +48,4 @@ func _on_rect_changed(new_rect : Rect2):
 func tile_map_set_cell(tile_hovered : Vector2i, xy : Vector2i, erase := false):
 	tile_map.set_cell(0, tile_hovered, 0, xy, -1 if erase else 0)
 	if not rect.has_point(tile_hovered):
-		rect_changed.emit(tile_map.get_used_rect())
+		rect = tile_map.get_used_rect()

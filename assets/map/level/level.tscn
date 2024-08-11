@@ -1,9 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://54qydkhvxv4n"]
+[gd_scene load_steps=18 format=3 uid="uid://54qydkhvxv4n"]
 
 [ext_resource type="Script" path="res://assets/map/level/level.gd" id="1_jdpmt"]
 [ext_resource type="Shader" path="res://assets/map/level/wall/materials/ground_next.gdshader" id="2_gm41o"]
+[ext_resource type="Script" path="res://addons/state_machine_nodes/state_machine.gd" id="2_vv8uy"]
 [ext_resource type="Script" path="res://assets/map/level/viewport_3d/viewport_3d.gd" id="3_6m262"]
+[ext_resource type="Script" path="res://states/level/idle.gd" id="3_plroy"]
 [ext_resource type="PackedScene" uid="uid://c7kw2qqn2s7gb" path="res://assets/map/level/viewport_3d/floor_2d/floor_2d.tscn" id="4_4yvlj"]
+[ext_resource type="Script" path="res://states/level/building.gd" id="4_incym"]
+[ext_resource type="Texture2D" uid="uid://cn0b7xxcmi6rw" path="res://resources/textures/texture_atlas.png" id="6_tjkgc"]
+[ext_resource type="Texture2D" uid="uid://c6jbklo7jmx2k" path="res://resources/grid/grid.png" id="9_qhb38"]
+[ext_resource type="PackedScene" uid="uid://b3xa6np7itoyx" path="res://assets/map/level/selector/selector.tscn" id="10_isfb4"]
 
 [sub_resource type="PlaneMesh" id="PlaneMesh_f84fu"]
 
@@ -11,21 +17,43 @@
 render_priority = -1
 shader = ExtResource("2_gm41o")
 shader_parameter/albedo = Color(0.33, 0.33, 0.33, 1)
+shader_parameter/texture_albedo = ExtResource("6_tjkgc")
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_e5pg7"]
 points = PackedVector3Array(-1000, 0, -1000, 1000, 0, -1000, 1000, 0, 1000, -1000, 0, 1000, -1000, -1, -1000, 1000, -1, -1000, 1000, -1, 1000, -1000, -1, 1000)
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ajfyi"]
+albedo_texture = ExtResource("9_qhb38")
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_2cw34"]
 size = Vector2(1000, 1000)
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_j55m5"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wl5y6"]
+shading_mode = 0
+specular_mode = 2
+disable_ambient_light = true
 albedo_color = Color(0, 0, 0, 1)
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_qha6u"]
 points = PackedVector3Array(-1000, 1, -1000, 1000, 1, -1000, 1000, 1, 1000, -1000, 1, 1000, -1000, -1, -1000, 1000, -1, -1000, 1000, -1, 1000, -1000, -1, 1000)
 
-[node name="Level" type="Node3D"]
+[node name="Level" type="Node3D" node_paths=PackedStringArray("walls_parent", "lights_parent", "entities_parent", "selector")]
 script = ExtResource("1_jdpmt")
+walls_parent = NodePath("Walls")
+lights_parent = NodePath("Lights")
+entities_parent = NodePath("Entities")
+selector = NodePath("Selector")
+
+[node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state", "target_node")]
+script = ExtResource("2_vv8uy")
+initial_state = NodePath("Idle")
+target_node = NodePath("..")
+
+[node name="Idle" type="Node" parent="StateMachine"]
+script = ExtResource("3_plroy")
+
+[node name="Building" type="Node" parent="StateMachine"]
+script = ExtResource("4_incym")
 
 [node name="Ground" type="Node3D" parent="."]
 
@@ -44,6 +72,7 @@ canvas_item_default_texture_filter = 0
 size = Vector2i(256, 256)
 
 [node name="Floor2D" parent="Ground/Viewport3D/SubViewport" instance=ExtResource("4_4yvlj")]
+unique_name_in_owner = true
 
 [node name="GroundCollider" type="StaticBody3D" parent="Ground"]
 unique_name_in_owner = true
@@ -58,8 +87,9 @@ shape = SubResource("ConvexPolygonShape3D_e5pg7")
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Ceilling"]
 transform = Transform3D(1, 0, 0, 0, -1, 8.74228e-08, 0, -8.74228e-08, -1, 0, 1, 0)
 layers = 4
+material_override = SubResource("StandardMaterial3D_ajfyi")
 mesh = SubResource("PlaneMesh_2cw34")
-surface_material_override/0 = SubResource("StandardMaterial3D_j55m5")
+surface_material_override/0 = SubResource("StandardMaterial3D_wl5y6")
 
 [node name="CeillingCollider" type="StaticBody3D" parent="Ceilling"]
 unique_name_in_owner = true
@@ -77,3 +107,5 @@ unique_name_in_owner = true
 
 [node name="Entities" type="Node3D" parent="."]
 unique_name_in_owner = true
+
+[node name="Selector" parent="." instance=ExtResource("10_isfb4")]

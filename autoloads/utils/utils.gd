@@ -3,6 +3,10 @@ extends Node
 	
 func v2_to_v3(v2 : Vector2) -> Vector3:
 	return Vector3(v2.x, 0, v2.y)
+	
+	
+func v2i_to_v3(v2i : Vector2i) -> Vector3:
+	return Vector3(v2i.x, 0, v2i.y)
 
 
 func v3_to_v2(v3 : Vector3) -> Vector2:

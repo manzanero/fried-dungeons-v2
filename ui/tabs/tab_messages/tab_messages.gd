@@ -51,14 +51,26 @@ func _on_add_dice(number: int, faces: int) -> void:
 
 
 func _on_dicer_roll_result(dice_string: String, result: Array):
-	new_message(Game.player_name, "dark_gray", "/roll " + dice_string)
+	var text := "/roll " + dice_string
 	
 	var result_int := 0
 	for r in result:
 		result_int += r
 	var result_str = "[b]%s[/b] [color=dark_gray]%s[/color]" % [result_int, result]
+	
+	history_panel.add_command(text)
+	var map = Game.ui.selected_map
+	
+	var origin: Element = null
+	if map and selection_as_origin_button.button_pressed:
+		origin = map.selected_level.selected_entity
 		
-	new_message(Game.player_name, "dark_gray", "Dice result:\n[center]%s[/center]" % result_str)
+	var origin_label := origin.label if origin else Game.player_name
+	var origin_color := origin.color.lightened(0.1 * 
+			(1.0 - origin.color.get_luminance())).to_html() if origin else "dark_gray"
+	
+	new_message(origin_label, origin_color, text)
+	new_message(origin_label, origin_color, "Dice result:\n[center]%s[/center]" % result_str)
 	
 
 func _on_history_message_pressed(text: String) -> void:

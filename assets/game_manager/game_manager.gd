@@ -27,3 +27,20 @@ func _process(_delta: float) -> void:
 	
 	# restart the frame input handled
 	Game.handled_input = false
+	
+	
+#########
+# input #
+#########
+
+func _input(event):
+	if event is InputEventKey:
+		if event.is_pressed():
+			if event.keycode == KEY_F4:
+				if DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_ENABLED:
+					DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
+				else:
+					DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
+					
+			if event.keycode == KEY_F5:
+				get_tree().reload_current_scene()

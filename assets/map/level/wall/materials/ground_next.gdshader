@@ -25,31 +25,16 @@ void fragment() {
 	alpha = albedo_tex.a;
 	
 	ALPHA = min(0.1, alpha);
-	//if (is_master_view)
-		//ALPHA = alpha;
-	//else
-		//ALPHA = min(0.1, alpha);
 }
 
 
-//void light() {
-	//if (is_master_view)
-		//DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
-	//else
-		//if (ATTENUATION * SPECULAR_AMOUNT > 0.001) 
-			//ALPHA = alpha;
-		//else
-			//DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
-//}
-
-
-void light() {
+void light() {	
 	if (is_master_view) {
 		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
 		ALPHA = alpha;
-	}
-	else {
+	} else if (LIGHT_IS_DIRECTIONAL) {
 		
+	} else {
 		// if is in view for any viewer
 		if (ATTENUATION * SPECULAR_AMOUNT > 0.001)
 			SPECULAR_LIGHT.x = 0.001;

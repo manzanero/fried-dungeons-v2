@@ -1,14 +1,25 @@
-[gd_scene load_steps=9 format=3 uid="uid://bn7uvkfq24dl4"]
+[gd_scene load_steps=13 format=3 uid="uid://bn7uvkfq24dl4"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
 [ext_resource type="PackedScene" uid="uid://dfwkx5bxrpk35" path="res://assets/dicer/dicer.tscn" id="3_hqwy8"]
 [ext_resource type="PackedScene" uid="uid://b1i1ky18bbaqf" path="res://ui/tabs/tab_debug/tab_debug.tscn" id="4_g7vlm"]
+[ext_resource type="Texture2D" uid="uid://dk4i0euhe2t1q" path="res://resources/icons/arrow_down.png" id="5_5f26e"]
 [ext_resource type="PackedScene" uid="uid://cd6g3qduls3n1" path="res://ui/tabs/tab_properties/tab_properties.tscn" id="5_groax"]
+[ext_resource type="PackedScene" uid="uid://b4oy5ukjusdyj" path="res://ui/tabs/tab_builder/tab_builder.tscn" id="6_jy8ng"]
+[ext_resource type="Texture2D" uid="uid://cf4nrufodnamj" path="res://resources/icons/arrow_up.png" id="6_o08ft"]
 [ext_resource type="PackedScene" uid="uid://dhbx748ct8awa" path="res://ui/tabs/tab_messages/tab_messages.tscn" id="6_r4wjl"]
 [ext_resource type="PackedScene" uid="uid://qg2jutjaad46" path="res://ui/tabs/tab_settings/tab_settings.tscn" id="7_cdf46"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2q8jd"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_knwtu"]
+draw_center = false
+border_width_left = 4
+border_width_top = 4
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.733333, 0.458824, 0.329412, 1)
 
 [node name="UI" type="Control"]
 custom_minimum_size = Vector2(768, 0)
@@ -181,12 +192,13 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 theme_override_constants/separation = 0
-split_offset = 1000
+split_offset = 2820
 
-[node name="Container" type="Control" parent="MarginContainer/V/H/H/Middle"]
+[node name="Up" type="Control" parent="MarginContainer/V/H/H/Middle"]
+custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
-[node name="TabMaps" type="TabContainer" parent="MarginContainer/V/H/H/Middle/Container"]
+[node name="TabMaps" type="TabContainer" parent="MarginContainer/V/H/H/Middle/Up"]
 unique_name_in_owner = true
 clip_contents = true
 custom_minimum_size = Vector2(0, 128)
@@ -198,7 +210,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/V/H/H/Middle/Container"]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="MarginContainer/V/H/H/Middle/Up"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -208,31 +220,123 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/V/H/H/Middle/Container/AspectRatioContainer"]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="MarginContainer/V/H/H/Middle/Up/AspectRatioContainer"]
 layout_mode = 2
 mouse_filter = 2
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="MarginContainer/V/H/H/Middle/Container/AspectRatioContainer/SubViewportContainer"]
+[node name="SubViewport" type="SubViewport" parent="MarginContainer/V/H/H/Middle/Up/AspectRatioContainer/SubViewportContainer"]
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(199, 199)
+size = Vector2i(379, 379)
 render_target_update_mode = 4
 
-[node name="Dicer" parent="MarginContainer/V/H/H/Middle/Container/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
+[node name="Dicer" parent="MarginContainer/V/H/H/Middle/Up/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
 unique_name_in_owner = true
 
-[node name="T" type="TabContainer" parent="MarginContainer/V/H/H/Middle"]
+[node name="RestoreDownButton" type="Button" parent="MarginContainer/V/H/H/Middle/Up"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 3
+anchor_left = 1.0
+anchor_top = 1.0
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = -27.0
+offset_top = -27.0
+offset_right = -3.0
+offset_bottom = -3.0
+grow_horizontal = 0
+grow_vertical = 0
+icon = ExtResource("6_o08ft")
+
+[node name="BuildBorder" type="Panel" parent="MarginContainer/V/H/H/Middle/Up"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_left = 2.0
+offset_top = 28.0
+offset_right = -2.0
+offset_bottom = -2.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_knwtu")
+
+[node name="Label" type="Label" parent="MarginContainer/V/H/H/Middle/Up/BuildBorder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+offset_left = -99.0
+offset_top = -24.0
+offset_right = 100.0
+offset_bottom = -4.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.733333, 0.458824, 0.329412, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+text = "Build mode (press \"escape\" to exit)"
+
+[node name="StateContainer" type="MarginContainer" parent="MarginContainer/V/H/H/Middle/Up"]
+visible = false
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 32
+
+[node name="H" type="HBoxContainer" parent="MarginContainer/V/H/H/Middle/Up/StateContainer"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+
+[node name="StateLabel" type="Label" parent="MarginContainer/V/H/H/Middle/Up/StateContainer/H"]
+layout_mode = 2
+text = "State:"
+
+[node name="StateLabelValue" type="Label" parent="MarginContainer/V/H/H/Middle/Up/StateContainer/H"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "None"
+
+[node name="Down" type="PanelContainer" parent="MarginContainer/V/H/H/Middle"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="DownTabs" type="TabContainer" parent="MarginContainer/V/H/H/Middle/Down"]
+unique_name_in_owner = true
 clip_contents = true
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
-size_flags_vertical = 3
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
 
-[node name="Debug" parent="MarginContainer/V/H/H/Middle/T" instance=ExtResource("4_g7vlm")]
+[node name="Builder" parent="MarginContainer/V/H/H/Middle/Down/DownTabs" instance=ExtResource("6_jy8ng")]
+unique_name_in_owner = true
 layout_mode = 2
+
+[node name="Debug" parent="MarginContainer/V/H/H/Middle/Down/DownTabs" instance=ExtResource("4_g7vlm")]
+visible = false
+layout_mode = 2
+
+[node name="MinimizeDownButton" type="Button" parent="MarginContainer/V/H/H/Middle/Down"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 0
+icon = ExtResource("5_5f26e")
 
 [node name="Right" type="VSplitContainer" parent="MarginContainer/V/H"]
 custom_minimum_size = Vector2(256, 0)

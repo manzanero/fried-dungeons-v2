@@ -11,9 +11,9 @@ shading_mode = 0
 specular_mode = 2
 disable_ambient_light = true
 disable_fog = true
-albedo_color = Color(0.75, 0.75, 0.75, 0.5)
+albedo_color = Color(0.745098, 0.752941, 0.752941, 0.756863)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_slnsi"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_m03fe"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_3dj65"]
 radial_segments = 16
@@ -45,7 +45,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 light_indirect_energy = 0.0
 light_volumetric_fog_energy = 0.0
 light_specular = 0.0
-light_cull_mask = 4294967231
+light_cull_mask = 4294967291
 shadow_enabled = true
 
 [node name="LineRenderer3D" type="MeshInstance3D" parent="."]
@@ -54,10 +54,10 @@ material_override = SubResource("StandardMaterial3D_aqxnx")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_slnsi")
+mesh = SubResource("ImmediateMesh_m03fe")
 script = ExtResource("3_dc0qo")
-start_thickness = 0.031
-end_thickness = 0.125
+start_thickness = 0.063
+end_thickness = 0.063
 use_global_coords = false
 tile_texture = false
 

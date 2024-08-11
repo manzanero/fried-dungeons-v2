@@ -28,11 +28,10 @@ void fragment() {
 void light() {
 	if (is_master_view) {
 		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR * 0.5;
-		//DIFFUSE_LIGHT = max(DIFFUSE_LIGHT, vec3(0.01));
 		ALPHA = alpha;
-		//ALPHA = max(0.5, alpha);
-	}
-	else {
+	} else if (LIGHT_IS_DIRECTIONAL) {
+		
+	} else {
 		
 		// if is in view for any viewer
 		if (ATTENUATION * SPECULAR_AMOUNT > 0.001)

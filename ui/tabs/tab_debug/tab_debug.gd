@@ -15,15 +15,27 @@ extends Control
 
 
 func _ready() -> void:
+	Debug.level = Debug.INFO
 	Debug.send_message.connect(_on_send_message)
+	
 	clear_button.pressed.connect(_on_clear_button_pressed)
-	wrap_button.pressed.connect(_on_wrap_button_pressed)
 	wrap_button.button_pressed = true
-	auto_button.pressed.connect(_on_auto_button_pressed)
+	wrap_button.pressed.connect(_on_wrap_button_pressed)
 	auto_button.button_pressed = true
-	output_text.scroll_following = true
+	auto_button.pressed.connect(_on_auto_button_pressed)
+	
 	level_group.pressed.connect(_on_level_group_pressed)
-	Debug.level = Debug.WARNING
+	match Debug.level:
+		Debug.DEBUG:
+			debug_button.button_pressed = true
+		Debug.INFO:
+			info_button.button_pressed = true
+		Debug.WARNING:
+			warning_button.button_pressed = true
+		Debug.ERROR:
+			error_button.button_pressed = true
+	
+	output_text.scroll_following = true
 	filter_line_edit.text = ""
 
 
