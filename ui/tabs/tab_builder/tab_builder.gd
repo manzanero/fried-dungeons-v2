@@ -2,7 +2,7 @@ class_name TabBuilder
 extends Control
 
 
-var material_index_selected := 0
+var material_index_selected := 5
 
 
 const ATLAS_TEXTURE_BUTTON = preload("res://ui/tabs/tab_builder/atlas_texture_button/atlas_texture_button.tscn")
@@ -33,11 +33,14 @@ func _ready() -> void:
 	for child in materials.get_children():
 		child.queue_free()
 		
-	for i in range(64):
+	for i in range(2, 64):
 		var button: AtlasTextureButton = ATLAS_TEXTURE_BUTTON.instantiate().init(materials, i)
 		button.pressed.connect(func (index): 
 			material_index_selected = index
 		)
+		if material_index_selected == i:
+			button.button_pressed = true
+		
 
 	one_side_button.pressed.connect(_on_button_pressed.bind(one_side_button, ONE_SIDED))
 	two_side_button.pressed.connect(_on_button_pressed.bind(two_side_button, TWO_SIDED))

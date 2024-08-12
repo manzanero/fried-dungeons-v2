@@ -20,7 +20,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.498039, 0.498039, 0.498039, 0.498039)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_kdnl1"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_cs6ul"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_cbu2a"]
 resource_local_to_scene = true
@@ -41,7 +41,7 @@ material_override = SubResource("StandardMaterial3D_1ar7b")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_kdnl1")
+mesh = SubResource("ImmediateMesh_cs6ul")
 script = ExtResource("5_70oql")
 start_thickness = 0.031
 end_thickness = 0.031

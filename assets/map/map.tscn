@@ -28,6 +28,8 @@ max_rot_x = 0.0
 environment = ExtResource("4_okbi2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+process_priority = 1
+process_physics_priority = 1
 
 [node name="3D" type="Control" parent="CanvasLayer"]
 layout_mode = 3

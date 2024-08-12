@@ -17,6 +17,11 @@ const PIXEL := Vector2(W_UNIT, H_UNIT) / 16
 		index = value
 		texture.region = Rect2(0, index * 16, 16, 16)
 
+@export var button_pressed := false :
+	set(value):
+		button_pressed = value
+		button.button_pressed = value
+
 
 @onready var texture_rect: TextureRect = $TextureRect
 @onready var texture: AtlasTexture = texture_rect.texture

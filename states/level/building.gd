@@ -31,8 +31,8 @@ func _enter_state(previous_state: String) -> void:
 			selector.grid.visible = true
 		TabBuilder.PAINT_RECT:
 			selector.grid.visible = true
-		TabBuilder.PAINT_WALL:
-			pass
+		TabBuilder.MOVE:
+			selector.grid.visible = true
 		TabBuilder.ONE_SIDED:
 			selector.grid.visible = true
 			selector.column.visible = true
@@ -46,6 +46,7 @@ func _enter_state(previous_state: String) -> void:
 			selector.grid.visible = true
 			selector.column.visible = true
 		TabBuilder.CUT:
+			selector.grid.visible = true
 			selector.column.visible = true
 
 
@@ -88,8 +89,10 @@ func _physics_process_state(_delta: float) -> String:
 			process_build_room(true)
 			
 		TabBuilder.MOVE:
+			process_change_grid()
 			process_wall_selection()
 		TabBuilder.CUT:
+			process_change_grid()
 			process_cutted_wall()
 			process_cut_wall()
 		TabBuilder.CHANGE:
@@ -250,7 +253,7 @@ func process_build_two_sided() -> void:
 func process_build_one_sided_start(two_sided := false) -> void:
 	if Input.is_action_just_pressed("left_click"):
 		_click_origin_position = Utils.v3_to_v2(selector.column.position)
-		_wall_being_builded = Game.wall_scene.instantiate().init(level, 5, randi())
+		_wall_being_builded = Game.wall_scene.instantiate().init(level, material_index_selected, randi())
 		_wall_being_builded.add_point(_click_origin_position)
 		if two_sided:
 			_wall_being_builded.two_sided = true
@@ -408,7 +411,7 @@ func process_build_room(wall_outside := false) -> void:
 		if wall_outside:
 			points.reverse()
 		
-		var wall: Wall = Game.wall_scene.instantiate().init(level, 5, randi())
+		var wall: Wall = Game.wall_scene.instantiate().init(level, material_index_selected, randi())
 		wall.add_point(origin)
 		for point in points:
 			wall.add_point(point)
