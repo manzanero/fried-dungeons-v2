@@ -61,10 +61,8 @@ flat = true
 [node name="Campaing" type="PopupMenu" parent="MarginContainer/V/PanelContainer/MenuBar"]
 item_count = 4
 item_0/text = "Change..."
-item_0/id = 0
 item_1/text = "Reload"
 item_1/id = 1
-item_2/text = ""
 item_2/id = 3
 item_2/separator = true
 item_3/text = "Quit"
@@ -73,15 +71,12 @@ item_3/id = 2
 [node name="Preferences" type="PopupMenu" parent="MarginContainer/V/PanelContainer/MenuBar"]
 item_count = 2
 item_0/text = "Layout..."
-item_0/id = 0
 item_1/text = "Style..."
 item_1/id = 1
 
 [node name="Help" type="PopupMenu" parent="MarginContainer/V/PanelContainer/MenuBar"]
 item_count = 3
 item_0/text = "Documentation"
-item_0/id = 0
-item_1/text = ""
 item_1/id = 2
 item_1/separator = true
 item_2/text = "About..."
@@ -135,9 +130,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+current_tab = 0
 
 [node name="Map" type="Control" parent="MarginContainer/V/H/H/Left/P/T"]
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="Tree" type="Tree" parent="MarginContainer/V/H/H/Left/P/T/Map"]
 layout_mode = 1
@@ -161,9 +158,11 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+current_tab = 0
 
 [node name="World" type="Control" parent="MarginContainer/V/H/H/Left/P2/T"]
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="Tree" type="Tree" parent="MarginContainer/V/H/H/Left/P2/T/World"]
 layout_mode = 1
@@ -176,6 +175,7 @@ grow_vertical = 2
 [node name="Resources" type="Control" parent="MarginContainer/V/H/H/Left/P2/T"]
 visible = false
 layout_mode = 2
+metadata/_tab_index = 1
 
 [node name="Tree" type="Tree" parent="MarginContainer/V/H/H/Left/P2/T/Resources"]
 layout_mode = 1
@@ -320,16 +320,19 @@ unique_name_in_owner = true
 clip_contents = true
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
+current_tab = 0
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
 
 [node name="Builder" parent="MarginContainer/V/H/H/Middle/Down/DownTabs" instance=ExtResource("6_jy8ng")]
 unique_name_in_owner = true
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="Debug" parent="MarginContainer/V/H/H/Middle/Down/DownTabs" instance=ExtResource("4_g7vlm")]
 visible = false
 layout_mode = 2
+metadata/_tab_index = 1
 
 [node name="MinimizeDownButton" type="Button" parent="MarginContainer/V/H/H/Middle/Down"]
 unique_name_in_owner = true
@@ -349,26 +352,31 @@ clip_contents = true
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 size_flags_vertical = 3
+current_tab = 0
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
 
 [node name="Properties" parent="MarginContainer/V/H/Right/Up" instance=ExtResource("5_groax")]
 unique_name_in_owner = true
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="Down" type="TabContainer" parent="MarginContainer/V/H/Right"]
 clip_contents = true
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 2
 size_flags_vertical = 3
+current_tab = 0
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
 
 [node name="Messages" parent="MarginContainer/V/H/Right/Down" instance=ExtResource("6_r4wjl")]
 unique_name_in_owner = true
 layout_mode = 2
+metadata/_tab_index = 0
 
 [node name="Settings" parent="MarginContainer/V/H/Right/Down" instance=ExtResource("7_cdf46")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
+metadata/_tab_index = 1

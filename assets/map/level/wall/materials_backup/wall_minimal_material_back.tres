@@ -1,9 +1,0 @@
-[gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://df2sbekow42f2"]
-
-[ext_resource type="Shader" path="res://assets/map/level/wall/materials/back.gdshader" id="1_gfks1"]
-[ext_resource type="Texture2D" uid="uid://cn0b7xxcmi6rw" path="res://resources/textures/texture_atlas.png" id="2_b3gog"]
-
-[resource]
-render_priority = 0
-shader = ExtResource("1_gfks1")
-shader_parameter/texture_albedo = ExtResource("2_b3gog")

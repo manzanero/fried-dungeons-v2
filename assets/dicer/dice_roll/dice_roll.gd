@@ -18,6 +18,7 @@ func init(parent: Node, _dice_string: String):
 	
 
 func _ready() -> void:
+	
 	child_entered_tree.connect(_on_added_die)
 	
 	# lifetime
@@ -31,6 +32,11 @@ func _on_lifetime_end() -> void:
 	
 
 func _process(_delta: float) -> void:
+	###### need better physics in 4.3
+	timeout_error.emit()
+	queue_free()
+	######
+	
 	if Input.is_action_just_pressed("left_click"):
 		visible = false
 

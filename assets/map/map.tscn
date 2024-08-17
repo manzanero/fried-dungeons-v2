@@ -1,21 +1,29 @@
-[gd_scene load_steps=8 format=3 uid="uid://cfyusau8c7lt0"]
+[gd_scene load_steps=9 format=3 uid="uid://cfyusau8c7lt0"]
 
 [ext_resource type="Script" path="res://assets/map/map.gd" id="1_jrnr7"]
 [ext_resource type="Script" path="res://assets/map/loader/loader.gd" id="2_l8wwe"]
 [ext_resource type="PackedScene" uid="uid://djn7mwvra11fw" path="res://assets/camera/camera.tscn" id="2_ty8om"]
+[ext_resource type="Script" path="res://assets/map/instancer/instancer.gd" id="3_grhhp"]
 [ext_resource type="Theme" uid="uid://bbmp4uwlx25jx" path="res://resources/themes/pixel_ui_theme/PixelTheme_paper.tres" id="4_1lesj"]
 [ext_resource type="Environment" uid="uid://drd07quupnr1b" path="res://assets/map/map_environment.tres" id="4_okbi2"]
 [ext_resource type="Theme" uid="uid://ve0n5o7lvu14" path="res://resources/themes/pixel_ui_theme/PixelTheme_nature.tres" id="5_mdj24"]
 [ext_resource type="Theme" uid="uid://dopunvp7uxup1" path="res://resources/themes/pixel_ui_theme/PixelTheme_blood.tres" id="6_6ihmm"]
 
-[node name="Map" type="Node3D" node_paths=PackedStringArray("camera")]
+[node name="Map" type="Node3D" node_paths=PackedStringArray("loader", "instancer", "levels_parent", "camera")]
 script = ExtResource("1_jrnr7")
-is_master = true
+loader = NodePath("Loader")
+instancer = NodePath("Instancer")
+levels_parent = NodePath("Levels")
 camera = NodePath("Camera")
+is_master = true
 is_master_view = true
 
 [node name="Loader" type="Node" parent="."]
 script = ExtResource("2_l8wwe")
+
+[node name="Instancer" type="Node" parent="." node_paths=PackedStringArray("map")]
+script = ExtResource("3_grhhp")
+map = NodePath("..")
 
 [node name="Levels" type="Node3D" parent="."]
 
@@ -28,8 +36,6 @@ max_rot_x = 0.0
 environment = ExtResource("4_okbi2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-process_priority = 1
-process_physics_priority = 1
 
 [node name="3D" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -45,6 +51,7 @@ theme = ExtResource("4_1lesj")
 
 [node name="PointOptions" type="Control" parent="CanvasLayer/3D"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -60,6 +67,7 @@ grow_vertical = 2
 
 [node name="AddAfter" type="Button" parent="CanvasLayer/3D/PointOptions"]
 unique_name_in_owner = true
+process_priority = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15
@@ -95,6 +103,7 @@ vertical_alignment = 1
 
 [node name="AddBefore" type="Button" parent="CanvasLayer/3D/PointOptions"]
 unique_name_in_owner = true
+process_priority = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15
@@ -130,6 +139,8 @@ vertical_alignment = 1
 
 [node name="DeleteButton" type="Button" parent="CanvasLayer/3D/PointOptions"]
 unique_name_in_owner = true
+process_priority = 1
+process_physics_priority = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15
@@ -165,6 +176,8 @@ vertical_alignment = 1
 
 [node name="BreakButton" type="Button" parent="CanvasLayer/3D/PointOptions"]
 unique_name_in_owner = true
+process_priority = 1
+process_physics_priority = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15
@@ -206,6 +219,7 @@ offset_bottom = 40.0
 
 [node name="PreventsArtifactsInShader" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+layers = 1025
 light_color = Color(0, 0, 0, 1)
 light_energy = 0.0
 light_indirect_energy = 0.0

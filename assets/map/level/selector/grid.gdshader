@@ -22,7 +22,7 @@ void fragment() {
 	float alpha = 1.0 - pow(smoothstep(0.5, fade_distance, d), 0.5);
 	ALBEDO = color.rgb;
 	ALPHA = alpha;
-	
+
 	if (alpha <= 0.0) {
 		discard;
 	}

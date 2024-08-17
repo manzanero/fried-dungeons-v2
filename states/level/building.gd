@@ -13,6 +13,8 @@ var _click_origin_position := Vector2.ZERO
 var _click_origin_tile := Vector2i.ZERO
 var _is_rect_being_builded := false
 var _wall_being_builded: Wall
+var _entity_being_instanced: Entity
+var _entity_previous_properties := {}
 var _wall_hovered: Wall
 
 
@@ -23,43 +25,95 @@ var _is_something_being_builded: bool :
 
 func _enter_state(previous_state: String) -> void:
 	super._enter_state(previous_state)
-	
 	Game.ui.build_border.visible = true
-		
+	selector.grid.visible = true
+	selector.column.visible = true
+	
 	match mode:
-		TabBuilder.PAINT_TILE:
-			selector.grid.visible = true
-		TabBuilder.PAINT_RECT:
-			selector.grid.visible = true
-		TabBuilder.MOVE:
-			selector.grid.visible = true
-		TabBuilder.ONE_SIDED:
-			selector.grid.visible = true
-			selector.column.visible = true
-		TabBuilder.TWO_SIDED:
-			selector.grid.visible = true
-			selector.column.visible = true
-		TabBuilder.ROOM:
-			selector.grid.visible = true
-			selector.column.visible = true
-		TabBuilder.OBSTACLE:
-			selector.grid.visible = true
-			selector.column.visible = true
-		TabBuilder.CUT:
-			selector.grid.visible = true
-			selector.column.visible = true
+		TabBuilder.MOVE, TabBuilder.NEW_ENTITY, TabBuilder.PAINT_TILE, TabBuilder.PAINT_RECT:
+			selector.column.visible = false
+	
+	match mode:
+		TabBuilder.CHANGE, TabBuilder.FLIP, TabBuilder.PAINT_WALL:
+			selector.grid.visible = false
 
 
 func _exit_state(next_state: String) -> void:
 	super._exit_state(next_state)
+	Game.ui.build_border.visible = false
 	selector.grid.visible = false
 	selector.column.visible = false
 	selector.wall.visible = false
 	selector.wall.mesh = null
+	_is_rect_being_builded = false
 	_wall_being_builded = null
-	
-	Game.ui.build_border.visible = false
+	if is_instance_valid(_entity_being_instanced):
+		_entity_being_instanced.queue_free()
 
+
+func process_state(_delta: float) -> String:
+	process_ground_hitted()
+	
+	if Input.is_action_just_pressed("ui_cancel") and not _is_something_being_builded:
+		var button := Game.ui.tab_builder.tile_button.button_group.get_pressed_button()
+		if button:
+			button.button_pressed = false
+		return "Idle"
+	
+	match mode:
+		TabBuilder.ONE_SIDED:
+			process_change_grid()
+			process_change_column()
+			process_build_one_sided()
+		TabBuilder.TWO_SIDED:
+			process_change_grid()
+			process_change_column()
+			process_build_two_sided()
+		TabBuilder.ROOM:
+			process_change_grid()
+			process_change_column()
+			process_build_room()
+		TabBuilder.OBSTACLE:
+			process_change_grid()
+			process_change_column()
+			process_build_room(true)
+			
+		TabBuilder.MOVE:
+			process_change_grid()
+			process_wall_selection()
+		TabBuilder.CUT:
+			process_change_grid()
+			process_cutted_wall()
+			process_cut_wall()
+		TabBuilder.CHANGE:
+			process_hover_wall()
+			process_change_wall()
+		TabBuilder.FLIP:
+			process_hover_wall()
+			process_flip_wall()
+		TabBuilder.PAINT_WALL:
+			process_hover_wall()
+			process_paint_wall()
+			
+		TabBuilder.PAINT_TILE:
+			process_change_grid()
+			process_build_point()
+		TabBuilder.PAINT_RECT:
+			process_change_grid()
+			process_build_rect()
+			
+		TabBuilder.NEW_ENTITY:
+			process_change_grid()
+			process_instance_entity()
+		TabBuilder.NEW_LIGHT:
+			process_change_grid()
+			process_change_column()
+		TabBuilder.NEW_ENTITY:
+			process_change_grid()
+			process_change_column()
+			
+	return ""
+	
 
 func _physics_process_state(_delta: float) -> String:
 	process_ground_hitted()
@@ -111,6 +165,16 @@ func _physics_process_state(_delta: float) -> String:
 		TabBuilder.PAINT_RECT:
 			process_change_grid()
 			process_build_rect()
+			
+		TabBuilder.NEW_ENTITY:
+			process_change_grid()
+			process_instance_entity()
+		TabBuilder.NEW_LIGHT:
+			process_change_grid()
+			process_change_column()
+		TabBuilder.NEW_ENTITY:
+			process_change_grid()
+			process_change_column()
 			
 	return ""
 
@@ -317,9 +381,15 @@ func _create_temp_wall(origin: Vector3, destiny: Vector3) -> void:
 func process_cutted_wall():
 	process_hover_wall()
 	
+	selector.column.visible = true
+	if not _wall_hovered:
+		selector.column.visible = false
+	
 	if _wall_being_builded:
+		selector.column.visible = true
 		_wall_being_builded.line_renderer_3d.disabled = false
-		selector.reset_vanish()
+		
+		# cutting startes but mouse out of the wall
 		if _wall_being_builded != _wall_hovered:
 			selector.column.position = _wall_being_builded.curve.get_closest_point(Utils.v2_to_v3(level.position_hovered))
 			if _wall_hovered:
@@ -344,12 +414,6 @@ func process_cut_next_point() -> void:
 	
 	_create_temp_wall(origin, destiny)
 	selector.wall.visible = true
-	
-	#if _wall_hovered:
-		#selector.wall.visible = true
-		#_create_temp_wall(origin, destiny)
-	#else:
-		#selector.wall.visible = false
 
 
 func process_cut() -> void:
@@ -458,3 +522,26 @@ func _create_temp_room_face(index_offset: int, origin: Vector3, destiny: Vector3
 	st.add_index(index_offset + 1)
 	st.add_index(index_offset + 3)
 	st.add_index(index_offset + 2)
+
+
+func process_instance_entity():
+	if not is_instance_valid(_entity_being_instanced):
+		_entity_being_instanced = map.instancer.create_entity(selector.position_2d, _entity_previous_properties)
+		_entity_being_instanced.is_editing = true
+		_entity_being_instanced.is_preview = true
+		select(_entity_being_instanced)
+	
+	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_map_tab:
+		Debug.print_info_message("Element \"%s\" created" % _entity_being_instanced.name)
+		_entity_being_instanced.is_editing = false
+		_entity_being_instanced.is_preview = false
+		_entity_previous_properties = _entity_being_instanced.get_properties_values()
+		_entity_being_instanced = null
+	
+		
+	#if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
+		#if is_instance_valid(_entity_being_instanced):
+			#_entity_being_instanced.position = selector.position_3d
+		#
+	#if Input.is_action_just_released("left_click") and is_instance_valid(_entity_being_instanced):
+		#_entity_being_instanced = null

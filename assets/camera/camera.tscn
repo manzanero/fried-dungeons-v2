@@ -31,6 +31,7 @@ unique_name_in_owner = true
 [node name="FocusHint3D" type="MeshInstance3D" parent="Focus"]
 unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, -0.5, 0)
+layers = 256
 mesh = SubResource("SphereMesh_hp6ey")
 skeleton = NodePath("../..")
 surface_material_override/0 = SubResource("StandardMaterial3D_a8qb8")
@@ -40,6 +41,7 @@ unique_name_in_owner = true
 
 [node name="Eyes" type="Camera3D" parent="Focus/Pivot"]
 unique_name_in_owner = true
+cull_mask = 1047551
 fov = 30.0
 near = 0.1
 far = 1000.0

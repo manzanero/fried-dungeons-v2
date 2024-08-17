@@ -19,6 +19,23 @@ const _CRITICAL_STR := "[color=dark_red][b][CRITICAL][/b][/color]"
 var is_debug := true
 var level := INFO
 
+
+func print_debug_message(message: String):
+	print_message(DEBUG, message)
+
+func print_info_message(message: String):
+	print_message(INFO, message)
+
+func print_warning_message(message: String):
+	print_message(WARNING, message)
+
+func print_error_message(message: String):
+	print_message(ERROR, message)
+
+func print_critical_message(message: String):
+	print_message(CRITICAL, message)
+
+
 func print_message(debug_level: int, message: String):
 	if is_debug and debug_level >= level:
 		var time_str := "[color=dark_gray]%s.%03d[/color]" % [

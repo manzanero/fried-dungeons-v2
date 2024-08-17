@@ -5,8 +5,12 @@ extends Node3D
 signal master_view_enabled(value : bool)
 
 
-@export var is_master := false
+@export var loader: Loader
+@export var instancer: Instancer
+@export var levels_parent: Node3D
 @export var camera: Camera
+
+@export var is_master := false
 
 @export var title := "Untitled"
 @export var ambient_light := 0.0
@@ -36,13 +40,9 @@ signal master_view_enabled(value : bool)
 
 var label := "none"
 var cells := {}
-var selected_level : Level
+var selected_level: Level
 
-
-@onready var loader: Loader = $Loader
-
-@onready var levels_parent := $Levels as Node3D
-@onready var world_environment := $WorldEnvironment as WorldEnvironment
+@onready var world_environment: WorldEnvironment = $WorldEnvironment
 @onready var environment := world_environment.environment as Environment
 @onready var sky := environment.sky as Sky
 

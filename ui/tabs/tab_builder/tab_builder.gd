@@ -24,9 +24,9 @@ const ATLAS_TEXTURE_BUTTON = preload("res://ui/tabs/tab_builder/atlas_texture_bu
 @onready var tile_button: Button = %TileButton
 @onready var rect_button: Button = %RectButton
 
-@onready var new_object_button: Button = %NewObjectButton
-@onready var new_entity_button: Button = %NewEntityButton
-@onready var new_light_button: Button = %NewLightButton
+@onready var entity_button: Button = %EntityButton
+@onready var light_button: Button = %LightButton
+@onready var object_button: Button = %ObjectButton
 
 
 func _ready() -> void:
@@ -41,7 +41,6 @@ func _ready() -> void:
 		if material_index_selected == i:
 			button.button_pressed = true
 		
-
 	one_side_button.pressed.connect(_on_button_pressed.bind(one_side_button, ONE_SIDED))
 	two_side_button.pressed.connect(_on_button_pressed.bind(two_side_button, TWO_SIDED))
 	room_button.pressed.connect(_on_button_pressed.bind(room_button, ROOM))
@@ -56,9 +55,9 @@ func _ready() -> void:
 	tile_button.pressed.connect(_on_button_pressed.bind(tile_button, PAINT_TILE))
 	rect_button.pressed.connect(_on_button_pressed.bind(rect_button, PAINT_RECT))
 	
-	new_object_button.pressed.connect(_on_button_pressed.bind(new_object_button, NEW_OBJECT))
-	new_entity_button.pressed.connect(_on_button_pressed.bind(new_entity_button, NEW_ENTITY))
-	new_light_button.pressed.connect(_on_button_pressed.bind(new_light_button, NEW_LIGHT))
+	entity_button.pressed.connect(_on_button_pressed.bind(entity_button, NEW_ENTITY))
+	light_button.pressed.connect(_on_button_pressed.bind(light_button, NEW_LIGHT))
+	object_button.pressed.connect(_on_button_pressed.bind(object_button, NEW_OBJECT))
 
 	visibility_changed.connect(_on_visibility_changed)
 
@@ -82,46 +81,9 @@ func _on_visibility_changed():
 			button.button_pressed = false
 
 
-
-#func _set_wall_selected(wall: Wall):
-	#Utils.safe_queue_free(properties_container)
-	#containers_tree.clear()
-	#if not element:
-		#if is_instance_valid(element_selected):
-			#Debug.print_message(Debug.DEBUG, "Element \"%s\" unselected" % element_selected.name)
-		#return
-		#
-	#element_selected = element
-	#Debug.print_message(Debug.INFO, "Element \"%s\" selected" % element_selected.name) 
-	#
-	#root_container = PROPERTY_CONTAINER.instantiate().init(property_containers)
-	#root_container.container_name = element_selected.name
-	#root_container.collapsable = false
-	#
-	#var properties := element_selected.properties
-	#_make_containers_tree(properties)
-	#
-	#for property_name in properties:
-		#var property: Element.Property = properties[property_name]
-		#var property_container: PropertyContainer = containers_tree[property.container]
-		#var field: PropertyField
-		#match property.hint:
-			#Element.Property.Hints.STRING:
-				#field = STRING_FIELD.instantiate().init(property_container, property_name, property.value)
-			#Element.Property.Hints.COLOR:
-				#field = COLOR_FIELD.instantiate().init(property_container, property_name, property.value)
-			#Element.Property.Hints.BOOL:
-				#field = BOOL_FIELD.instantiate().init(property_container, property_name, property.value)
-			#Element.Property.Hints.FLOAT:
-				#field = FLOAT_FIELD.instantiate().init(property_container, property_name, property.value)
-			#_:
-				#Debug.print_message(Debug.ERROR, "Unkown type \"%s\" of property \"%s\"" % [typeof(property.value), property_name]) 
-		#field.value_changed.connect(_on_field_value_changed)
-
-
 enum {
-	PAINT_TILE, PAINT_RECT,
-	MOVE, CUT, CHANGE, FLIP, PAINT_WALL,
 	ONE_SIDED, TWO_SIDED, ROOM, OBSTACLE,
+	MOVE, CUT, CHANGE, FLIP, PAINT_WALL,
+	PAINT_TILE, PAINT_RECT,
 	NEW_OBJECT, NEW_ENTITY, NEW_LIGHT,
 }

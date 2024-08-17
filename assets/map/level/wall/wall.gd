@@ -40,7 +40,7 @@ var points : Array[WallPoint] = []
 
 var selected_point : WallPoint
 var edited_point : WallPoint
-var is_edit_mode : bool : set = _set_edit_mode
+var is_selected : bool : set = _set_selected
 		
 var is_editing : bool
 
@@ -89,8 +89,8 @@ func _process_wall_edit():
 		set_point(edited_point, point_position)
 
 
-func _set_edit_mode(value : bool):
-	is_edit_mode = value
+func _set_selected(value: bool):
+	is_selected = value
 	
 	if value:
 		line_renderer_3d.disabled = false
@@ -177,7 +177,7 @@ func break_point(broken_wall_point : WallPoint):
 			new_wall.add_point(Utils.v3_to_v2(point.position_3d))
 
 		level.selected_wall = new_wall
-		new_wall.is_edit_mode = true
+		new_wall.is_selected = true
 
 	if index < curve.point_count:
 		var new_wall : Wall = Game.wall_scene.instantiate().init(level, material_index, material_seed, material_layer, two_sided)

@@ -61,11 +61,10 @@ func _on_sleepin_state_changed():
 				result += linked_d100.result
 				if result > 100:
 					result -= 100
-					
-			
+
 			stopped.emit()
 			return
-	
+
 	roll()
 
 

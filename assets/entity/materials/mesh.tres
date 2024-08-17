@@ -4,6 +4,7 @@
 [ext_resource type="Texture2D" uid="uid://crmobcm0up3ug" path="res://resources/entity_textures/monsters/undead/undead_102.png" id="2_svd56"]
 
 [resource]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("1_ncjcp")
 shader_parameter/albedo = Color(1, 1, 1, 1)

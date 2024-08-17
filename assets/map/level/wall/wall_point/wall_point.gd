@@ -42,7 +42,7 @@ func _ready():
 	
 
 func _on_changed():
-	if not wall.is_edit_mode:
+	if not wall.is_selected:
 		return
 		
 	visible = not wall.level.map.camera.eyes.is_position_behind(position_3d)

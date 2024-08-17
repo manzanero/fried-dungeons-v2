@@ -13,7 +13,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.745098, 0.752941, 0.752941, 0.756863)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_m03fe"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_k11gk"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_3dj65"]
 radial_segments = 16
@@ -42,6 +42,7 @@ script = ExtResource("1_j4ayf")
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+layers = 1025
 light_indirect_energy = 0.0
 light_volumetric_fog_energy = 0.0
 light_specular = 0.0
@@ -54,7 +55,7 @@ material_override = SubResource("StandardMaterial3D_aqxnx")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_m03fe")
+mesh = SubResource("ImmediateMesh_k11gk")
 script = ExtResource("3_dc0qo")
 start_thickness = 0.063
 end_thickness = 0.063
@@ -66,6 +67,7 @@ tile_texture = false
 [node name="InnerMesh" type="MeshInstance3D" parent="Body"]
 unique_name_in_owner = true
 transform = Transform3D(0.063, 0, 0, 0, 0.063, 0, 0, 0, 0.063, 0, 1, 0)
+layers = 8
 cast_shadow = 0
 gi_mode = 0
 mesh = SubResource("SphereMesh_3dj65")
@@ -75,6 +77,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_fp4lq")
 [node name="OuterMesh" type="MeshInstance3D" parent="Body"]
 unique_name_in_owner = true
 transform = Transform3D(0.125, 0, 0, 0, 0.125, 0, 0, 0, 0.125, 0, 1, 0)
+layers = 8
 cast_shadow = 0
 gi_mode = 0
 mesh = SubResource("SphereMesh_3dj65")

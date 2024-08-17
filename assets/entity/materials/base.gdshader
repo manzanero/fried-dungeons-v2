@@ -30,19 +30,19 @@ void light() {
 		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;  // add the light of the lighter
 		ALPHA = alpha;
 	} else if (LIGHT_IS_DIRECTIONAL) {
-		
+
 	} else {
-		
+
 		// if is in view for any viewer
 		if (ATTENUATION * SPECULAR_AMOUNT > 0.001)
 			SPECULAR_LIGHT.x = 0.001;
 		else
 			DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;  // add the light of the lighter
-		
+
 		// if is in light for any lighter
 		if (has_ambient_light || DIFFUSE_LIGHT.x > 0.001)
 			SPECULAR_LIGHT.y = 0.001;
-		
+
 		// if is in view and light
 		if (SPECULAR_LIGHT.x > 0. && SPECULAR_LIGHT.y > 0.)
 			ALPHA = alpha;

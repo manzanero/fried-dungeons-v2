@@ -19,6 +19,8 @@ script = ExtResource("1_awbn3")
 
 [node name="Button" type="Button" parent="."]
 unique_name_in_owner = true
+process_priority = 1
+process_physics_priority = 1
 custom_minimum_size = Vector2(16, 16)
 layout_mode = 1
 anchors_preset = 15

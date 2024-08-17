@@ -9,6 +9,15 @@ extends Node3D
 @onready var column: LineRenderer = %Column
 
 
+var position_2d: Vector2 :
+	get:
+		return Utils.v3_to_v2(column.position)
+
+var position_3d: Vector3 :
+	get:
+		return column.position
+
+
 var _has_changed := false
 var _cached_grid_position := Vector2.ZERO
 var _cached_area_position := Vector2.ZERO

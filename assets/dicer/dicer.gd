@@ -49,7 +49,6 @@ func create_dice_roll(dice_string: String,
 				12: die = D12.instantiate()
 				20: die = D20.instantiate()
 			die.init(dice_roll, rr.dice_side, dice_color, randi_range(0, 999999))
-	
 
 
 func _on_dice_roll_finished(dice_string: String, result: Array):

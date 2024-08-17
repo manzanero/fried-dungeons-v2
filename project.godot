@@ -12,7 +12,7 @@ config_version=5
 
 config/name="Fried Dungeons"
 run/main_scene="res://assets/game_manager/game_manager.tscn"
-config/features=PackedStringArray("4.2", "Forward Plus")
+config/features=PackedStringArray("4.3", "Forward Plus")
 run/max_fps=240
 config/icon="res://icon.svg"
 
@@ -66,7 +66,7 @@ shift_left_click={
 }
 control={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194326,"physical_keycode":0,"key_label":0,"unicode":0,"echo":false,"script":null)
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":4194326,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
 
@@ -79,6 +79,9 @@ control={
 3d_render/layer_5="entity"
 3d_render/layer_6="object"
 3d_render/layer_7="die"
+3d_render/layer_9="selector"
+3d_render/layer_10="entity_base"
+3d_render/layer_11="ground_blank"
 3d_physics/layer_1="earth"
 3d_physics/layer_2="water"
 3d_physics/layer_3="flame"
@@ -95,7 +98,8 @@ control={
 
 [physics]
 
-3d/physics_engine="JoltPhysics3D"
+3d/run_on_separate_thread=true
+3d/physics_engine="Rapier3D"
 
 [rendering]
 
@@ -124,4 +128,8 @@ has_ambient_light={
 wall_atlas={
 "type": "sampler2D",
 "value": "res://user/defaults/atlas/default.png"
+}
+light_texture={
+"type": "sampler2D",
+"value": ""
 }

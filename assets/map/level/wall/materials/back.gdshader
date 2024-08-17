@@ -1,9 +1,7 @@
 shader_type spatial;
 
-
 render_mode blend_add;
 render_mode cull_front;
-
 render_mode specular_disabled;
 render_mode fog_disabled;
 
@@ -20,14 +18,28 @@ void fragment() {
 	vec4 albedo_tex = texture(wall_atlas, UV);
 	ALBEDO = 0.5 * albedo_tex.rgb;
 	NORMAL = -NORMAL;
-	alpha = albedo_tex.a * 0.75;
+	
+	//if (int(FRAGCOORD.x) % 2 == 0) discard;
+	//if ((int(FRAGCOORD.y) + 1) % 2 == 0) discard;
+	
+	if (int(FRAGCOORD.y) % 2 == 0)
+		if (int(FRAGCOORD.x) % 2 == 0)
+		//if ((int(FRAGCOORD.y) + 1) % 2 == 0)
+			discard;
+	
+	if ((int(FRAGCOORD.x) + 1) % 2 == 0)
+		if ((int(FRAGCOORD.y) + 1) % 2 == 0)
+			discard;
+		
+	alpha = albedo_tex.a;
+
 	ALPHA = 0.;
 }
 
 
 void light() {
 	if (is_master_view) {
-		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR * 0.5;
+		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR * 1.;
 		ALPHA = alpha;
 	} else if (LIGHT_IS_DIRECTIONAL) {
 		

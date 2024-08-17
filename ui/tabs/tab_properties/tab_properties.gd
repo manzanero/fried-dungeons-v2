@@ -2,9 +2,6 @@ class_name TabProperties
 extends Control
 
 
-signal element_changed(element: Element, property: String, value: Variant)
-
-
 const PROPERTY_CONTAINER := preload("res://ui/tabs/tab_properties/container/property_container.tscn")
 const STRING_FIELD := preload("res://ui/tabs/tab_properties/field/string_field/string_field.tscn")
 const COLOR_FIELD := preload("res://ui/tabs/tab_properties/field/color_field/color_field.tscn")
@@ -25,11 +22,11 @@ func _set_element_selected(element: Element):
 	containers_tree.clear()
 	if not element:
 		if is_instance_valid(element_selected):
-			Debug.print_message(Debug.DEBUG, "Element \"%s\" unselected" % element_selected.name)
+			Debug.print_debug_message("Element \"%s\" unselected" % element_selected.name)
 		return
 		
 	element_selected = element
-	Debug.print_message(Debug.INFO, "Element \"%s\" selected" % element_selected.name) 
+	Debug.print_info_message("Element \"%s\" selected" % element_selected.name) 
 	
 	root_container = PROPERTY_CONTAINER.instantiate().init(property_containers)
 	root_container.container_name = element_selected.name

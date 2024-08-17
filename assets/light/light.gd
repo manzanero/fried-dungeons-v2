@@ -48,9 +48,9 @@ var hidden := true :
 		hidden = value
 		body.visible = not value
 var target_position : Vector2
-var is_edit_mode : bool :
+var is_selected: bool :
 	set(value):
-		is_edit_mode = value
+		is_selected = value
 		if value:
 			line_renderer_3d.disabled = false
 		else:
@@ -94,8 +94,13 @@ func _process(delta : float):
 		position = lerp(position, Utils.v2_to_v3(target_position), 10 * delta)
 		
 	#omni_light_3d.position.y = 0.5 + 1. / 128. * (1 + sin(floor(Time.get_ticks_msec() / PI / 64)))
+	
 
 
+func remove():
+	queue_free()
+	
+	
 ###############
 # Serializers #
 ###############

@@ -15,7 +15,7 @@ void vertex() {
 void fragment() {
 	float d = length(vec2(mouse_position.x - world_vertex.x, mouse_position.z - world_vertex.z));
 	float alpha = 1.0 - pow(smoothstep(0.5, 2.5, d), 0.5);
-	
+
 	vec4 albedo_tex = texture(texture_albedo, UV);
 	ALBEDO = albedo_tex.rgb;
 	ALPHA *= alpha * albedo_tex.a * 0.75;

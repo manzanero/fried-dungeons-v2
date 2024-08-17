@@ -26,8 +26,15 @@ func set_property_value(property_name: StringName, new_value: Variant) -> void:
 	property_changed.emit(property_name, old_value, new_value)
 	
 	
-func get_property(property_name: StringName, default: Variant) -> Property:
+func get_property(property_name: StringName, default: Variant = null) -> Property:
 	return properties.get(property_name, default)
+	
+
+func get_properties_values():
+	var property_values := {}
+	for property_name in properties:
+		property_values[property_name] = properties[property_name].value
+	return property_values
 	
 
 func merge_properties(properties_dict: Dictionary):

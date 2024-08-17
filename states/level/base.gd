@@ -37,7 +37,7 @@ func process_wall_selection():
 		Game.handled_input = true
 				
 	elif is_instance_valid(level.selected_wall):
-		level.selected_wall.is_edit_mode = false
+		level.selected_wall.is_selected = false
 		level.selected_wall = null
 	
 
@@ -56,7 +56,7 @@ func process_light_selection():
 		Game.handled_input = true
 
 	elif is_instance_valid(level.selected_light):
-		level.selected_light.is_edit_mode = false
+		level.selected_light.is_selected = false
 		level.selected_light = null
 
 
@@ -86,10 +86,8 @@ func process_entity_selection():
 		Game.handled_input = true
 	
 	elif is_instance_valid(level.selected_entity): 
-		level.selected_entity.is_edit_mode = false
+		level.selected_entity.is_selected = false
 		level.selected_entity = null
-		
-		Game.ui.tab_properties.element_selected = null
 
 
 func process_entity_movement():
@@ -116,53 +114,52 @@ func process_ground_hitted():
 
 	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.GROUND_BITMASK)
 	if hit_info:
-		level.position_hovered = Utils.v3_to_v2(hit_info["position"]).snapped(Game.PIXEL)
+		var hit_position = hit_info["position"]
+		level.position_hovered = Utils.v3_to_v2(hit_position.snapped(Game.VOXEL))
 		level.tile_hovered = Utils.v2_to_v2i(level.position_hovered)
 		level.is_ground_hovered = true
-		level.ground_hitted.emit()
 
 
 func process_ceilling_hitted():
 	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.CEILLING_BITMASK)
 	if hit_info:
-		level.ceilling_hovered = Utils.v3_to_v2(hit_info["position"]).snapped(Game.PIXEL)
+		var hit_position = hit_info["position"]
+		level.ceilling_hovered = Utils.v3_to_v2(hit_position.snapped(Game.VOXEL))
 		
 
-func select(thing):	
+func select(thing):
 	if thing is Light:
-		thing.is_edit_mode = true
+		thing.is_selected = true
 		level.selected_light = thing
 		for light in level.lights_parent.get_children():
 			if light != thing:
-				light.is_edit_mode = false
+				light.is_selected = false
 	else:
 		level.selected_light = null
 		for light in level.lights_parent.get_children():
-			light.is_edit_mode = false
+			light.is_selected = false
 
 	if thing is Entity:
-		thing.is_edit_mode = true
+		thing.is_selected = true
 		level.selected_entity = thing
 		for entity: Entity in level.entities_parent.get_children():
 			if entity != thing:
-				entity.is_edit_mode = false
-				
-		Game.ui.tab_properties.element_selected = thing
+				entity.is_selected = false
 		
 	else:
 		level.selected_entity = null
 		for entity in level.entities_parent.get_children():
-			entity.is_edit_mode = false
+			entity.is_selected = false
 				
 			
 	if thing is Wall:
-		thing.is_edit_mode = true
+		thing.is_selected = true
 		level.selected_wall = thing
 		for wall in level.walls_parent.get_children():
 			if wall != thing:
-				wall.is_edit_mode = false
+				wall.is_selected = false
 		
 	else:
 		level.selected_wall = null
 		for wall in level.walls_parent.get_children():
-			wall.is_edit_mode = false
+			wall.is_selected = false

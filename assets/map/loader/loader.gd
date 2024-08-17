@@ -46,8 +46,8 @@ func load_donjon_json_file(json_file_path):
 	
 	# horizontal walls
 	for z in range(len_z):
-		var wall : Wall
-		var wall_last_point : WallPoint
+		var wall: Wall = null
+		var wall_last_point: WallPoint = null
 		
 		for x in range(1, len_x): 
 			var donjon_code_down : float = cells_data[z][x]

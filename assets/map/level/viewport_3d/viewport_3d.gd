@@ -15,24 +15,21 @@ var rect : Rect2 :
 @onready var floor_2d := $SubViewport/Floor2D as Floor2D
 @onready var tile_map := floor_2d.tile_map as TileMap
 
+@onready var light_viewport: SubViewport = %LightViewport
+@onready var camera_3d: Camera3D = %Camera3D
+
 
 func _ready():
-	
-	# Viewports cannot start with texture
-	#var mesh_material := get_surface_override_material(0) as StandardMaterial3D
-	#mesh_material.albedo_texture = viewport.get_texture()
-	
-	var mesh_material: ShaderMaterial = get_surface_override_material(0)
-	mesh_material.set_shader_parameter("texture_albedo", viewport.get_texture())
-
-	
 	rect_changed.connect(_on_rect_changed)
 	
 	# set init state
 	rect = tile_map.get_used_rect()
 	
-
-func _on_rect_changed(new_rect : Rect2):
+	
+func _on_rect_changed(new_rect: Rect2):
+	if not new_rect:
+		return
+	
 	var tile_size = tile_map.tile_set.tile_size.x
 	var rect_position := new_rect.position
 	var rect_size := new_rect.size
@@ -41,8 +38,13 @@ func _on_rect_changed(new_rect : Rect2):
 	viewport.size = rect_size * tile_size
 	position = Vector3(rect_position.x + rect_size.x / 2.0, 0, rect_position.y + rect_size.y / 2.0)
 	(mesh as PlaneMesh).size = rect_size
+	
+	# light viewport
+	light_viewport.size = viewport.size
+	camera_3d.size = rect_size.x
+	camera_3d.position = position + Vector3.UP
 
-	Debug.print_message(Debug.INFO, "New rect: %s" % [rect])
+	Debug.print_debug_message("New rect: %s" % [rect])
 
 
 func tile_map_set_cell(tile_hovered : Vector2i, xy : Vector2i, erase := false):

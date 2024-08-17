@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://54qydkhvxv4n"]
+[gd_scene load_steps=24 format=3 uid="uid://54qydkhvxv4n"]
 
 [ext_resource type="Script" path="res://assets/map/level/level.gd" id="1_jdpmt"]
 [ext_resource type="Shader" path="res://assets/map/level/wall/materials/ground_next.gdshader" id="2_gm41o"]
@@ -7,20 +7,39 @@
 [ext_resource type="Script" path="res://states/level/idle.gd" id="3_plroy"]
 [ext_resource type="PackedScene" uid="uid://c7kw2qqn2s7gb" path="res://assets/map/level/viewport_3d/floor_2d/floor_2d.tscn" id="4_4yvlj"]
 [ext_resource type="Script" path="res://states/level/building.gd" id="4_incym"]
-[ext_resource type="Texture2D" uid="uid://cn0b7xxcmi6rw" path="res://resources/textures/texture_atlas.png" id="6_tjkgc"]
+[ext_resource type="Shader" path="res://assets/map/level/wall/materials/ground_blank.gdshader" id="5_n0ut6"]
+[ext_resource type="Environment" uid="uid://drd07quupnr1b" path="res://assets/map/map_environment.tres" id="9_a35q0"]
 [ext_resource type="Texture2D" uid="uid://c6jbklo7jmx2k" path="res://resources/grid/grid.png" id="9_qhb38"]
 [ext_resource type="PackedScene" uid="uid://b3xa6np7itoyx" path="res://assets/map/level/selector/selector.tscn" id="10_isfb4"]
 
+[sub_resource type="QuadMesh" id="QuadMesh_xqf8a"]
+size = Vector2(1000, 1000)
+orientation = 1
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_b7q4t"]
+render_priority = 0
+shader = ExtResource("5_n0ut6")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+
 [sub_resource type="PlaneMesh" id="PlaneMesh_f84fu"]
 
+[sub_resource type="ViewportTexture" id="ViewportTexture_to44r"]
+viewport_path = NodePath("Ground/Viewport3D/SubViewport")
+
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ajd5n"]
+resource_local_to_scene = true
 render_priority = -1
 shader = ExtResource("2_gm41o")
 shader_parameter/albedo = Color(0.33, 0.33, 0.33, 1)
-shader_parameter/texture_albedo = ExtResource("6_tjkgc")
+shader_parameter/texture_albedo = SubResource("ViewportTexture_to44r")
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_e5pg7"]
 points = PackedVector3Array(-1000, 0, -1000, 1000, 0, -1000, 1000, 0, 1000, -1000, 0, 1000, -1000, -1, -1000, 1000, -1, -1000, 1000, -1, 1000, -1000, -1, 1000)
+
+[sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_ycm7m"]
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_wjyid"]
+viewport_path = NodePath("Ground/Viewport3D/LightViewport")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ajfyi"]
 albedo_texture = ExtResource("9_qhb38")
@@ -57,6 +76,12 @@ script = ExtResource("4_incym")
 
 [node name="Ground" type="Node3D" parent="."]
 
+[node name="Blank" type="MeshInstance3D" parent="Ground"]
+layers = 1024
+cast_shadow = 0
+mesh = SubResource("QuadMesh_xqf8a")
+surface_material_override/0 = SubResource("ShaderMaterial_b7q4t")
+
 [node name="Viewport3D" type="MeshInstance3D" parent="Ground"]
 unique_name_in_owner = true
 mesh = SubResource("PlaneMesh_f84fu")
@@ -74,13 +99,45 @@ size = Vector2i(256, 256)
 [node name="Floor2D" parent="Ground/Viewport3D/SubViewport" instance=ExtResource("4_4yvlj")]
 unique_name_in_owner = true
 
+[node name="RefreshLightTimer" type="Timer" parent="Ground/Viewport3D"]
+unique_name_in_owner = true
+autostart = true
+
+[node name="LightViewport" type="SubViewport" parent="Ground/Viewport3D"]
+unique_name_in_owner = true
+transparent_bg = true
+canvas_item_default_texture_filter = 0
+gui_disable_input = true
+size = Vector2i(1600, 1600)
+render_target_update_mode = 0
+
+[node name="Camera3D" type="Camera3D" parent="Ground/Viewport3D/LightViewport"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1, 0)
+keep_aspect = 0
+cull_mask = 1047554
+environment = ExtResource("9_a35q0")
+projection = 1
+current = true
+far = 2.0
+
 [node name="GroundCollider" type="StaticBody3D" parent="Ground"]
 unique_name_in_owner = true
 collision_layer = 16777216
 collision_mask = 0
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground/GroundCollider"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.344548, 0)
 shape = SubResource("ConvexPolygonShape3D_e5pg7")
+
+[node name="UnprecisedCollider" type="CollisionShape3D" parent="Ground/GroundCollider"]
+shape = SubResource("WorldBoundaryShape3D_ycm7m")
+
+[node name="DebugLightTexture" type="TextureRect" parent="Ground"]
+visible = false
+offset_right = 40.0
+offset_bottom = 40.0
+texture = SubResource("ViewportTexture_wjyid")
 
 [node name="Ceilling" type="Node3D" parent="."]
 
@@ -109,3 +166,7 @@ unique_name_in_owner = true
 unique_name_in_owner = true
 
 [node name="Selector" parent="." instance=ExtResource("10_isfb4")]
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="."]
+offset_right = 2048.0
+offset_bottom = 2048.0
