@@ -19,8 +19,16 @@ func _on_camera_fps_enabled(value: bool):
 		Game.ui.tab_settings.ambient_changed.emit(true, light, color)
 	else:
 		Game.ui.tab_settings.master_view_check.pressed.emit()
-		
+	
+	var builder_button_pressed = Game.ui.tab_builder.wall_button.button_group.get_pressed_button()
+	if builder_button_pressed:
+		var state_machine := Game.ui.selected_map.selected_level.state_machine
+		state_machine.change_state("Idle")
+		builder_button_pressed.button_pressed = false
+	
 	get_tree().set_group("lights", "hidden", value)
+	get_tree().set_group("base", "visible", not value)
+	
 	
 
 func _process(_delta: float) -> void:

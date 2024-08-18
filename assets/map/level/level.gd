@@ -10,7 +10,7 @@ extends Node3D
 
 @export var selector: Selector
 
-@export var refresh_light_frecuency := 0.5
+@export var refresh_light_frecuency := 0.1
 
 
 var rect: Rect2 : 
@@ -50,6 +50,7 @@ var light_sample_2d: Image
 
 @onready var refresh_light_timer: Timer = %RefreshLightTimer
 @onready var light_viewport: SubViewport = %LightViewport
+@onready var light_texture: ViewportTexture = light_viewport.get_texture()
 @onready var camera_3d: Camera3D = %Camera3D
 
 @onready var ceilling_mesh_instance_3d: MeshInstance3D = $Ceilling/MeshInstance3D
@@ -75,17 +76,19 @@ func _ready():
 	
 	refresh_light_timer.wait_time = refresh_light_frecuency
 	refresh_light_timer.timeout.connect(_on_refreshed_light)
+	RenderingServer.global_shader_parameter_set("light_texture", light_texture)
+	#light_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	
 
 func _on_refreshed_light():
 	light_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-	light_sample_2d = light_viewport.get_texture().get_image()
+	light_sample_2d = light_texture.get_image()
 	
-	for entity: Entity in entities_parent.get_children():
-		if get_point_light(entity.position_2d).a:
-			entity.is_watched = true
-		else:
-			entity.is_watched = false
+	#for entity: Entity in entities_parent.get_children():
+		#if get_light(entity.position_2d).a:
+			#entity.is_watched = true
+		#else:
+			#entity.is_watched = false
 
 
 func _on_camera_changed():
@@ -93,7 +96,9 @@ func _on_camera_changed():
 		follower_entity.global_position = Game.camera.hint_3d.global_position
 
 
-func get_point_light(point: Vector2):
+func get_light(point: Vector2) -> Color:
+	if not light_sample_2d:
+		return Color.TRANSPARENT
 	return light_sample_2d.get_pixelv(point * 16)
 
 

@@ -39,6 +39,8 @@ func _ready():
 	changed.connect(_on_changed)
 	button.button_down.connect(_on_button_down)
 	button.button_up.connect(_on_button_up)
+	button.gui_input.connect(_on_gui_input)
+	button.mouse_exited.connect(_on_mouse_exited)
 	
 
 func _on_changed():
@@ -56,9 +58,17 @@ func _on_changed():
 func _on_button_down():
 	wall.select_point(null)
 	wall.edit_point(self)
-	Game.handled_input = true
 
 	
 func _on_button_up():
 	wall.select_point(self)
 	wall.edit_point(null)
+	
+	
+func _on_gui_input(event: InputEvent):
+	Game.handled_input = true
+	
+	
+func _on_mouse_exited():
+	Game.ui.selected_map_tab.cursor_control.visible = true
+	

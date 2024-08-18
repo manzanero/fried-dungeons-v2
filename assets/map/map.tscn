@@ -51,7 +51,6 @@ theme = ExtResource("4_1lesj")
 
 [node name="PointOptions" type="Control" parent="CanvasLayer/3D"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 1
 anchors_preset = 8
 anchor_left = 0.5
@@ -81,6 +80,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
+mouse_default_cursor_shape = 10
 theme = ExtResource("5_mdj24")
 keep_pressed_outside = true
 
@@ -117,6 +117,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
+mouse_default_cursor_shape = 10
 theme = ExtResource("5_mdj24")
 keep_pressed_outside = true
 
@@ -154,6 +155,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
+mouse_default_cursor_shape = 8
 theme = ExtResource("6_6ihmm")
 keep_pressed_outside = true
 
@@ -191,6 +193,7 @@ grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
+mouse_default_cursor_shape = 1
 theme = ExtResource("6_6ihmm")
 keep_pressed_outside = true
 
@@ -207,6 +210,7 @@ offset_right = 7.0
 offset_bottom = 11.0
 grow_horizontal = 2
 grow_vertical = 2
+mouse_default_cursor_shape = 1
 text = "<>"
 horizontal_alignment = 1
 vertical_alignment = 1

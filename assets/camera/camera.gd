@@ -3,6 +3,8 @@ extends Node3D
 
 signal changed()
 signal fps_enabled(value : bool)
+signal mouse_entered()
+signal mouse_exited()
 
 @export var init_x: float = 15
 @export var init_z: float = 25
@@ -190,7 +192,27 @@ func _input(event):
 			return
 			
 		if is_rotate or is_move or is_fps:
-			offset_mouse_move += event.relative
+			var viewport := get_viewport()
+			var size: Vector2i = viewport.size
+			var mouse_position := viewport.get_mouse_position()
+			
+			if mouse_position.x < 0:
+				mouse_position.x += size.x
+				viewport.warp_mouse(mouse_position)
+			elif mouse_position.x > size.x:
+				mouse_position.x -= size.x
+				viewport.warp_mouse(mouse_position)
+			
+			if mouse_position.y < 0:
+				mouse_position.y += size.y
+				viewport.warp_mouse(mouse_position)
+			elif mouse_position.y > size.y:
+				mouse_position.y -= size.y
+				viewport.warp_mouse(mouse_position)
+			
+			if event.relative.length() < 256:
+				offset_mouse_move += event.relative
+			
 
 	elif event is InputEventMouseButton:
 		if event.is_released():
@@ -228,8 +250,28 @@ func _notification(what : int):
 	match what:
 		NOTIFICATION_WM_MOUSE_EXIT:
 			is_mouse_visible = false
+			mouse_exited.emit()
+			
+			#var view = get_viewport()
+			#var size = Game.ui.size
+			#var width = view.size.x
+			#var height = view.size.y
+			#var current_mouse_position := view.get_mouse_position()
+			#var position_x = current_mouse_position.x
+			#var position_y = current_mouse_position.y
+			#
+			#if position_x < 0:
+				#position_x += width
+			#elif position_x > width:
+				#position_x -= width
+				#
+			#print(view.size)
+			#print(current_mouse_position)
+			#Input.warp_mouse(Vector2(position_x, position_y))
+			#set_deferred("is_operated", true)
 		NOTIFICATION_WM_MOUSE_ENTER:
 			is_mouse_visible = true
+			mouse_entered.emit()
 		NOTIFICATION_APPLICATION_FOCUS_OUT:
 			is_windows_focused = false
 		NOTIFICATION_APPLICATION_FOCUS_IN:

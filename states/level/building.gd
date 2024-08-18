@@ -14,7 +14,8 @@ var _click_origin_tile := Vector2i.ZERO
 var _is_rect_being_builded := false
 var _wall_being_builded: Wall
 var _entity_being_instanced: Entity
-var _entity_previous_properties := {}
+var _light_being_instanced: Light
+var _previous_properties := {}
 var _wall_hovered: Wall
 
 
@@ -30,7 +31,7 @@ func _enter_state(previous_state: String) -> void:
 	selector.column.visible = true
 	
 	match mode:
-		TabBuilder.MOVE, TabBuilder.NEW_ENTITY, TabBuilder.PAINT_TILE, TabBuilder.PAINT_RECT:
+		TabBuilder.MOVE, TabBuilder.NEW_ENTITY, TabBuilder.NEW_LIGHT, TabBuilder.PAINT_TILE, TabBuilder.PAINT_RECT:
 			selector.column.visible = false
 	
 	match mode:
@@ -49,71 +50,10 @@ func _exit_state(next_state: String) -> void:
 	_wall_being_builded = null
 	if is_instance_valid(_entity_being_instanced):
 		_entity_being_instanced.queue_free()
+	if is_instance_valid(_light_being_instanced):
+		_light_being_instanced.queue_free()
+	_previous_properties = {}
 
-
-func process_state(_delta: float) -> String:
-	process_ground_hitted()
-	
-	if Input.is_action_just_pressed("ui_cancel") and not _is_something_being_builded:
-		var button := Game.ui.tab_builder.tile_button.button_group.get_pressed_button()
-		if button:
-			button.button_pressed = false
-		return "Idle"
-	
-	match mode:
-		TabBuilder.ONE_SIDED:
-			process_change_grid()
-			process_change_column()
-			process_build_one_sided()
-		TabBuilder.TWO_SIDED:
-			process_change_grid()
-			process_change_column()
-			process_build_two_sided()
-		TabBuilder.ROOM:
-			process_change_grid()
-			process_change_column()
-			process_build_room()
-		TabBuilder.OBSTACLE:
-			process_change_grid()
-			process_change_column()
-			process_build_room(true)
-			
-		TabBuilder.MOVE:
-			process_change_grid()
-			process_wall_selection()
-		TabBuilder.CUT:
-			process_change_grid()
-			process_cutted_wall()
-			process_cut_wall()
-		TabBuilder.CHANGE:
-			process_hover_wall()
-			process_change_wall()
-		TabBuilder.FLIP:
-			process_hover_wall()
-			process_flip_wall()
-		TabBuilder.PAINT_WALL:
-			process_hover_wall()
-			process_paint_wall()
-			
-		TabBuilder.PAINT_TILE:
-			process_change_grid()
-			process_build_point()
-		TabBuilder.PAINT_RECT:
-			process_change_grid()
-			process_build_rect()
-			
-		TabBuilder.NEW_ENTITY:
-			process_change_grid()
-			process_instance_entity()
-		TabBuilder.NEW_LIGHT:
-			process_change_grid()
-			process_change_column()
-		TabBuilder.NEW_ENTITY:
-			process_change_grid()
-			process_change_column()
-			
-	return ""
-	
 
 func _physics_process_state(_delta: float) -> String:
 	process_ground_hitted()
@@ -170,8 +110,9 @@ func _physics_process_state(_delta: float) -> String:
 			process_change_grid()
 			process_instance_entity()
 		TabBuilder.NEW_LIGHT:
+			process_ceilling_hitted()
 			process_change_grid()
-			process_change_column()
+			process_instance_light()
 		TabBuilder.NEW_ENTITY:
 			process_change_grid()
 			process_change_column()
@@ -526,7 +467,7 @@ func _create_temp_room_face(index_offset: int, origin: Vector3, destiny: Vector3
 
 func process_instance_entity():
 	if not is_instance_valid(_entity_being_instanced):
-		_entity_being_instanced = map.instancer.create_entity(selector.position_2d, _entity_previous_properties)
+		_entity_being_instanced = map.instancer.create_entity(selector.position_2d, _previous_properties)
 		_entity_being_instanced.is_editing = true
 		_entity_being_instanced.is_preview = true
 		select(_entity_being_instanced)
@@ -535,13 +476,20 @@ func process_instance_entity():
 		Debug.print_info_message("Element \"%s\" created" % _entity_being_instanced.name)
 		_entity_being_instanced.is_editing = false
 		_entity_being_instanced.is_preview = false
-		_entity_previous_properties = _entity_being_instanced.get_properties_values()
+		_previous_properties = _entity_being_instanced.get_properties_values()
 		_entity_being_instanced = null
+
+
+func process_instance_light():
+	if not is_instance_valid(_light_being_instanced):
+		_light_being_instanced = map.instancer.create_light(selector.position_2d, _previous_properties)
+		_light_being_instanced.is_editing = true
+		_light_being_instanced.is_preview = true
+		select(_light_being_instanced)
 	
-		
-	#if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
-		#if is_instance_valid(_entity_being_instanced):
-			#_entity_being_instanced.position = selector.position_3d
-		#
-	#if Input.is_action_just_released("left_click") and is_instance_valid(_entity_being_instanced):
-		#_entity_being_instanced = null
+	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_map_tab:
+		Debug.print_info_message("Element \"%s\" created" % _light_being_instanced.name)
+		_light_being_instanced.is_editing = false
+		_light_being_instanced.is_preview = false
+		_previous_properties = _light_being_instanced.get_properties_values()
+		_light_being_instanced = null

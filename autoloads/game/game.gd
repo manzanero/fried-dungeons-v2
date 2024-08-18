@@ -21,7 +21,7 @@ const PIXEL_SNAPPING_QUARTER := PIXEL * 4
 const VOXEL_SNAPPING_HALF := VOXEL * 8
 const VOXEL_SNAPPING_QUARTER := VOXEL * 4
 
-const MAX_LIGHTS := 30
+const MAX_LIGHTS := 60  # TODO: check if can be higher
 
 const ENTITY_LAYER := 17
 const LIGHT_LAYER := 18

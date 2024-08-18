@@ -66,10 +66,18 @@ func _ready():
 
 	add_after_button.button_down.connect(_on_add_after_button_down)
 	add_after_button.button_up.connect(_on_add_after_button_up)
+	add_after_button.gui_input.connect(_on_gui_input)
+	add_after_button.mouse_exited.connect(_on_mouse_exited)
 	add_before_button.button_down.connect(_on_add_before_button_down)
 	add_before_button.button_up.connect(_on_add_before_button_up)
+	add_before_button.gui_input.connect(_on_gui_input)
+	add_before_button.mouse_exited.connect(_on_mouse_exited)
 	delete_button.button_down.connect(_on_delete_button_down)
+	delete_button.gui_input.connect(_on_gui_input)
+	delete_button.mouse_exited.connect(_on_mouse_exited)
 	break_button.button_down.connect(_on_break_button_down)
+	break_button.gui_input.connect(_on_gui_input)
+	break_button.mouse_exited.connect(_on_mouse_exited)
 	
 	point_options.visible = false
 	
@@ -103,7 +111,6 @@ func _on_add_after_button_down():
 	var point := wall.selected_point
 	var new_point = wall.add_point(selected_level.position_hovered, point.index + 1)
 	wall.edit_point(new_point)
-	Game.handled_input = true
 
 	
 func _on_add_after_button_up():
@@ -118,7 +125,6 @@ func _on_add_before_button_down():
 	var point := wall.selected_point
 	var new_point = wall.add_point(selected_level.position_hovered, point.index)
 	wall.edit_point(new_point)
-	Game.handled_input = true
 
 	
 func _on_add_before_button_up():
@@ -132,11 +138,18 @@ func _on_delete_button_down():
 	var wall := selected_level.selected_wall
 	wall.remove_point(wall.selected_point)
 	wall.select_point(null)
-	Game.handled_input = true
 	
 
 func _on_break_button_down():
 	var wall := selected_level.selected_wall
 	wall.break_point(wall.selected_point)
 	wall.select_point(null)
+	
+	
+func _on_gui_input(event: InputEvent):
 	Game.handled_input = true
+	
+	
+func _on_mouse_exited():
+	Game.ui.selected_map_tab.cursor_control.visible = true
+	

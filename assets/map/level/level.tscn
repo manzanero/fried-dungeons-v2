@@ -30,7 +30,7 @@ viewport_path = NodePath("Ground/Viewport3D/SubViewport")
 resource_local_to_scene = true
 render_priority = -1
 shader = ExtResource("2_gm41o")
-shader_parameter/albedo = Color(0.33, 0.33, 0.33, 1)
+shader_parameter/albedo = Color(0.481789, 0.481789, 0.481789, 1)
 shader_parameter/texture_albedo = SubResource("ViewportTexture_to44r")
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_e5pg7"]

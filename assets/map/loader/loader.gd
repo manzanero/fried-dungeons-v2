@@ -140,7 +140,7 @@ func load_donjon_json_file(json_file_path):
 			if entity_counter < 0 and not cell_is_wall and not cell_is_door:
 				var entity_position := Vector2(x + 0.5, z + 0.5)
 				var entity : Entity = Game.entity_scene.instantiate().init(level, entity_position, {
-					"base_color": Color.RED
+					"color": Color.RED
 				})
 				entity_counter = entity_frecuency
 				

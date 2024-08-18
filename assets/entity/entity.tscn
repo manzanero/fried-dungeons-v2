@@ -1,15 +1,23 @@
-[gd_scene load_steps=18 format=4 uid="uid://cfu5gxos3nxx7"]
+[gd_scene load_steps=21 format=4 uid="uid://cfu5gxos3nxx7"]
 
 [ext_resource type="PackedScene" uid="uid://c546it4fefagq" path="res://assets/element/element.tscn" id="1_fqk2b"]
 [ext_resource type="Script" path="res://assets/entity/entity.gd" id="1_scptp"]
 [ext_resource type="Texture2D" uid="uid://crmobcm0up3ug" path="res://resources/entity_textures/monsters/undead/undead_102.png" id="2_4djgx"]
+[ext_resource type="Shader" uid="uid://clx7knlqqfehf" path="res://assets/entity/materials/base_shader.tres" id="3_cs5ne"]
 [ext_resource type="SphereMesh" uid="uid://djpa5djoxbvsd" path="res://assets/entity/entity_base_mesh.tres" id="3_q4myc"]
-[ext_resource type="Material" uid="uid://1trq0n03sn0h" path="res://assets/entity/materials/base.tres" id="3_s643a"]
-[ext_resource type="Material" uid="uid://cxyi188e3a3cw" path="res://assets/entity/materials/mesh.tres" id="6_6rs6x"]
+[ext_resource type="Shader" uid="uid://4ntj7s3bdcgf" path="res://assets/entity/materials/body_shader.tres" id="4_esgyb"]
 [ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh_instance.gd" id="6_b77m4"]
 [ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="7_ih4st"]
 [ext_resource type="Material" uid="uid://c1nel0ayea611" path="res://assets/entity/materials/sprite.tres" id="8_b4q87"]
 [ext_resource type="PackedScene" uid="uid://bg2g2ca2xolm6" path="res://assets/entity/eye/eye.tscn" id="9_5arlo"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_kc822"]
+resource_local_to_scene = true
+render_priority = 1
+shader = ExtResource("3_cs5ne")
+shader_parameter/albedo = null
+shader_parameter/light = null
+shader_parameter/transparency = null
 
 [sub_resource type="TorusMesh" id="TorusMesh_e2f1x"]
 inner_radius = 0.25
@@ -25,6 +33,15 @@ shading_mode = 0
 specular_mode = 2
 albedo_color = Color(0.75, 0.75, 0.75, 0.5)
 
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_2mk1e"]
+resource_local_to_scene = true
+render_priority = 1
+shader = ExtResource("4_esgyb")
+shader_parameter/albedo = Color(1, 1, 1, 1)
+shader_parameter/light = null
+shader_parameter/transparency = 0.0
+shader_parameter/texture_albedo = ExtResource("2_4djgx")
+
 [sub_resource type="ArrayMesh" id="ArrayMesh_4qpxw"]
 _surfaces = [{
 "aabb": AABB(-0.248, -0.248, -0.031, 0.496, 0.496, 0.06201),
@@ -39,6 +56,8 @@ _surfaces = [{
 }]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_g5yvx"]
+resource_local_to_scene = true
+shading_mode = 0
 albedo_texture = ExtResource("2_4djgx")
 texture_filter = 0
 
@@ -55,18 +74,24 @@ margin = 0.001
 height = 1.0
 radius = 0.249
 
+[sub_resource type="LabelSettings" id="LabelSettings_kj3hi"]
+resource_local_to_scene = true
+font_size = 8
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
 [node name="Entity" groups=["entities"] instance=ExtResource("1_fqk2b")]
 collision_layer = 65536
 script = ExtResource("1_scptp")
 
-[node name="Base" type="Node3D" parent="." index="1"]
+[node name="Base" type="Node3D" parent="." index="1" groups=["base"]]
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="Base" index="0"]
 layers = 512
+material_override = SubResource("ShaderMaterial_kc822")
 cast_shadow = 0
 mesh = ExtResource("3_q4myc")
 skeleton = NodePath("../..")
-surface_material_override/0 = ExtResource("3_s643a")
 
 [node name="SelectorMeshInstance3D" type="MeshInstance3D" parent="Base" index="1"]
 unique_name_in_owner = true
@@ -81,7 +106,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.063, 0)
 [node name="SpriteMeshInstance" type="MeshInstance3D" parent="Body" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
 layers = 16
-material_override = ExtResource("6_6rs6x")
+material_override = SubResource("ShaderMaterial_2mk1e")
 cast_shadow = 0
 mesh = SubResource("ArrayMesh_4qpxw")
 surface_material_override/0 = SubResource("StandardMaterial3D_g5yvx")
@@ -100,14 +125,14 @@ material_override = ExtResource("8_b4q87")
 pixel_size = 0.031
 texture = ExtResource("2_4djgx")
 
-[node name="Selector" type="StaticBody3D" parent="." index="3"]
+[node name="SelectorCollider" type="StaticBody3D" parent="." index="3"]
 collision_layer = 134217728
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Selector" index="0"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SelectorCollider" index="0"]
 shape = SubResource("ConcavePolygonShape3D_1tx41")
 
-[node name="Collider" type="CollisionShape3D" parent="." index="4"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." index="4"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("CylinderShape3D_6qsiy")
 
@@ -117,23 +142,28 @@ visible = false
 
 [node name="CanvasLayer" type="CanvasLayer" parent="." index="6"]
 
-[node name="Info" type="Control" parent="CanvasLayer" index="0"]
+[node name="Info" type="Control" parent="CanvasLayer" index="0" groups=["info"]]
 unique_name_in_owner = true
 layout_mode = 3
 anchors_preset = 0
-offset_right = 40.0
-offset_bottom = 40.0
 mouse_filter = 2
 
 [node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Info" index="0"]
-layout_mode = 0
-offset_right = 40.0
-offset_bottom = 40.0
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
 
-[node name="Label" type="Label" parent="CanvasLayer/Info/VBoxContainer" index="0"]
+[node name="LabelLabel" type="Label" parent="CanvasLayer/Info/VBoxContainer" index="0"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "Unkown"
+label_settings = SubResource("LabelSettings_kj3hi")
+horizontal_alignment = 1
 
 [node name="BarsContainer" type="VBoxContainer" parent="CanvasLayer/Info/VBoxContainer" index="1"]
 layout_mode = 2
