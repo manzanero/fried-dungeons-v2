@@ -11,10 +11,11 @@ var rect : Rect2 :
 		rect_changed.emit(rect)
 
 
-@onready var viewport := $SubViewport as SubViewport
-@onready var floor_2d := $SubViewport/Floor2D as Floor2D
+@onready var floor_viewport: SubViewport = %FloorViewport
+@onready var floor_2d := $FloorViewport/Floor2D as Floor2D
 @onready var tile_map := floor_2d.tile_map as TileMap
 
+@onready var refresh_light_timer: Timer = %RefreshLightTimer
 @onready var light_viewport: SubViewport = %LightViewport
 @onready var camera_3d: Camera3D = %Camera3D
 
@@ -35,14 +36,19 @@ func _on_rect_changed(new_rect: Rect2):
 	var rect_size := new_rect.size
 	
 	floor_2d.position = -rect_position * tile_size
-	viewport.size = rect_size * tile_size
+	floor_viewport.size = rect_size * tile_size
 	position = Vector3(rect_position.x + rect_size.x / 2.0, 0, rect_position.y + rect_size.y / 2.0)
 	(mesh as PlaneMesh).size = rect_size
 	
 	# light viewport
-	light_viewport.size = viewport.size
+	light_viewport.size = floor_viewport.size / 4
 	camera_3d.size = rect_size.x
 	camera_3d.position = position + Vector3.UP
+	
+	light_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	floor_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	
+	# TODO light_sample_2d needs to be updated?
 
 	Debug.print_debug_message("New rect: %s" % [rect])
 

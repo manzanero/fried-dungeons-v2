@@ -10,6 +10,7 @@ var atlas_image := Image.new()
 
 
 @onready var wall := $".." as Wall
+@onready var rect := wall.level.viewport_3d.rect
 
 
 func _ready() -> void:
@@ -82,9 +83,21 @@ func _create_face(origin : Vector3, destiny : Vector3, index_offset : int, origi
 	]
 	var uvs := _get_uvs(origin_offset, destiny_offset)
 	var normal := Plane(vertices[0], vertices[1], vertices[2]).normal
+	
+	## if pixel shading
+	#var uvs2 := [
+		#(Utils.v3_to_v2(origin) - rect.position + Utils.v3_to_v2(normal) * 0.05) / rect.size,
+		#(Utils.v3_to_v2(destiny) - rect.position + Utils.v3_to_v2(normal) * 0.05) / rect.size,
+		#(Utils.v3_to_v2(origin) - rect.position + Utils.v3_to_v2(normal) * 0.05) / rect.size,
+		#(Utils.v3_to_v2(destiny) - rect.position + Utils.v3_to_v2(normal) * 0.05) / rect.size,
+	#]
 
 	for i in range(4):
 		st.set_uv(uvs[i])
+		
+		## if pixel shading
+		#st.set_uv2(uvs2[i])
+		
 		st.set_normal(normal)
 		st.add_vertex(vertices[i])
 		

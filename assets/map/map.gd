@@ -15,7 +15,7 @@ signal master_view_enabled(value : bool)
 @export var title := "Untitled"
 @export var ambient_light := 0.0
 @export var ambient_color := Color.WHITE
-@export var master_ambient_light := 0.5
+@export var master_ambient_light := 0.25
 @export var master_ambient_color := Color.WHITE
 
 @export var is_master_view := false :
@@ -56,8 +56,8 @@ var selected_level: Level
 
 
 func _ready():
-	DebugMenu.style = DebugMenu.Style.HIDDEN
-	#DebugMenu.style = DebugMenu.Style.VISIBLE_COMPACT
+	#DebugMenu.style = DebugMenu.Style.HIDDEN
+	DebugMenu.style = DebugMenu.Style.VISIBLE_COMPACT
 #	DebugMenu.style = DebugMenu.Style.VISIBLE_DETAILED
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	#DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
@@ -93,15 +93,6 @@ func init_test_data():
 	#loader.load_donjon_json_file("res://resources/maps/medium/medium.json")
 
 
-#func _on_camera_fps_enabled(value: bool):
-	#if is_master:
-		#is_master_view = true
-		#current_ambient_light = ambient_light if value else master_ambient_light
-	#else:
-		#is_master_view = value
-		#current_ambient_light = ambient_light
-
-
 #########
 # walls #
 #########
@@ -111,6 +102,7 @@ func _on_add_after_button_down():
 	var point := wall.selected_point
 	var new_point = wall.add_point(selected_level.position_hovered, point.index + 1)
 	wall.edit_point(new_point)
+	Game.handled_input = true
 
 	
 func _on_add_after_button_up():
@@ -118,6 +110,7 @@ func _on_add_after_button_up():
 	var new_point = wall.edited_point
 	wall.select_point(new_point)
 	wall.edit_point(null)
+	Game.handled_input = true
 
 
 func _on_add_before_button_down():
@@ -125,6 +118,7 @@ func _on_add_before_button_down():
 	var point := wall.selected_point
 	var new_point = wall.add_point(selected_level.position_hovered, point.index)
 	wall.edit_point(new_point)
+	Game.handled_input = true
 
 	
 func _on_add_before_button_up():
@@ -132,18 +126,21 @@ func _on_add_before_button_up():
 	var new_point = wall.edited_point
 	wall.select_point(new_point)
 	wall.edit_point(null)
+	Game.handled_input = true
 
 
 func _on_delete_button_down():
 	var wall := selected_level.selected_wall
 	wall.remove_point(wall.selected_point)
 	wall.select_point(null)
+	Game.handled_input = true
 	
 
 func _on_break_button_down():
 	var wall := selected_level.selected_wall
 	wall.break_point(wall.selected_point)
 	wall.select_point(null)
+	Game.handled_input = true
 	
 	
 func _on_gui_input(event: InputEvent):

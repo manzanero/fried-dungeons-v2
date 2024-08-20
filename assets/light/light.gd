@@ -115,7 +115,9 @@ func _set_selected(value: bool) -> void:
 func remove():
 	queue_free()
 
+
 ## Properties
+
 const ACTIVE = &"active"
 const RANGE = &"show_base"
 const COLOR = &"color"

@@ -56,7 +56,7 @@ func move_grid_to(new_position: Vector2) -> void:
 	_has_changed = true
 	
 	var new_position_3d := Utils.v2_to_v3(new_position)
-	grid.position = new_position_3d.floor() + Vector3.UP * 0.05
+	grid.position = new_position_3d.floor() + Vector3.UP * 0.0
 	grid_material.set_shader_parameter("mouse_position", new_position_3d)
 
 
@@ -71,7 +71,7 @@ func tiled_move_area_to(new_position_origin: Vector2, new_position_destiny: Vect
 	var new_position_destiny_3d := Utils.v2_to_v3(new_position_destiny.floor())
 	var center_position := (new_position_origin_3d + new_position_destiny_3d) * 0.5
 	var area_size := (new_position_destiny_3d - new_position_origin_3d).abs() + Vector3.ONE
-	area.position = center_position + Vector3(0.5, 0.1, 0.5)
+	area.position = center_position + Vector3(0.5, 0.05, 0.5)
 	area.scale = area_size
 
 
@@ -86,5 +86,5 @@ func move_area_to(new_position_origin: Vector2, new_position_destiny: Vector2) -
 	var new_position_destiny_3d := Utils.v2_to_v3(new_position_destiny)
 	var center_position := (new_position_origin_3d + new_position_destiny_3d) * 0.5
 	var area_size := (new_position_destiny_3d - new_position_origin_3d).abs() + Vector3.UP
-	area.position = center_position + Vector3(0, 0.1, 0)
+	area.position = center_position + Vector3(0, 0.05, 0)
 	area.scale = area_size

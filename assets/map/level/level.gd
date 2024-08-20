@@ -45,7 +45,8 @@ var light_sample_2d: Image
 
 @onready var state_machine: StateMachine = $StateMachine
 
-@onready var viewport_3d := %Viewport3D as Viewport3D
+@onready var viewport_3d: Viewport3D = %Viewport3D
+@onready var floor_viewport := viewport_3d.floor_viewport
 @onready var floor_2d := %Floor2D as Floor2D
 
 @onready var refresh_light_timer: Timer = %RefreshLightTimer
@@ -76,19 +77,21 @@ func _ready():
 	
 	refresh_light_timer.wait_time = refresh_light_frecuency
 	refresh_light_timer.timeout.connect(_on_refreshed_light)
-	RenderingServer.global_shader_parameter_set("light_texture", light_texture)
+	
+	## if pixel shading
+	#RenderingServer.global_shader_parameter_set("light_texture", light_texture)
+	
+	## if real time
 	#light_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	#floor_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	
 
 func _on_refreshed_light():
-	light_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
-	light_sample_2d = light_texture.get_image()
 	
-	#for entity: Entity in entities_parent.get_children():
-		#if get_light(entity.position_2d).a:
-			#entity.is_watched = true
-		#else:
-			#entity.is_watched = false
+	# if not real time
+	light_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	floor_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	light_sample_2d = light_texture.get_image()
 
 
 func _on_camera_changed():
@@ -99,7 +102,12 @@ func _on_camera_changed():
 func get_light(point: Vector2) -> Color:
 	if not light_sample_2d:
 		return Color.TRANSPARENT
-	return light_sample_2d.get_pixelv(point * 16)
+	var pixel_position := (point - rect.position) * 4 
+	if pixel_position.x < 0 or pixel_position.x > light_sample_2d.get_width():
+		return Color.TRANSPARENT
+	if pixel_position.y < 0 or pixel_position.y > light_sample_2d.get_height():
+		return Color.TRANSPARENT
+	return light_sample_2d.get_pixelv(pixel_position)
 
 
 func _process(_delta: float) -> void:
@@ -122,4 +130,4 @@ func _process(_delta: float) -> void:
 func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			Debug.print_message(Debug.DEBUG, "Tile clicked: %s" % tile_hovered)
+			Debug.print_debug_message("Tile clicked: %s" % tile_hovered)

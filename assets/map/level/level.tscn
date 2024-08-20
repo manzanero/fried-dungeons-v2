@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://54qydkhvxv4n"]
+[gd_scene load_steps=26 format=3 uid="uid://54qydkhvxv4n"]
 
 [ext_resource type="Script" path="res://assets/map/level/level.gd" id="1_jdpmt"]
 [ext_resource type="Shader" path="res://assets/map/level/wall/materials/ground_next.gdshader" id="2_gm41o"]
@@ -8,7 +8,6 @@
 [ext_resource type="PackedScene" uid="uid://c7kw2qqn2s7gb" path="res://assets/map/level/viewport_3d/floor_2d/floor_2d.tscn" id="4_4yvlj"]
 [ext_resource type="Script" path="res://states/level/building.gd" id="4_incym"]
 [ext_resource type="Shader" path="res://assets/map/level/wall/materials/ground_blank.gdshader" id="5_n0ut6"]
-[ext_resource type="Environment" uid="uid://drd07quupnr1b" path="res://assets/map/map_environment.tres" id="9_a35q0"]
 [ext_resource type="Texture2D" uid="uid://c6jbklo7jmx2k" path="res://resources/grid/grid.png" id="9_qhb38"]
 [ext_resource type="PackedScene" uid="uid://b3xa6np7itoyx" path="res://assets/map/level/selector/selector.tscn" id="10_isfb4"]
 
@@ -24,7 +23,7 @@ shader_parameter/albedo = Color(1, 1, 1, 1)
 [sub_resource type="PlaneMesh" id="PlaneMesh_f84fu"]
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_to44r"]
-viewport_path = NodePath("Ground/Viewport3D/SubViewport")
+viewport_path = NodePath("Ground/Viewport3D/FloorViewport")
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_ajd5n"]
 resource_local_to_scene = true
@@ -37,6 +36,20 @@ shader_parameter/texture_albedo = SubResource("ViewportTexture_to44r")
 points = PackedVector3Array(-1000, 0, -1000, 1000, 0, -1000, 1000, 0, 1000, -1000, 0, 1000, -1000, -1, -1000, 1000, -1, -1000, 1000, -1, 1000, -1000, -1, 1000)
 
 [sub_resource type="WorldBoundaryShape3D" id="WorldBoundaryShape3D_ycm7m"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kkd3b"]
+content_margin_right = 3.0
+content_margin_bottom = 3.0
+bg_color = Color(0, 0, 0, 1)
+border_width_right = 4
+border_width_bottom = 4
+border_color = Color(0.105882, 0.113725, 0.121569, 1)
+
+[sub_resource type="ViewportTexture" id="ViewportTexture_e1ii1"]
+viewport_path = NodePath("Ground/Viewport3D/FloorViewport")
+
+[sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_tsqpm"]
+blend_mode = 3
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_wjyid"]
 viewport_path = NodePath("Ground/Viewport3D/LightViewport")
@@ -89,14 +102,15 @@ skeleton = NodePath("../../..")
 surface_material_override/0 = SubResource("ShaderMaterial_ajd5n")
 script = ExtResource("3_6m262")
 
-[node name="SubViewport" type="SubViewport" parent="Ground/Viewport3D"]
+[node name="FloorViewport" type="SubViewport" parent="Ground/Viewport3D"]
+unique_name_in_owner = true
 disable_3d = true
 transparent_bg = true
 use_hdr_2d = true
 canvas_item_default_texture_filter = 0
-size = Vector2i(256, 256)
+size = Vector2i(2, 2)
 
-[node name="Floor2D" parent="Ground/Viewport3D/SubViewport" instance=ExtResource("4_4yvlj")]
+[node name="Floor2D" parent="Ground/Viewport3D/FloorViewport" instance=ExtResource("4_4yvlj")]
 unique_name_in_owner = true
 
 [node name="RefreshLightTimer" type="Timer" parent="Ground/Viewport3D"]
@@ -108,7 +122,7 @@ unique_name_in_owner = true
 transparent_bg = true
 canvas_item_default_texture_filter = 0
 gui_disable_input = true
-size = Vector2i(1600, 1600)
+size = Vector2i(2, 2)
 render_target_update_mode = 0
 
 [node name="Camera3D" type="Camera3D" parent="Ground/Viewport3D/LightViewport"]
@@ -116,7 +130,6 @@ unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 1, 0)
 keep_aspect = 0
 cull_mask = 1047554
-environment = ExtResource("9_a35q0")
 projection = 1
 current = true
 far = 2.0
@@ -133,10 +146,26 @@ shape = SubResource("ConvexPolygonShape3D_e5pg7")
 [node name="UnprecisedCollider" type="CollisionShape3D" parent="Ground/GroundCollider"]
 shape = SubResource("WorldBoundaryShape3D_ycm7m")
 
-[node name="DebugLightTexture" type="TextureRect" parent="Ground"]
-visible = false
-offset_right = 40.0
-offset_bottom = 40.0
+[node name="CanvasLayer" type="CanvasLayer" parent="Ground"]
+
+[node name="Panel" type="PanelContainer" parent="Ground/CanvasLayer"]
+offset_right = 2.0
+offset_bottom = 2.0
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_kkd3b")
+
+[node name="DebugFloorTexture" type="TextureRect" parent="Ground/CanvasLayer/Panel"]
+texture_filter = 2
+layout_mode = 2
+texture = SubResource("ViewportTexture_e1ii1")
+expand_mode = 3
+
+[node name="DebugLightTexture" type="TextureRect" parent="Ground/CanvasLayer/Panel"]
+texture_filter = 2
+material = SubResource("CanvasItemMaterial_tsqpm")
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
 texture = SubResource("ViewportTexture_wjyid")
 
 [node name="Ceilling" type="Node3D" parent="."]

@@ -133,7 +133,7 @@ text = "Master Light"
 
 [node name="SpinBox" parent="ScrollContainer/VBoxContainer/AmbientContainer/M/PropertyFields/MasterAmbientLightField/H" index="1"]
 step = 1.0
-value = 50.0
+value = 25.0
 suffix = "%"
 custom_arrow_step = 1.0
 

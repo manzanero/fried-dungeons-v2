@@ -8,6 +8,9 @@ var campaign_name: String = 'My Campaign'
 var ui: UI
 var handled_input : bool
 
+# Variables
+var radian_friendly_tick := 0
+var wave_global := 0.0
 
 # Constants
 
@@ -39,8 +42,8 @@ var WALL_BITMASK := Utils.get_bitmask(Game.WALL_LAYER)
 var CEILLING_BITMASK := Utils.get_bitmask(Game.CEILLING_LAYER)
 var SELECTOR_BITMASK := Utils.get_bitmask(Game.SELECTOR_LAYER)
 
-var level_scene = load("res://assets/map/level/level.tscn") as PackedScene
-var wall_scene = load("res://assets/map/level/wall/wall.tscn") as PackedScene
-var wall_point_scene = load("res://assets/map/level/wall/wall_point/wall_point.tscn") as PackedScene
-var light_scene = load("res://assets/light/light.tscn") as PackedScene
-var entity_scene = load("res://assets/entity/entity.tscn") as PackedScene
+var level_scene := load("res://assets/map/level/level.tscn")
+var wall_scene := load("res://assets/map/level/wall/wall.tscn")
+var wall_point_scene := load("res://assets/map/level/wall/wall_point/wall_point.tscn")
+var light_scene := load("res://assets/light/light.tscn")
+var entity_scene := load("res://assets/entity/entity.tscn")

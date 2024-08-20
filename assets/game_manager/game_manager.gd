@@ -32,6 +32,8 @@ func _on_camera_fps_enabled(value: bool):
 	
 
 func _process(_delta: float) -> void:
+	Game.radian_friendly_tick = floor(Time.get_ticks_msec() / (2 * PI) / 32)
+	Game.wave_global = sin(Game.radian_friendly_tick)
 	
 	# restart the frame input handled
 	Game.handled_input = false

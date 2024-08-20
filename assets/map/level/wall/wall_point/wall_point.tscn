@@ -4,6 +4,8 @@
 [ext_resource type="Theme" uid="uid://wdhwb87x2roh" path="res://resources/themes/pixel_ui_theme/PixelTheme_sky.tres" id="1_ejwbb"]
 
 [node name="WallPoint" type="Control"]
+process_priority = 1
+process_physics_priority = 1
 layout_mode = 3
 anchors_preset = 8
 anchor_left = 0.5

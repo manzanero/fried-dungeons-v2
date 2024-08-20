@@ -45,6 +45,7 @@ enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/
 
 info=""
 base=""
+entities=""
 
 [gui]
 

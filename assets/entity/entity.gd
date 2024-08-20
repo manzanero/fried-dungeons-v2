@@ -89,7 +89,7 @@ func _ready() -> void:
 	
 	
 func _process(_delta: float) -> void:
-	body.position.y = 1. / 16. + 1. / 128. * (1 + sin(floor(Time.get_ticks_msec() / PI / 64)))
+	body.position.y = 1. / 16. + 1. / 128. * (1 + Game.wave_global)
 	
 	var ligth = level.get_light(position_2d)
 	if ligth != cached_light:
@@ -137,7 +137,7 @@ func _physics_process(delta: float) -> void:
 			var direction_to_target := vector_to_target.normalized()
 			var velocity_to_target := clampf(delta * distance_to_target * input_velocity, 0, 10)
 			velocity = direction_to_target * velocity_to_target
-			if move_and_slide():
+			if velocity and move_and_slide():
 				target_position = position
 		else:
 			position = target_position

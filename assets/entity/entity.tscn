@@ -3,7 +3,7 @@
 [ext_resource type="PackedScene" uid="uid://c546it4fefagq" path="res://assets/element/element.tscn" id="1_fqk2b"]
 [ext_resource type="Script" path="res://assets/entity/entity.gd" id="1_scptp"]
 [ext_resource type="Texture2D" uid="uid://crmobcm0up3ug" path="res://resources/entity_textures/monsters/undead/undead_102.png" id="2_4djgx"]
-[ext_resource type="Shader" uid="uid://clx7knlqqfehf" path="res://assets/entity/materials/base_shader.tres" id="3_cs5ne"]
+[ext_resource type="Shader" uid="uid://dvmjmk47dugh6" path="res://assets/entity/materials/base_shader.tres" id="3_cs5ne"]
 [ext_resource type="SphereMesh" uid="uid://djpa5djoxbvsd" path="res://assets/entity/entity_base_mesh.tres" id="3_q4myc"]
 [ext_resource type="Shader" uid="uid://4ntj7s3bdcgf" path="res://assets/entity/materials/body_shader.tres" id="4_esgyb"]
 [ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh_instance.gd" id="6_b77m4"]
