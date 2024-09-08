@@ -47,7 +47,12 @@ func _on_panel_button_pressed(panel: Control, button: Button):
 
 func _on_add_dice(number: int, faces: int) -> void:
 	var dice_string := "%sd%s" % [number, faces]
-	Game.ui.dicer.create_dice_roll(dice_string, Game.player_color, randi_range(0, 999999))
+	var color := Game.player_color
+	if selection_as_origin_button.button_pressed:
+		if Game.ui.selected_map.selected_level.selected_entity:
+			color = Game.ui.selected_map.selected_level.selected_entity.color
+	
+	Game.ui.dicer.create_dice_roll(dice_string, color, randi_range(0, 999999))
 
 
 func _on_dicer_roll_result(dice_string: String, result: Array):

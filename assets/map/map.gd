@@ -12,7 +12,8 @@ signal master_view_enabled(value : bool)
 
 @export var is_master := false
 
-@export var title := "Untitled"
+@export var label := "Untitled"
+@export var slug := "untitled"
 @export var ambient_light := 0.0
 @export var ambient_color := Color.WHITE
 @export var master_ambient_light := 0.25
@@ -38,7 +39,6 @@ signal master_view_enabled(value : bool)
 			environment.ambient_light_color = current_ambient_color * current_ambient_light
 
 
-var label := "none"
 var cells := {}
 var selected_level: Level
 
@@ -56,14 +56,6 @@ var selected_level: Level
 
 
 func _ready():
-	#DebugMenu.style = DebugMenu.Style.HIDDEN
-	DebugMenu.style = DebugMenu.Style.VISIBLE_COMPACT
-#	DebugMenu.style = DebugMenu.Style.VISIBLE_DETAILED
-	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
-	#DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
-	
-	#camera.fps_enabled.connect(_on_camera_fps_enabled)
-
 	add_after_button.button_down.connect(_on_add_after_button_down)
 	add_after_button.button_up.connect(_on_add_after_button_up)
 	add_after_button.gui_input.connect(_on_gui_input)
@@ -85,7 +77,6 @@ func _ready():
 	is_master_view = is_master
 	current_ambient_light = master_ambient_light if is_master else ambient_light
 	
-	init_test_data()
 
 
 func init_test_data():
@@ -143,10 +134,30 @@ func _on_break_button_down():
 	Game.handled_input = true
 	
 	
-func _on_gui_input(event: InputEvent):
+func _on_gui_input(_event: InputEvent):
 	Game.handled_input = true
 	
 	
 func _on_mouse_exited():
 	Game.ui.selected_map_tab.cursor_control.visible = true
+
+
+###############
+# Serializing #
+###############
+
+func json() -> Dictionary:
+	var levels := {}
+	for level: Level in levels_parent.get_children():
+		levels[level.index] = level.json()
 	
+	return {
+		"label": label,
+		"levels": levels,
+		"settings": {
+			"ambient_light": ambient_light,
+			"ambient_color": Utils.color_to_html_color(ambient_color),
+			"master_ambient_light": master_ambient_light,
+			"master_ambient_color": Utils.color_to_html_color(master_ambient_color),
+		},
+	}

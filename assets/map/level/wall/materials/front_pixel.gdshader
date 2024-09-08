@@ -26,10 +26,10 @@ global uniform sampler2D wall_atlas : source_color,filter_nearest;
 void fragment() {
 	vec4 albedo_tex = texture(wall_atlas, UV);
 	vec4 light_color = texture(light_texture, UV2);
-	
+
     vec4 world_position = inverse(MODEL_MATRIX) * INV_VIEW_MATRIX * vec4(VERTEX, 1.0);
     //vec4 light_color = texture(light_texture, world_position.xz * 16.);
-	
+
 	ALBEDO = 0.25 * albedo_tex.rgb * light_color.rgb;
 	//ALPHA = albedo_tex.a * light_color.a;
 	ALPHA = albedo_tex.a;

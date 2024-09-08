@@ -2,15 +2,20 @@ extends Node
 
 
 var world_seed := randi_range(0, 999999)
-var player_name: String = 'Player'
-var player_color: Color = Color.RED
-var campaign_name: String = 'My Campaign'
+var player_name := 'Player'
+var player_is_master := false
+var player_color := Color.RED
+var campaign: Campaign
+var server: ServerManager
 var ui: UI
 var handled_input : bool
 
+
 # Variables
+
 var radian_friendly_tick := 0
 var wave_global := 0.0
+
 
 # Constants
 

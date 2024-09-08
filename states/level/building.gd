@@ -146,7 +146,9 @@ func process_build_point() -> void:
 		_click_origin_tile = level.tile_hovered
 		selector.tiled_move_area_to(level.position_hovered, level.position_hovered)
 		var random = range(8).pick_random()
-		level.viewport_3d.tile_map_set_cell(level.tile_hovered, Vector2i(random, material_index_selected))
+		var tile_data := {"i": material_index_selected, "f": random}
+		level.cells[level.tile_hovered] = Level.Cell.new(tile_data.i, tile_data.f)
+		level.viewport_3d.tile_map_set_cell(level.tile_hovered, Vector2i(tile_data.f, tile_data.i))
 	
 	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_map_tab:
 		selector.area.visible = false
@@ -179,7 +181,10 @@ func process_build_rect() -> void:
 			for x in range(init_x, end_x + dir_x, dir_x):
 				for y in range(init_y, end_y + dir_y, dir_y):
 					var random = range(8).pick_random()
-					level.viewport_3d.tile_map_set_cell(Vector2i(x, y), Vector2i(random, material_index_selected))
+					var tile := Vector2i(x, y)
+					var tile_data := {"i": material_index_selected, "f": random}
+					level.cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
+					level.viewport_3d.tile_map_set_cell(tile, Vector2i(random, tile_data.i))
 
 
 func process_hover_wall():

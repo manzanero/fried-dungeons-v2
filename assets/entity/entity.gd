@@ -192,11 +192,13 @@ func _init_property_list():
 		init_property(property_array[0], property_array[1], property_array[2], property_array[3])
 
 
-func _on_property_changed(property_name: String, old_value: Variant, new_value: Variant) -> void:
+func _on_property_changed(property_name: String, _old_value: Variant, new_value: Variant) -> void:
+	Game.server.add_operation.rpc({})
 	match property_name:
 		SHOW_LABEL:
 			show_label = new_value
 		LABEL:
+			label = new_value
 			label_label.text = new_value
 		COLOR:
 			color = new_value
@@ -214,3 +216,18 @@ func _on_property_changed(property_name: String, old_value: Variant, new_value: 
 			base.visible = new_value
 		BODY_SIZE:
 			body.scale = (Vector3.ONE * new_value * 2).clampf(0.5, 10)
+
+
+###############
+# Serializing #
+###############
+
+func json():
+	var values := {}
+	for property in properties:
+		values[property] = properties[property].get_raw()
+	
+	return {
+		"position": Utils.v3_to_a2(position),
+		"properties": values,
+	}

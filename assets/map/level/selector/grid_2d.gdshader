@@ -11,7 +11,7 @@ void fragment() {
 	if (COLOR.a == 0.0) {
 		discard;
 	}
-	
+
 	float d = distance(mouse_position + vec2(0.5), UV) - 0.16;
 	//float alpha = 1.0 - pow(smoothstep(0.5, fade_distance, d), 0.5);
 	//float alpha = 1.0 - 2.0 * d;

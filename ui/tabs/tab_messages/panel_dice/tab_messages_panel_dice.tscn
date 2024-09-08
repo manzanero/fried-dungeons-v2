@@ -14,15 +14,6 @@ corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
 corner_detail = 4
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bheoc"]
-content_margin_left = 12.0
-content_margin_top = 4.0
-content_margin_right = 12.0
-content_margin_bottom = 4.0
-bg_color = Color(0.205117, 0.205117, 0.205117, 1)
-draw_center = false
-border_color = Color(0.105882, 0.113725, 0.121569, 1)
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3t1mb"]
 content_margin_left = 12.0
 content_margin_top = 4.0
@@ -44,6 +35,15 @@ corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
 corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bheoc"]
+content_margin_left = 12.0
+content_margin_top = 4.0
+content_margin_right = 12.0
+content_margin_bottom = 4.0
+bg_color = Color(0.205117, 0.205117, 0.205117, 1)
+draw_center = false
+border_color = Color(0.105882, 0.113725, 0.121569, 1)
 
 [node name="Dice" type="ScrollContainer"]
 anchors_preset = 15
@@ -74,54 +74,54 @@ columns = 8
 [node name="Op1" type="Button" parent="HBoxContainer/OperatorButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "("
 alignment = 0
 
 [node name="Op2" type="Button" parent="HBoxContainer/OperatorButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = ")"
 alignment = 0
 
 [node name="Op3" type="Button" parent="HBoxContainer/OperatorButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "+"
 alignment = 0
 
 [node name="Op4" type="Button" parent="HBoxContainer/OperatorButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "-"
 alignment = 0
 
 [node name="Op5" type="Button" parent="HBoxContainer/OperatorButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "*"
 alignment = 0
 
 [node name="Op6" type="Button" parent="HBoxContainer/OperatorButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "/"
 alignment = 0
 
@@ -136,9 +136,9 @@ columns = 10
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "1"
 alignment = 0
 
@@ -146,9 +146,9 @@ alignment = 0
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "2"
 alignment = 0
 
@@ -156,9 +156,9 @@ alignment = 0
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "3"
 alignment = 0
 
@@ -166,9 +166,9 @@ alignment = 0
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "4"
 alignment = 0
 
@@ -176,9 +176,9 @@ alignment = 0
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "5"
 alignment = 0
 
@@ -186,9 +186,9 @@ alignment = 0
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "6"
 alignment = 0
 
@@ -196,9 +196,9 @@ alignment = 0
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "7"
 alignment = 0
 
@@ -206,9 +206,9 @@ alignment = 0
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "8"
 alignment = 0
 
@@ -216,9 +216,9 @@ alignment = 0
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "9"
 alignment = 0
 
@@ -226,638 +226,638 @@ alignment = 0
 visible = false
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "10"
 alignment = 0
 
 [node name="D4_1" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "1d4"
 alignment = 0
 
 [node name="D4_2" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "2"
 alignment = 0
 
 [node name="D4_3" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "3"
 alignment = 0
 
 [node name="D4_4" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "4"
 alignment = 0
 
 [node name="D4_5" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "5"
 alignment = 0
 
 [node name="D4_6" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "6"
 alignment = 0
 
 [node name="D4_7" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "7"
 alignment = 0
 
 [node name="D4_8" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "8"
 alignment = 0
 
 [node name="D4_9" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "9"
 alignment = 0
 
 [node name="D4_10" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "10"
 alignment = 0
 
 [node name="D6_1" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "1d6"
 alignment = 0
 
 [node name="D6_2" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "2"
 alignment = 0
 
 [node name="D6_3" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "3"
 alignment = 0
 
 [node name="D6_4" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "4"
 alignment = 0
 
 [node name="D6_5" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "5"
 alignment = 0
 
 [node name="D6_6" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "6"
 alignment = 0
 
 [node name="D6_7" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "7"
 alignment = 0
 
 [node name="D6_8" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "8"
 alignment = 0
 
 [node name="D6_9" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "9"
 alignment = 0
 
 [node name="D6_10" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "10"
 alignment = 0
 
 [node name="D8_1" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "1d8"
 alignment = 0
 
 [node name="D8_2" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "2"
 alignment = 0
 
 [node name="D8_3" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "3"
 alignment = 0
 
 [node name="D8_4" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "4"
 alignment = 0
 
 [node name="D8_5" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "5"
 alignment = 0
 
 [node name="D8_6" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "6"
 alignment = 0
 
 [node name="D8_7" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "7"
 alignment = 0
 
 [node name="D8_8" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "8"
 alignment = 0
 
 [node name="D8_9" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "9"
 alignment = 0
 
 [node name="D8_10" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "10"
 alignment = 0
 
 [node name="D10_1" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "1d10"
 alignment = 0
 
 [node name="D10_2" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "2"
 alignment = 0
 
 [node name="D10_3" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "3"
 alignment = 0
 
 [node name="D10_4" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "4"
 alignment = 0
 
 [node name="D10_5" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "5"
 alignment = 0
 
 [node name="D10_6" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "6"
 alignment = 0
 
 [node name="D10_7" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "7"
 alignment = 0
 
 [node name="D10_8" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "8"
 alignment = 0
 
 [node name="D10_9" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "9"
 alignment = 0
 
 [node name="D10_10" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "10"
 alignment = 0
 
 [node name="D12_1" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "1d12"
 alignment = 0
 
 [node name="D12_2" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "2"
 alignment = 0
 
 [node name="D12_3" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "3"
 alignment = 0
 
 [node name="D12_4" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "4"
 alignment = 0
 
 [node name="D12_5" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "5"
 alignment = 0
 
 [node name="D12_6" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "6"
 alignment = 0
 
 [node name="D12_7" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "7"
 alignment = 0
 
 [node name="D12_8" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "8"
 alignment = 0
 
 [node name="D12_9" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "9"
 alignment = 0
 
 [node name="D12_10" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "10"
 alignment = 0
 
 [node name="D20_1" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "1d20"
 alignment = 0
 
 [node name="D20_2" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "2"
 alignment = 0
 
 [node name="D20_3" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "3"
 alignment = 0
 
 [node name="D20_4" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "4"
 alignment = 0
 
 [node name="D20_5" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "5"
 alignment = 0
 
 [node name="D20_6" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "6"
 alignment = 0
 
 [node name="D20_7" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "7"
 alignment = 0
 
 [node name="D20_8" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "8"
 alignment = 0
 
 [node name="D20_9" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "9"
 alignment = 0
 
 [node name="D20_10" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "10"
 alignment = 0
 
 [node name="D100_1" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "1d100"
 alignment = 0
 
 [node name="D100_2" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "2"
 alignment = 0
 
 [node name="D100_3" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "3"
 alignment = 0
 
 [node name="D100_4" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "4"
 alignment = 0
 
 [node name="D100_5" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "5"
 alignment = 0
 
 [node name="D100_6" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "6"
 alignment = 0
 
 [node name="D100_7" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "7"
 alignment = 0
 
 [node name="D100_8" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "8"
 alignment = 0
 
 [node name="D100_9" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "9"
 alignment = 0
 
 [node name="D100_10" type="Button" parent="HBoxContainer/DiceButtons"]
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 theme_override_styles/hover = SubResource("StyleBoxFlat_3t1mb")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ptof3")
+theme_override_styles/normal = SubResource("StyleBoxFlat_bheoc")
 text = "10"
 alignment = 0

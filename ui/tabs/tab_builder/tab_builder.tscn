@@ -4,6 +4,9 @@
 [ext_resource type="Script" path="res://ui/tabs/tab_builder/tab_builder.gd" id="2_ovrmx"]
 [ext_resource type="PackedScene" uid="uid://fk4ms248dm5y" path="res://ui/tabs/tab_builder/atlas_texture_button/atlas_texture_button.tscn" id="4_p25rk"]
 
+[sub_resource type="ButtonGroup" id="ButtonGroup_upllj"]
+allow_unpress = true
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8jh3g"]
 content_margin_left = 2.0
 content_margin_top = 2.0
@@ -39,9 +42,6 @@ content_margin_right = 8.0
 content_margin_bottom = 4.0
 draw_center = false
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_upllj"]
-allow_unpress = true
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rmbeg"]
 content_margin_left = 8.0
 content_margin_top = 8.0
@@ -76,6 +76,7 @@ grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_4djbp")
 script = ExtResource("2_ovrmx")
+mode_button_group = SubResource("ButtonGroup_upllj")
 materials = NodePath("HBoxContainer/BoxContainer/PanelContainer/MaterialsContainer")
 
 [node name="HBoxContainer" type="BoxContainer" parent="."]

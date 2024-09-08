@@ -4,15 +4,6 @@
 [ext_resource type="PackedScene" uid="uid://6pq2k4jg8hbv" path="res://ui/tabs/tab_messages/panel_dice/tab_messages_panel_dice.tscn" id="2_e88ub"]
 [ext_resource type="PackedScene" uid="uid://dw4t2g37sotcj" path="res://ui/tabs/tab_messages/panel_history/tab_messages_panel_history.tscn" id="3_e3rt8"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_17m7u"]
-content_margin_left = 4.0
-content_margin_right = 4.0
-draw_center = false
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5qn83"]
 content_margin_left = 4.0
 content_margin_right = 4.0
@@ -26,6 +17,15 @@ corner_radius_bottom_left = 3
 content_margin_left = 4.0
 content_margin_right = 4.0
 bg_color = Color(0.12549, 0.156863, 0.192157, 1)
+corner_radius_top_left = 3
+corner_radius_top_right = 3
+corner_radius_bottom_right = 3
+corner_radius_bottom_left = 3
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_17m7u"]
+content_margin_left = 4.0
+content_margin_right = 4.0
+draw_center = false
 corner_radius_top_left = 3
 corner_radius_top_right = 3
 corner_radius_bottom_right = 3
@@ -85,9 +85,9 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
+theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_6y5qp")
@@ -97,9 +97,9 @@ text = "Dice"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
+theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_6y5qp")
 text = "History"
@@ -170,9 +170,9 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
+theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_udd2s")
@@ -182,9 +182,9 @@ text = "Player"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
+theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_udd2s")
 text = "Selection"
@@ -194,9 +194,9 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10
 focus_mode = 0
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
+theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 text = "Send"
 
 [editable path="VBoxContainer/VSplitContainer/HelperContainer/History"]

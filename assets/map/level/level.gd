@@ -12,8 +12,10 @@ extends Node3D
 
 @export var refresh_light_frecuency := 0.1
 
+var index := 0
+var cells := {}
 
-var rect: Rect2 : 
+var rect: Rect2i : 
 	set(value):
 		rect = value
 		viewport_3d.rect = value
@@ -74,7 +76,7 @@ func _ready():
 			follower_entity = null
 	)
 	ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
-	
+		
 	refresh_light_timer.wait_time = refresh_light_frecuency
 	refresh_light_timer.timeout.connect(_on_refreshed_light)
 	
@@ -102,7 +104,7 @@ func _on_camera_changed():
 func get_light(point: Vector2) -> Color:
 	if not light_sample_2d:
 		return Color.TRANSPARENT
-	var pixel_position := (point - rect.position) * 4 
+	var pixel_position := (point - Vector2(rect.position)) * 4 
 	if pixel_position.x < 0 or pixel_position.x > light_sample_2d.get_width():
 		return Color.TRANSPARENT
 	if pixel_position.y < 0 or pixel_position.y > light_sample_2d.get_height():
@@ -118,9 +120,6 @@ func _process(_delta: float) -> void:
 			selected_entity.remove()
 		if is_instance_valid(selected_light):
 			selected_light.remove()
-			
-	#if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
-		#Debug.print_debug_message(str(get_point_light(position_hovered)))
 
 
 #########
@@ -131,3 +130,65 @@ func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			Debug.print_debug_message("Tile clicked: %s" % tile_hovered)
+
+
+###########
+# objects #
+###########
+
+class Cell:
+	var index: int
+	var frame: int
+
+	func _init(_index, _frame) -> void:
+		index = _index
+		frame = _frame
+		
+
+###############
+# Serializing #
+###############
+
+func json() -> Dictionary:
+	var pos_x := rect.position.x
+	var pos_z := rect.position.y
+	var len_x := rect.size.x
+	var len_z := rect.size.y
+	
+	var tiles := []
+	tiles.resize(len_z)
+	for y in range(len_z):
+		var row := []
+		row.resize(len_x)
+		tiles[y] = row
+	for tile in cells:
+		var cell: Cell = cells[tile]
+		tiles[tile.y - pos_z][tile.x - pos_x] = {"i": cell.index, "f": cell.frame}
+		
+	var walls := []
+	for wall in walls_parent.get_children():
+		walls.append(wall.json())
+		
+	var entities := []
+	for entity: Entity in entities_parent.get_children():
+		entities.append(entity.json())
+		
+	var lights := []
+	for light: Light in lights_parent.get_children():
+		lights.append(light.json())
+		
+	var objects := []
+		
+	var level := {
+		"rect": {
+			"position": Utils.v2_to_a2(rect.position),
+			"size": Utils.v2_to_a2(rect.size),
+		},
+		"tiles": tiles,
+		"walls": walls,
+		"entities": entities,
+		"lights": lights,
+		"objects": objects,
+	}
+	
+	return level

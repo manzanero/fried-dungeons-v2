@@ -10,7 +10,7 @@ resource_local_to_scene = true
 atlas = SubResource("CompressedTexture2D_q4rxl")
 region = Rect2(0, 176, 16, 16)
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l04eb"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trkt0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jwlbw"]
 bg_color = Color(0.75, 0.75, 0.75, 0.25)
@@ -32,7 +32,7 @@ expand_margin_top = 5.0
 expand_margin_right = 5.0
 expand_margin_bottom = 5.0
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trkt0"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l04eb"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_jvkgq"]
 resource_local_to_scene = false
@@ -53,10 +53,10 @@ texture = SubResource("AtlasTexture_o76j5")
 layout_mode = 2
 offset_right = 64.0
 offset_bottom = 64.0
-theme_override_styles/normal = SubResource("StyleBoxEmpty_l04eb")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_trkt0")
 theme_override_styles/hover = SubResource("StyleBoxFlat_jwlbw")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_sqksp")
-theme_override_styles/focus = SubResource("StyleBoxEmpty_trkt0")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_l04eb")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_jvkgq")
 icon_alignment = 1

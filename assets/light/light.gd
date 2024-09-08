@@ -133,7 +133,7 @@ func _init_property_list():
 		init_property(property_array[0], property_array[1], property_array[2], property_array[3])
 
 
-func _on_property_changed(property_name: String, old_value: Variant, new_value: Variant) -> void:
+func _on_property_changed(property_name: String, _old_value: Variant, new_value: Variant) -> void:
 	match property_name:
 		ACTIVE:
 			active = new_value
@@ -142,14 +142,17 @@ func _on_property_changed(property_name: String, old_value: Variant, new_value: 
 		COLOR:
 			light_color = new_value
 
-	
+
 ###############
-# Serializers #
+# Serializing #
 ###############
 
-func serialize():
-	var serialized_light := {}
-	serialized_light["id"] = id
-	serialized_light["position"] = Utils.v3_to_a2(position)
-	serialized_light["color"] = Utils.color_to_string(color)
-	return serialized_light
+func json():
+	var values := {}
+	for property in properties:
+		values[property] = properties[property].get_raw()
+		
+	return {
+		"position": Utils.v3_to_a2(position),
+		"properties": values,
+	}

@@ -5,6 +5,8 @@ extends Node
 @onready var map: Map = $".."
 
 
+#region donjon
+
 func load_donjon_json_file(json_file_path):
 	seed(Game.world_seed)
 	Debug.print_message(Debug.INFO, "Loading donjon map: " + json_file_path)
@@ -14,6 +16,7 @@ func load_donjon_json_file(json_file_path):
 		return
 		
 	map.label = map_data["settings"]["name"]
+	map.slug = Utils.slugify(map.label)
 	var level := Game.level_scene.instantiate().init(map) as Level
 	map.selected_level = level
 	var viewport_3d := level.viewport_3d
@@ -39,10 +42,13 @@ func load_donjon_json_file(json_file_path):
 			var cell_is_wall := int(donjon_code) in [0, 16]
 			
 			var random_var : int = range(4).pick_random()
+			var tile := Vector2i(x, z)
 			if cell_is_wall:
-				tile_map.set_cell(0, Vector2i(x, z), 0, Vector2i(random_var, void_index), 0)
+				level.cells[tile] = Level.Cell.new(void_index, random_var)
+				tile_map.set_cell(0, tile, 0, Vector2i(random_var, void_index), 0)
 			else:
-				tile_map.set_cell(0, Vector2i(x, z), 0, Vector2i(random_var, ground_index), 0)
+				level.cells[tile] = Level.Cell.new(ground_index, random_var)
+				tile_map.set_cell(0, tile, 0, Vector2i(random_var, ground_index), 0)
 	
 	# horizontal walls
 	for z in range(len_z):
@@ -139,7 +145,7 @@ func load_donjon_json_file(json_file_path):
 			entity_counter -= 1
 			if entity_counter < 0 and not cell_is_wall and not cell_is_door:
 				var entity_position := Vector2(x + 0.5, z + 0.5)
-				var entity : Entity = Game.entity_scene.instantiate().init(level, entity_position, {
+				var entity: Entity = Game.entity_scene.instantiate().init(level, entity_position, {
 					"color": Color.RED
 				})
 				entity_counter = entity_frecuency
@@ -243,3 +249,93 @@ func _create_west_portcullis(level, offset, portcullis_index):
 #func _load_fried_json_file(json_file_path):
 	#var serialized_map = Utils.loads_json(json_file_path)
 	#deserialize(serialized_map)
+	
+#endregion
+
+
+func load_map(map_data: Dictionary):
+	seed(Game.world_seed)
+	Debug.print_info_message("Loading map: " + map_data.label)
+	
+	map.label = map_data.label
+	
+	if not map_data.has("levels"):
+		var level: Level = Game.level_scene.instantiate().init(map)
+		level.rect = Rect2i(0, 0, 1, 1)
+		
+		var viewport_3d := level.viewport_3d
+		var floor_2d := viewport_3d.floor_2d
+		var tile_map := floor_2d.tile_map
+		
+		var tile := Vector2i(0, 0)
+		var tile_data := {"i": 1, "f": 0}
+		level.cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
+		tile_map.set_cell(0, tile, 0, Vector2i(tile_data.f, tile_data.i), 0)
+		Game.entity_scene.instantiate().init(level, Vector2(0.5, 0.5))
+		Game.light_scene.instantiate().init(level, Vector2(0.5, 0.5))
+		
+	else:
+		for level_index in map_data.levels:
+			var level_data: Dictionary = map_data.levels[level_index]
+			var level: Level = Game.level_scene.instantiate().init(map)
+			level.index = level_index
+			
+			var viewport_3d := level.viewport_3d
+			var floor_2d := viewport_3d.floor_2d
+			var tile_map := floor_2d.tile_map
+			var tiles_data = level_data.tiles
+			var pos_x = level_data.rect.position[0]
+			var pos_z = level_data.rect.position[1]
+			var len_x = level_data.rect.size[0]
+			var len_z = level_data.rect.size[1]
+			level.rect = Rect2i(level_data.rect.position[0], level_data.rect.position[1], len_x, len_z)
+		
+			# ground
+			for x in range(len_x):
+				for z in range(len_z): 
+					var tile_data = tiles_data[z][x]
+					if not tile_data:
+						continue
+						
+					var tile := Vector2i(x + pos_x, z + pos_z)
+					level.cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
+					tile_map.set_cell(0, tile, 0, Vector2i(tile_data.f, tile_data.i), 0)
+					
+			# walls
+			for wall_data in level_data.walls:
+				var wall: Wall = Game.wall_scene.instantiate().init(level, 
+						wall_data.i, wall_data.s, wall_data.l, wall_data["2"])
+				for point in wall_data.p:
+					wall.add_point(Utils.a2_to_v2(point))
+					
+			# entities
+			for entity_data in level_data.entities:
+				if entity_data.properties[&"color"] is String:
+					entity_data.properties[&"color"] = Utils.html_color_to_color(entity_data.properties[&"color"])
+				Game.entity_scene.instantiate().init(level, Utils.a2_to_v2(entity_data.position), entity_data.properties)
+					
+			# lights
+			for light_data in level_data.lights:
+				if light_data.properties[&"color"] is String:
+					light_data.properties[&"color"] = Utils.html_color_to_color(light_data.properties[&"color"])
+				Game.light_scene.instantiate().init(level, Utils.a2_to_v2(light_data.position), light_data.properties)
+
+	
+	map.selected_level = map.levels_parent.get_children()[0]
+	
+	if map_data.has("settings"):
+		map.ambient_light = map_data.settings.ambient_light
+		map.ambient_color = Utils.html_color_to_color(map_data.settings.ambient_color)
+		map.master_ambient_light = map_data.settings.master_ambient_light
+		map.master_ambient_color = Utils.html_color_to_color(map_data.settings.master_ambient_color)
+
+		# settings
+		Game.ui.tab_settings.title_edit.text = map.label
+		Game.ui.tab_settings.ambient_light_spin.value = map.ambient_light
+		Game.ui.tab_settings.ambient_color_button.color = map.ambient_color
+		Game.ui.tab_settings.override_ambient_light_check.button_pressed = map_data.settings.get("override_ambient_light", true)
+		Game.ui.tab_settings.master_ambient_light_spin.value = map.master_ambient_light * 100
+		Game.ui.tab_settings.override_ambient_color_check.button_pressed = map_data.settings.get("override_ambient_color", false)
+		Game.ui.tab_settings.master_ambient_color_button.color = map.master_ambient_color * 100
+		Game.ui.tab_settings._on_ambient_edited()
+	

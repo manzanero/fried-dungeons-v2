@@ -1,23 +1,23 @@
 extends Node
 	
 	
-func v2_to_v3(v2 : Vector2) -> Vector3:
+func v2_to_v3(v2: Vector2) -> Vector3:
 	return Vector3(v2.x, 0, v2.y)
 	
 	
-func v2i_to_v3(v2i : Vector2i) -> Vector3:
+func v2i_to_v3(v2i: Vector2i) -> Vector3:
 	return Vector3(v2i.x, 0, v2i.y)
 
 
-func v3_to_v2(v3 : Vector3) -> Vector2:
+func v3_to_v2(v3: Vector3) -> Vector2:
 	return Vector2(v3.x, v3.z)
 
 
-func v3_to_v2i(v3 : Vector3) -> Vector2i:
+func v3_to_v2i(v3: Vector3) -> Vector2i:
 	return Vector2i(floori(v3.x), floori(v3.z))
 
 
-func v2_to_v2i(v2 : Vector2) -> Vector2i:
+func v2_to_v2i(v2: Vector2) -> Vector2i:
 	return Vector2i(floori(v2.x), floori(v2.y))
 
 
@@ -34,32 +34,36 @@ func html_color_to_v3i(html_color: String) -> Vector3i:
 	return Vector3i(int(color.r), int(color.g), int(color.b))
 	
 	
-func v3_to_pretty(v3 : Vector3) -> String:
+func v3_to_pretty(v3: Vector3) -> String:
 	return "(%s, %s, %s)" % [v3.x, v3.y, v3.z]
 	
 	
-func v3i_to_pretty(v3i : Vector3i) -> String:
+func v3i_to_pretty(v3i: Vector3i) -> String:
 	return "(%s, %s, %s)" % [v3i.x, v3i.y, v3i.z]
 
 
-func a3_to_v3(array : Array) -> Vector3:
+func a3_to_v3(array: Array) -> Vector3:
 	return Vector3(array[0], array[1], array[2])
 
 
-func a2_to_v3(array : Array) -> Vector3:
+func a2_to_v3(array: Array) -> Vector3:
 	return Vector3(array[0], 0, array[1])
 
 
-func a2_to_v2(array : Array) -> Vector2:
+func a2_to_v2(array: Array) -> Vector2:
 	return Vector2(array[0], array[1])
 
 
-func a3_to_v3i(array : Array[float]) -> Vector3i:
+func a3_to_v3i(array: Array[float]) -> Vector3i:
 	return Vector3i(floori(array[0]), floori(array[1]), floori(array[2]))
 
 
-func v3_to_a3(v3 : Vector3) -> Array[float]:
+func v3_to_a3(v3: Vector3) -> Array[float]:
 	return [snappedf(v3.x, 0.001), snappedf(v3.y, 0.001), snappedf(v3.z, 0.001)]
+
+
+func v2_to_a2(v2: Vector2) -> Array[float]:
+	return [snappedf(v2.x, 0.001), snappedf(v2.y, 0.001)]
 
 
 func v3_to_a2(v3: Vector3) -> Array[float]:
@@ -157,7 +161,15 @@ func get_mouse_hit(camera: Camera3D, from_center: bool, raycast: PhysicsRayQuery
 	raycast.collision_mask = collision_mask
 	raycast.hit_back_faces = hit_back_faces
 	return space_state.intersect_ray(raycast)
-
+	
+	
+func action_shortcut(action_name):
+	var input_event := InputEventAction.new()
+	input_event.action = action_name
+	var shortcut := Shortcut.new()
+	shortcut.events = [input_event]
+	return shortcut
+	
 
 func loads_json(data : String) -> Dictionary:
 	var json := JSON.new()
@@ -186,7 +198,7 @@ func dumps_json(data) -> String:
 	return JSON.stringify(data, "", false)
 
 
-func dump_json(path : String, data : Dictionary) -> void:
+func dump_json(path: String, data: Dictionary) -> void:
 	var json_string := dumps_json(data)
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	var open_error := FileAccess.get_open_error()
@@ -195,5 +207,95 @@ func dump_json(path : String, data : Dictionary) -> void:
 	file.store_line(json_string)
 
 
-func make_dirs(path : String) -> void:
-	DirAccess.make_dir_recursive_absolute(path)
+func make_dirs(path: String) -> void:
+	var error := DirAccess.make_dir_recursive_absolute(path)
+	if error:
+		printerr("Error creating dirs: " + str(error))
+		
+		
+func remove_dirs(path: String) -> void:
+	var global_path := ProjectSettings.globalize_path(path)
+	OS.move_to_trash(global_path)
+
+
+func rename(from: String, to: String) -> void:
+	var error := DirAccess.rename_absolute(from, to)
+	if error:
+		printerr("Error renaming: " + str(error))
+
+
+func create_unique_folder(path: String, sep_char := "-") -> int:
+	var siblins := 1
+	var unique_path := path
+
+	while DirAccess.dir_exists_absolute(unique_path):
+		siblins += 1
+		var regex = RegEx.new()
+		regex.compile(r"(.*?)%s(\d+)$" % sep_char)
+		var matches := regex.search(unique_path)
+		if matches:
+			var groups := matches.get_strings()
+			unique_path = "%s%s%s" % [groups[1], sep_char, int(groups[2]) + 1]
+		else:
+			unique_path = "%s%s%s" % [path, sep_char, siblins]
+
+	make_dirs(unique_path)
+	return siblins
+	
+
+func sort_strings_ended_with_number(array: Array[String]) -> Array[String]:
+	var regex := RegEx.new()
+	var pattern := r"(.*?)(\d+)$"
+	regex.compile(pattern)
+	array.sort_custom(func (a: String, b: String):
+		var match_a := regex.search(a)
+		var match_b := regex.search(b)
+		if not match_a or not match_b:
+			return a < b
+			
+		var groups_a := match_a.strings
+		var groups_b := match_b.strings
+		var text_a = groups_a[1]
+		var text_b = groups_b[1]
+		if text_a == text_b:
+			var num_a = int(groups_a[2])
+			var num_b = int(groups_b[2])
+			return num_a < num_b
+		else:
+			return text_a < text_b
+	)
+	return array
+
+
+func slugify(text: String) -> String:
+	text = text.strip_edges().to_lower()
+	var replacements = {
+		" ": "-",
+		"á": "a", "à": "a", "ä": "a", "â": "a", "ã": "a", "å": "a", "æ": "ae",
+		"ç": "c", "č": "c", "ć": "c",
+		"é": "e", "è": "e", "ë": "e", "ê": "e", "ě": "e",
+		"í": "i", "ì": "i", "ï": "i", "î": "i",
+		"ñ": "n", 
+		"ó": "o", "ò": "o", "ö": "o", "ô": "o", "õ": "o", "ø": "o", "œ": "oe",
+		"š": "s", "ß": "ss",
+		"ú": "u", "ù": "u", "ü": "u", "û": "u",
+		"ý": "y", "ÿ": "y",
+		"ž": "z", "ź": "z", "ż": "z",
+		"đ": "d", "ð": "d",
+		"ł": "l",
+		"þ": "th",
+	}
+	
+	for original in replacements.keys():
+		text = text.replace(original, replacements[original])
+
+	var slug = ""
+	for t in text:
+		if t in "-abcdefghijklmnopqrstuvwxyz0123456789":
+			slug += t
+
+	return slug
+
+
+func png_to_texture(path: String) -> Texture2D:
+	return ImageTexture.create_from_image(Image.load_from_file(path))

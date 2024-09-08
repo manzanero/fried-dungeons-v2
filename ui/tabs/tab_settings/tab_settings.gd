@@ -6,6 +6,9 @@ signal info_changed(title: String)
 signal ambient_changed(master_view: bool, light: float, color: Color)
 
 
+var cached_valid_label: String
+
+
 # info
 @onready var info_container: PropertyContainer = %InfoContainer
 @onready var title_field: StringField = %TitleField
@@ -50,10 +53,14 @@ func _ready() -> void:
 
 
 func _on_info_edited():
-	var title := title_edit.text
-	if not title:
-		title = "Untitled"
-	info_changed.emit(title)
+	var label := title_edit.text.validate_filename()
+	if not label:
+		label = "Untitled"
+	
+	var caret_column := title_edit.caret_column
+	title_edit.text = label
+	title_edit.caret_column = caret_column
+	info_changed.emit(label)
 
 
 func _on_ambient_edited():

@@ -1,7 +1,6 @@
 class_name PropertyContainer
 extends Control
 
-
 const ARROW_DOWN = preload("res://resources/icons/arrow_down.png")
 const ARROW_RIGHT = preload("res://resources/icons/arrow_right.png")
 

@@ -8,9 +8,11 @@
 [ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="6_in7wo"]
 
 [sub_resource type="QuadMesh" id="QuadMesh_i7wkn"]
+resource_local_to_scene = true
 orientation = 1
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_bqjo7"]
+resource_local_to_scene = true
 render_priority = 9
 transparency = 4
 depth_draw_mode = 1
@@ -20,6 +22,7 @@ specular_mode = 2
 albedo_color = Color(0.752941, 0.756863, 0.752941, 0.760784)
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_phdll"]
+resource_local_to_scene = true
 render_priority = 9
 shader = ExtResource("2_6ovoq")
 shader_parameter/mouse_position = null
@@ -48,6 +51,7 @@ meshes = Array[ArrayMesh]([SubResource("ArrayMesh_p83yh")])
 material = SubResource("StandardMaterial3D_q76gf")
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_wj261"]
+resource_local_to_scene = true
 render_priority = 9
 transparency = 4
 cull_mode = 2
@@ -58,8 +62,10 @@ specular_mode = 2
 albedo_color = Color(0.75, 0.75, 0.75, 0.25)
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_tfb43"]
+resource_local_to_scene = true
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_dsg2h"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_t6462"]
+resource_local_to_scene = true
 
 [node name="Selector" type="Node3D"]
 script = ExtResource("1_yrs1k")
@@ -103,7 +109,7 @@ material_override = SubResource("StandardMaterial3D_bqjo7")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_dsg2h")
+mesh = SubResource("ImmediateMesh_t6462")
 script = ExtResource("6_in7wo")
 points = Array[Vector3]([Vector3(0, 0, 0), Vector3(0, 1, 0)])
 start_thickness = 0.031

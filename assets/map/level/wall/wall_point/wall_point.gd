@@ -65,7 +65,7 @@ func _on_button_up():
 	wall.edit_point(null)
 	
 	
-func _on_gui_input(event: InputEvent):
+func _on_gui_input(_event: InputEvent):
 	Game.handled_input = true
 	
 	

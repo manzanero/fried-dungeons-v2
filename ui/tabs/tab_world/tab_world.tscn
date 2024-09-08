@@ -1,0 +1,93 @@
+[gd_scene load_steps=4 format=3 uid="uid://lye1ti1uqjjr"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_world/tab_world.gd" id="1_75xg6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h407n"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cdj30"]
+content_margin_top = 6.0
+bg_color = Color(1, 1, 1, 0.309804)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+expand_margin_left = 4.0
+expand_margin_right = 4.0
+
+[node name="TabWorld" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_75xg6")
+
+[node name="VBoxContainer2" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer2"]
+layout_mode = 2
+
+[node name="NewButton" type="Button" parent="VBoxContainer2/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "New +"
+
+[node name="ScanButton" type="Button" parent="VBoxContainer2/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Scan"
+
+[node name="TitleLineEdit" type="LineEdit" parent="VBoxContainer2/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "title..."
+clear_button_enabled = true
+
+[node name="Tree" type="Tree" parent="VBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_h407n")
+theme_override_styles/selected = SubResource("StyleBoxFlat_cdj30")
+theme_override_styles/selected_focus = SubResource("StyleBoxFlat_cdj30")
+hide_root = true
+
+[node name="VBoxContainer" type="BoxContainer" parent="VBoxContainer2"]
+layout_mode = 2
+
+[node name="OpenButton" type="Button" parent="VBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Open"
+
+[node name="FolderButton" type="Button" parent="VBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+tooltip_text = "Opens in file explored"
+text = "Folder"
+
+[node name="RemoveButton" type="Button" parent="VBoxContainer2/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Move to trash"
+text = "Remove"

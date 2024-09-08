@@ -57,6 +57,20 @@ class Property:
 		value = _value
 		container = _container
 
+	func set_raw(_value):
+		match hint:
+			Hints.COLOR:
+				value = Utils.html_color_to_color(_value)
+			_:
+				value = _value
+				
+	func get_raw():
+		match hint:
+			Hints.COLOR:
+				return Utils.color_to_html_color(value)
+			_:
+				return value
+
 	class Hints:
 		const BOOL = &"bool_hint"
 		const COLOR = &"color_hint"

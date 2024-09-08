@@ -32,10 +32,10 @@ func _on_lifetime_end() -> void:
 	
 
 func _process(_delta: float) -> void:
-	###### need better physics in 4.3
-	timeout_error.emit()
-	queue_free()
-	######
+	####### workarround for non working physics
+	#timeout_error.emit()
+	#queue_free()
+	#######
 	
 	if Input.is_action_just_pressed("left_click"):
 		visible = false

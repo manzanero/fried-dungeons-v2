@@ -274,3 +274,23 @@ func cut(a: Vector2, b: Vector2):
 
 func get_point_by_index(index : int) -> WallPoint:
 	return points[index] if index < len(points) else null
+
+
+###############
+# Serializing #
+###############
+
+func json():
+	var p := []
+	for point in points:
+		p.append(Utils.v3_to_a2(point.position_3d))
+	
+	return {
+		"i": material_index,
+		"s": material_seed,
+		"l": material_layer,
+		"2": two_sided,
+		"p": p,
+	}
+	
+	

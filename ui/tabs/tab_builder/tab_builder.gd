@@ -8,6 +8,7 @@ var material_index_selected := 5
 const ATLAS_TEXTURE_BUTTON = preload("res://ui/tabs/tab_builder/atlas_texture_button/atlas_texture_button.tscn")
 
 
+@export var mode_button_group: ButtonGroup
 @export var materials: Control
 
 @onready var one_side_button: Button = %OneSideButton
@@ -79,6 +80,15 @@ func _on_visibility_changed():
 		var button := tile_button.button_group.get_pressed_button()
 		if button:
 			button.button_pressed = false
+			
+
+func reset():
+	Game.ui.build_border.visible = false
+	if mode_button_group.get_pressed_button():
+		mode_button_group.get_pressed_button().button_pressed = false
+
+	if Game.ui.selected_map and Game.ui.selected_map.selected_level:
+		Game.ui.selected_map.selected_level.state_machine.change_state("Idle")
 
 
 enum {
