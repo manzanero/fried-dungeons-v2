@@ -27,7 +27,7 @@ func init(parent: Node, _faces, _color, _roll_seed: int, _linked_d100: Die = nul
 	linked_d100 = _linked_d100
 	parent.add_child(self)
 	color = _color
-	name = "Die"
+	name = Utils.random_string()
 	return self
 
 

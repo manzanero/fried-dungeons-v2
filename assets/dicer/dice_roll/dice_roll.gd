@@ -13,7 +13,7 @@ var is_finished := false
 func init(parent: Node, _dice_string: String):
 	dice_string = _dice_string
 	parent.add_child(self)
-	name = "DiceRoll"
+	name = Utils.random_string()
 	return self
 	
 

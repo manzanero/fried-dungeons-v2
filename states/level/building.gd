@@ -13,8 +13,6 @@ var _click_origin_position := Vector2.ZERO
 var _click_origin_tile := Vector2i.ZERO
 var _is_rect_being_builded := false
 var _wall_being_builded: Wall
-var _entity_being_instanced: Entity
-var _light_being_instanced: Light
 var _previous_properties := {}
 var _wall_hovered: Wall
 
@@ -48,10 +46,8 @@ func _exit_state(next_state: String) -> void:
 	selector.wall.mesh = null
 	_is_rect_being_builded = false
 	_wall_being_builded = null
-	if is_instance_valid(_entity_being_instanced):
-		_entity_being_instanced.queue_free()
-	if is_instance_valid(_light_being_instanced):
-		_light_being_instanced.queue_free()
+	if is_instance_valid(level.preview_element):
+		level.preview_element.queue_free()
 	_previous_properties = {}
 
 
@@ -121,14 +117,14 @@ func _physics_process_state(_delta: float) -> String:
 
 
 func process_change_grid() -> void:
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	selector.move_grid_to(level.position_hovered)
 
 
 func process_change_column() -> void:
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	var point_position := level.position_hovered
@@ -139,18 +135,19 @@ func process_change_column() -> void:
 
 
 func process_build_point() -> void:
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
 		selector.area.visible = true
 		
-	if Input.is_action_pressed("left_click") and _click_origin_tile != level.tile_hovered and Game.ui.is_mouse_over_map_tab:
-		_click_origin_tile = level.tile_hovered
+	if Input.is_action_pressed("left_click") and _click_origin_tile != level.tile_hovered and Game.ui.is_mouse_over_scene_tab:
+		var tile := level.tile_hovered
+		_click_origin_tile = tile
 		selector.tiled_move_area_to(level.position_hovered, level.position_hovered)
 		var random = range(8).pick_random()
 		var tile_data := {"i": material_index_selected, "f": random}
-		level.cells[level.tile_hovered] = Level.Cell.new(tile_data.i, tile_data.f)
-		level.viewport_3d.tile_map_set_cell(level.tile_hovered, Vector2i(tile_data.f, tile_data.i))
+		level.build_point(tile, tile_data)
+		Game.server.rpcs.build_point.rpc(map.slug, level.index, tile, tile_data)
 	
-	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_map_tab:
+	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_scene_tab:
 		selector.area.visible = false
 
 
@@ -159,19 +156,19 @@ func process_build_rect() -> void:
 		selector.area.visible = false
 		_is_rect_being_builded = false
 		
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
 		_click_origin_position = level.position_hovered
 		_is_rect_being_builded = true
 		selector.area.visible = true
 		
-	if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
+	if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
 		selector.tiled_move_area_to(_click_origin_position, level.position_hovered)
 		
 	if Input.is_action_just_released("left_click") and _is_rect_being_builded:
 		selector.area.visible = false
 		_is_rect_being_builded = false
 		
-		if Game.ui.is_mouse_over_map_tab:
+		if Game.ui.is_mouse_over_scene_tab:
 			var init_x := int(_click_origin_position.floor().x)
 			var init_y := int(_click_origin_position.floor().y)
 			var end_x := level.tile_hovered.x
@@ -183,12 +180,12 @@ func process_build_rect() -> void:
 					var random = range(8).pick_random()
 					var tile := Vector2i(x, y)
 					var tile_data := {"i": material_index_selected, "f": random}
-					level.cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
-					level.viewport_3d.tile_map_set_cell(tile, Vector2i(random, tile_data.i))
+					level.build_point(tile, tile_data)
+					Game.server.rpcs.build_point.rpc(map.slug, level.index, tile, tile_data)
 
 
 func process_hover_wall():
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	if is_instance_valid(_wall_hovered):
@@ -206,7 +203,7 @@ func process_hover_wall():
 
 		
 func process_change_wall() -> void:
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	if not is_instance_valid(_wall_hovered):
@@ -217,7 +214,7 @@ func process_change_wall() -> void:
 
 		
 func process_flip_wall() -> void:
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	if not is_instance_valid(_wall_hovered):
@@ -228,7 +225,7 @@ func process_flip_wall() -> void:
 
 
 func process_paint_wall() -> void:
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	if not is_instance_valid(_wall_hovered):
@@ -239,7 +236,7 @@ func process_paint_wall() -> void:
 
 
 func process_build_one_sided() -> void:
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	if _wall_being_builded:
@@ -250,7 +247,7 @@ func process_build_one_sided() -> void:
 		
 
 func process_build_two_sided() -> void:
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	if _wall_being_builded:
@@ -263,11 +260,19 @@ func process_build_two_sided() -> void:
 func process_build_one_sided_start(two_sided := false) -> void:
 	if Input.is_action_just_pressed("left_click"):
 		_click_origin_position = Utils.v3_to_v2(selector.column.position)
-		_wall_being_builded = Game.wall_scene.instantiate().init(level, material_index_selected, randi())
-		_wall_being_builded.add_point(_click_origin_position)
-		if two_sided:
-			_wall_being_builded.two_sided = true
+		_wall_being_builded = map.instancer.create_wall(level, Utils.random_string(), 
+				[_click_origin_position], material_index_selected, randi(), 1, two_sided)
+		
+		Game.server.rpcs.create_wall.rpc(map.slug, level.index, 
+				_wall_being_builded.id,
+				_wall_being_builded.points_position_2d, 
+				_wall_being_builded.material_index, 
+				_wall_being_builded.material_seed, 
+				_wall_being_builded.material_layer, 
+				_wall_being_builded.two_sided)
 			
+		Debug.print_info_message("Wall \"%s\" created" % _wall_being_builded.id)
+		
 		selector.wall.visible = true
 		
 		
@@ -289,10 +294,19 @@ func process_build_one_sided_new_point() -> void:
 			_click_origin_position = Utils.v3_to_v2(selector.column.position)
 			_wall_being_builded.add_point(_click_origin_position)
 			
+			Game.server.rpcs.set_wall_points.rpc(map.slug, level.index, 
+					_wall_being_builded.id, 
+					_wall_being_builded.points_position_2d)
+			
+			Debug.print_info_message("Wall \"%s\" changed" % _wall_being_builded.id)
+			
 			
 func _stop_creating_wall():
 	if _wall_being_builded.curve.point_count < 2:
 		_wall_being_builded.remove()
+		
+		Game.server.rpcs.remove_wall.rpc(map.slug, level.index, _wall_being_builded.id)
+		
 	_wall_being_builded = null
 	selector.wall.visible = false
 	
@@ -352,7 +366,7 @@ func process_cut_wall() -> void:
 
 
 func process_cut_next_point() -> void:
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	var origin := Utils.v2_to_v3(_click_origin_position)
@@ -375,7 +389,7 @@ func process_cut() -> void:
 
 
 func process_cut_start() -> void:
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	if Input.is_action_just_pressed("left_click"):
@@ -389,12 +403,12 @@ func process_build_room(wall_outside := false) -> void:
 		selector.wall.visible = false
 		_is_rect_being_builded = false
 		
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
 		_click_origin_position = Utils.v3_to_v2(selector.column.position)
 		selector.wall.visible = true
 		_is_rect_being_builded = true
 		
-	if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
+	if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
 		var destiny := Utils.v3_to_v2(selector.column.position)
 		selector.move_area_to(_click_origin_position, destiny)
 		_create_temp_room(Utils.v2_to_v3(_click_origin_position), selector.column.position)
@@ -404,7 +418,7 @@ func process_build_room(wall_outside := false) -> void:
 		selector.wall.visible = false
 		_is_rect_being_builded = false
 		
-		if not Game.ui.is_mouse_over_map_tab:
+		if not Game.ui.is_mouse_over_scene_tab:
 			return
 		
 		var origin := _click_origin_position
@@ -421,12 +435,19 @@ func process_build_room(wall_outside := false) -> void:
 		if wall_outside:
 			points.reverse()
 		
-		var wall: Wall = Game.wall_scene.instantiate().init(level, material_index_selected, randi())
+		var wall: Wall = map.instancer.create_wall(
+				level, Utils.random_string(), [], material_index_selected, randi())
 		wall.add_point(origin)
 		for point in points:
 			wall.add_point(point)
 		wall.add_point(origin)
-				
+		
+		Game.server.rpcs.create_wall.rpc(map.slug, level.index, wall.id, wall.points_position_2d, 
+				wall.material_index, wall.material_seed, wall.material_layer, wall.two_sided)
+		Game.server.rpcs.set_wall_points.rpc(map.slug, level.index, wall.id, wall.points_position_2d)
+			
+		Debug.print_info_message("Wall \"%s\" created" % wall.id)
+
 
 func _create_temp_room(origin: Vector3, destiny: Vector3) -> void:
 	var index_offset := 0
@@ -471,30 +492,36 @@ func _create_temp_room_face(index_offset: int, origin: Vector3, destiny: Vector3
 
 
 func process_instance_entity():
-	if not is_instance_valid(_entity_being_instanced):
-		_entity_being_instanced = map.instancer.create_entity(selector.position_2d, _previous_properties)
-		_entity_being_instanced.is_editing = true
-		_entity_being_instanced.is_preview = true
-		select(_entity_being_instanced)
+	if not is_instance_valid(level.preview_element):
+		level.preview_element = map.instancer.create_entity(
+			level, Utils.random_string(), selector.position_2d, _previous_properties)
+		level.preview_element.is_preview = true
+		select(level.preview_element)
 	
-	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_map_tab:
-		Debug.print_info_message("Element \"%s\" created" % _entity_being_instanced.name)
-		_entity_being_instanced.is_editing = false
-		_entity_being_instanced.is_preview = false
-		_previous_properties = _entity_being_instanced.get_properties_values()
-		_entity_being_instanced = null
+	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_scene_tab:
+		var entity := level.preview_element
+		Debug.print_info_message("Entity \"%s\" created" % entity.id)
+		entity.is_preview = false
+		Game.server.rpcs.create_entity.rpc(
+			map.slug, level.index, entity.id, entity.position_2d, entity.properties_values)
 
+		_previous_properties = level.preview_element.properties_values
+		level.preview_element = null
+	
 
 func process_instance_light():
-	if not is_instance_valid(_light_being_instanced):
-		_light_being_instanced = map.instancer.create_light(selector.position_2d, _previous_properties)
-		_light_being_instanced.is_editing = true
-		_light_being_instanced.is_preview = true
-		select(_light_being_instanced)
+	if not is_instance_valid(level.preview_element):
+		level.preview_element = map.instancer.create_light(
+			level, Utils.random_string(), selector.position_2d, _previous_properties)
+		level.preview_element.is_preview = true
+		select(level.preview_element)
 	
-	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_map_tab:
-		Debug.print_info_message("Element \"%s\" created" % _light_being_instanced.name)
-		_light_being_instanced.is_editing = false
-		_light_being_instanced.is_preview = false
-		_previous_properties = _light_being_instanced.get_properties_values()
-		_light_being_instanced = null
+	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_scene_tab:
+		var light := level.preview_element
+		Debug.print_info_message("Light \"%s\" created" % light.id)
+		light.is_preview = false
+		Game.server.rpcs.create_light.rpc(
+			map.slug, level.index, light.id, light.position_2d, light.properties_values)
+
+		_previous_properties = level.preview_element.properties_values
+		level.preview_element = null

@@ -23,10 +23,11 @@ func _exit_state(next_state: String) -> void:
 
 
 func process_wall_selection():
-	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
+	if Game.handled_input:
 		return
-		
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Input.is_action_just_pressed("left_click"):
+		return
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 
 	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.WALL_BITMASK)
@@ -39,74 +40,49 @@ func process_wall_selection():
 	elif is_instance_valid(level.selected_wall):
 		level.selected_wall.is_selected = false
 		level.selected_wall = null
-	
 
-func process_light_selection():
+
+func process_element_selection():
 	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
 		return
 		
-	if not Game.ui.is_mouse_over_map_tab:
-		return
-		
-	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.LIGHT_BITMASK)
-	if hit_info:
-		var light_hitted := hit_info["collider"].get_parent() as Light
-		select(light_hitted)
-		
-		Game.handled_input = true
-
-	elif is_instance_valid(level.selected_light):
-		level.selected_light.is_selected = false
-		level.selected_light = null
-
-
-func process_light_movement():
-	if not level.selected_light:
-		return
-		
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
-		level.selected_light.is_editing = true
-		
-	elif Input.is_action_just_released("left_click"):
-		level.selected_light.is_editing = false
-
-
-func process_entity_selection():
-	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
-		return
-		
-	if not Game.ui.is_mouse_over_map_tab:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 	
 	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
 	if hit_info:
-		var entity_hitted := hit_info["collider"].get_parent() as Entity
-		select(entity_hitted)
+		var element_hitted := hit_info["collider"].get_parent() as Element
+		select(element_hitted)
 		
 		Game.handled_input = true
 	
-	elif is_instance_valid(level.selected_entity): 
-		level.selected_entity.is_selected = false
-		level.selected_entity = null
+	elif is_instance_valid(level.element_selected): 
+		level.element_selected.is_selected = false
+		level.element_selected = null
 
 
-func process_entity_movement():
-	if not level.selected_entity:
+func process_element_movement():
+	if not level.element_selected:
 		return
 		
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_map_tab:
-		level.selected_entity.is_editing = true
-	elif Input.is_action_just_released("left_click"):
-		level.selected_entity.is_editing = false
+	if Input.is_action_just_released("left_click"):
+		level.element_selected.is_dragged = false
+	
+	if not Game.ui.is_mouse_over_scene_tab:
+		return
+		
+	if Input.is_action_just_pressed("left_click"):
+		level.element_selected.is_dragged = true
+			
 
 
 func process_entity_follow():
-	if not level.selected_entity:
+	if not level.element_selected:
 		return
 		
 	if Input.is_action_just_pressed("shift_left_click"):
-		level.follower_entity = level.selected_entity
-		level.selected_entity = null
+		level.follower_entity = level.element_selected
+		level.element_selected = null
 
 
 func process_ground_hitted():
@@ -128,29 +104,17 @@ func process_ceilling_hitted():
 		
 
 func select(thing):
-	if thing is Light:
+	if thing is Element:
 		thing.is_selected = true
-		level.selected_light = thing
-		for light in level.lights_parent.get_children():
-			if light != thing:
-				light.is_selected = false
-	else:
-		level.selected_light = null
-		for light in level.lights_parent.get_children():
-			light.is_selected = false
-
-	if thing is Entity:
-		thing.is_selected = true
-		level.selected_entity = thing
-		for entity: Entity in level.entities_parent.get_children():
-			if entity != thing:
-				entity.is_selected = false
+		level.element_selected = thing
+		for element: Element in level.elements_parent.get_children():
+			if element != thing:
+				element.is_selected = false
 		
 	else:
-		level.selected_entity = null
-		for entity in level.entities_parent.get_children():
-			entity.is_selected = false
-				
+		level.element_selected = null
+		for element in level.elements_parent.get_children():
+			element.is_selected = false
 			
 	if thing is Wall:
 		thing.is_selected = true

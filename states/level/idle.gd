@@ -7,9 +7,7 @@ func _physics_process_state(_delta: float) -> String:
 		process_ground_hitted()
 		process_ceilling_hitted()
 		
-	process_light_selection()
-	process_light_movement()
-	process_entity_selection()
-	process_entity_movement()
+	process_element_selection()
+	process_element_movement()
 	process_entity_follow()
 	return ""

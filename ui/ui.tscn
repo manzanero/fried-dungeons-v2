@@ -1,7 +1,8 @@
-[gd_scene load_steps=16 format=3 uid="uid://bn7uvkfq24dl4"]
+[gd_scene load_steps=17 format=3 uid="uid://bn7uvkfq24dl4"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
+[ext_resource type="PackedScene" uid="uid://b4l1ilsp0i1is" path="res://ui/tabs/tab_elements/tab_elements.tscn" id="3_636ai"]
 [ext_resource type="PackedScene" uid="uid://lye1ti1uqjjr" path="res://ui/tabs/tab_world/tab_world.tscn" id="3_e6fcj"]
 [ext_resource type="PackedScene" uid="uid://dfwkx5bxrpk35" path="res://assets/dicer/dicer.tscn" id="3_hqwy8"]
 [ext_resource type="PackedScene" uid="uid://b1i1ky18bbaqf" path="res://ui/tabs/tab_debug/tab_debug.tscn" id="4_g7vlm"]
@@ -147,17 +148,10 @@ grow_vertical = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="Map" type="Control" parent="IDE/V/H/H/Left/P/T"]
+[node name="Elements" parent="IDE/V/H/H/Left/P/T" instance=ExtResource("3_636ai")]
+unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
-
-[node name="Tree" type="Tree" parent="IDE/V/H/H/Left/P/T/Map"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
 
 [node name="P2" type="Panel" parent="IDE/V/H/H/Left"]
 custom_minimum_size = Vector2(256, 128)
@@ -206,7 +200,7 @@ split_offset = 2820
 custom_minimum_size = Vector2(0, 200)
 layout_mode = 2
 
-[node name="TabMaps" type="TabContainer" parent="IDE/V/H/H/Middle/Up"]
+[node name="TabScenes" type="TabContainer" parent="IDE/V/H/H/Middle/Up"]
 unique_name_in_owner = true
 clip_contents = true
 custom_minimum_size = Vector2(0, 128)
@@ -330,18 +324,18 @@ unique_name_in_owner = true
 clip_contents = true
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
-current_tab = 1
+current_tab = 0
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
 
 [node name="Builder" parent="IDE/V/H/H/Middle/Down/DownTabs" instance=ExtResource("6_jy8ng")]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 mode_button_group = SubResource("ButtonGroup_e1kdt")
 metadata/_tab_index = 0
 
 [node name="Debug" parent="IDE/V/H/H/Middle/Down/DownTabs" instance=ExtResource("4_g7vlm")]
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 

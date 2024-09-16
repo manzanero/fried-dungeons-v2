@@ -2,7 +2,7 @@ class_name TabMessages
 extends Control
 
 
-signal command_roll(origin: Element, dice_string: String)
+#signal command_roll(origin: Element, dice_string: String)
 signal command_echo(origin: Element, text_string: String)
 
 

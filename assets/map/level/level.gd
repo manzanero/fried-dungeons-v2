@@ -5,8 +5,7 @@ extends Node3D
 @export var map: Map
 
 @export var walls_parent: Node3D
-@export var lights_parent: Node3D
-@export var entities_parent: Node3D
+@export var elements_parent: Node3D
 
 @export var selector: Selector
 
@@ -14,6 +13,8 @@ extends Node3D
 
 var index := 0
 var cells := {}
+var elements := {}
+var walls := {}
 
 var rect: Rect2i : 
 	set(value):
@@ -27,15 +28,15 @@ var position_hovered: Vector2
 var ceilling_hovered: Vector2
 var tile_hovered: Vector2i
 var selected_wall: Wall
-var selected_light: Light
-var selected_entity: Entity
+var element_selected: Element
+var preview_element: Element
 var follower_entity: Entity :
 	set(value):
 		if follower_entity:
 			follower_entity.sprite_mesh.visible = true
 		follower_entity = value
 		if follower_entity:
-			follower_entity.sprite_mesh.visible = false
+			follower_entity.body_mesh_instance.visible = false
 			follower_entity.is_selected = false
 			map.camera.target_position.global_position = follower_entity.global_position
 			map.camera.is_fps = true
@@ -44,6 +45,12 @@ var active_lights: Array[Light] = []
 
 var light_sample_2d: Image
 
+func get_entity_by_id(element_id) -> Entity:
+	var element: Element = elements_parent.get_node(element_id)
+	if not element:
+		Debug.print_error_message("Entity \"%s\" (%s) not found" % [element.label, element.id])
+	return element
+	
 
 @onready var state_machine: StateMachine = $StateMachine
 
@@ -59,8 +66,10 @@ var light_sample_2d: Image
 @onready var ceilling_mesh_instance_3d: MeshInstance3D = $Ceilling/MeshInstance3D
 
 
-func init(_map : Map):
+func init(_map: Map, _index: int):
 	map = _map
+	index = _index
+	map.levels[index] = self
 	map.selected_level = self
 	map.levels_parent.add_child(self)
 	return self
@@ -105,9 +114,9 @@ func get_light(point: Vector2) -> Color:
 	if not light_sample_2d:
 		return Color.TRANSPARENT
 	var pixel_position := (point - Vector2(rect.position)) * 4 
-	if pixel_position.x < 0 or pixel_position.x > light_sample_2d.get_width():
+	if pixel_position.x < 0 or pixel_position.x >= light_sample_2d.get_width():
 		return Color.TRANSPARENT
-	if pixel_position.y < 0 or pixel_position.y > light_sample_2d.get_height():
+	if pixel_position.y < 0 or pixel_position.y >= light_sample_2d.get_height():
 		return Color.TRANSPARENT
 	return light_sample_2d.get_pixelv(pixel_position)
 
@@ -116,10 +125,18 @@ func _process(_delta: float) -> void:
 	if Input.is_key_pressed(KEY_DELETE):
 		if is_instance_valid(selected_wall):
 			selected_wall.remove()
-		if is_instance_valid(selected_entity):
-			selected_entity.remove()
-		if is_instance_valid(selected_light):
-			selected_light.remove()
+			
+			Game.server.rpcs.remove_wall.rpc(map.slug, index, selected_wall.id)
+			
+		if is_instance_valid(element_selected):
+			element_selected.remove()
+			
+			Game.server.rpcs.remove_element.rpc(map.slug, index, element_selected.id)
+
+
+func build_point(tile: Vector2i, tile_data: Dictionary):
+	cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
+	viewport_3d.tile_map_set_cell(tile, Vector2i(tile_data.f, tile_data.i))
 
 
 #########
@@ -165,19 +182,18 @@ func json() -> Dictionary:
 		var cell: Cell = cells[tile]
 		tiles[tile.y - pos_z][tile.x - pos_x] = {"i": cell.index, "f": cell.frame}
 		
-	var walls := []
+	var walls_data := []
 	for wall in walls_parent.get_children():
-		walls.append(wall.json())
+		walls_data.append(wall.json())
 		
 	var entities := []
-	for entity: Entity in entities_parent.get_children():
-		entities.append(entity.json())
-		
 	var lights := []
-	for light: Light in lights_parent.get_children():
-		lights.append(light.json())
-		
 	var objects := []
+	for element: Element in elements_parent.get_children():
+		if element is Entity:
+			entities.append(element.json())
+		elif element is Light:
+			lights.append(element.json())
 		
 	var level := {
 		"rect": {
@@ -185,7 +201,7 @@ func json() -> Dictionary:
 			"size": Utils.v2_to_a2(rect.size),
 		},
 		"tiles": tiles,
-		"walls": walls,
+		"walls": walls_data,
 		"entities": entities,
 		"lights": lights,
 		"objects": objects,

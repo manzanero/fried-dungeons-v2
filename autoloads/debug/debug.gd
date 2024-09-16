@@ -16,6 +16,7 @@ const _WARNING_STR := "[color=dark_goldenrod][b][WARNING][/b][/color]"
 const _ERROR_STR := "[color=red][b][ERROR][/b][/color]"
 const _CRITICAL_STR := "[color=dark_red][b][CRITICAL][/b][/color]"
 
+var id := 1
 var is_debug := true
 var level := INFO
 
@@ -38,6 +39,7 @@ func print_critical_message(message: Variant):
 
 func print_message(debug_level: int, message: Variant):
 	if is_debug and debug_level >= level:
+		var id_str := "(%s)" % [id]
 		var time_str := "[color=dark_gray]%s.%03d[/color]" % [
 			Time.get_time_string_from_system(false), Time.get_ticks_msec() % 1000]
 
@@ -53,6 +55,6 @@ func print_message(debug_level: int, message: Variant):
 		else:
 			level_str = _CRITICAL_STR
 		
-		var debug_str = "%s %s %s" % [time_str, level_str, str(message)]
+		var debug_str = "%s %s %s %s" % [id_str, time_str, level_str, str(message)]
 		print_rich(debug_str)
 		send_message.emit(debug_str)

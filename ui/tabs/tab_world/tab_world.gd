@@ -2,7 +2,7 @@ class_name TabWorld
 extends Control
 
 
-const TAB_MAP = preload("res://ui/tabs/tab_map/tab_map.tscn")
+const TAB_SCENE = preload("res://ui/tabs/tab_scene/tab_scene.tscn")
 
 
 var campaign_selected: Campaign : 
@@ -12,7 +12,7 @@ var campaign_selected: Campaign :
 		refresh_tree()
 		
 
-var map_slug: String :
+var selected_map_slug: String :
 	get: 
 		return tree.get_selected().get_tooltip_text(0)
 
@@ -58,7 +58,7 @@ func _on_scan_button_pressed():
 	refresh_tree()
 
 
-func _on_filter_text_changed(new_text: String):
+func _on_filter_text_changed(_new_text: String):
 	refresh_tree()
 
 
@@ -97,17 +97,17 @@ func _on_open_button_pressed():
 	if not map_item:
 		return
 	
-	if map_slug in Game.ui.opened_map_slugs:
-		var tab_index = Game.ui.opened_map_slugs.find(map_slug)
-		Game.ui.map_tabs.current_tab = tab_index
+	if selected_map_slug in Game.ui.opened_map_slugs:
+		var tab_index = Game.ui.opened_map_slugs.find(selected_map_slug)
+		Game.ui.scene_tabs.current_tab = tab_index
 		return
 	
-	var new_tab_index := Game.ui.map_tabs.get_tab_count()
-	var tab_map: TabMap = TAB_MAP.instantiate().init(map_slug, cached_maps[map_slug])
-	Game.ui.map_tabs.current_tab = new_tab_index
+	var new_tab_index := Game.ui.scene_tabs.get_tab_count()
+	var tab_scene: TabScene = TAB_SCENE.instantiate().init(selected_map_slug, cached_maps[selected_map_slug])
+	Game.ui.scene_tabs.current_tab = new_tab_index
 	refresh_tree()
 	
-	tab_map.map.camera.target_position.position = Utils.v2i_to_v3(tab_map.map.selected_level.rect.get_center())
+	tab_scene.map.camera.target_position.position = Utils.v2i_to_v3(tab_scene.map.selected_level.rect.get_center())
 	
 
 
@@ -116,7 +116,7 @@ func _on_folder_button_pressed() -> void:
 	if not map_item:
 		return
 	
-	var path := campaign_selected.maps_path.path_join(map_slug)
+	var path := campaign_selected.maps_path.path_join(selected_map_slug)
 	OS.shell_show_in_file_manager(ProjectSettings.globalize_path(path))
 	
 
@@ -125,10 +125,10 @@ func _on_remove_button_pressed():
 	if not map_item:
 		return
 		
-	var path := campaign_selected.maps_path.path_join(map_slug)
+	var path := campaign_selected.maps_path.path_join(selected_map_slug)
 	Utils.remove_dirs(path)
-	if map_slug in Game.ui.opened_map_slugs:
-		Game.ui.map_tabs.get_tab_control(Game.ui.opened_map_slugs.find(map_slug)).queue_free()
+	if selected_map_slug in Game.ui.opened_map_slugs:
+		Game.ui.scene_tabs.get_tab_control(Game.ui.opened_map_slugs.find(selected_map_slug)).queue_free()
 	
 	scan(campaign_selected)
 	refresh_tree()

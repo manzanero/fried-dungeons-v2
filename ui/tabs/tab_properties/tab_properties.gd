@@ -65,3 +65,7 @@ func _make_containers_tree(properties: Dictionary):
 
 func _on_field_value_changed(property_name: String, new_value: Variant):
 	element_selected.set_property_value(property_name, new_value)
+	var level: Level = element_selected.level
+	var map: Map = level.map
+	var id := element_selected.id
+	Game.server.rpcs.change_element_property.rpc(map.slug, level.index, id, property_name, new_value)

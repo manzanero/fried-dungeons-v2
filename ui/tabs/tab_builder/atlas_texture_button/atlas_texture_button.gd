@@ -31,7 +31,7 @@ const PIXEL := Vector2(W_UNIT, H_UNIT) / 16
 
 func init(_parent: Control, _index: int):
 	_parent.add_child(self)
-	name = "AtlasTextureButton"
+	name = Utils.random_string()
 	index = _index
 	return self
 	

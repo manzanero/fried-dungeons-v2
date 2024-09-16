@@ -5,6 +5,9 @@ extends Node3D
 signal master_view_enabled(value : bool)
 
 
+var levels := {}
+
+
 @export var loader: Loader
 @export var instancer: Instancer
 @export var levels_parent: Node3D
@@ -139,7 +142,7 @@ func _on_gui_input(_event: InputEvent):
 	
 	
 func _on_mouse_exited():
-	Game.ui.selected_map_tab.cursor_control.visible = true
+	Game.ui.selected_scene_tab.cursor_control.visible = true
 
 
 ###############
@@ -147,13 +150,13 @@ func _on_mouse_exited():
 ###############
 
 func json() -> Dictionary:
-	var levels := {}
+	var levels_data := {}
 	for level: Level in levels_parent.get_children():
-		levels[level.index] = level.json()
+		levels_data[level.index] = level.json()
 	
 	return {
 		"label": label,
-		"levels": levels,
+		"levels": levels_data,
 		"settings": {
 			"ambient_light": ambient_light,
 			"ambient_color": Utils.color_to_html_color(ambient_color),

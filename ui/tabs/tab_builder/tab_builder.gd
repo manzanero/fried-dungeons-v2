@@ -73,6 +73,9 @@ func _on_button_pressed(button: Button, mode: int) -> void:
 
 
 func _on_visibility_changed():
+	if not Game.ui.selected_map:
+		return
+	
 	var state_machine := Game.ui.selected_map.selected_level.state_machine
 	if not visible:
 		if state_machine.state == "Building":

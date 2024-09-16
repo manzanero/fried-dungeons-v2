@@ -3,7 +3,7 @@ extends Control
 
 
 signal host_campaign_pressed(campaign: Campaign)
-signal join_server_pressed(server: Dictionary)
+signal join_server_pressed()
 
 
 const CAMPAIGN_BUTTON = preload("res://ui/main_menu/campaign_button/campaign_button.tscn")
@@ -176,6 +176,7 @@ func _on_host_button_pressed():
 	var campaign = Campaign.new().init(campaign_data.label)
 	host_campaign_pressed.emit(campaign)
 	
+	Game.campaign = campaign
 	Game.player_name = "Master"
 	Game.player_is_master = true
 	Game.server.host_multiplayer()
@@ -211,7 +212,7 @@ func _on_join_server_button_pressed():
 	var global_path := ProjectSettings.globalize_path(path)
 	var server_data := Utils.load_json(global_path.path_join("/server.json"))
 	
-	join_server_pressed.emit(server_data)
+	join_server_pressed.emit()
 	
 	Game.player_name = username
 	Game.player_is_master = false
@@ -243,7 +244,7 @@ func _on_new_server_add_button_pressed():
 	#ask server
 	var slug := "new-campaign"
 	var server_name := "New Campaign"
-	var icon: Texture2D = null
+	var _icon: Texture2D = null
 
 	var server_path := "user://servers/%s" % slug
 	Utils.make_dirs(server_path.path_join("maps"))

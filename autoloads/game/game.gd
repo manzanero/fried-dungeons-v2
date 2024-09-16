@@ -1,18 +1,22 @@
 extends Node
 
 
-var world_seed := randi_range(0, 999999)
 var player_name := 'Player'
 var player_is_master := false
 var player_color := Color.RED
 var campaign: Campaign
+
+var manager: GameManager
 var server: ServerManager
 var ui: UI
-var handled_input : bool
+
+var maps := {}
 
 
 # Variables
 
+var world_seed := randi_range(0, 999999)
+var handled_input : bool
 var radian_friendly_tick := 0
 var wave_global := 0.0
 
@@ -26,6 +30,7 @@ const SNAPPING_HALF := U * 8
 const SNAPPING_QUARTER := U * 4
 const PIXEL_SNAPPING_HALF := PIXEL * 8
 const PIXEL_SNAPPING_QUARTER := PIXEL * 4
+const PIXEL_SNAPPING_HALF_QUARTER := PIXEL * 2
 const VOXEL_SNAPPING_HALF := VOXEL * 8
 const VOXEL_SNAPPING_QUARTER := VOXEL * 4
 
@@ -48,7 +53,6 @@ var CEILLING_BITMASK := Utils.get_bitmask(Game.CEILLING_LAYER)
 var SELECTOR_BITMASK := Utils.get_bitmask(Game.SELECTOR_LAYER)
 
 var level_scene := load("res://assets/map/level/level.tscn")
-var wall_scene := load("res://assets/map/level/wall/wall.tscn")
 var wall_point_scene := load("res://assets/map/level/wall/wall_point/wall_point.tscn")
 var light_scene := load("res://assets/light/light.tscn")
 var entity_scene := load("res://assets/entity/entity.tscn")

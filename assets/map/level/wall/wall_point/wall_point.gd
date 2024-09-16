@@ -5,15 +5,15 @@ extends Control
 signal changed()
 
 
-var wall : Wall
+var wall: Wall
 
 
-var position_3d : Vector3 :
+var position_3d: Vector3 :
 	set(value):
 		position_3d = value
 		changed.emit()
 
-var index : int :
+var index: int :
 	set(value):
 		wall.points.erase(self)
 		wall.points.insert(value, self)
@@ -25,12 +25,12 @@ var index : int :
 @onready var label := %Label as Label
 
 
-func init(_wall : Wall, _index : int, _position_3d : Vector3):
+func init(_wall: Wall, _index: int, _position_3d: Vector3):
 	wall = _wall
 	wall.level.map.points_parent.add_child(self)
 	index = _index
 	position_3d = _position_3d
-	name = "WallPoint"
+	name = Utils.random_string()
 	visible = false
 	return self
 
@@ -46,9 +46,11 @@ func _ready():
 func _on_changed():
 	if not wall.is_selected:
 		return
-		
-	visible = not wall.level.map.camera.eyes.is_position_behind(position_3d)
-	position = wall.level.map.camera.eyes.unproject_position(position_3d + Vector3.UP * 0.001)  # x axis points cannot be unproject
+	
+	var map := wall.level.map
+	visible = not map.camera.eyes.is_position_behind(position_3d)
+	position = map.camera.eyes.unproject_position(position_3d + Vector3.UP * 0.001)  # x axis points cannot be unproject
+	map.point_options.visible = false
 
 	await get_tree().process_frame  # deletion of point need one frame to process
 	
@@ -58,6 +60,7 @@ func _on_changed():
 func _on_button_down():
 	wall.select_point(null)
 	wall.edit_point(self)
+	Game.handled_input = true
 
 	
 func _on_button_up():
@@ -70,5 +73,8 @@ func _on_gui_input(_event: InputEvent):
 	
 	
 func _on_mouse_exited():
-	Game.ui.selected_map_tab.cursor_control.visible = true
-	
+	Game.ui.selected_scene_tab.cursor_control.visible = true
+
+
+func remove():
+	queue_free()

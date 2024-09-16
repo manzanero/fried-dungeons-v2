@@ -5,13 +5,14 @@
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h407n"]
 content_margin_left = 4.0
 content_margin_top = 4.0
-content_margin_right = 4.0
+content_margin_right = 8.0
 content_margin_bottom = 4.0
 bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cdj30"]
 content_margin_top = 6.0
@@ -69,6 +70,7 @@ size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_h407n")
 theme_override_styles/selected = SubResource("StyleBoxFlat_cdj30")
 theme_override_styles/selected_focus = SubResource("StyleBoxFlat_cdj30")
+hide_folding = true
 hide_root = true
 
 [node name="VBoxContainer" type="BoxContainer" parent="VBoxContainer2"]

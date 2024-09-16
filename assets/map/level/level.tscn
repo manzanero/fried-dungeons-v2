@@ -71,11 +71,10 @@ albedo_color = Color(0, 0, 0, 1)
 resource_local_to_scene = true
 points = PackedVector3Array(-1000, 1, -1000, 1000, 1, -1000, 1000, 1, 1000, -1000, 1, 1000, -1000, -1, -1000, 1000, -1, -1000, 1000, -1, 1000, -1000, -1, 1000)
 
-[node name="Level" type="Node3D" node_paths=PackedStringArray("walls_parent", "lights_parent", "entities_parent", "selector")]
+[node name="Level" type="Node3D" node_paths=PackedStringArray("walls_parent", "elements_parent", "selector")]
 script = ExtResource("1_jdpmt")
 walls_parent = NodePath("Walls")
-lights_parent = NodePath("Lights")
-entities_parent = NodePath("Entities")
+elements_parent = NodePath("Elements")
 selector = NodePath("Selector")
 
 [node name="StateMachine" type="Node" parent="." node_paths=PackedStringArray("initial_state", "target_node")]
@@ -186,10 +185,7 @@ shape = SubResource("ConvexPolygonShape3D_u0tag")
 [node name="Walls" type="Node3D" parent="."]
 unique_name_in_owner = true
 
-[node name="Lights" type="Node3D" parent="."]
-unique_name_in_owner = true
-
-[node name="Entities" type="Node3D" parent="."]
+[node name="Elements" type="Node3D" parent="."]
 unique_name_in_owner = true
 
 [node name="Selector" parent="." instance=ExtResource("10_isfb4")]

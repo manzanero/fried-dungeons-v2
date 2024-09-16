@@ -145,7 +145,8 @@ func load_donjon_json_file(json_file_path):
 			entity_counter -= 1
 			if entity_counter < 0 and not cell_is_wall and not cell_is_door:
 				var entity_position := Vector2(x + 0.5, z + 0.5)
-				var entity: Entity = Game.entity_scene.instantiate().init(level, entity_position, {
+				var entity: Entity = Game.entity_scene.instantiate().init(level, 
+						Utils.random_string(), entity_position, {
 					"color": Color.RED
 				})
 				entity_counter = entity_frecuency
@@ -244,12 +245,7 @@ func _create_west_portcullis(level, offset, portcullis_index):
 	var walls_points := Utils.aaa2_to_atpv2(PORTCULLIS_WALLS).map(func (x): return _get_global_grid_points(offset, x))
 	Game.wall_scene.instantiate().init(level, portcullis_index, 0, 1, true).add_points(walls_points[0])
 	#Game.wall_scene.instantiate().init(level, portcullis_index, 1, true).add_points(walls_points[1])
-	
-	
-#func _load_fried_json_file(json_file_path):
-	#var serialized_map = Utils.loads_json(json_file_path)
-	#deserialize(serialized_map)
-	
+
 #endregion
 
 
@@ -259,8 +255,9 @@ func load_map(map_data: Dictionary):
 	
 	map.label = map_data.label
 	
+	# It is an empty map
 	if not map_data.has("levels"):
-		var level: Level = Game.level_scene.instantiate().init(map)
+		var level: Level = Game.level_scene.instantiate().init(map, 0)
 		level.rect = Rect2i(0, 0, 1, 1)
 		
 		var viewport_3d := level.viewport_3d
@@ -271,14 +268,14 @@ func load_map(map_data: Dictionary):
 		var tile_data := {"i": 1, "f": 0}
 		level.cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
 		tile_map.set_cell(0, tile, 0, Vector2i(tile_data.f, tile_data.i), 0)
-		Game.entity_scene.instantiate().init(level, Vector2(0.5, 0.5))
+		Game.entity_scene.instantiate().init(level, Utils.random_string(), Vector2(0.5, 0.5))
 		Game.light_scene.instantiate().init(level, Vector2(0.5, 0.5))
 		
 	else:
 		for level_index in map_data.levels:
 			var level_data: Dictionary = map_data.levels[level_index]
-			var level: Level = Game.level_scene.instantiate().init(map)
-			level.index = level_index
+			var index := int(level_index)
+			var level: Level = Game.level_scene.instantiate().init(map, index)
 			
 			var viewport_3d := level.viewport_3d
 			var floor_2d := viewport_3d.floor_2d
@@ -303,22 +300,24 @@ func load_map(map_data: Dictionary):
 					
 			# walls
 			for wall_data in level_data.walls:
-				var wall: Wall = Game.wall_scene.instantiate().init(level, 
-						wall_data.i, wall_data.s, wall_data.l, wall_data["2"])
-				for point in wall_data.p:
-					wall.add_point(Utils.a2_to_v2(point))
+				var id: String = wall_data.get("id", Utils.random_string())
+				var points_position_2d := Utils.aa2_to_pv2(wall_data.p)
+				map.instancer.create_wall(
+					level, id, points_position_2d, wall_data.i, wall_data.s, wall_data.l, wall_data["2"])
 					
 			# entities
 			for entity_data in level_data.entities:
-				if entity_data.properties[&"color"] is String:
-					entity_data.properties[&"color"] = Utils.html_color_to_color(entity_data.properties[&"color"])
-				Game.entity_scene.instantiate().init(level, Utils.a2_to_v2(entity_data.position), entity_data.properties)
+				if entity_data.properties["color"] is String:
+					entity_data.properties["color"] = Utils.html_color_to_color(entity_data.properties["color"])
+				var id: String = entity_data.get("id", Utils.random_string())
+				map.instancer.create_entity(level, id, Utils.a2_to_v2(entity_data.position), entity_data.properties)
 					
 			# lights
-			for light_data in level_data.lights:
-				if light_data.properties[&"color"] is String:
-					light_data.properties[&"color"] = Utils.html_color_to_color(light_data.properties[&"color"])
-				Game.light_scene.instantiate().init(level, Utils.a2_to_v2(light_data.position), light_data.properties)
+			for light_data: Dictionary in level_data.lights:
+				if light_data.properties["color"] is String:
+					light_data.properties["color"] = Utils.html_color_to_color(light_data.properties["color"])
+				var id: String = light_data.get("id", Utils.random_string())
+				map.instancer.create_light(level, id, Utils.a2_to_v2(light_data.position), light_data.properties)
 
 	
 	map.selected_level = map.levels_parent.get_children()[0]

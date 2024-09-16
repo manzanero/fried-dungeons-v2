@@ -67,9 +67,12 @@ func _on_curve_changed():
 		if shape:
 			shape.backface_collision = true
 		wall.collider.shape = shape
+		
 	wall.line_renderer_3d.points.resize(curve.point_count)
+	
 	for index in range(curve.point_count):
 		wall.line_renderer_3d.points[index] = curve.get_point_position(index)
+		
 	for point in wall.points:
 		point.changed.emit()
 	

@@ -14,6 +14,7 @@ signal reload_campaign_pressed
 @onready var main_menu: MainMenu = %MainMenu
 
 # left section
+@onready var tab_elements: TabElements = %Elements
 @onready var tab_world: TabWorld = %World
 
 # right section
@@ -22,7 +23,7 @@ signal reload_campaign_pressed
 @onready var tab_messages: TabMessages = %Messages
 
 # center section
-@onready var map_tabs: TabContainer = %TabMaps
+@onready var scene_tabs: TabContainer = %TabScenes
 @onready var tab_builder: TabBuilder = %Builder
 @onready var build_border: Panel = %BuildBorder
 @onready var dicer: Dicer = %Dicer
@@ -35,30 +36,30 @@ signal reload_campaign_pressed
 var opened_maps: Array[Map] :
 	get:
 		var maps: Array[Map] = []
-		for i in map_tabs.get_tab_count():
-			maps.append(map_tabs.get_tab_control(i).map)
+		for i in scene_tabs.get_tab_count():
+			maps.append(scene_tabs.get_tab_control(i).map)
 		return maps
 
 
 var opened_map_slugs: Array[String] :
 	get:
 		var slugs: Array[String] = []
-		for i in map_tabs.get_tab_count():
-			slugs.append(map_tabs.get_tab_control(i).map.slug)
+		for i in scene_tabs.get_tab_count():
+			slugs.append(scene_tabs.get_tab_control(i).map.slug)
 		return slugs
 		
 		
-var selected_map_tab: TabMap :
+var selected_scene_tab: TabScene :
 	get:
-		return map_tabs.get_current_tab_control()
+		return scene_tabs.get_current_tab_control()
 		
 var selected_map: Map :
 	get:
-		return selected_map_tab.map if selected_map_tab else null
+		return selected_scene_tab.map if selected_scene_tab else null
 		
-var is_mouse_over_map_tab: bool :
+var is_mouse_over_scene_tab: bool :
 	get:
-		return selected_map_tab.is_mouse_over and not main_menu.visible
+		return selected_scene_tab.is_mouse_over and not main_menu.visible
 
 func _ready() -> void:
 	nav_campaing.id_pressed.connect(_on_nav_campaing_id_pressed)
@@ -98,7 +99,7 @@ func quit():
 
 
 func _on_info_changed(label: String):
-	selected_map_tab.name = label
+	selected_scene_tab.name = label
 	selected_map.label = label
 
 

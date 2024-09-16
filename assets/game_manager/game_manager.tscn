@@ -1,12 +1,17 @@
-[gd_scene load_steps=3 format=3 uid="uid://bncfy5dln4vea"]
+[gd_scene load_steps=4 format=3 uid="uid://bncfy5dln4vea"]
 
 [ext_resource type="Script" path="res://assets/game_manager/game_manager.gd" id="1_5812a"]
 [ext_resource type="Script" path="res://assets/game_manager/server_manager/server_manager.gd" id="2_k74hc"]
+[ext_resource type="Script" path="res://assets/game_manager/server_manager/rpcs/rpcs.gd" id="3_cutg1"]
 
 [node name="GameManager" type="Node"]
 process_priority = -1
 process_physics_priority = -1
 script = ExtResource("1_5812a")
 
-[node name="ServerManager" type="Node" parent="."]
+[node name="ServerManager" type="Node" parent="." node_paths=PackedStringArray("rpcs")]
 script = ExtResource("2_k74hc")
+rpcs = NodePath("RPCS")
+
+[node name="RPCS" type="Node" parent="ServerManager"]
+script = ExtResource("3_cutg1")
