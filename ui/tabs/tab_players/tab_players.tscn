@@ -1,0 +1,123 @@
+[gd_scene load_steps=3 format=3 uid="uid://bgemyy0f7bxdq"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_players/tab_players.gd" id="1_mll3s"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n0rb3"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.901961)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[node name="TabPlayers" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+script = ExtResource("1_mll3s")
+
+[node name="V" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="H" type="HBoxContainer" parent="V"]
+layout_mode = 2
+
+[node name="NewButton" type="Button" parent="V/H"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "New +"
+
+[node name="ScanButton" type="Button" parent="V/H"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Scan"
+
+[node name="NameLineEdit" type="LineEdit" parent="V/H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "name..."
+clear_button_enabled = true
+
+[node name="ScrollContainer" type="ScrollContainer" parent="V"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_n0rb3")
+
+[node name="PlayerButtons" type="VBoxContainer" parent="V/ScrollContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="V"]
+layout_mode = 2
+
+[node name="AddEntity" type="Button" parent="V/HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Add Entity Control to Player"
+
+[node name="RemoveEntity" type="Button" parent="V/HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Remove Entity"
+
+[node name="GridContainer" type="GridContainer" parent="V"]
+layout_mode = 2
+columns = 2
+
+[node name="UsernameLineEdit" type="LineEdit" parent="V/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Username..."
+
+[node name="UsernameButton" type="Button" parent="V/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Set Username"
+
+[node name="PasswordLineEdit" type="LineEdit" parent="V/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+placeholder_text = "Password..."
+
+[node name="PasswordButton" type="Button" parent="V/GridContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Set Password"
+
+[node name="H2" type="BoxContainer" parent="V"]
+layout_mode = 2
+
+[node name="FolderButton" type="Button" parent="V/H2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Opens in file explored"
+text = "Folder"
+
+[node name="RemoveButton" type="Button" parent="V/H2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Move to trash"
+text = "Remove"

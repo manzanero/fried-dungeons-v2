@@ -6,6 +6,7 @@ signal reload_campaign_pressed
 
 
 # nav bar
+@onready var nav_bar: PanelContainer = %NavBar
 @onready var nav_campaing: PopupMenu = %Campaing
 @onready var nav_preferences: PopupMenu = %Preferences
 @onready var nav_help: PopupMenu = %Help
@@ -14,10 +15,17 @@ signal reload_campaign_pressed
 @onready var main_menu: MainMenu = %MainMenu
 
 # left section
+@onready var left: Control = %Left
+@onready var left_up: Control = %LeftUp
+@onready var left_down: Control = %LeftDown
 @onready var tab_elements: TabElements = %Elements
 @onready var tab_world: TabWorld = %World
+@onready var tab_players: TabPlayers = %Players
 
 # right section
+@onready var right: Control = %Right
+@onready var right_up: Control = %RightUp
+@onready var right_down: Control = %RightDown
 @onready var tab_properties: TabProperties = %Properties
 @onready var tab_settings: TabSettings = %Settings
 @onready var tab_messages: TabMessages = %Messages
@@ -28,7 +36,9 @@ signal reload_campaign_pressed
 @onready var build_border: Panel = %BuildBorder
 @onready var dicer: Dicer = %Dicer
 @onready var state_label_value: Label = %StateLabelValue
-@onready var down: Control = %Down
+@onready var player_label_value: Label = %PlayerLabelValue
+@onready var middle_up: Control = %MiddleUp
+@onready var middle_down: Control = %MiddleDown
 @onready var minimize_down_button: Button = %MinimizeDownButton
 @onready var restore_down_button: Button = %RestoreDownButton
 
@@ -51,7 +61,7 @@ var opened_map_slugs: Array[String] :
 		
 var selected_scene_tab: TabScene :
 	get:
-		return scene_tabs.get_current_tab_control()
+		return scene_tabs.get_current_tab_control() if scene_tabs else null
 		
 var selected_map: Map :
 	get:
@@ -119,5 +129,5 @@ func _on_ambient_changed(master_view: bool, light: float, color: Color):
 func _on_minimize_down_pressed(minimize: bool):
 	minimize_down_button.visible = not minimize
 	restore_down_button.visible = minimize
-	down.visible = not minimize
+	middle_down.visible = not minimize
 	

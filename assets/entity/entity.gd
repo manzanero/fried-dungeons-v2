@@ -95,6 +95,9 @@ func _process(_delta: float) -> void:
 func _set_selected(value: bool) -> void:
 	is_selected = value
 	if value:
+		if is_instance_valid(level.element_selected):
+			level.element_selected.is_selected = false
+			
 		level.element_selected = self
 		Game.ui.tab_properties.element_selected = self
 	elif Game.ui.tab_properties.element_selected == self:
@@ -127,8 +130,8 @@ const BODY_SIZE = "body_size"
 
 func _init_property_list(_properties):
 	var init_properties = [
-		["info", SHOW_LABEL, Property.Hints.BOOL, _properties.get(SHOW_LABEL, true)],
 		["info", LABEL, Property.Hints.STRING, _properties.get(LABEL, "Unknown")],
+		["info", SHOW_LABEL, Property.Hints.BOOL, _properties.get(SHOW_LABEL, true)],
 		["info", COLOR, Property.Hints.COLOR, _properties.get(COLOR, Color.WHITE)],
 		["base", SHOW_BASE, Property.Hints.BOOL, _properties.get(SHOW_BASE, true)],
 		["base", BASE_SIZE, Property.Hints.FLOAT, _properties.get(BASE_SIZE, 0.5)],
@@ -180,7 +183,8 @@ func json():
 		values[property] = properties[property].get_raw()
 	
 	return {
-		"id": name,
+		"type": "entity",
+		"id": id,
 		"position": Utils.v3_to_a2(position),
 		"properties": values,
 	}

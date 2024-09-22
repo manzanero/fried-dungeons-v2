@@ -79,17 +79,19 @@ layout_mode = 2
 [node name="OpenButton" type="Button" parent="VBoxContainer2/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Open"
 
 [node name="FolderButton" type="Button" parent="VBoxContainer2/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
 tooltip_text = "Opens in file explored"
 text = "Folder"
 
 [node name="RemoveButton" type="Button" parent="VBoxContainer2/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 tooltip_text = "Move to trash"
 text = "Remove"

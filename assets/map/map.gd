@@ -95,6 +95,9 @@ func _on_add_after_button_down():
 	var wall := selected_level.selected_wall
 	var point := wall.selected_point
 	var new_point = wall.add_point(selected_level.position_hovered, point.index + 1)
+	
+	Game.server.rpcs.set_wall_points.rpc(wall.map.slug, wall.level.index, wall.id, wall.points_position_2d)
+	
 	wall.edit_point(new_point)
 	Game.handled_input = true
 
@@ -111,6 +114,9 @@ func _on_add_before_button_down():
 	var wall := selected_level.selected_wall
 	var point := wall.selected_point
 	var new_point = wall.add_point(selected_level.position_hovered, point.index)
+	
+	Game.server.rpcs.set_wall_points.rpc(wall.map.slug, wall.level.index, wall.id, wall.points_position_2d)
+	
 	wall.edit_point(new_point)
 	Game.handled_input = true
 

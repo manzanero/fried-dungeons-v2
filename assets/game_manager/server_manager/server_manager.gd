@@ -2,8 +2,8 @@ class_name ServerManager
 extends Node
 
 
-signal player_connected(player_name)
-signal player_disconnected(player_name)
+signal player_connected(player: Player)
+signal player_disconnected(player: Player)
 signal server_disconnected
 
 @export var rpcs: Rpcs
@@ -21,37 +21,69 @@ func _ready():
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
 
 
-func host_multiplayer():
-	var error := peer.create_server(2020)
-	if error:
-		Debug.print_error_message("create_server == %s" % error)
-		return error
+func host_multiplayer() -> Error:
+	var retries := 3
+	for i in range(retries):
+		var error := peer.create_server(2020)
+		if not error:
+			break
+		
+		if i < retries - 1:
+			Debug.print_warning_message("create_server == %s" % error)
+		else:
+			Debug.print_error_message("create_server == %s" % error)
+			return error
+		
 	multiplayer.multiplayer_peer = peer
-	
-	players[Game.player_name] = 1
+	return OK
 	
 
-func join_multiplayer(host: String):
+func join_multiplayer(host: String) -> Error:
 	var error := peer.create_client(host, 2020)
 	if error:
 		Debug.print_error_message("create_client == %s" % error)
 		return error
+		
 	multiplayer.multiplayer_peer = peer
+	return OK
 	
 
 func _on_player_connected(id: int):
 	Debug.print_info_message("Player connected: %s" % id)
-	_register_player.rpc_id(id, Game.player_name)
-	if multiplayer.is_server():
-		set_up_player(id)
+	if not multiplayer.is_server():
+		_register_player.rpc_id(id, Game.player.json())
 
 
 @rpc("any_peer", "reliable")
-func _register_player(player_name: String):
-	var new_player_id := multiplayer.get_remote_sender_id()
+func _register_player(player_data: Dictionary):
+	var player := Player.load(player_data)
 	
-	players[player_name] = new_player_id
-	player_connected.emit(player_name)
+	var new_player_id := multiplayer.get_remote_sender_id()
+	players[player.username] = new_player_id
+	
+	if multiplayer.is_server():
+		if _is_player_registered(player_data.username, player_data.password):
+			set_up_player(new_player_id)
+		else:
+			peer.disconnect_peer(new_player_id)
+
+	player_connected.emit(player)
+
+
+func _is_player_registered(username, password) -> bool:
+	Debug.print_info_message("Player login: %s" % username)
+	var player_slug := Utils.slugify(username)
+	var campaign := Game.ui.tab_players.campaign_selected
+	var player_slugs := campaign.players
+	if not player_slug in player_slugs:
+		Debug.print_info_message("Player login failed: %s" % username)
+		return false
+	
+	if not password == campaign.get_player(player_slug).password:
+		Debug.print_info_message("Player login failed: %s" % username)
+		return false
+	
+	return true
 
 
 func _on_player_disconnected(id):
@@ -65,12 +97,15 @@ func _on_connected_ok():
 	player_id = multiplayer.get_unique_id()
 	
 	Debug.id = player_id
-	players[Game.player_name] = player_id
-	player_connected.emit(Game.player_name)
+	players[Game.player.slug] = player_id
+	player_connected.emit(Game.player)
 
 
 func _on_connected_fail():
+	Debug.print_info_message("Connected fail")
 	multiplayer.multiplayer_peer = null
+	players.clear()
+	server_disconnected.emit()
 
 
 func _on_server_disconnected():

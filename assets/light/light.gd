@@ -71,16 +71,20 @@ func _set_selected(value: bool) -> void:
 
 ## Properties
 
-const ACTIVE = &"active"
-const RANGE = &"show_base"
-const COLOR = &"color"
+const SHOW_LABEL = "show_label"
+const LABEL = "label"
+const ACTIVE = "active"
+const RANGE = "range"
+const COLOR = "color"
 
 
 func _init_property_list(_properties):
 	var init_properties = [
-		["", ACTIVE, Property.Hints.BOOL, _properties.get(ACTIVE, true)],
-		["", RANGE, Property.Hints.FLOAT, _properties.get(RANGE, 5)],
-		["", COLOR, Property.Hints.COLOR, _properties.get(COLOR, Color.WHITE)],
+		["info", ACTIVE, Property.Hints.BOOL, _properties.get(ACTIVE, true)],
+		["info", LABEL, Property.Hints.STRING, _properties.get(LABEL, "Unknown")],
+		["info", SHOW_LABEL, Property.Hints.BOOL, _properties.get(SHOW_LABEL, true)],
+		["light", RANGE, Property.Hints.FLOAT, _properties.get(RANGE, 5)],
+		["light", COLOR, Property.Hints.COLOR, _properties.get(COLOR, Color.WHITE)],
 	]
 	for property_array in init_properties:
 		init_property(property_array[0], property_array[1], property_array[2], property_array[3])
@@ -95,6 +99,8 @@ func change_property(property_name: String, new_value: Variant) -> void:
 	match property_name:
 		ACTIVE:
 			active = new_value
+		LABEL:
+			label = new_value
 		RANGE:
 			range_radius = new_value
 		COLOR:
@@ -111,6 +117,8 @@ func json():
 		values[property] = properties[property].get_raw()
 		
 	return {
+		"type": "light",
+		"id": id,
 		"position": Utils.v3_to_a2(position),
 		"properties": values,
 	}

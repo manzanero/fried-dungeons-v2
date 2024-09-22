@@ -46,19 +46,19 @@ var players: Array[String] :
 		return _players
 		
 		
-var entities_path: String :
+var elements_path: String :
 	get:
-		return "user://campaigns/%s/entities" % slug
+		return "user://campaigns/%s/elements" % slug
 
 
-var entities: Array[String] : 
+var elements: Array[String] : 
 	get:
 		check()
-		var _entities: Array[String] = []
-		var dirs := DirAccess.get_directories_at(entities_path)
+		var _elements: Array[String] = []
+		var dirs := DirAccess.get_directories_at(elements_path)
 		for dir in dirs:
-			_entities.append(dir)
-		return _entities
+			_elements.append(dir)
+		return _elements
 		
 
 var json: Dictionary :
@@ -76,6 +76,10 @@ func init(_label, _is_master := true):
 
 func get_map(map_slug: String) -> Dictionary:
 	return Utils.load_json("%s/%s/map.json" % [maps_path, map_slug])
+
+
+func get_player(player_slug: String) -> Dictionary:
+	return Utils.load_json("%s/%s/player.json" % [players_path, player_slug])
 	
 
 func save() -> void:
@@ -89,4 +93,6 @@ func check() -> void:
 	if not DirAccess.dir_exists_absolute(maps_path):
 		DirAccess.make_dir_recursive_absolute(maps_path)
 	if not DirAccess.dir_exists_absolute(players_path):
+		DirAccess.make_dir_recursive_absolute(players_path)
+	if not DirAccess.dir_exists_absolute(elements_path):
 		DirAccess.make_dir_recursive_absolute(players_path)

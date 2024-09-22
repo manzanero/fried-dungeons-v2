@@ -2,6 +2,9 @@ class_name Level
 extends Node3D
 
 
+signal element_selection(element: Element)
+
+
 @export var map: Map
 
 @export var walls_parent: Node3D
@@ -28,7 +31,10 @@ var position_hovered: Vector2
 var ceilling_hovered: Vector2
 var tile_hovered: Vector2i
 var selected_wall: Wall
-var element_selected: Element
+var element_selected: Element :
+	set(value):
+		element_selected = value
+		element_selection.emit(value)
 var preview_element: Element
 var follower_entity: Entity :
 	set(value):
@@ -85,6 +91,11 @@ func _ready():
 			follower_entity = null
 	)
 	ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+	
+	element_selection.connect(func (element: Element):
+		if element:
+			Game.ui.tab_elements.elements[element.id].select(0)
+	)
 		
 	refresh_light_timer.wait_time = refresh_light_frecuency
 	refresh_light_timer.timeout.connect(_on_refreshed_light)
@@ -186,14 +197,9 @@ func json() -> Dictionary:
 	for wall in walls_parent.get_children():
 		walls_data.append(wall.json())
 		
-	var entities := []
-	var lights := []
-	var objects := []
+	var elements_data := []
 	for element: Element in elements_parent.get_children():
-		if element is Entity:
-			entities.append(element.json())
-		elif element is Light:
-			lights.append(element.json())
+		elements_data.append(element.json())
 		
 	var level := {
 		"rect": {
@@ -202,9 +208,7 @@ func json() -> Dictionary:
 		},
 		"tiles": tiles,
 		"walls": walls_data,
-		"entities": entities,
-		"lights": lights,
-		"objects": objects,
+		"elements": elements_data,
 	}
 	
 	return level

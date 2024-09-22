@@ -107,8 +107,9 @@ func _on_open_button_pressed():
 	Game.ui.scene_tabs.current_tab = new_tab_index
 	refresh_tree()
 	
-	tab_scene.map.camera.target_position.position = Utils.v2i_to_v3(tab_scene.map.selected_level.rect.get_center())
+	#Game.ui.tab_elements.reset()
 	
+	tab_scene.map.camera.target_position.position = Utils.v2i_to_v3(tab_scene.map.selected_level.rect.get_center())
 
 
 func _on_folder_button_pressed() -> void:

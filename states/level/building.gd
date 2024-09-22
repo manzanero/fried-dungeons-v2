@@ -47,7 +47,7 @@ func _exit_state(next_state: String) -> void:
 	_is_rect_being_builded = false
 	_wall_being_builded = null
 	if is_instance_valid(level.preview_element):
-		level.preview_element.queue_free()
+		level.preview_element.remove()
 	_previous_properties = {}
 
 
@@ -211,6 +211,10 @@ func process_change_wall() -> void:
 		
 	if Input.is_action_just_pressed("left_click"):
 		_wall_hovered.two_sided = not _wall_hovered.two_sided
+			
+		Game.server.rpcs.set_wall_properties.rpc(map.slug, level.index, _wall_hovered.id,
+				_wall_hovered.material_index, _wall_hovered.material_seed, 
+				_wall_hovered.material_layer, _wall_hovered.two_sided)
 
 		
 func process_flip_wall() -> void:
@@ -222,6 +226,10 @@ func process_flip_wall() -> void:
 		
 	if Input.is_action_just_pressed("left_click"):
 		_wall_hovered.reverse()
+			
+		Game.server.rpcs.set_wall_properties.rpc(map.slug, level.index, _wall_hovered.id,
+				_wall_hovered.material_index, _wall_hovered.material_seed, 
+				_wall_hovered.material_layer, _wall_hovered.two_sided)
 
 
 func process_paint_wall() -> void:
@@ -233,6 +241,10 @@ func process_paint_wall() -> void:
 		
 	if Input.is_action_just_pressed("left_click"):
 		_wall_hovered.material_index = material_index_selected
+			
+		Game.server.rpcs.set_wall_properties.rpc(map.slug, level.index, _wall_hovered.id,
+				_wall_hovered.material_index, _wall_hovered.material_seed, 
+				_wall_hovered.material_layer, _wall_hovered.two_sided)
 
 
 func process_build_one_sided() -> void:

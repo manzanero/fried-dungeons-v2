@@ -78,6 +78,9 @@ func set_property_value(property_name: StringName, new_value: Variant) -> void:
 
 	properties[property_name].value = new_value
 	property_changed.emit(property_name, old_value, new_value)
+	
+	if property_name == "label":
+		Game.ui.tab_elements.changed_element(self)
 
 
 func get_property(property_name: StringName, default: Variant = null) -> Property:
@@ -138,6 +141,8 @@ func _physics_process(delta: float) -> void:
 func remove():
 	queue_free()
 	level.elements.erase(id)
+	
+	Game.ui.tab_elements.remove_element(self)
 	
 
 class Property:

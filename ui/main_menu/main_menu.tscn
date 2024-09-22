@@ -112,18 +112,20 @@ layout_mode = 2
 [node name="HostButton" type="Button" parent="MainContainer/PanelContainer/VBoxContainer/VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Host"
 
 [node name="FolderButton" type="Button" parent="MainContainer/PanelContainer/VBoxContainer/VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
 tooltip_text = "Opens in file explored"
 text = "Folder"
 
 [node name="DeleteButton" type="Button" parent="MainContainer/PanelContainer/VBoxContainer/VBoxContainer/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 tooltip_text = "Move to trash"
 text = "Remove"
 
@@ -201,20 +203,21 @@ layout_mode = 2
 [node name="JoinServerButton" type="Button" parent="MainContainer/PanelContainer/VBoxContainer/VBoxContainer2/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
 text = "Join"
 
 [node name="FolderServerButton" type="Button" parent="MainContainer/PanelContainer/VBoxContainer/VBoxContainer2/VBoxContainer"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-size_flags_horizontal = 0
+size_flags_horizontal = 3
 tooltip_text = "Opens in file explored"
 text = "Folder"
 
 [node name="RemoveServerButton" type="Button" parent="MainContainer/PanelContainer/VBoxContainer/VBoxContainer2/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Remove"
 
 [node name="Control" type="Control" parent="MainContainer/PanelContainer"]

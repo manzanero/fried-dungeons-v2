@@ -1,0 +1,58 @@
+[gd_scene load_steps=7 format=3 uid="uid://co1mh06ctd65i"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_players/player_button/player_entity_button/player_entity_button.gd" id="1_0xquv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xtds8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xc54l"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+bg_color = Color(0.6, 0.6, 0.6, 0.458824)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_375u8"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+bg_color = Color(0.6, 0.6, 0.6, 0.458824)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_06mwu"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0lf13"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+
+[node name="PlayerEntityButton" type="Button"]
+theme_override_styles/focus = SubResource("StyleBoxEmpty_xtds8")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_xc54l")
+theme_override_styles/hover = SubResource("StyleBoxFlat_375u8")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_06mwu")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_0lf13")
+button_mask = 3
+text = "Entity Name"
+alignment = 0
+script = ExtResource("1_0xquv")

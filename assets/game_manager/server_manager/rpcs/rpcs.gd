@@ -26,6 +26,19 @@ func create_wall(map_slug: String, level_index: int, id: String, points_position
 
 
 @rpc("any_peer", "reliable")
+func divide_wall(map_slug: String, level_index: int, id: String,
+		new_ids: Array, new_points_position_2d: Array) -> void:
+	var map: Map = _get_map_by_slug(map_slug); if not map: return
+	var level: Level = _get_level_by_index(map, level_index); if not level: return
+	var wall := _get_wall_by_id(level, id); if not wall: return
+	remove_wall(map_slug, level_index, id)
+	for i in range(new_ids.size()):
+		create_wall(map_slug, level_index, new_ids[i], new_points_position_2d[i], 
+		wall.material_index, wall.material_seed, wall.material_layer, wall.two_sided)
+	Debug.print_info_message("Wall \"%s\" divided into %s" % [wall.id, new_ids])
+
+
+@rpc("any_peer", "reliable")
 func remove_wall(map_slug: String, level_index: int, id: String) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
@@ -41,7 +54,7 @@ func set_wall_point(map_slug: String, level_index: int, id: String,
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var wall := _get_wall_by_id(level, id); if not wall: return
 	wall.set_point(wall.points[index], position_2d)
-	Debug.print_info_message("Wall \"%s\" changed" % wall.id)
+	Debug.print_info_message("Wall \"%s\" setted point %s" % [wall.id, index])
 
 
 @rpc("any_peer", "reliable")

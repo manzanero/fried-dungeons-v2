@@ -23,8 +23,6 @@ func create_entity(level: Level, id: String, position_2d: Vector2, properties :=
 	var entity: Entity = ENTITY.instantiate().init(level, id, position_2d, properties)
 	level.elements[id] = entity
 	Game.ui.tab_elements.add_element(entity)
-	entity.property_changed.connect(Game.ui.tab_elements.changed_element.bind(entity).unbind(3))
-	entity.tree_exited.connect(Game.ui.tab_elements.remove_element.bind(entity))
 	return entity
 
 
@@ -32,6 +30,4 @@ func create_light(level: Level, id: String, position_2d: Vector2, properties := 
 	var light: Light = LIGHT.instantiate().init(level, id, position_2d, properties)
 	level.elements[id] = light
 	Game.ui.tab_elements.add_element(light)
-	light.property_changed.connect(Game.ui.tab_elements.changed_element.bind(light))
-	light.tree_exited.connect(Game.ui.tab_elements.remove_element.bind(light))
 	return light

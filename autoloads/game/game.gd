@@ -1,9 +1,9 @@
 extends Node
 
 
-var player_name := 'Player'
-var player_is_master := false
-var player_color := Color.RED
+var master: Player = Player.new("Master", "", Color.WHITE)
+var player: Player
+var is_master := false
 var campaign: Campaign
 
 var manager: GameManager

@@ -218,10 +218,11 @@ func remove_dirs(path: String) -> void:
 	OS.move_to_trash(global_path)
 
 
-func rename(from: String, to: String) -> void:
+func rename(from: String, to: String) -> Error:
 	var error := DirAccess.rename_absolute(from, to)
 	if error:
 		printerr("Error renaming: " + str(error))
+	return error
 
 
 func create_unique_folder(path: String, sep_char := "-") -> int:

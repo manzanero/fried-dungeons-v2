@@ -268,8 +268,8 @@ func load_map(map_data: Dictionary):
 		var tile_data := {"i": 1, "f": 0}
 		level.cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
 		tile_map.set_cell(0, tile, 0, Vector2i(tile_data.f, tile_data.i), 0)
-		Game.entity_scene.instantiate().init(level, Utils.random_string(), Vector2(0.5, 0.5))
-		Game.light_scene.instantiate().init(level, Vector2(0.5, 0.5))
+		map.instancer.create_entity(level, Utils.random_string(), Vector2(0.5, 0.5))
+		map.instancer.create_light(level, Utils.random_string(), Vector2(0.5, 0.5))
 		
 	else:
 		for level_index in map_data.levels:
@@ -305,20 +305,17 @@ func load_map(map_data: Dictionary):
 				map.instancer.create_wall(
 					level, id, points_position_2d, wall_data.i, wall_data.s, wall_data.l, wall_data["2"])
 					
-			# entities
-			for entity_data in level_data.entities:
-				if entity_data.properties["color"] is String:
-					entity_data.properties["color"] = Utils.html_color_to_color(entity_data.properties["color"])
-				var id: String = entity_data.get("id", Utils.random_string())
-				map.instancer.create_entity(level, id, Utils.a2_to_v2(entity_data.position), entity_data.properties)
-					
-			# lights
-			for light_data: Dictionary in level_data.lights:
-				if light_data.properties["color"] is String:
-					light_data.properties["color"] = Utils.html_color_to_color(light_data.properties["color"])
-				var id: String = light_data.get("id", Utils.random_string())
-				map.instancer.create_light(level, id, Utils.a2_to_v2(light_data.position), light_data.properties)
-
+			# elements
+			for element_data in level_data.get("elements", []):
+				if element_data.properties["color"] is String:
+					element_data.properties["color"] = Utils.html_color_to_color(element_data.properties["color"])
+						
+				if element_data.type == "entity":
+					map.instancer.create_entity(level, element_data.id, 
+							Utils.a2_to_v2(element_data.position), element_data.properties)
+				elif element_data.type == "light":
+					map.instancer.create_light(level, element_data.id, 
+							Utils.a2_to_v2(element_data.position), element_data.properties)
 	
 	map.selected_level = map.levels_parent.get_children()[0]
 	

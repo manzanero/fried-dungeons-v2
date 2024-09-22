@@ -3,7 +3,7 @@ extends Control
 
 
 signal host_campaign_pressed(campaign: Campaign)
-signal join_server_pressed()
+signal join_server_pressed(server_data: Dictionary)
 
 
 const CAMPAIGN_BUTTON = preload("res://ui/main_menu/campaign_button/campaign_button.tscn")
@@ -177,8 +177,7 @@ func _on_host_button_pressed():
 	host_campaign_pressed.emit(campaign)
 	
 	Game.campaign = campaign
-	Game.player_name = "Master"
-	Game.player_is_master = true
+	Game.is_master = true
 	Game.server.host_multiplayer()
 	
 
@@ -207,16 +206,12 @@ func _on_join_server_button_pressed():
 	server_pressed.button_pressed = false
 	
 	var server_slug: String = server_pressed.get_parent().slug
-	var username: String = server_pressed.get_parent().username
+	var _username: String = server_pressed.get_parent().username
 	var path := "user://servers".path_join(server_slug)
 	var global_path := ProjectSettings.globalize_path(path)
 	var server_data := Utils.load_json(global_path.path_join("/server.json"))
 	
-	join_server_pressed.emit()
-	
-	Game.player_name = username
-	Game.player_is_master = false
-	Game.server.join_multiplayer(server_data.host)
+	join_server_pressed.emit(server_data)
 		
 
 func _on_folder_server_button_pressed():

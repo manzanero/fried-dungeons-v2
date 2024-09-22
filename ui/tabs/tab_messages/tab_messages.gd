@@ -47,10 +47,11 @@ func _on_panel_button_pressed(panel: Control, button: Button):
 
 func _on_add_dice(number: int, faces: int) -> void:
 	var dice_string := "%sd%s" % [number, faces]
-	var color := Game.player_color
+	var color := Game.player.color
 	if selection_as_origin_button.button_pressed:
-		if Game.ui.selected_map.selected_level.selected_entity:
-			color = Game.ui.selected_map.selected_level.selected_entity.color
+		var element_selected := Game.ui.selected_map.selected_level.element_selected
+		if element_selected:
+			color = element_selected.color
 	
 	Game.ui.dicer.create_dice_roll(dice_string, color, randi_range(0, 999999))
 
@@ -68,9 +69,16 @@ func _on_dicer_roll_result(dice_string: String, result: Array):
 	
 	var origin: Element = null
 	if map and selection_as_origin_button.button_pressed:
-		origin = map.selected_level.selected_entity
+		origin = map.selected_level.element_selected
+	
+	var origin_label: String 
+	if origin:
+		origin_label = origin.label 
+	elif Game.player:
+		origin_label = Game.player.username
+	else:
+		origin_label = Game.master.username
 		
-	var origin_label := origin.label if origin else Game.player_name
 	var origin_color := origin.color.lightened(0.1 * 
 			(1.0 - origin.color.get_luminance())).to_html() if origin else "dark_gray"
 	
@@ -105,9 +113,16 @@ func process_message(text: String):
 	
 	var origin: Element = null
 	if map and selection_as_origin_button.button_pressed:
-		origin = map.selected_level.selected_entity
+		origin = map.selected_level.element_selected
 	
-	var origin_label := origin.label if origin else Game.player_name
+	var origin_label: String 
+	if origin:
+		origin_label = origin.label 
+	elif Game.player:
+		origin_label = Game.player.username
+	else:
+		origin_label = Game.master.username
+		
 	var origin_color := origin.color.lightened(0.1 * 
 			(1.0 - origin.color.get_luminance())).to_html() if origin else "dark_gray"
 	new_message(origin_label, origin_color, text)

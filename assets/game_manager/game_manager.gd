@@ -9,8 +9,8 @@ const TAB_SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
 
 
 func _ready() -> void:
-	#DebugMenu.style = DebugMenu.Style.HIDDEN
-	DebugMenu.style = DebugMenu.Style.VISIBLE_COMPACT
+	DebugMenu.style = DebugMenu.Style.HIDDEN
+	#DebugMenu.style = DebugMenu.Style.VISIBLE_COMPACT
 	#DebugMenu.style = DebugMenu.Style.VISIBLE_DETAILED
 	DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 	#DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)
@@ -20,6 +20,10 @@ func _ready() -> void:
 	
 	Game.manager = self
 	Game.server = server
+	Game.server.server_disconnected.connect(_on_server_disconected)
+	
+	Game.world_seed = randi_range(0, 999999)
+	seed(Game.world_seed)
 	
 	Game.ui = UI_SCENE.instantiate()
 	add_child(Game.ui)
@@ -30,12 +34,15 @@ func _ready() -> void:
 	Game.ui.main_menu.join_server_pressed.connect(_on_join_server_pressed)
 	
 	Game.ui.reload_campaign_pressed.connect(_on_reload_campaign_pressed)
-	Game.ui.scene_tabs.tab_changed.connect(Game.ui.tab_builder.reset.unbind(1))
+	Game.ui.scene_tabs.tab_changed.connect(func (_tab: int):
+		Game.ui.tab_builder.reset()
+		Game.ui.tab_elements.reset()
+	)
 	Game.ui.scene_tabs.get_tab_bar().tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ALWAYS
 	Game.ui.scene_tabs.get_tab_bar().tab_close_pressed.connect(_on_tab_close_pressed)
 	
 	Game.maps.clear()
-	
+
 	
 func _on_save_campaign_button_pressed():
 	if multiplayer.is_server():
@@ -79,7 +86,6 @@ func change_map_slug(map: Map, new: String):
 	Utils.rename(old, new)
 	
 
-
 func _on_reload_campaign_pressed():
 	_on_host_campaign_pressed(Game.campaign)
 	
@@ -90,30 +96,41 @@ func _on_host_campaign_pressed(campaign: Campaign):
 	reset()
 	
 	Game.ui.tab_world.campaign_selected = campaign
-	var campaign_slug := campaign.slug
-	var campaign_path := "user://campaigns/%s/campaign.json" % [campaign_slug]
-	var campaign_data := Utils.load_json(campaign_path)
+	Game.ui.tab_players.campaign_selected = campaign
+	var campaign_data := Utils.load_json(campaign.campaign_path.path_join("campaign.json"))
 	
+	# Get map to open
 	var selected_map: String = campaign.maps[0]
 	if campaign_data.has("selected_map"):
 		selected_map = campaign_data.selected_map
-		
-	var map_path := "user://campaigns/%s/maps/%s/map.json" % [campaign_slug, selected_map]
-	var map_data := Utils.load_json(map_path)
+	var map_data := Utils.load_json(campaign.maps_path.path_join(selected_map).path_join("map.json"))
 	if not map_data.has("label"):
 		selected_map = campaign.maps[0]
-		map_path = "user://campaigns/%s/maps/%s/map.json" % [campaign_slug, selected_map]
-		map_data = Utils.load_json(map_path)
+		map_data = Utils.load_json(campaign.maps_path.path_join(selected_map).path_join("map.json"))
 	
-	#await get_tree().process_frame
+	await get_tree().process_frame
+	
 	var _tab_scene: TabScene = TAB_SCENE.instantiate().init(selected_map, map_data)
 	Game.ui.tab_world.refresh_tree()
+	
+	set_profile()
 
 
-func _on_join_server_pressed():
+func _on_join_server_pressed(server_data: Dictionary):
+	Game.player = Player.new(server_data.username, server_data.password)
+	Game.is_master = false
+	Game.server.join_multiplayer(server_data.host)
+	
 	Game.ui.ide.visible = true
 	Game.ui.main_menu.visible = false
 	reset()
+	
+	set_profile()
+
+
+func _on_server_disconected():
+	Game.ui.ide.visible = false
+	Game.ui.main_menu.visible = true
 
 
 func _on_tab_close_pressed(tab_index: int):
@@ -147,12 +164,32 @@ func reset():
 	if server_button_pressed:
 		server_button_pressed.button_pressed = false
 	
+	Game.ui.tab_elements.reset()
 	Game.ui.tab_builder.reset()
 	Game.ui.tab_properties.element_selected = null
 	for tab_scene in Game.ui.scene_tabs.get_children():
 		tab_scene.queue_free()
 	
 	await get_tree().process_frame
+
+
+func set_profile():
+	if Game.is_master:
+		Game.ui.nav_bar.visible = true
+		Game.ui.left.visible = true
+		Game.ui.middle_down.visible = true
+		Game.ui.right_up.visible = true
+		Game.ui.tab_settings.visible = true
+		Game.ui.scene_tabs.tabs_visible = true
+		Game.ui.right_down.tabs_visible = true
+	else:
+		Game.ui.nav_bar.visible = false
+		Game.ui.left.visible = false
+		Game.ui.middle_down.visible = false
+		Game.ui.right_up.visible = false
+		Game.ui.tab_settings.visible = false
+		Game.ui.scene_tabs.tabs_visible = false
+		Game.ui.right_down.tabs_visible = false
 
 
 func safe_quit():
