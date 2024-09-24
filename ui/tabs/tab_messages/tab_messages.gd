@@ -47,7 +47,7 @@ func _on_panel_button_pressed(panel: Control, button: Button):
 
 func _on_add_dice(number: int, faces: int) -> void:
 	var dice_string := "%sd%s" % [number, faces]
-	var color := Game.player.color
+	var color := Game.player.color if Game.player else Game.master.color
 	if selection_as_origin_button.button_pressed:
 		var element_selected := Game.ui.selected_map.selected_level.element_selected
 		if element_selected:
@@ -79,8 +79,7 @@ func _on_dicer_roll_result(dice_string: String, result: Array):
 	else:
 		origin_label = Game.master.username
 		
-	var origin_color := origin.color.lightened(0.1 * 
-			(1.0 - origin.color.get_luminance())).to_html() if origin else "dark_gray"
+	var origin_color := origin.color if origin else Color.DARK_GRAY
 	
 	new_message(origin_label, origin_color, text)
 	new_message(origin_label, origin_color, "Dice result:\n[center]%s[/center]" % result_str)
@@ -123,8 +122,7 @@ func process_message(text: String):
 	else:
 		origin_label = Game.master.username
 		
-	var origin_color := origin.color.lightened(0.1 * 
-			(1.0 - origin.color.get_luminance())).to_html() if origin else "dark_gray"
+	var origin_color := origin.color if origin else Color.DARK_GRAY
 	new_message(origin_label, origin_color, text)
 
 	if text.begins_with('/roll '):
@@ -150,6 +148,8 @@ func roll_command(dice_string: String) -> String:
 
 
 func new_message(label, color, text):
-	output_text_label.append_text("[b][color=%s]%s[/color]  ·  [/b]%s\n" % [color, label, text])
+	if color.get_luminance() < 0.5:
+		label = "[outline_color=white][outline_size=8]%s[/outline_size][/outline_color]" % label
+	output_text_label.append_text("[b][color=%s]%s[/color]  ·  [/b]%s\n" % [color.to_html(), label, text])
 	output_text_label.append_text("[center][b][color=dark_gray]·[/color][/b][/center]\n")
 	#output_text_label.append_text("[center][font_size=4]" + "-".repeat(128) + "[/font_size][/center]\n")

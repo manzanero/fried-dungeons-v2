@@ -12,6 +12,7 @@ func _init(_username := username, _password := password, _color := color, _entit
 	username = _username
 	password = _password
 	color = _color
+	entities = _entities
 	
 
 var slug: String :
@@ -20,9 +21,9 @@ var slug: String :
 
 
 static func load(player_data: Dictionary) -> Player:
-	return Player.new(
-			player_data.username, player_data.password, 
-			Utils.html_color_to_color(player_data.color), player_data.entities)
+	return Player.new(player_data.username, player_data.password, 
+			Utils.html_color_to_color(player_data.get("color", "FFFFFF")), 
+			player_data.get("entities", {}))
 
 
 func json():

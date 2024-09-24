@@ -1,4 +1,4 @@
-[gd_scene load_steps=7 format=4 uid="uid://bfnj5ydwae3g0"]
+[gd_scene load_steps=9 format=4 uid="uid://bfnj5ydwae3g0"]
 
 [ext_resource type="Script" path="res://assets/dicer/dices/die.gd" id="1_h1v7f"]
 [ext_resource type="Material" uid="uid://ryj4lu80i7tb" path="res://resources/dice/dice_material.tres" id="2_jm8mk"]
@@ -8,21 +8,44 @@ friction = 0.8
 rough = true
 bounce = 0.2
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_lvh0e"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_a7s7n"]
+resource_name = "Steel - Satin.002"
+cull_mode = 2
+metallic = 1.0
+roughness = 0.552786
+texture_filter = 2
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_5l8c6"]
+_surfaces = [{
+"aabb": AABB(-9.7082, -7.32717, -9.52024, 19.4164, 14.6544, 19.0405),
+"format": 34896613377,
+"index_count": 60,
+"index_data": PackedByteArray("AAADAAIABAADAAAAAAAFAAQABAAGAAcABwAJAAMAAwAEAAcAAgABAAAAAgADAAkABQAAAAEACAACAAkABgAFAAsACgAHAAYACQAHAAoACAABAAIACAAKAAsABgALAAoABQAGAAQAAQALAAUAAQAIAAsACgAIAAkA"),
+"name": "Steel - Satin.002",
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 12,
+"vertex_data": PackedByteArray("5DASAOtJAAD/fwAA7x4AABrPEgDrSQAA/39iAP//AAAAAD6eVKcAAAAAwGGqWAAA5DDs/xO2AAD/f///D+EAAP7/wGGqWAAA//8+nlSnAAAaz+z/E7YAAP9/nP8AAAAA")
+}]
+blend_shape_mode = 0
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_xd1vt"]
 resource_name = "d10_mesh_MeshBody1_003"
 _surfaces = [{
 "aabb": AABB(-9.7082, -7.32717, -9.52024, 19.4164, 14.6544, 19.0405),
-"attribute_data": PackedByteArray("Q5fg/cLbYGzC22Bs//+//cLbYGwY3VZwDsXW/RjdVnAY3VZwx+k6/nDekWwhoeT97d1+/nDekWxw3pFspIQgTO2z3k3v+nlMHuOKSjOciEsbueT/4tqOROLajkTg9Yv94tqORBbb+ln383T+IovV/xbb+lkW2/pZN9IX/dXbmzTV25s0L5b//9XbmzQd3fwqjIkm/h3d/Cq+rt7/Hd38KoatX/4e3ztaW7rY/R7fO1oe3ztazn9A/lbfzERW38xEVt/MRETokf6A3HX/ZN66NGTeujSYomP9ZN66NH/XBFXXv2VQVKh7UeTu7U9wkMRQ"),
+"attribute_data": PackedByteArray("Q5fs/cLbicHC24nB///L/cLbicEY3WnFDsXh/RjdacUY3WnFx+lE/nDeucEhoe/9Ad5E/XDeucFw3rnBpIRIXe2z/V7v+p9dHuNkXjOctFwbueT/4tqSmuLakprg9Zj94tqSmhbbiK/3833+IovW/xbbiK8W24ivN9In/dXb9orV2/aKL5b//9Xb9ood3YyBjIkx/h3djIG+rt7/Hd2MgYataP4e38ivW7rk/R7fyK8e38ivzn9K/lbfz5pW38+aVt/PmjHoVv2A3Hj/ZN4Vi2TeFYuYonH9ZN4Vi3/X+2XXv3ZhVKiGYuTuAWFwkNNh"),
 "format": 34896613399,
 "index_count": 60,
 "index_data": PackedByteArray("AAATAAsAFwARAAMABAAdABgAFQAgACcAJAAtAA8AEAAUACYADQAFAAEADAASADEAGQACAAgALAAOADAAIQAbADsAMwAjAB8ALgAlADQAKwAHAAoAKAA1ADkAHgA3ADIAHAAiABYACQA6ABoABgAqADgANgApAC8A"),
+"material": SubResource("StandardMaterial3D_a7s7n"),
 "name": "Steel - Satin.002",
 "primitive": 3,
-"uv_scale": Vector4(1.3547, 0.35048, 0, 0),
+"uv_scale": Vector4(1.3547, 0.35817, 0, 0),
 "vertex_count": 60,
-"vertex_data": PackedByteArray("5DASAOtJ8b/kMBIA60nyv+QwEgDrSXUD5DASAOtJS87kMBIA60l1sv9/AADvHvK//38AAO8eDu7/fwAA7x6OA/9/AADvHnUD/38AAO8eEe4azxIA60mOAxrPEgDrSfG/Gs8SAOtJWM4azxIA60nyvxrPEgDrSXmy/39iAP//Au7/f2IA//8H7v9/YgD//0vO/39iAP//WM7/f2IA///xvwAAPp5UpwfuAAA+nlSnU6IAAD6eVKdGIgAAPp5Up0vOAAA+nlSndbIAAMBhqlh1AwAAwGGqWBHuAADAYapYac4AAMBhqlhGIgAAwGGqWHWy5DDs/xO2DcDkMOz/E7byP+Qw7P8TtlOi5DDs/xO2ac7kMOz/E7ZGIv9///8P4fI//3///w/hAu7/f///D+Fyov9///8P4Qfu/3///w/hU6L+/8Bhqlhizv7/wGGqWCsi/v/AYapYDu7+/8BhqliOA/7/wGGqWHmy//8+nlSnAu7//z6eVKdyov//Pp5Upysi//8+nlSnebL//z6eVKdYzhrP7P8Ttg3AGs/s/xO28j8az+z/E7ZyohrP7P8TtmLOGs/s/xO2KyL/f5z/AAANwP9/nP8AAA7u/3+c/wAAYs7/f5z/AAAR7v9/nP8AAGnOAQACgNIApYHkIg11jET6h2pI8r7SAKWBxpUVIoYKh6LkIg11JKIp6oYKh6IBAAKA7QdzO9IApYG6Ppg3UAzAFT5qToyMRPqH7QdzOwEAAoA+ak6MF32nts70UbKMRPqHakjyvuQiDXUkoinqeMN8xM70UbJqSPK+AP8CfpD/NoAXfae2eMN8xM70UbKQ/zaAUAzAFXI2/wI+ak6MF32ntmK7JEPCzQh1xpUVIoYKh6K6Ppg3UAzAFXI2/wLCzQh1uj6YN+0HczsA/wJ+kP82gHI2/wJiuyRDws0IdQD/An7GlRUiYrskQySiKep4w3zE")
+"vertex_data": PackedByteArray("5DASAOtJ8b/kMBIA60nyv+QwEgDrSXUD5DASAOtJSs7kMBIA60l1sv9/AADvHvK//38AAO8eDu7/fwAA7x6OA/9/AADvHnUD/38AAO8eEe4azxIA60mOAxrPEgDrSfG/Gs8SAOtJWc4azxIA60nyvxrPEgDrSXmy/39iAP//Ae7/f2IA//8H7v9/YgD//0rO/39iAP//Wc7/f2IA///xvwAAPp5UpwfuAAA+nlSnU6IAAD6eVKdGIgAAPp5Up0rOAAA+nlSndbIAAMBhqlh1AwAAwGGqWBHuAADAYapYac4AAMBhqlhGIgAAwGGqWHWy5DDs/xO2DcDkMOz/E7byP+Qw7P8TtlOi5DDs/xO2ac7kMOz/E7ZGIv9///8P4fI//3///w/hAe7/f///D+Fyov9///8P4Qfu/3///w/hU6L+/8Bhqlhhzv7/wGGqWCsi/v/AYapYDu7+/8BhqliOA/7/wGGqWHmy//8+nlSnAe7//z6eVKdyov//Pp5Upysi//8+nlSnebL//z6eVKdZzhrP7P8Ttg3AGs/s/xO28j8az+z/E7ZyohrP7P8TtmHOGs/s/xO2KyL/f5z/AAANwP9/nP8AAA7u/3+c/wAAYc7/f5z/AAAR7v9/nP8AAGnOAQACgNIApYHkIg11jUT7h2pI8r7SAKWBxpUVIoYKh6LkIg11JqIo6oYKh6IBAAKA7AdzO9IApYG6Ppg3UAzAFT5qToyNRPuH7AdzOwEAAoA+ak6MF32nts70UbKNRPuHakjyvuQiDXUmoijqecN8xM70UbJqSPK+6v7XfZD/NoAXfae2ecN8xM70UbKQ/zaAUAzAFXI2/wI+ak6MF32ntmC7HkPCzQh1xpUVIoYKh6K6Ppg3UAzAFXI2/wLCzQh1uj6YN+wHczvq/td9kP82gHI2/wJgux5Dws0Ider+133GlRUiYLseQyaiKOp5w3zE")
 }]
 blend_shape_mode = 0
+shadow_mesh = SubResource("ArrayMesh_5l8c6")
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_t2flh"]
 points = PackedVector3Array(-0.00189972, 7.30423, -9.52024, -6.00016, 7.32287, 4.02206, 5.99826, 7.32287, 4.02206, 9.7063, -1.73282, -2.92615, -0.00189972, -7.32717, -7.22032, -9.7082, -1.73282, -2.92615)
@@ -46,7 +69,7 @@ transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0)
 layers = 64
 material_override = ExtResource("2_jm8mk")
 cast_shadow = 0
-mesh = SubResource("ArrayMesh_lvh0e")
+mesh = SubResource("ArrayMesh_xd1vt")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(0.04, 0, 0, 0, 0.04, 0, 0, 0, 0.04, 0, 0, 0)

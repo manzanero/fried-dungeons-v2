@@ -54,18 +54,24 @@ func _ready() -> void:
 
 
 func _on_camera_fps_enabled(value: bool):
+	var light := Game.ui.tab_settings.ambient_light_spin.value / 100.0
+	var color := Game.ui.tab_settings.ambient_color_button.color
 	if value:
-		var light := Game.ui.tab_settings.ambient_light_spin.value / 100.0
-		var color := Game.ui.tab_settings.ambient_color_button.color
 		Game.ui.tab_settings.ambient_changed.emit(true, light, color)
 	else:
-		Game.ui.tab_settings.master_view_check.pressed.emit()
+		if Game.is_master:
+			Game.ui.tab_settings.master_view_check.pressed.emit()
+		else:
+			Game.ui.tab_settings.ambient_changed.emit(false, light, color)
 	
+	# exit build mode
 	var builder_button_pressed = Game.ui.tab_builder.wall_button.button_group.get_pressed_button()
 	if builder_button_pressed:
 		var state_machine := Game.ui.selected_map.selected_level.state_machine
 		state_machine.change_state("Idle")
 		builder_button_pressed.button_pressed = false
 	
-	get_tree().set_group("lights", "hidden", value)
+	if Game.is_master:
+		get_tree().set_group("lights", "hidden", value)
+	
 	get_tree().set_group("base", "visible", not value)

@@ -7,7 +7,8 @@ signal stopped
 @export var color := Color.WHITE :
 	set(value):
 		color = value
-		material.albedo_color = value
+		material_base.albedo_color = value
+		material_digits.albedo_color = Color.BLACK if color.get_luminance() > 0.5 else Color.WHITE
 @export var roll_seed := 0
 @export var throw_strength := 5.0
 
@@ -18,7 +19,8 @@ var linked_d100: Die
 @onready var raycasts := %Raycasts.get_children()
 @onready var result_timer := get_tree().create_timer(timeout)
 @onready var mesh_instance_3d: MeshInstance3D = %MeshInstance3D
-@onready var material: StandardMaterial3D = mesh_instance_3d.material_override
+@onready var material_base: StandardMaterial3D = mesh_instance_3d.material_override
+@onready var material_digits: StandardMaterial3D = material_base.next_pass
 
 
 func init(parent: Node, _faces, _color, _roll_seed: int, _linked_d100: Die = null):

@@ -158,6 +158,8 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		COLOR:
 			color = new_value
 			label_label.label_settings.font_color = new_value
+			label_label.label_settings.outline_color = \
+					Color.WHITE if new_value.get_luminance() < 0.5 else Color.BLACK
 			dirty_mesh = true
 		SHOW_BASE:
 			base.visible = new_value

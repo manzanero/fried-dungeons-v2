@@ -117,9 +117,8 @@ func _on_host_campaign_pressed(campaign: Campaign):
 
 
 func _on_join_server_pressed(server_data: Dictionary):
-	Game.player = Player.new(server_data.username, server_data.password)
 	Game.is_master = false
-	Game.server.join_multiplayer(server_data.host)
+	Game.server.join_multiplayer(server_data)
 	
 	Game.ui.ide.visible = true
 	Game.ui.main_menu.visible = false
@@ -138,6 +137,7 @@ func _on_tab_close_pressed(tab_index: int):
 	var map := tab_scene.map
 	save_map(map)
 	Game.maps.erase(map.slug)
+	tab_scene.map.selected_level.get_node("Ceilling").free()
 	tab_scene.queue_free()
 	await get_tree().process_frame
 	Game.ui.tab_world.scan(Game.campaign)

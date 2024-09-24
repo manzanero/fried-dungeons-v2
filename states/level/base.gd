@@ -58,6 +58,7 @@ func process_element_selection():
 	
 	elif is_instance_valid(level.element_selected): 
 		level.element_selected.is_selected = false
+		level.element_selected.is_dragged = false
 		level.element_selected = null
 
 
@@ -83,6 +84,11 @@ func process_entity_follow():
 	if Input.is_action_just_pressed("shift_left_click"):
 		level.follower_entity = level.element_selected
 		level.element_selected = null
+		
+		#if level.follower_entity:
+			#map.camera.target_position.global_position = level.follower_entity.global_position + 0.5 * Vector3.UP
+			#map.camera.focus.position = level.follower_entity.global_position + 0.5 * Vector3.UP
+			#map.camera.eyes.position.z = 0
 
 
 func process_ground_hitted():

@@ -39,10 +39,11 @@ var preview_element: Element
 var follower_entity: Entity :
 	set(value):
 		if follower_entity:
-			follower_entity.sprite_mesh.visible = true
+			follower_entity.body.visible = true
+			follower_entity.is_dragged = false
 		follower_entity = value
 		if follower_entity:
-			follower_entity.body_mesh_instance.visible = false
+			follower_entity.body.visible = false
 			follower_entity.is_selected = false
 			map.camera.target_position.global_position = follower_entity.global_position
 			map.camera.is_fps = true
@@ -88,6 +89,8 @@ func _ready():
 			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 		else:
 			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
+			
+			#map.camera.eyes.position.z = map.camera.init_zoom
 			follower_entity = null
 	)
 	ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
@@ -118,7 +121,9 @@ func _on_refreshed_light():
 
 func _on_camera_changed():
 	if follower_entity:
-		follower_entity.global_position = Game.camera.hint_3d.global_position
+		follower_entity.target_position = map.camera.focus_hint_3d.global_position
+		follower_entity.is_moving_to_target = true
+		Game.server.rpcs.set_element_target.rpc(map.slug, index, follower_entity.id, follower_entity.target_position)
 
 
 func get_light(point: Vector2) -> Color:

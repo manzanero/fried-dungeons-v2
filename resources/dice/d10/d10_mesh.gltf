@@ -33,8 +33,8 @@
 			],
 			"scale":[
 				0.009999999776482582,
-				0.010000000707805157,
-				0.010000000707805157
+				0.009999999776482582,
+				0.009999999776482582
 			]
 		}
 	],
@@ -84,8 +84,8 @@
 	"images":[
 		{
 			"mimeType":"image/png",
-			"name":"dice_texture",
-			"uri":"dice_texture.png"
+			"name":"dice_texture_alpha",
+			"uri":"dice_texture_alpha.png"
 		}
 	],
 	"accessors":[
