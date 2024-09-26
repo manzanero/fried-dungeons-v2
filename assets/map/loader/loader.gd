@@ -324,14 +324,18 @@ func load_map(map_data: Dictionary):
 		map.ambient_color = Utils.html_color_to_color(map_data.settings.ambient_color)
 		map.master_ambient_light = map_data.settings.master_ambient_light
 		map.master_ambient_color = Utils.html_color_to_color(map_data.settings.master_ambient_color)
-
-		# settings
-		Game.ui.tab_settings.title_edit.text = map.label
-		Game.ui.tab_settings.ambient_light_spin.value = map.ambient_light
-		Game.ui.tab_settings.ambient_color_button.color = map.ambient_color
-		Game.ui.tab_settings.override_ambient_light_check.button_pressed = map_data.settings.get("override_ambient_light", true)
-		Game.ui.tab_settings.master_ambient_light_spin.value = map.master_ambient_light * 100
-		Game.ui.tab_settings.override_ambient_color_check.button_pressed = map_data.settings.get("override_ambient_color", false)
-		Game.ui.tab_settings.master_ambient_color_button.color = map.master_ambient_color * 100
-		Game.ui.tab_settings._on_ambient_edited()
+		
+		if not Game.is_master:
+			map.current_ambient_light = map.ambient_light
+			map.current_ambient_color = map.ambient_color
+			
+		## settings
+		#Game.ui.tab_settings.title_edit.text = map.label
+		#Game.ui.tab_settings.ambient_light_spin.value = map.ambient_light * 100
+		#Game.ui.tab_settings.ambient_color_button.color = map.ambient_color
+		#Game.ui.tab_settings.override_ambient_light_check.button_pressed = map_data.settings.get("override_ambient_light", true)
+		#Game.ui.tab_settings.master_ambient_light_spin.value = map.master_ambient_light * 100
+		#Game.ui.tab_settings.override_ambient_color_check.button_pressed = map_data.settings.get("override_ambient_color", false)
+		#Game.ui.tab_settings.master_ambient_color_button.color = map.master_ambient_color
+		#Game.ui.tab_settings._on_ambient_edited()
 	

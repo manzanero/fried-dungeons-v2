@@ -80,6 +80,10 @@ func get_map(map_slug: String) -> Dictionary:
 
 func get_player(player_slug: String) -> Dictionary:
 	return Utils.load_json("%s/%s/player.json" % [players_path, player_slug])
+
+
+func set_player(player_slug: String, player_data: Dictionary) -> void:
+	return Utils.dump_json("%s/%s/player.json" % [players_path, player_slug], player_data)
 	
 
 func save() -> void:

@@ -76,7 +76,6 @@ func _ready() -> void:
 	nav_campaing.set_item_shortcut(0, Utils.action_shortcut("save"))
 	
 	tab_settings.info_changed.connect(_on_info_changed)
-	tab_settings.ambient_changed.connect(_on_ambient_changed)
 	
 	minimize_down_button.pressed.connect(_on_minimize_down_pressed.bind(true))
 	restore_down_button.pressed.connect(_on_minimize_down_pressed.bind(false))
@@ -111,19 +110,6 @@ func quit():
 func _on_info_changed(label: String):
 	selected_scene_tab.name = label
 	selected_map.label = label
-
-
-func _on_ambient_changed(master_view: bool, light: float, color: Color):
-	var map := selected_map
-	map.is_master_view = master_view
-	map.current_ambient_light = light
-	map.current_ambient_color = color
-	if master_view:
-		map.master_ambient_light = light
-		map.master_ambient_color = color
-	else:
-		map.ambient_light = light
-		map.ambient_color = color
 
 
 func _on_minimize_down_pressed(minimize: bool):

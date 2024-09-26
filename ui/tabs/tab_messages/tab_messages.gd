@@ -53,7 +53,7 @@ func _on_add_dice(number: int, faces: int) -> void:
 		if element_selected:
 			color = element_selected.color
 	
-	Game.ui.dicer.create_dice_roll(dice_string, color, randi_range(0, 999999))
+	Game.ui.dicer.create_dice_roll.rpc(dice_string, color, randi_range(0, 999999))
 
 
 func _on_dicer_roll_result(dice_string: String, result: Array):
@@ -81,8 +81,8 @@ func _on_dicer_roll_result(dice_string: String, result: Array):
 		
 	var origin_color := origin.color if origin else Color.DARK_GRAY
 	
-	new_message(origin_label, origin_color, text)
-	new_message(origin_label, origin_color, "Dice result:\n[center]%s[/center]" % result_str)
+	new_message.rpc(origin_label, origin_color, text)
+	new_message.rpc(origin_label, origin_color, "Dice result:\n[center]%s[/center]" % result_str)
 	
 
 func _on_history_message_pressed(text: String) -> void:
@@ -123,12 +123,12 @@ func process_message(text: String):
 		origin_label = Game.master.username
 		
 	var origin_color := origin.color if origin else Color.DARK_GRAY
-	new_message(origin_label, origin_color, text)
+	new_message.rpc(origin_label, origin_color, text)
 
 	if text.begins_with('/roll '):
 		var dice_string = text.split('/roll ', false, 1)[0]
 		var output_text = "Dice result:\n[center]%s[/center]" % [roll_command(dice_string)]
-		new_message(origin_label, origin_color, output_text)
+		new_message.rpc(origin_label, origin_color, output_text)
 			
 	else:
 		command_echo.emit(origin, text)
@@ -147,6 +147,7 @@ func roll_command(dice_string: String) -> String:
 	return result_str
 
 
+@rpc("call_local", "any_peer", "reliable")
 func new_message(label, color, text):
 	if color.get_luminance() < 0.5:
 		label = "[outline_color=white][outline_size=8]%s[/outline_size][/outline_color]" % label

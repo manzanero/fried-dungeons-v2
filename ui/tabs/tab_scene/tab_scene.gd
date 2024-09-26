@@ -54,15 +54,23 @@ func _ready() -> void:
 
 
 func _on_camera_fps_enabled(value: bool):
-	var light := Game.ui.tab_settings.ambient_light_spin.value / 100.0
-	var color := Game.ui.tab_settings.ambient_color_button.color
-	if value:
-		Game.ui.tab_settings.ambient_changed.emit(true, light, color)
-	else:
-		if Game.is_master:
-			Game.ui.tab_settings.master_view_check.pressed.emit()
-		else:
-			Game.ui.tab_settings.ambient_changed.emit(false, light, color)
+	map.is_master_view = true
+	map.current_ambient_light = map.ambient_light
+	map.current_ambient_color = map.ambient_color
+	
+	if not value:
+		if not Game.is_master:
+			map.is_master_view = false
+			return
+		
+		map.is_master_view = Game.ui.tab_settings.master_view_check.button_pressed
+		if not map.is_master_view:
+			return
+		
+		if Game.ui.tab_settings.override_ambient_light_check.button_pressed:
+			map.current_ambient_light = map.master_ambient_light
+		if Game.ui.tab_settings.override_ambient_color_check.button_pressed:
+			map.current_ambient_color = map.master_ambient_color
 	
 	# exit build mode
 	var builder_button_pressed = Game.ui.tab_builder.wall_button.button_group.get_pressed_button()

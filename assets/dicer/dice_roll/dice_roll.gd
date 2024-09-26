@@ -39,7 +39,12 @@ func _process(_delta: float) -> void:
 	
 	if Input.is_action_just_pressed("left_click"):
 		visible = false
-
+	
+	if is_finished and not visible:
+		queue_free()
+		 
+	get_tree().create_timer(60).timeout.connect(queue_free)
+	
 
 func _on_added_die(die: Die) -> void:
 	die.stopped.connect(_on_die_stopped)

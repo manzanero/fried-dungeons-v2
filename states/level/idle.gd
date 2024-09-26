@@ -11,3 +11,19 @@ func _physics_process_state(_delta: float) -> String:
 	process_element_movement()
 	process_entity_follow()
 	return ""
+
+
+
+	
+func _input(e: InputEvent):
+	if not is_current_state():
+		return
+
+	if e is InputEventMouseButton and e.button_index == MOUSE_BUTTON_LEFT and e.double_click:
+		if level.is_ground_hovered:
+			var color := Game.player.color if Game.player else Game.master.color
+			map.instancer.create_player_signal(level, level.position_hovered, color)
+			
+			Game.server.rpcs.create_player_signal.rpc(map.slug, level.index, level.position_hovered, color)
+	
+	

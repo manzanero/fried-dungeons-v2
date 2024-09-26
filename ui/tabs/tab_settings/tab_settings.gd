@@ -3,7 +3,7 @@ extends Control
 
 
 signal info_changed(title: String)
-signal ambient_changed(master_view: bool, light: float, color: Color)
+#signal ambient_changed(master_view: bool, light: float, color: Color, master_light: float, master_color: Color)
 
 
 var cached_valid_label: String
@@ -53,25 +53,45 @@ func _ready() -> void:
 
 
 func _on_info_edited():
-	var label := title_edit.text.validate_filename()
-	if not label:
-		label = "Untitled"
-	
-	var caret_column := title_edit.caret_column
-	title_edit.text = label
-	title_edit.caret_column = caret_column
-	info_changed.emit(label)
+	var label := title_edit.text
+	info_changed.emit(label.strip_edges() if label else "Untitled")
 
 
 func _on_ambient_edited():
-	var master_view := master_view_check.button_pressed
-	var light := ambient_light_spin.value / 100.0
-	var color := ambient_color_button.color
-
-	if master_view:
-		if override_ambient_light_check.button_pressed:
-			light = master_ambient_light_spin.value / 100.0
-		if override_ambient_color_check.button_pressed:
-			color = master_ambient_color_button.color
+	var map := Game.ui.selected_map
+	map.ambient_light = ambient_light_spin.value / 100.0
+	map.ambient_color = ambient_color_button.color
+	map.master_ambient_light = master_ambient_light_spin.value / 100.0
+	map.master_ambient_color = master_ambient_color_button.color
+	map.current_ambient_light = map.ambient_light
+	map.current_ambient_color = map.ambient_color
 	
-	ambient_changed.emit(master_view, light, color)
+	Game.server.rpcs.change_ambient.rpc(map.slug, 
+			map.ambient_light,
+			map.ambient_color,
+			map.master_ambient_light,
+			map.master_ambient_color)
+	
+	map.is_master_view = master_view_check.button_pressed
+	if not map.is_master_view:
+		return
+	
+	if override_ambient_light_check.button_pressed:
+		map.current_ambient_light = map.master_ambient_light
+	if override_ambient_color_check.button_pressed:
+		map.current_ambient_color = map.master_ambient_color
+
+
+func reset():
+	var map := Game.ui.selected_map
+	if not map:
+		return
+	
+	# info
+	title_edit.text = Game.ui.selected_scene_tab.name
+	
+	# ambient
+	ambient_light_spin.set_value_no_signal(map.ambient_light * 100)
+	ambient_color_button.color = map.ambient_color
+	master_ambient_light_spin.set_value_no_signal(map.master_ambient_light * 100)
+	master_ambient_color_button.color = map.master_ambient_color

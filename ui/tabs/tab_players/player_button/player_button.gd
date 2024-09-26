@@ -46,6 +46,7 @@ func init(tab_players: TabPlayers, _slug: String, _username: String, _texture: T
 
 	return self
 
+
 func _init_player_entity_button(entity_id: String):
 	var player_entity: Button
 	if player_entities_parent.has_node(entity_id):
@@ -68,7 +69,9 @@ func _init_player_entity_button(entity_id: String):
 	player_entity.right_button_pressed.connect(func ():
 		player_entity.queue_free()
 		player_entities_data.erase(entity_id)
-		Game.ui.tab_players.save(slug)
+		Game.ui.tab_players.save_player(slug)
+		
+		Game.server.rpcs.set_player_entity_control.rpc(slug, entity_id, false)
 		
 		Debug.print_info_message("Entity \"%s\" removed from player \"%s\"" % [entity_id, slug])
 	)

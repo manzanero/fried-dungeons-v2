@@ -8,6 +8,7 @@ extends Node
 const WALL = preload("res://assets/map/level/wall/wall.tscn")
 const ENTITY = preload("res://assets/entity/entity.tscn")
 const LIGHT = preload("res://assets/light/light.tscn")
+const PLAYER_SIGNAL = preload("res://assets/player_signal/player_signal.tscn")
 
 
 func create_wall(level: Level, id: String, points_position_2d: Array[Vector2], 
@@ -31,3 +32,8 @@ func create_light(level: Level, id: String, position_2d: Vector2, properties := 
 	level.elements[id] = light
 	Game.ui.tab_elements.add_element(light)
 	return light
+
+
+func create_player_signal(level: Level, position_2d: Vector2, color: Color) -> PlayerSignal:
+	var player_signal: PlayerSignal = PLAYER_SIGNAL.instantiate().init(level, position_2d, color)
+	return player_signal

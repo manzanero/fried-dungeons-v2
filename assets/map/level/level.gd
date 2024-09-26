@@ -135,6 +135,10 @@ func get_light(point: Vector2) -> Color:
 	if pixel_position.y < 0 or pixel_position.y >= light_sample_2d.get_height():
 		return Color.TRANSPARENT
 	return light_sample_2d.get_pixelv(pixel_position)
+	
+
+func is_watched(point: Vector2) -> bool:
+	return get_light(point).a
 
 
 func _process(_delta: float) -> void:
@@ -176,7 +180,9 @@ class Cell:
 	func _init(_index, _frame) -> void:
 		index = _index
 		frame = _frame
-		
+	
+	func json() -> Dictionary:
+		return {"i": index, "f": frame}
 
 ###############
 # Serializing #
@@ -196,7 +202,7 @@ func json() -> Dictionary:
 		tiles[y] = row
 	for tile in cells:
 		var cell: Cell = cells[tile]
-		tiles[tile.y - pos_z][tile.x - pos_x] = {"i": cell.index, "f": cell.frame}
+		tiles[tile.y - pos_z][tile.x - pos_x] = cell.json()
 		
 	var walls_data := []
 	for wall in walls_parent.get_children():

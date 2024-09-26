@@ -268,10 +268,10 @@ func sort_strings_ended_with_number(array: Array[String]) -> Array[String]:
 	return array
 
 
-func slugify(text: String) -> String:
+func slugify(text: String, whitespace_to: String = "-", simbols_to: String = "_") -> String:
 	text = text.strip_edges().to_lower()
 	var replacements = {
-		" ": "-",
+		" ": whitespace_to,
 		"á": "a", "à": "a", "ä": "a", "â": "a", "ã": "a", "å": "a", "æ": "ae",
 		"ç": "c", "č": "c", "ć": "c",
 		"é": "e", "è": "e", "ë": "e", "ê": "e", "ě": "e",

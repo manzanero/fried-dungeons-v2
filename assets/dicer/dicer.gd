@@ -15,10 +15,14 @@ const D20 := preload("res://assets/dicer/dices/d20.tscn")
 const D100 := preload("res://assets/dicer/dices/d100.tscn")
 
 
+var dice_roll: DiceRoll
+
+
 @onready var dice_rolls: Node3D = %DiceRolls
 @onready var audio_stream_player: AudioStreamPlayer = $AudioStreamPlayer
 
 
+@rpc("call_local", "any_peer", "reliable")
 func create_dice_roll(dice_string: String, 
 		dice_color: Color = Game.player_color, dice_roll_seed: int = Game.world_seed) -> void:
 
@@ -28,9 +32,13 @@ func create_dice_roll(dice_string: String,
 
 	var parsed_dice = dice_syntax.dice_parser(dice_string)
 	
-	var dice_roll: DiceRoll = DICE_ROLL.instantiate().init(dice_rolls, dice_string)
-	dice_roll.timeout_error.connect(roll_parsed.bind(dice_string, parsed_dice))
-	dice_roll.finished.connect(_on_dice_roll_finished)
+	if is_instance_valid(dice_roll):
+		dice_roll.visible = false
+	
+	dice_roll = DICE_ROLL.instantiate().init(dice_rolls, dice_string)
+	if is_multiplayer_authority():
+		dice_roll.timeout_error.connect(roll_parsed.bind(dice_string, parsed_dice))
+		dice_roll.finished.connect(_on_dice_roll_finished)
 	
 	for rr in parsed_dice.rules_array:
 		for i in range(rr.dice_count):

@@ -4,7 +4,9 @@ extends Node
 
 signal player_connected(username)
 signal player_disconnected(username)
-signal server_disconnected(username)
+signal server_disconnected
+
+const PORT := 25565
 
 @export var rpcs: Rpcs
 
@@ -26,7 +28,7 @@ func _ready():
 func host_multiplayer() -> Error:
 	var retries := 3
 	for i in range(retries):
-		var error := peer.create_server(2020)
+		var error := peer.create_server(PORT)
 		if not error:
 			break
 		
@@ -41,7 +43,7 @@ func host_multiplayer() -> Error:
 	
 
 func join_multiplayer(server_data: Dictionary) -> Error:
-	var error := peer.create_client(server_data.host, 2020)
+	var error := peer.create_client(server_data.host, PORT)
 	if error:
 		Debug.print_error_message("create_client == %s" % error)
 		return error
@@ -61,7 +63,7 @@ func _on_player_connected(id: int):
 
 
 @rpc("any_peer", "reliable")
-func _register_player(username: String, password: String):	
+func _register_player(username: String, password: String):
 	var new_player_id := multiplayer.get_remote_sender_id()
 	players[username] = new_player_id
 	
@@ -99,7 +101,7 @@ func _on_server_disconnected():
 	Debug.print_info_message("Server disconnected")
 	multiplayer.multiplayer_peer = null
 	players.clear()
-	server_disconnected.emit(player_username)
+	server_disconnected.emit()
 	
 
 ## rpcs
@@ -146,6 +148,7 @@ func _load_map(map_slug: String, map_data: Dictionary):
 	var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, map_data)
 	tab_scene.map.is_master_view = false
 	tab_scene.map.current_ambient_light = tab_scene.map.ambient_light
+	tab_scene.map.current_ambient_color = tab_scene.map.ambient_color
 	get_tree().set_group("lights", "hidden", true)
 
 
@@ -153,8 +156,8 @@ func _load_map(map_slug: String, map_data: Dictionary):
 func _load_player(player_slug: String, player_data: Dictionary):
 	Debug.print_info_message("Loading player %s" % player_slug)
 	Game.player = Player.load(player_data)
-	for entity_slug in Game.player.entities:
-		var entity: Entity = Game.ui.selected_map.selected_level.elements.get(entity_slug)
+	for entity_id in Game.player.entities:
+		var entity: Entity = Game.ui.selected_map.selected_level.elements.get(entity_id)
 		if entity:
 			entity.eye.visible = true
-			Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, entity_slug])
+			Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, entity_id])

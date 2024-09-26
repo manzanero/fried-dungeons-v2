@@ -81,7 +81,6 @@ func _ready():
 	current_ambient_light = master_ambient_light if is_master else ambient_light
 	
 
-
 func init_test_data():
 	loader.load_donjon_json_file("res://resources/maps/small/small_alt.json")
 	#loader.load_donjon_json_file("res://resources/maps/medium/medium.json")

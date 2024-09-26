@@ -37,6 +37,7 @@ func _ready() -> void:
 	Game.ui.scene_tabs.tab_changed.connect(func (_tab: int):
 		Game.ui.tab_builder.reset()
 		Game.ui.tab_elements.reset()
+		Game.ui.tab_settings.reset()
 	)
 	Game.ui.scene_tabs.get_tab_bar().tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ALWAYS
 	Game.ui.scene_tabs.get_tab_bar().tab_close_pressed.connect(_on_tab_close_pressed)
@@ -72,18 +73,14 @@ func save_map(map: Map):
 	Utils.make_dirs(map_path)
 	Utils.dump_json(map_path.path_join("map.json"), map_data)
 	
-	var map_new_slug := Utils.slugify(map.label)
-	if map.slug != map_new_slug:
-		change_map_slug(map, map_new_slug)
-
-
-func change_map_slug(map: Map, new: String):
-	var old := map.slug
-	Game.maps[new] = old
-	Game.maps.erase(old)
-	map.slug = new
-	var _map_new_path := Game.campaign.maps_path.path_join(new)
-	Utils.rename(old, new)
+	var old_slug := map.slug
+	var new_slug := Utils.slugify(map.label)
+	if old_slug != new_slug:
+		Game.maps[new_slug] = map
+		Game.maps.erase(old_slug)
+		map.slug = new_slug
+		var map_new_path := Game.campaign.maps_path.path_join(new_slug)
+		Utils.rename(map_path, map_new_path)
 	
 
 func _on_reload_campaign_pressed():
@@ -117,9 +114,10 @@ func _on_host_campaign_pressed(campaign: Campaign):
 
 
 func _on_join_server_pressed(server_data: Dictionary):
+	if Game.server.join_multiplayer(server_data):
+		return
+		
 	Game.is_master = false
-	Game.server.join_multiplayer(server_data)
-	
 	Game.ui.ide.visible = true
 	Game.ui.main_menu.visible = false
 	reset()

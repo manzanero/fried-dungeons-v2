@@ -37,7 +37,7 @@ var player_selected := {} :
 func _ready() -> void:
 	new_button.pressed.connect(_on_new_button_pressed)
 	scan_button.pressed.connect(_on_scan_button_pressed)
-	username_line_edit.text_changed.connect(_on_filter_text_changed)
+	name_line_edit.text_changed.connect(_on_filter_text_changed)
 	
 	add_entity.pressed.connect(_on_add_entity_pressed)
 	username_button.pressed.connect(_on_username_button_pressed)
@@ -57,10 +57,8 @@ func _on_new_button_pressed():
 			"username": username,"password": "","entities": {}})
 	
 	scan(campaign_selected) 
-	await refresh_tree()
 	
-	#await get_tree().process_frame
-	#await get_tree().process_frame
+	await refresh_tree()
 	
 	player_slug_selected = Utils.slugify(username)
 	var player_button: PlayerButton = player_buttons.get_node(player_slug_selected)
@@ -87,11 +85,8 @@ func scan(campaign: Campaign):
 	player_slug_selected = ""
 
 
-func save(players_slug):
-	#Utils.make_dirs(campaign_selected.players_path.path_join(players_slug))
-	Utils.dump_json(
-			campaign_selected.players_path.path_join(players_slug).path_join("player.json"), 
-			cached_players[players_slug])
+func save_player(players_slug):
+	campaign_selected.set_player(players_slug, cached_players[players_slug])
 
 
 func refresh_tree():
@@ -114,7 +109,7 @@ func refresh_tree():
 
 func _on_add_entity_pressed():
 	var entity := Game.ui.selected_map.selected_level.element_selected; 
-	if not entity or entity is not Entity:
+	if not is_instance_valid(entity) or entity is not Entity:
 		return
 		
 	var player := player_selected
@@ -126,10 +121,11 @@ func _on_add_entity_pressed():
 		return
 	
 	player_button.add_player_entity(entity)
-	#player_button.player_entity_right_button_pressed.connect(_on_entity_right_button_pressed)
 	player.entities[entity.id] = player_button.player_entities_data[entity.id]
 	
-	save(player_slug_selected)
+	save_player(player_slug_selected)
+	
+	Game.server.rpcs.set_player_entity_control.rpc(player_slug_selected, entity.id, true)
 	
 	Debug.print_info_message("Entity \"%s\" added to player \"%s\"" % [entity.id, player_slug_selected])
 
@@ -157,7 +153,7 @@ func _on_username_button_pressed():
 	cached_players[new_player_slug] = player
 	cached_players[new_player_slug].username = new_username
 	cached_players.erase(player_slug_selected)
-	save(new_player_slug)
+	save_player(new_player_slug)
 	player_slug_selected = new_player_slug
 	
 	Debug.print_info_message("Player \"%s\" (%s) changed to \"%s\" (%s)" % [
@@ -174,7 +170,7 @@ func _on_password_button_pressed():
 	
 	password_line_edit.text = ""
 	player.password = new_password
-	save(player_slug_selected)
+	save_player(player_slug_selected)
 	
 	Debug.print_info_message("Player \"%s\" (%s) changed password" % [player.username, player_slug_selected])
 

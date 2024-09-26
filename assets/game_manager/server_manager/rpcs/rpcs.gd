@@ -1,6 +1,34 @@
 class_name Rpcs
 extends Node
 
+
+@rpc("any_peer", "reliable")
+func change_ambient(map_slug: String, 
+		light: float, color: Color, master_light: float, master_color: Color):
+	var map: Map = _get_map_by_slug(map_slug); if not map: return
+	map.master_ambient_light = master_light
+	map.master_ambient_color = master_color
+	map.ambient_light = light
+	map.ambient_color = color
+	map.current_ambient_light = light
+	map.current_ambient_color = color
+	
+
+@rpc("any_peer", "reliable")
+func set_player_entity_control(player_slug: String, id: String, control: bool):
+	var level := Game.ui.selected_map.selected_level
+	var element := _get_element_by_id(level, id); if not element: return
+	element.eye.visible = control
+	Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, id])
+
+@rpc("any_peer", "reliable")
+func create_player_signal(map_slug: String, level_index: int, position_2d: Vector2, color: Color):
+	var map: Map = _get_map_by_slug(map_slug); if not map: return
+	var level: Level = _get_level_by_index(map, level_index); if not level: return
+	if level.is_watched(position_2d):
+		map.instancer.create_player_signal(level, position_2d, color)
+
+
 #region building
 
 @rpc("any_peer", "reliable")
@@ -79,10 +107,6 @@ func set_wall_properties(map_slug: String, level_index: int, id: String,
 	wall.two_sided = two_sided
 	Debug.print_info_message("Wall \"%s\" changed" % wall.id)
 
-#endregion
-
-
-#region elements
 
 @rpc("any_peer", "reliable")
 func create_entity(map_slug: String, level_index: int, id: String, 
@@ -143,8 +167,6 @@ func remove_element(map_slug: String, level_index: int, id: String) -> void:
 	element.remove()
 	Debug.print_info_message("Element \"%s\" (%s) removed" % [element.label, element.id])
 
-#endregion
-
 
 func _get_map_by_slug(slug: String) -> Map:
 	var map: Map = Game.maps.get(slug)
@@ -173,3 +195,5 @@ func _get_element_by_id(level: Level, id: String) -> Element:
 		Debug.print_debug_message("Entity \"%s\" not exist" % [id])
 		
 	return element
+
+#endregion

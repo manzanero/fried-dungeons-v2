@@ -166,6 +166,9 @@ func _on_host_button_pressed():
 	var campaing_pressed := campaign_buttons_group.get_pressed_button()
 	if not campaing_pressed:
 		return
+		
+	if Game.server.host_multiplayer():
+		return
 	
 	campaing_pressed.button_pressed = false
 		
@@ -178,7 +181,6 @@ func _on_host_button_pressed():
 	
 	Game.campaign = campaign
 	Game.is_master = true
-	Game.server.host_multiplayer()
 	
 
 func _on_folder_button_pressed():
