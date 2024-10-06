@@ -10,12 +10,12 @@ extends Node3D
 
 
 var position_2d: Vector2 :
-	get:
-		return Utils.v3_to_v2(column.position)
+	set(value): column.position = Utils.v2_to_v3(value)
+	get: return Utils.v3_to_v2(column.position)
 
 var position_3d: Vector3 :
-	get:
-		return column.position
+	set(value): column.position = value
+	get: return column.position
 
 
 var _has_changed := false

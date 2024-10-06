@@ -7,18 +7,15 @@ extends Resource
 
 
 var slug: String :
-	get:
-		return Utils.slugify(label)
+	get: return Utils.slugify(label)
 
 
 var campaign_path: String :
-	get:
-		return "user://campaigns/%s" % slug
+	get: return "user://campaigns/%s" % slug
 
 
 var maps_path: String :
-	get:
-		return "user://campaigns/%s/maps" % slug
+	get: return "user://campaigns/%s/maps" % slug
 
 
 var maps: Array[String] : 
@@ -32,8 +29,7 @@ var maps: Array[String] :
 		
 		
 var players_path: String :
-	get:
-		return "user://campaigns/%s/players" % slug
+	get: return "user://campaigns/%s/players" % slug
 
 
 var players: Array[String] : 
@@ -44,18 +40,17 @@ var players: Array[String] :
 		for dir in dirs:
 			_players.append(dir)
 		return _players
-		
-		
-var elements_path: String :
-	get:
-		return "user://campaigns/%s/elements" % slug
 
 
-var elements: Array[String] : 
+var resources_path: String :
+	get: return "user://campaigns/%s/resources" % slug
+
+
+var resources: Array[String] : 
 	get:
 		check()
 		var _elements: Array[String] = []
-		var dirs := DirAccess.get_directories_at(elements_path)
+		var dirs := DirAccess.get_directories_at(resources_path)
 		for dir in dirs:
 			_elements.append(dir)
 		return _elements
@@ -98,5 +93,5 @@ func check() -> void:
 		DirAccess.make_dir_recursive_absolute(maps_path)
 	if not DirAccess.dir_exists_absolute(players_path):
 		DirAccess.make_dir_recursive_absolute(players_path)
-	if not DirAccess.dir_exists_absolute(elements_path):
-		DirAccess.make_dir_recursive_absolute(players_path)
+	if not DirAccess.dir_exists_absolute(resources_path):
+		DirAccess.make_dir_recursive_absolute(resources_path)

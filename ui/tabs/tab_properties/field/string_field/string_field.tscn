@@ -4,8 +4,6 @@
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/string_field/string_field.gd" id="2_t30o5"]
 
 [node name="StringField" instance=ExtResource("1_271ju")]
-offset_left = 0.0
-offset_right = 0.0
 offset_bottom = 31.0
 script = ExtResource("2_t30o5")
 
@@ -13,3 +11,4 @@ script = ExtResource("2_t30o5")
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+select_all_on_focus = true

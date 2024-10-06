@@ -3,16 +3,17 @@
 [ext_resource type="Script" path="res://ui/tabs/tab_elements/tab_elements.gd" id="1_7e7qs"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_ryb6d"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tfy1d"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0, 0, 0, 0.901961)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8e145"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+corner_detail = 1
 
 [node name="TabElements" type="Control"]
 layout_mode = 3
@@ -23,16 +24,14 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7e7qs")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="DraggableTree" parent="." instance=ExtResource("2_ryb6d")]
+unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_tfy1d")
-
-[node name="DraggableTree" parent="ScrollContainer" instance=ExtResource("2_ryb6d")]
-unique_name_in_owner = true
-layout_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxFlat_8e145")
 drop_mode_flags = 0
+scroll_horizontal_enabled = false

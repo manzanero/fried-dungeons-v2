@@ -38,9 +38,6 @@ var hidden := true :
 	set(value):
 		hidden = value
 		body.visible = not value
-		
-var position_2d: Vector2 :
-	get: return Utils.v3_to_v2(position)
 
 
 @onready var omni_light_3d := $OmniLight3D as OmniLight3D
@@ -120,5 +117,6 @@ func json():
 		"type": "light",
 		"id": id,
 		"position": Utils.v3_to_a2(position),
+		"rotation": snappedf(rotation_y, 0.001),
 		"properties": values,
 	}

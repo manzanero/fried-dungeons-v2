@@ -1,0 +1,37 @@
+[gd_scene load_steps=4 format=3 uid="uid://c3oq3t62qadp0"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_resources/tab_resources.gd" id="1_ni4af"]
+[ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_gkipe"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ciyps"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+corner_detail = 1
+
+[node name="TabResources" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_ni4af")
+
+[node name="DraggableTree" parent="." instance=ExtResource("2_gkipe")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/focus = SubResource("StyleBoxFlat_ciyps")
+drop_mode_flags = 0
+scroll_horizontal_enabled = false

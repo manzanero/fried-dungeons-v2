@@ -59,18 +59,15 @@ func _on_camera_fps_enabled(value: bool):
 	map.current_ambient_color = map.ambient_color
 	
 	if not value:
-		if not Game.is_master:
+		if Game.is_master:
+			map.is_master_view = Game.ui.tab_settings.master_view_check.button_pressed
+			if map.is_master_view:
+				if Game.ui.tab_settings.override_ambient_light_check.button_pressed:
+					map.current_ambient_light = map.master_ambient_light
+				if Game.ui.tab_settings.override_ambient_color_check.button_pressed:
+					map.current_ambient_color = map.master_ambient_color
+		else:
 			map.is_master_view = false
-			return
-		
-		map.is_master_view = Game.ui.tab_settings.master_view_check.button_pressed
-		if not map.is_master_view:
-			return
-		
-		if Game.ui.tab_settings.override_ambient_light_check.button_pressed:
-			map.current_ambient_light = map.master_ambient_light
-		if Game.ui.tab_settings.override_ambient_color_check.button_pressed:
-			map.current_ambient_color = map.master_ambient_color
 	
 	# exit build mode
 	var builder_button_pressed = Game.ui.tab_builder.wall_button.button_group.get_pressed_button()

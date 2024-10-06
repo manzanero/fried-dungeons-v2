@@ -2,7 +2,7 @@ class_name Dicer
 extends Node3D
 
 
-signal roll_result(result: Array)
+signal roll_result(origin_label, origin_color, dice_string, result: Array)
 
 const SM = preload("res://addons/dice_syntax/string_manip.gd")
 const DICE_ROLL = preload("res://assets/dicer/dice_roll/dice_roll.tscn")
@@ -23,9 +23,7 @@ var dice_roll: DiceRoll
 
 
 @rpc("call_local", "any_peer", "reliable")
-func create_dice_roll(dice_string: String, 
-		dice_color: Color = Game.player_color, dice_roll_seed: int = Game.world_seed) -> void:
-
+func create_dice_roll(origin_label: String, origin_color: Color, dice_string: String, dice_roll_seed: int) -> void:
 	audio_stream_player.play()
 	
 	seed(dice_roll_seed)
@@ -35,9 +33,9 @@ func create_dice_roll(dice_string: String,
 	if is_instance_valid(dice_roll):
 		dice_roll.visible = false
 	
-	dice_roll = DICE_ROLL.instantiate().init(dice_rolls, dice_string)
+	dice_roll = DICE_ROLL.instantiate().init(dice_rolls, origin_label, origin_color, dice_string)
 	if is_multiplayer_authority():
-		dice_roll.timeout_error.connect(roll_parsed.bind(dice_string, parsed_dice))
+		dice_roll.timeout_error.connect(roll_parsed.bind(origin_label, origin_color, dice_string, parsed_dice))
 		dice_roll.finished.connect(_on_dice_roll_finished)
 	
 	for rr in parsed_dice.rules_array:
@@ -45,8 +43,8 @@ func create_dice_roll(dice_string: String,
 			var die: Die
 			
 			if rr.dice_side == 100:
-				var die_100: Die = D100.instantiate().init(dice_roll, 100, dice_color, randi_range(0, 999999))
-				die = D10.instantiate().init(dice_roll, 10, dice_color, randi_range(0, 999999), die_100)
+				var die_100: Die = D100.instantiate().init(dice_roll, 100, origin_color, randi_range(0, 999999))
+				die = D10.instantiate().init(dice_roll, 10, origin_color, randi_range(0, 999999), die_100)
 				continue
 				
 			match rr.dice_side:
@@ -56,16 +54,16 @@ func create_dice_roll(dice_string: String,
 				10: die = D10.instantiate()
 				12: die = D12.instantiate()
 				20: die = D20.instantiate()
-			die.init(dice_roll, rr.dice_side, dice_color, randi_range(0, 999999))
+			die.init(dice_roll, rr.dice_side, origin_color, randi_range(0, 999999))
 
 
-func _on_dice_roll_finished(dice_string: String, result: Array):
-	roll_result.emit(dice_string, result)
+func _on_dice_roll_finished(origin_label: String, origin_color: Color, dice_string: String, result: Array):
+	roll_result.emit(origin_label, origin_color, dice_string, result)
 
 
-func roll_parsed(dice_string: String, parsed_dice: Dictionary):
+func roll_parsed(origin_label: String, origin_color: Color, dice_string: String, parsed_dice: Dictionary):
 	var result_data := dice_syntax.roll_parsed(parsed_dice)
-	roll_result.emit(dice_string, result_data.rolls[0].dice) 
+	roll_result.emit(origin_label, origin_color, dice_string, result_data.rolls[0].dice) 
 	
 	
 	

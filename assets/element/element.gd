@@ -7,8 +7,10 @@ signal property_changed(property_name: StringName, old_value: Variant, new_value
 
 var map: Map
 var level: Level
+var snapping := Game.PIXEL_SNAPPING_QUARTER 
 
 
+@export var is_ceiling_element: bool
 @export var properties := {}
 
 
@@ -21,13 +23,17 @@ var label := "Unknown"
 var color := Color.BLUE
 var icon: Texture2D = null
 
-
-var is_dragged := false
+var is_dragged: bool : set = _set_dragged
 var is_selected: bool : set = _set_selected
 var is_preview: bool : set = _set_preview
+var is_rotated: bool : set = _set_rotated
+
 var target_position: Vector3
 var is_moving_to_target: bool
-
+var position_2d: Vector2 :
+	get: return Utils.v3_to_v2(position)
+var rotation_y: float :
+	get: return rotation.y
 
 var properties_values: Dictionary :
 	get:
@@ -39,11 +45,12 @@ var properties_values: Dictionary :
 @onready var elements: Node3D = $Elements
 
 
-func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {}):
+func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {}, _rotation_y := 0.0):
 	id = _id
 	level = _level
 	map = level.map
 	position = Vector3(_position_2d.x, 0, _position_2d.y)
+	rotation.y = _rotation_y
 	level.elements_parent.add_child(self)
 	_init_property_list(_properties)
 	property_changed.connect(_on_property_changed)
@@ -90,39 +97,68 @@ func get_property(property_name: StringName, default: Variant = null) -> Propert
 func update_properties():
 	for property_name in properties:
 		property_changed.emit(property_name, null, properties[property_name].value)
-
-
-func get_target_hovered():
-	if Input.is_key_pressed(KEY_ALT):
-		return Utils.v2_to_v3(level.position_hovered)
-	else:
-		return Utils.v2_to_v3(level.position_hovered.snapped(Game.PIXEL_SNAPPING_QUARTER))
-
-
-func _set_preview(value: bool) -> void:
-	is_preview = value
-	if not value:
-		Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, position)
+		
+		
+## override
+func _set_dragged(value: bool) -> void:
+	is_dragged = value
 
 
 ## override
-func _set_selected(_value: bool) -> void:
-	pass
+func _set_rotated(value: bool) -> void:
+	is_rotated = value
+
+
+## override
+func _set_preview(value: bool) -> void:
+	is_preview = value
+
+
+## override
+func _set_selected(value: bool) -> void:
+	is_selected = value
+	if value:
+		if is_instance_valid(level.element_selected):
+			level.element_selected.is_selected = false
+			
+		level.element_selected = self
+		Game.ui.tab_properties.element_selected = self
 		
+	elif Game.ui.tab_properties.element_selected == self:
+		Game.ui.tab_properties.element_selected = null
+
+
+func get_target_hovered() -> Vector3:
+	if is_ceiling_element:
+		if Input.is_key_pressed(KEY_ALT):
+			return Utils.v2_to_v3(level.ceilling_hovered - level.drag_offset)
+		else:
+			return Utils.v2_to_v3((level.ceilling_hovered - level.drag_offset).snapped(snapping))
+	else:
+		if is_rotated:
+			return Utils.v2_to_v3(level.exact_position_hovered - level.drag_offset)
+		else:
+			if Input.is_key_pressed(KEY_ALT):
+				return Utils.v2_to_v3(level.position_hovered - level.drag_offset)
+			else:
+				return Utils.v2_to_v3((level.position_hovered - level.drag_offset).snapped(snapping))
+				
+				
+func look_target(target_hovered: Vector3):
+	if target_hovered.distance_to(position) > 0.125:
+		look_at(target_hovered, Vector3.UP, true)
+	
+	if not Input.is_key_pressed(KEY_ALT):
+		rotation.y = snapped(rotation.y, PI / 8)
+
 
 func _physics_process(delta: float) -> void:
 	if is_preview:
-		position = get_target_hovered()
+		_preview_process()
 		return
 		
 	if is_dragged:
-		if multiplayer.is_server() and Input.is_key_pressed(KEY_CTRL):
-			position = get_target_hovered()
-			Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, position)
-		
-		target_position = get_target_hovered()
-		is_moving_to_target = true
-		Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position)
+		_dragged_process()
 	
 	if is_moving_to_target:
 		var vector_to_target := target_position - position
@@ -136,6 +172,35 @@ func _physics_process(delta: float) -> void:
 				target_position = position
 		else:
 			is_moving_to_target = false
+			
+			
+func _preview_process() -> void:
+	var target_hovered := get_target_hovered()
+	if is_rotated:
+		look_target(target_hovered)
+	else:
+		position = target_hovered
+			
+			
+func _dragged_process() -> void:
+	is_rotated = Input.is_action_pressed("rotate")
+	
+	var target_hovered := get_target_hovered()
+	if multiplayer.is_server() and Input.is_key_pressed(KEY_CTRL):
+		if is_rotated:
+			look_target(target_hovered)
+		else:
+			position = target_hovered
+			
+		Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, position, rotation_y)
+	
+	if is_rotated:
+		look_target(target_hovered)
+	else:
+		target_position = target_hovered
+		is_moving_to_target = true
+		
+	Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation_y)
 
 
 func remove():
@@ -143,6 +208,7 @@ func remove():
 	level.elements.erase(id)
 	
 	Game.ui.tab_elements.remove_element(self)
+	Game.ui.tab_properties.element_selected = null
 	
 
 class Property:

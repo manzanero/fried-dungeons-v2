@@ -1,7 +1,6 @@
 class_name LevelBuildingState
 extends LevelBaseState
 
-
 var mode: int
 var material_index_selected: int :
 	get:
@@ -9,10 +8,11 @@ var material_index_selected: int :
 
 var st := SurfaceTool.new()
 
-var _click_origin_position := Vector2.ZERO
-var _click_origin_tile := Vector2i.ZERO
+var _click_origin_position := Game.NULL_POSITION_2D
+var _click_origin_tile := Game.NULL_TILE
 var _is_rect_being_builded := false
 var _wall_being_builded: Wall
+var _previous_rotation: float
 var _previous_properties := {}
 var _wall_hovered: Wall
 
@@ -27,14 +27,15 @@ func _enter_state(previous_state: String) -> void:
 	Game.ui.build_border.visible = true
 	selector.grid.visible = true
 	selector.column.visible = true
+	selector.position_2d = Game.NULL_POSITION_2D
 	
-	match mode:
-		TabBuilder.MOVE, TabBuilder.NEW_ENTITY, TabBuilder.NEW_LIGHT, TabBuilder.PAINT_TILE, TabBuilder.PAINT_RECT:
-			selector.column.visible = false
+	if mode in [TabBuilder.MOVE, TabBuilder.NEW_ENTITY, TabBuilder.NEW_LIGHT, TabBuilder.NEW_SHAPE, 
+			TabBuilder.PAINT_TILE, TabBuilder.PAINT_RECT]:
+		selector.column.visible = false
 	
-	match mode:
-		TabBuilder.CHANGE, TabBuilder.FLIP, TabBuilder.PAINT_WALL:
-			selector.grid.visible = false
+	if mode in [TabBuilder.CHANGE, TabBuilder.FLIP, TabBuilder.PAINT_WALL]:
+		selector.grid.visible = false
+
 
 
 func _exit_state(next_state: String) -> void:
@@ -46,9 +47,10 @@ func _exit_state(next_state: String) -> void:
 	selector.wall.mesh = null
 	_is_rect_being_builded = false
 	_wall_being_builded = null
+	_previous_properties = {}
+	_previous_rotation = 0.0
 	if is_instance_valid(level.preview_element):
 		level.preview_element.remove()
-	_previous_properties = {}
 
 
 func _physics_process_state(_delta: float) -> String:
@@ -109,9 +111,9 @@ func _physics_process_state(_delta: float) -> String:
 			process_ceilling_hitted()
 			process_change_grid()
 			process_instance_light()
-		TabBuilder.NEW_ENTITY:
+		TabBuilder.NEW_SHAPE:
 			process_change_grid()
-			process_change_column()
+			process_instance_shape()
 			
 	return ""
 
@@ -149,6 +151,7 @@ func process_build_point() -> void:
 	
 	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_scene_tab:
 		selector.area.visible = false
+		_click_origin_tile = Game.NULL_TILE
 
 
 func process_build_rect() -> void:
@@ -272,7 +275,7 @@ func process_build_two_sided() -> void:
 func process_build_one_sided_start(two_sided := false) -> void:
 	if Input.is_action_just_pressed("left_click"):
 		_click_origin_position = Utils.v3_to_v2(selector.column.position)
-		_wall_being_builded = map.instancer.create_wall(level, Utils.random_string(), 
+		_wall_being_builded = map.instancer.create_wall(level, Utils.random_string(8, true), 
 				[_click_origin_position], material_index_selected, randi(), 1, two_sided)
 		
 		Game.server.rpcs.create_wall.rpc(map.slug, level.index, 
@@ -448,7 +451,7 @@ func process_build_room(wall_outside := false) -> void:
 			points.reverse()
 		
 		var wall: Wall = map.instancer.create_wall(
-				level, Utils.random_string(), [], material_index_selected, randi())
+				level, Utils.random_string(8, true), [], material_index_selected, randi())
 		wall.add_point(origin)
 		for point in points:
 			wall.add_point(point)
@@ -504,27 +507,38 @@ func _create_temp_room_face(index_offset: int, origin: Vector3, destiny: Vector3
 
 
 func process_instance_entity():
-	if not is_instance_valid(level.preview_element):
-		level.preview_element = map.instancer.create_entity(
-			level, Utils.random_string(), selector.position_2d, _previous_properties)
-		level.preview_element.is_preview = true
-		select(level.preview_element)
+	var entity := level.preview_element
+	if not is_instance_valid(entity):
+		entity = map.instancer.create_entity(level, Utils.random_string(8, true), 
+				selector.position_2d, _previous_properties, _previous_rotation)
+		entity.is_preview = true
+		select(entity)
+		level.preview_element = entity
+		
+	entity.is_rotated = Input.is_action_pressed("rotate")
 	
 	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_scene_tab:
-		var entity := level.preview_element
-		Debug.print_info_message("Entity \"%s\" created" % entity.id)
-		entity.is_preview = false
-		Game.server.rpcs.create_entity.rpc(
-			map.slug, level.index, entity.id, entity.position_2d, entity.properties_values)
-
 		_previous_properties = level.preview_element.properties_values
+		_previous_rotation = entity.rotation.y
 		level.preview_element = null
+		
+		if Game.ui.is_mouse_over_scene_tab:
+			entity.is_rotated = false
+			entity.is_preview = false
+			
+			Debug.print_info_message("Entity \"%s\" created" % entity.id)
+		
+			Game.server.rpcs.create_entity.rpc(map.slug, level.index, entity.id, 
+					entity.position_2d, entity.properties_values, entity.rotation_y)
+				
+		else:
+			entity.remove()
 	
 
 func process_instance_light():
 	if not is_instance_valid(level.preview_element):
-		level.preview_element = map.instancer.create_light(
-			level, Utils.random_string(), selector.position_2d, _previous_properties)
+		level.preview_element = map.instancer.create_light(level, Utils.random_string(8, true), 
+				selector.position_2d, _previous_properties)
 		level.preview_element.is_preview = true
 		select(level.preview_element)
 	
@@ -532,8 +546,38 @@ func process_instance_light():
 		var light := level.preview_element
 		Debug.print_info_message("Light \"%s\" created" % light.id)
 		light.is_preview = false
-		Game.server.rpcs.create_light.rpc(
-			map.slug, level.index, light.id, light.position_2d, light.properties_values)
+		Game.server.rpcs.create_light.rpc(map.slug, level.index, light.id, 
+				light.position_2d, light.properties_values, light.rotation_y)
 
 		_previous_properties = level.preview_element.properties_values
 		level.preview_element = null
+	
+
+func process_instance_shape():
+	var shape := level.preview_element
+	if not is_instance_valid(shape):
+		shape = map.instancer.create_shape(level, Utils.random_string(8, true), 
+				selector.position_2d, _previous_properties, _previous_rotation)
+		shape.is_preview = true
+		select(shape)
+		level.preview_element = shape
+		
+	shape.is_rotated = Input.is_action_pressed("rotate")
+	
+	if Input.is_action_just_released("left_click") and Game.ui.is_mouse_over_scene_tab:
+		_previous_properties = level.preview_element.properties_values
+		_previous_rotation = shape.rotation.y
+		level.preview_element = null
+		
+		if Game.ui.is_mouse_over_scene_tab:
+			shape.is_rotated = false
+			shape.is_preview = false
+			
+			Debug.print_info_message("Shape \"%s\" created" % shape.id)
+		
+			Game.server.rpcs.create_shape.rpc(map.slug, level.index, shape.id,
+					shape.position_2d, shape.properties_values, shape.rotation_y)
+				
+		else:
+			shape.remove()
+		

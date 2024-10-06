@@ -21,11 +21,12 @@ func set_player_entity_control(player_slug: String, id: String, control: bool):
 	element.eye.visible = control
 	Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, id])
 
+
 @rpc("any_peer", "reliable")
 func create_player_signal(map_slug: String, level_index: int, position_2d: Vector2, color: Color):
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	if level.is_watched(position_2d):
+	if Game.is_master or level.is_watched(position_2d):
 		map.instancer.create_player_signal(level, position_2d, color)
 
 
@@ -110,41 +111,52 @@ func set_wall_properties(map_slug: String, level_index: int, id: String,
 
 @rpc("any_peer", "reliable")
 func create_entity(map_slug: String, level_index: int, id: String, 
-		position_2d: Vector2, properties_values := {}) -> void:
+		position_2d: Vector2, properties_values := {}, rotation_y := 0.0) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	var entity := map.instancer.create_entity(level, id, position_2d, properties_values)
+	var entity := map.instancer.create_entity(level, id, position_2d, properties_values, rotation_y)
 	Debug.print_info_message("Entity \"%s\" created" % entity.id)
 
 
 @rpc("any_peer", "reliable")
 func create_light(map_slug: String, level_index: int, id: String, 
-		position_2d: Vector2, properties_values := {}) -> void:
+		position_2d: Vector2, properties_values := {}, rotation_y := 0.0) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	var light := map.instancer.create_light(level, id, position_2d, properties_values)
+	var light := map.instancer.create_light(level, id, position_2d, properties_values, rotation_y)
 	Debug.print_info_message("Light \"%s\" created" % light.id)
 
 
 @rpc("any_peer", "reliable")
+func create_shape(map_slug: String, level_index: int, id: String, 
+		position_2d: Vector2, properties_values := {}, rotation_y := 0.0) -> void:
+	var map: Map = _get_map_by_slug(map_slug); if not map: return
+	var level: Level = _get_level_by_index(map, level_index); if not level: return
+	var shape := map.instancer.create_shape(level, id, position_2d, properties_values, rotation_y)
+	Debug.print_info_message("Shape \"%s\" created" % shape.id)
+
+
+@rpc("any_peer", "reliable")
 func set_element_target(map_slug: String, level_index: int, id: String, 
-		position_3d: Vector3) -> void:
+		position_3d: Vector3, rotation_y := 0.0) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var element := _get_element_by_id(level, id); if not element: return
 	element.target_position = position_3d
+	element.rotation.y = rotation_y
 	element.is_moving_to_target = true
 	Debug.print_info_message("Element \"%s\" has new target position" % [element.id])
 
 
 @rpc("any_peer", "reliable")
 func set_element_position(map_slug: String, level_index: int, id: String, 
-		position_3d: Vector3) -> void:
+		position_3d: Vector3, rotation_y := 0.0) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var element := _get_element_by_id(level, id); if not element: return
 	element.target_position = position_3d
 	element.position = position_3d
+	element.rotation.y = rotation_y
 	element.is_moving_to_target = false
 	Debug.print_info_message("Element \"%s\" has new position" % [element.id])
 

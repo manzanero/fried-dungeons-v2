@@ -51,7 +51,6 @@ shadow_mesh = SubResource("ArrayMesh_5l8c6")
 points = PackedVector3Array(-0.00189972, 7.30423, -9.52024, -6.00016, 7.32287, 4.02206, 5.99826, 7.32287, 4.02206, 9.7063, -1.73282, -2.92615, -0.00189972, -7.32717, -7.22032, -9.7082, -1.73282, -2.92615)
 
 [sub_resource type="ConvexPolygonShape3D" id="ConvexPolygonShape3D_dn3j1"]
-custom_solver_bias = 1.0
 points = PackedVector3Array(9.70821, 1.72995, 2.92429, 5.99826, -7.32431, -4.02392, -6.00016, -7.32431, -4.02392, -9.7082, 1.72995, 2.92429, -0.00189972, -7.30566, 9.51838, -0.00189972, 7.32718, 7.21846)
 
 [node name="D10" type="RigidBody3D" groups=["die"]]

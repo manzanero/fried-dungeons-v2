@@ -1,0 +1,39 @@
+[gd_scene load_steps=8 format=4 uid="uid://upfcm5wo63fj"]
+
+[ext_resource type="Texture2D" uid="uid://j04vtki4o5mi" path="res://resources/textures/bookshelf.png" id="1_dll86"]
+[ext_resource type="Material" uid="uid://7u05bsnb3i4y" path="res://assets/element/shape/materials/shape_slice.tres" id="1_nxtt2"]
+[ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh_instance.gd" id="2_sb4wy"]
+[ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="3_ahfai"]
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_lljfk"]
+_surfaces = [{
+"aabb": AABB(-0.08, -0.08, -0.005, 0.16, 0.16, 0.01),
+"attribute_data": PackedByteArray("AAAAAAAAAAAAAIA+AAAAAAAAgD4AAIA+AAAAAAAAAAAAAIA+AACAPgAAAAAAAIA+AACAPgAAAAAAAAAAAAAAAAAAAAAAAIA+AACAPgAAgD4AAAA8AAAAAAAAADwAAAAAAAAAPAAAgD4AAAA8AACAPgAAeD4AAAAAAAB4PgAAAAAAAHg+AACAPgAAeD4AAIA+AAAAAAAAADwAAIA+AAAAPAAAgD4AAAA8AAAAAAAAADwAAAAAAAB4PgAAgD4AAHg+AACAPgAAeD4AAAAAAAB4Pg=="),
+"format": 34359742487,
+"index_count": 36,
+"index_data": PackedByteArray("AAABAAIAAwAEAAUABgAHAAgABgAIAAkACgALAAwACgAMAA0ADgAPABAADgAQABEAEgATABQAEgAUABUAFgAXABgAFgAYABkA"),
+"primitive": 3,
+"uv_scale": Vector4(0, 0, 0, 0),
+"vertex_count": 26,
+"vertex_data": PackedByteArray("CtejvQrXoz0K16M7CtejPQrXoz0K16M7CtejPQrXo70K16M7CtejvQrXoz0K16M7CtejPQrXo70K16M7CtejvQrXo70K16M7CtejPQrXoz0K16O7CtejvQrXoz0K16O7CtejvQrXo70K16O7CtejPQrXo70K16O7CtejvQrXoz0K16O7CtejvQrXoz0K16M7CtejvQrXo70K16M7CtejvQrXo70K16O7CtejPQrXoz0K16M7CtejPQrXoz0K16O7CtejPQrXo70K16O7CtejPQrXo70K16M7CtejvQrXoz0K16O7CtejPQrXoz0K16O7CtejPQrXoz0K16M7CtejvQrXoz0K16M7CtejvQrXo70K16M7CtejPQrXo70K16M7CtejPQrXo70K16O7CtejvQrXo70K16O7/3//f////7//f/9/////v/9//3////+//3//f////7//f/9/////v/9//3////+//////////z//////////P/////////8//////////z8AAP9/////vwAA/3////+/AAD/f////78AAP9/////v////3////+/////f////7////9/////v////3////+//3///////7//f///////v/9///////+//3///////7//fwAA////v/9/AAD///+//38AAP///7//fwAA////vw==")
+}]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_sr1yo"]
+albedo_texture = ExtResource("1_dll86")
+texture_filter = 0
+
+[sub_resource type="Resource" id="Resource_8vn57"]
+script = ExtResource("3_ahfai")
+meshes = Array[ArrayMesh]([SubResource("ArrayMesh_lljfk")])
+material = SubResource("StandardMaterial3D_sr1yo")
+
+[node name="SpriteMeshInstance" type="MeshInstance3D"]
+material_override = ExtResource("1_nxtt2")
+cast_shadow = 0
+mesh = SubResource("ArrayMesh_lljfk")
+surface_material_override/0 = SubResource("StandardMaterial3D_sr1yo")
+script = ExtResource("2_sb4wy")
+texture = ExtResource("1_dll86")
+region_enabled = true
+region_rect = Rect2i(0, 0, 16, 16)
+generated_sprite_mesh = SubResource("Resource_8vn57")

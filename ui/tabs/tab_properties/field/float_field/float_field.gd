@@ -19,5 +19,5 @@ func _ready() -> void:
 	spin_box.value_changed.connect(_on_value_changed)
 	
 
-func _on_value_changed(new_value: float):
+func _on_number_value_changed(new_value: float):
 	value_changed.emit(property_name, new_value)

@@ -7,6 +7,7 @@ var map: Map
 var selector: Selector
 
 var level_ray := PhysicsRayQueryParameters3D.new()
+var drag_offset: Vector3
 
 
 func _enter_state(previous_state: String) -> void:
@@ -30,7 +31,7 @@ func process_wall_selection():
 	if not Game.ui.is_mouse_over_scene_tab:
 		return
 
-	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.WALL_BITMASK)
+	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.WALL_BITMASK)
 	if hit_info:
 		var wall_hitted := hit_info["collider"].get_parent() as Wall
 		select(wall_hitted)
@@ -49,13 +50,22 @@ func process_element_selection():
 	if not Game.ui.is_mouse_over_scene_tab:
 		return
 	
-	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
+	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
 	if hit_info:
-		var element_hitted := hit_info["collider"].get_parent() as Element
-		select(element_hitted)
+		var collider = hit_info["collider"]
+		var element_hitted := collider as Element
+		if not element_hitted:
+			element_hitted = collider.get_parent() as Element
+			
+		if Game.is_master or element_hitted.id in Game.player.entities:
+			select(element_hitted)
+			Game.handled_input = true
+			
+		elif is_instance_valid(level.element_selected): 
+			level.element_selected.is_selected = false
+			level.element_selected.is_dragged = false
+			level.element_selected = null
 		
-		Game.handled_input = true
-	
 	elif is_instance_valid(level.element_selected): 
 		level.element_selected.is_selected = false
 		level.element_selected.is_dragged = false
@@ -73,9 +83,12 @@ func process_element_movement():
 		return
 		
 	if Input.is_action_just_pressed("left_click"):
+		if level.element_selected.is_ceiling_element:
+			level.drag_offset = level.ceilling_hovered - level.element_selected.position_2d
+		else:
+			level.drag_offset = level.position_hovered - level.element_selected.position_2d
 		level.element_selected.is_dragged = true
 			
-
 
 func process_entity_follow():
 	if not level.element_selected:
@@ -96,8 +109,9 @@ func process_ground_hitted():
 
 	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.GROUND_BITMASK)
 	if hit_info:
-		var hit_position = hit_info["position"]
-		level.position_hovered = Utils.v3_to_v2(hit_position.snapped(Game.VOXEL))
+		var hit_position: Vector3 = hit_info["position"]
+		level.exact_position_hovered = Utils.v3_to_v2(hit_position)
+		level.position_hovered = level.exact_position_hovered.snapped(Game.PIXEL)
 		level.tile_hovered = Utils.v2_to_v2i(level.position_hovered)
 		level.is_ground_hovered = true
 

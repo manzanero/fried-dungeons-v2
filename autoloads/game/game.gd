@@ -33,6 +33,9 @@ const PIXEL_SNAPPING_QUARTER := PIXEL * 4
 const PIXEL_SNAPPING_HALF_QUARTER := PIXEL * 2
 const VOXEL_SNAPPING_HALF := VOXEL * 8
 const VOXEL_SNAPPING_QUARTER := VOXEL * 4
+const NULL_POSITION_2D := Vector2.ONE * 999999
+const NULL_POSITION_3D := Vector3.ONE * 999999
+const NULL_TILE := Vector2i.ONE * 999999
 
 const MAX_LIGHTS := 60  # TODO: check if can be higher
 
@@ -54,5 +57,5 @@ var SELECTOR_BITMASK := Utils.get_bitmask(Game.SELECTOR_LAYER)
 
 var level_scene := load("res://assets/map/level/level.tscn")
 var wall_point_scene := load("res://assets/map/level/wall/wall_point/wall_point.tscn")
-var light_scene := load("res://assets/light/light.tscn")
-var entity_scene := load("res://assets/entity/entity.tscn")
+#var light_scene := load("res://assets/light/light.tscn")
+#var entity_scene := load("res://assets/entity/entity.tscn")

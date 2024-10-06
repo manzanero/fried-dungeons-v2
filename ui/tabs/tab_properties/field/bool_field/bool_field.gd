@@ -16,8 +16,8 @@ func init(property_container: PropertyContainer, _property_name, _property_value
 
 
 func _ready() -> void:
-	check_box.pressed.connect(_on_value_changed)
+	check_box.pressed.connect(_on_bool_value_changed)
 	
 
-func _on_value_changed():
+func _on_bool_value_changed():
 	value_changed.emit(property_name, check_box.button_pressed)

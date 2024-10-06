@@ -1,7 +1,6 @@
 class_name Entity
 extends Element
 
-var cached_light: Color
 
 var show_label: bool :
 	set(value): label_label.visible = value
@@ -12,19 +11,17 @@ var show_base: bool :
 		show_base = value
 		base_mesh_instance.visible = value
 
-var base_color: Color :
-	set(value):
-		base_color = value
-		base_mesh_instance.material_override.set_shader_parameter("albedo", base_color)
+var cached_light: Color :
+	set(value): 
+		cached_light = value; 
 		base_mesh_instance.material_override.set_shader_parameter("light", cached_light)
-		base_mesh_instance.material_override.set_shader_parameter("transparency", transparency)
+		body_mesh_instance.material_override.set_shader_parameter("light", cached_light)
+	
+var base_color: Color :
+	set(value): base_color = value; base_mesh_instance.material_override.set_shader_parameter("albedo", base_color)
 
 var body_color: Color :
-	set(value): 
-		body_color = value
-		body_mesh_instance.material_override.set_shader_parameter("albedo", body_color)
-		body_mesh_instance.material_override.set_shader_parameter("light", cached_light)
-		body_mesh_instance.material_override.set_shader_parameter("transparency", transparency)
+	set(value): body_color = value; body_mesh_instance.material_override.set_shader_parameter("albedo", body_color)
 
 var luminance: float :
 	get: return cached_light.v
@@ -32,17 +29,10 @@ var luminance: float :
 var is_watched: bool : 
 	get: return cached_light.a
 
-var position_2d: Vector2 :
-	get: return Utils.v3_to_v2(position)
-
 var transparency := 0. :
 	set(value):
 		transparency = value
-		base_mesh_instance.material_override.set_shader_parameter("albedo", base_color)
-		base_mesh_instance.material_override.set_shader_parameter("light", cached_light)
 		base_mesh_instance.material_override.set_shader_parameter("transparency", transparency)
-		body_mesh_instance.material_override.set_shader_parameter("albedo", body_color)
-		body_mesh_instance.material_override.set_shader_parameter("light", cached_light)
 		body_mesh_instance.material_override.set_shader_parameter("transparency", transparency)
 
 var dirty_mesh := true
@@ -53,7 +43,7 @@ var dirty_mesh := true
 @onready var body: Node3D = $Body
 @onready var sprite_3d: Sprite3D = $Body/Sprite3D
 @onready var body_mesh_instance: SpriteMeshInstance = $Body/SpriteMeshInstance
-@onready var selector_collider: StaticBody3D = $SelectorCollider
+@onready var selector_collider: StaticBody3D = %SelectorCollider
 @onready var eye: Eye = $Eye
 @onready var info: Control = %Info
 @onready var label_label: Label = %LabelLabel
@@ -77,11 +67,12 @@ func _process(_delta: float) -> void:
 			base_color = Color(color.r * luminance, color.g * luminance, color.b * luminance, color.a)
 			body_color = Color(luminance, luminance, luminance)
 		
-		if not level.map.camera.is_fps:
+		if level.map.camera.is_fps:
+			info.visible = false
+		else:
 			info.visible = not level.map.camera.eyes.is_position_behind(position)
 			info.position = level.map.camera.eyes.unproject_position(position + Vector3.UP * 0.001)  # x axis points cannot be unproject
-		else:
-			info.visible = false
+
 	else:
 		if dirty_mesh:
 			body_color = Color.TRANSPARENT
@@ -93,26 +84,16 @@ func _process(_delta: float) -> void:
 
 
 func _set_selected(value: bool) -> void:
-	is_selected = value
-	if value:
-		if is_instance_valid(level.element_selected):
-			level.element_selected.is_selected = false
-			
-		level.element_selected = self
-		Game.ui.tab_properties.element_selected = self
-	elif Game.ui.tab_properties.element_selected == self:
-		Game.ui.tab_properties.element_selected = null
+	super._set_selected(value)
 		
 	selector_mesh_instance.visible = value
 
 
 func _set_preview(value: bool) -> void:
-	is_preview = value
+	super._set_preview(value)
+	
 	if value:
-		if multiplayer.is_server():
-			transparency = 0.25
-		else:
-			transparency = 0.25
+		transparency = 0.25
 	else:
 		transparency = 0
 
@@ -188,5 +169,6 @@ func json():
 		"type": "entity",
 		"id": id,
 		"position": Utils.v3_to_a2(position),
+		"rotation": snappedf(rotation_y, 0.001),
 		"properties": values,
 	}

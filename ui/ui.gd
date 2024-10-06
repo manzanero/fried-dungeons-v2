@@ -33,6 +33,7 @@ signal reload_campaign_pressed
 # center section
 @onready var scene_tabs: TabContainer = %TabScenes
 @onready var tab_builder: TabBuilder = %Builder
+@onready var tab_resources: TabResources = %Resources
 @onready var build_border: Panel = %BuildBorder
 @onready var dicer: Dicer = %Dicer
 @onready var state_label_value: Label = %StateLabelValue

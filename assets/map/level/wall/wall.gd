@@ -28,9 +28,10 @@ signal curve_changed()
 				mesh_instance_3d.material_overlay = BACK_SOLID
 				mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 			else:
-				const BACK: Material = preload("res://assets/map/level/wall/materials/back.tres")
-				mesh_instance_3d.material_overlay = BACK
-				mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+				mesh_instance_3d.material_overlay = null
+				#const BACK: Material = preload("res://assets/map/level/wall/materials/back.tres")
+				#mesh_instance_3d.material_overlay = BACK
+				#mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 
 var map: Map
 var level: Level
@@ -203,13 +204,13 @@ func break_point(broken_wall_point : WallPoint):
 	var wall_1_points_position_2d := _points_position_2d.slice(0, index + 1)
 	var wall_2_points_position_2d := _points_position_2d.slice(index)
 	
-	var wall_1 := map.instancer.create_wall(level, Utils.random_string(),
+	var wall_1 := map.instancer.create_wall(level, Utils.random_string(8, true),
 			wall_1_points_position_2d, material_index, material_seed, material_layer, two_sided)
 	level.selected_wall = wall_1
 	wall_1.is_selected = true
 	Debug.print_info_message("Wall \"%s\" created" % wall_1.id)
 
-	var wall_2 := map.instancer.create_wall(level, Utils.random_string(),
+	var wall_2 := map.instancer.create_wall(level, Utils.random_string(8, true),
 			wall_2_points_position_2d, material_index, material_seed, material_layer, two_sided)
 	Debug.print_info_message("Wall \"%s\" created" % wall_2.id)
 	
@@ -249,7 +250,7 @@ func cut(a: Vector2, b: Vector2):
 	var point_2: Vector3
 	var delta := 0.0
 	
-	var wall_1 := map.instancer.create_wall(level, Utils.random_string(),
+	var wall_1 := map.instancer.create_wall(level, Utils.random_string(8, true),
 			[], material_index, material_seed, material_layer, two_sided)
 	wall_1.add_point(Utils.v3_to_v2(curve.get_point_position(0)))
 	
@@ -270,7 +271,7 @@ func cut(a: Vector2, b: Vector2):
 	
 	var wall_1_created := wall_1.check()
 		
-	var wall_2 := map.instancer.create_wall(level, Utils.random_string(),
+	var wall_2 := map.instancer.create_wall(level, Utils.random_string(8, true),
 			[], material_index, material_seed, material_layer, two_sided)
 	wall_2.add_point(b.snapped(Game.PIXEL))
 	

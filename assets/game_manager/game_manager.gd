@@ -111,6 +111,8 @@ func _on_host_campaign_pressed(campaign: Campaign):
 	Game.ui.tab_world.refresh_tree()
 	
 	set_profile()
+	
+	Game.ui.tab_resources.reset()
 
 
 func _on_join_server_pressed(server_data: Dictionary):
@@ -155,16 +157,13 @@ func _process(_delta: float) -> void:
 
 
 func reset():
-	var campaign_button_pressed = Game.ui.main_menu.campaign_buttons_group.get_pressed_button()
-	if campaign_button_pressed:
-		campaign_button_pressed.button_pressed = false
-	var server_button_pressed = Game.ui.main_menu.server_buttons_group.get_pressed_button()
-	if server_button_pressed:
-		server_button_pressed.button_pressed = false
+	Utils.reset_button_group(Game.ui.main_menu.campaign_buttons_group)
+	Utils.reset_button_group(Game.ui.main_menu.server_buttons_group)
 	
 	Game.ui.tab_elements.reset()
 	Game.ui.tab_builder.reset()
-	Game.ui.tab_properties.element_selected = null
+	Game.ui.tab_resources.reset()
+	Game.ui.tab_properties.reset()
 	for tab_scene in Game.ui.scene_tabs.get_children():
 		tab_scene.queue_free()
 	
@@ -177,7 +176,6 @@ func set_profile():
 		Game.ui.left.visible = true
 		Game.ui.middle_down.visible = true
 		Game.ui.right_up.visible = true
-		Game.ui.tab_settings.visible = true
 		Game.ui.scene_tabs.tabs_visible = true
 		Game.ui.right_down.tabs_visible = true
 	else:
@@ -185,7 +183,6 @@ func set_profile():
 		Game.ui.left.visible = false
 		Game.ui.middle_down.visible = false
 		Game.ui.right_up.visible = false
-		Game.ui.tab_settings.visible = false
 		Game.ui.scene_tabs.tabs_visible = false
 		Game.ui.right_down.tabs_visible = false
 

@@ -163,6 +163,12 @@ func get_mouse_hit(camera: Camera3D, from_center: bool, raycast: PhysicsRayQuery
 	return space_state.intersect_ray(raycast)
 	
 	
+func reset_button_group(button_group: ButtonGroup):
+	var pressed_button := button_group.get_pressed_button()
+	if pressed_button:
+		pressed_button.button_pressed = false
+		
+		
 func action_shortcut(action_name):
 	var input_event := InputEventAction.new()
 	input_event.action = action_name
@@ -294,11 +300,16 @@ func slugify(text: String, whitespace_to: String = "-", simbols_to: String = "_"
 	for t in text:
 		if t in "-abcdefghijklmnopqrstuvwxyz0123456789":
 			slug += t
+		else:
+			slug += simbols_to
 
 	return slug
 
 
-func random_string(lenght := 8) -> String:
+func random_string(lenght := 8, reset_seed := false) -> String:
+	if reset_seed:
+		randomize()
+	
 	var string := ""
 	const CHARS : Array[String] = [
 			"A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", 
@@ -312,4 +323,23 @@ func random_string(lenght := 8) -> String:
 
 
 func png_to_texture(path: String) -> Texture2D:
-	return ImageTexture.create_from_image(Image.load_from_file(path))
+	if not FileAccess.file_exists(path):
+		return
+		
+	var image := Image.load_from_file(path)
+	if not image:
+		printerr("PNG load failed")
+		return
+
+	return ImageTexture.create_from_image(image)
+
+
+func png_to_atlas(path: String) -> AtlasTexture:
+	var atlas_texture := AtlasTexture.new()
+	var texture := png_to_texture(path)
+	if not texture:
+		printerr("PNG load failed")
+		return
+		
+	atlas_texture.atlas = texture
+	return atlas_texture

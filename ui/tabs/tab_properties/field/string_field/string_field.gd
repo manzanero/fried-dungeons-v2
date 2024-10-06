@@ -16,8 +16,8 @@ func init(property_container: PropertyContainer, _property_name, _property_value
 
 
 func _ready() -> void:
-	line_edit.text_changed.connect(_on_value_changed)
+	line_edit.text_changed.connect(_on_text_value_changed)
 	
 
-func _on_value_changed(new_text: String):
+func _on_text_value_changed(new_text: String):
 	value_changed.emit(property_name, new_text)

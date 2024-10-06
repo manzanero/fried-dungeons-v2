@@ -7,6 +7,7 @@ const STRING_FIELD := preload("res://ui/tabs/tab_properties/field/string_field/s
 const COLOR_FIELD := preload("res://ui/tabs/tab_properties/field/color_field/color_field.tscn")
 const BOOL_FIELD := preload("res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn")
 const FLOAT_FIELD := preload("res://ui/tabs/tab_properties/field/float_field/float_field.tscn")
+const INTEGER_FIELD := preload("res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn")
 
 
 var element_selected: Element : set = _set_element_selected
@@ -48,6 +49,8 @@ func _set_element_selected(element: Element):
 				field = BOOL_FIELD.instantiate().init(property_container, property_name, property.value)
 			Element.Property.Hints.FLOAT:
 				field = FLOAT_FIELD.instantiate().init(property_container, property_name, property.value)
+			Element.Property.Hints.INTEGER:
+				field = INTEGER_FIELD.instantiate().init(property_container, property_name, property.value)
 			_:
 				Debug.print_message(Debug.ERROR, "Unkown type \"%s\" of property \"%s\"" % [typeof(property.value), property_name]) 
 		field.value_changed.connect(_on_field_value_changed)
@@ -69,3 +72,7 @@ func _on_field_value_changed(property_name: String, new_value: Variant):
 	var map: Map = level.map
 	var id := element_selected.id
 	Game.server.rpcs.change_element_property.rpc(map.slug, level.index, id, property_name, new_value)
+
+
+func reset():
+	_set_element_selected(null)

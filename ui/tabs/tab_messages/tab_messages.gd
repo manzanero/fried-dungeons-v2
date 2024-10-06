@@ -47,39 +47,36 @@ func _on_panel_button_pressed(panel: Control, button: Button):
 
 func _on_add_dice(number: int, faces: int) -> void:
 	var dice_string := "%sd%s" % [number, faces]
-	var color := Game.player.color if Game.player else Game.master.color
-	if selection_as_origin_button.button_pressed:
-		var element_selected := Game.ui.selected_map.selected_level.element_selected
-		if element_selected:
-			color = element_selected.color
+	var text := "/roll " + dice_string
+	history_panel.add_command(text)
 	
-	Game.ui.dicer.create_dice_roll.rpc(dice_string, color, randi_range(0, 999999))
+	var map = Game.ui.selected_map
+	var origin: Element = null
+	if map and selection_as_origin_button.button_pressed:
+		origin = map.selected_level.element_selected
+
+	var origin_label := Game.master.username
+	if origin:
+		origin_label = origin.label 
+	elif Game.player:
+		origin_label = Game.player.username
+		
+	var origin_color := Game.master.color
+	if origin:
+		origin_color = origin.color
+	elif Game.player:
+		origin_color = Game.player.color
+	
+	Game.ui.dicer.create_dice_roll.rpc(origin_label, origin_color, dice_string, randi_range(0, 999999))
 
 
-func _on_dicer_roll_result(dice_string: String, result: Array):
+func _on_dicer_roll_result(origin_label: String, origin_color: Color, dice_string: String, result: Array):
 	var text := "/roll " + dice_string
 	
 	var result_int := 0
 	for r in result:
 		result_int += r
 	var result_str = "[b]%s[/b] [color=dark_gray]%s[/color]" % [result_int, result]
-	
-	history_panel.add_command(text)
-	var map = Game.ui.selected_map
-	
-	var origin: Element = null
-	if map and selection_as_origin_button.button_pressed:
-		origin = map.selected_level.element_selected
-	
-	var origin_label: String 
-	if origin:
-		origin_label = origin.label 
-	elif Game.player:
-		origin_label = Game.player.username
-	else:
-		origin_label = Game.master.username
-		
-	var origin_color := origin.color if origin else Color.DARK_GRAY
 	
 	new_message.rpc(origin_label, origin_color, text)
 	new_message.rpc(origin_label, origin_color, "Dice result:\n[center]%s[/center]" % result_str)
@@ -88,6 +85,8 @@ func _on_dicer_roll_result(dice_string: String, result: Array):
 func _on_history_message_pressed(text: String) -> void:
 	if message_edit.text == text:
 		process_message(text)
+		message_edit.clear()
+		return
 	
 	message_edit.clear()
 	message_edit.insert_text_at_caret(text)
@@ -108,21 +107,24 @@ func _on_send_message_button() -> void:
 
 func process_message(text: String):
 	history_panel.add_command(text)
-	var map = Game.ui.selected_map
 	
+	var map = Game.ui.selected_map
 	var origin: Element = null
 	if map and selection_as_origin_button.button_pressed:
 		origin = map.selected_level.element_selected
-	
-	var origin_label: String 
+
+	var origin_label := Game.master.username
 	if origin:
 		origin_label = origin.label 
 	elif Game.player:
 		origin_label = Game.player.username
-	else:
-		origin_label = Game.master.username
 		
-	var origin_color := origin.color if origin else Color.DARK_GRAY
+	var origin_color := Game.master.color
+	if origin:
+		origin_color = origin.color
+	elif Game.player:
+		origin_color = Game.player.color
+		
 	new_message.rpc(origin_label, origin_color, text)
 
 	if text.begins_with('/roll '):
@@ -135,6 +137,8 @@ func process_message(text: String):
 
 
 func roll_command(dice_string: String) -> String:
+	Game.ui.dicer.audio_stream_player.play()
+	
 	var parsed_dice := dice_syntax.dice_parser(dice_string)
 	var result_data := dice_syntax.roll_parsed(parsed_dice)
 	
@@ -148,9 +152,11 @@ func roll_command(dice_string: String) -> String:
 
 
 @rpc("call_local", "any_peer", "reliable")
-func new_message(label, color, text):
+func new_message(label: String, color: Color, text: String):		
+	var label_rich := label
 	if color.get_luminance() < 0.5:
-		label = "[outline_color=white][outline_size=8]%s[/outline_size][/outline_color]" % label
-	output_text_label.append_text("[b][color=%s]%s[/color]  ·  [/b]%s\n" % [color.to_html(), label, text])
+		label_rich = "[outline_color=white][outline_size=8]%s[/outline_size][/outline_color]" % label
+	output_text_label.append_text("[b][color=%s]%s[/color]  ·  [/b]%s\n" % [color.to_html(), label_rich, text])
 	output_text_label.append_text("[center][b][color=dark_gray]·[/color][/b][/center]\n")
-	#output_text_label.append_text("[center][font_size=4]" + "-".repeat(128) + "[/font_size][/center]\n")
+	
+	Debug.print_info_message("New message from \"%s\" (%s)" % [label, color.to_html()])

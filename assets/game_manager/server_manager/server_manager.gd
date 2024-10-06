@@ -26,23 +26,20 @@ func _ready():
 
 
 func host_multiplayer() -> Error:
-	var retries := 3
-	for i in range(retries):
-		var error := peer.create_server(PORT)
-		if not error:
-			break
-		
-		if i < retries - 1:
-			Debug.print_warning_message("create_server == %s" % error)
-		else:
-			Debug.print_error_message("create_server == %s" % error)
-			return error
+	if multiplayer.multiplayer_peer:
+		multiplayer.multiplayer_peer.close()
+	var error := peer.create_server(PORT)
+	if error:
+		Debug.print_error_message("create_server == %s" % error)
+		return error
 		
 	multiplayer.multiplayer_peer = peer
 	return OK
 	
 
 func join_multiplayer(server_data: Dictionary) -> Error:
+	if multiplayer.multiplayer_peer:
+		multiplayer.multiplayer_peer.close()
 	var error := peer.create_client(server_data.host, PORT)
 	if error:
 		Debug.print_error_message("create_client == %s" % error)

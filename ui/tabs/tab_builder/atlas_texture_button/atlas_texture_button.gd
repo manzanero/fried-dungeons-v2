@@ -31,7 +31,7 @@ const PIXEL := Vector2(W_UNIT, H_UNIT) / 16
 
 func init(_parent: Control, _index: int):
 	_parent.add_child(self)
-	name = Utils.random_string()
+	name = Utils.random_string(8, true)
 	index = _index
 	return self
 	

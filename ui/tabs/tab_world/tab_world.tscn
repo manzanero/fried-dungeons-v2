@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://lye1ti1uqjjr"]
+[gd_scene load_steps=5 format=3 uid="uid://lye1ti1uqjjr"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_world/tab_world.gd" id="1_75xg6"]
 
@@ -12,6 +12,18 @@ corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u2vvi"]
+draw_center = false
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
 corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cdj30"]
@@ -68,6 +80,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_h407n")
+theme_override_styles/focus = SubResource("StyleBoxFlat_u2vvi")
 theme_override_styles/selected = SubResource("StyleBoxFlat_cdj30")
 theme_override_styles/selected_focus = SubResource("StyleBoxFlat_cdj30")
 hide_folding = true

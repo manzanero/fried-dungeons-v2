@@ -27,7 +27,7 @@ const ATLAS_TEXTURE_BUTTON = preload("res://ui/tabs/tab_builder/atlas_texture_bu
 
 @onready var entity_button: Button = %EntityButton
 @onready var light_button: Button = %LightButton
-@onready var object_button: Button = %ObjectButton
+@onready var shape_button: Button = %ShapeButton
 
 
 func _ready() -> void:
@@ -58,7 +58,7 @@ func _ready() -> void:
 	
 	entity_button.pressed.connect(_on_button_pressed.bind(entity_button, NEW_ENTITY))
 	light_button.pressed.connect(_on_button_pressed.bind(light_button, NEW_LIGHT))
-	object_button.pressed.connect(_on_button_pressed.bind(object_button, NEW_OBJECT))
+	shape_button.pressed.connect(_on_button_pressed.bind(shape_button, NEW_SHAPE))
 
 	visibility_changed.connect(_on_visibility_changed)
 
@@ -87,8 +87,7 @@ func _on_visibility_changed():
 
 func reset():
 	Game.ui.build_border.visible = false
-	if mode_button_group.get_pressed_button():
-		mode_button_group.get_pressed_button().button_pressed = false
+	Utils.reset_button_group(mode_button_group)
 
 	if Game.ui.selected_map and Game.ui.selected_map.selected_level:
 		Game.ui.selected_map.selected_level.state_machine.change_state("Idle")
@@ -98,5 +97,5 @@ enum {
 	ONE_SIDED, TWO_SIDED, ROOM, OBSTACLE,
 	MOVE, CUT, CHANGE, FLIP, PAINT_WALL,
 	PAINT_TILE, PAINT_RECT,
-	NEW_ENTITY, NEW_LIGHT, NEW_OBJECT,
+	NEW_ENTITY, NEW_LIGHT, NEW_SHAPE,
 }

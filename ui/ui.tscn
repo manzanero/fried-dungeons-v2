@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://bn7uvkfq24dl4"]
+[gd_scene load_steps=19 format=3 uid="uid://bn7uvkfq24dl4"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
@@ -13,6 +13,7 @@
 [ext_resource type="Texture2D" uid="uid://cf4nrufodnamj" path="res://resources/icons/arrow_up.png" id="6_o08ft"]
 [ext_resource type="PackedScene" uid="uid://dhbx748ct8awa" path="res://ui/tabs/tab_messages/tab_messages.tscn" id="6_r4wjl"]
 [ext_resource type="PackedScene" uid="uid://qg2jutjaad46" path="res://ui/tabs/tab_settings/tab_settings.tscn" id="7_cdf46"]
+[ext_resource type="PackedScene" uid="uid://c3oq3t62qadp0" path="res://ui/tabs/tab_resources/tab_resources.tscn" id="9_l1602"]
 [ext_resource type="PackedScene" uid="uid://ds0ekrxvqkcwk" path="res://ui/main_menu/main_menu.tscn" id="11_me8rl"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2q8jd"]
@@ -160,24 +161,11 @@ unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="Resources" type="Control" parent="IDE/V/H/H/Left/LeftDown"]
-visible = false
-layout_mode = 2
-metadata/_tab_index = 1
-
-[node name="Tree" type="Tree" parent="IDE/V/H/H/Left/LeftDown/Resources"]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-
 [node name="Players" parent="IDE/V/H/H/Left/LeftDown" instance=ExtResource("5_w7n2g")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-metadata/_tab_index = 2
+metadata/_tab_index = 1
 
 [node name="Middle" type="VSplitContainer" parent="IDE/V/H/H"]
 custom_minimum_size = Vector2(256, 0)
@@ -331,20 +319,27 @@ unique_name_in_owner = true
 clip_contents = true
 custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
-current_tab = 0
+current_tab = 1
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
 
 [node name="Builder" parent="IDE/V/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("6_jy8ng")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 mode_button_group = SubResource("ButtonGroup_e1kdt")
 metadata/_tab_index = 0
 
-[node name="Debug" parent="IDE/V/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("4_g7vlm")]
-visible = false
+[node name="Resources" parent="IDE/V/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("9_l1602")]
+unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 1
+
+[node name="Debug" parent="IDE/V/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("4_g7vlm")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
 
 [node name="MinimizeDownButton" type="Button" parent="IDE/V/H/H/Middle/MiddleDown"]
 unique_name_in_owner = true
@@ -375,6 +370,12 @@ unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
 
+[node name="Settings" parent="IDE/V/H/Right/RightUp" instance=ExtResource("7_cdf46")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
+
 [node name="RightDown" type="TabContainer" parent="IDE/V/H/Right"]
 unique_name_in_owner = true
 clip_contents = true
@@ -389,12 +390,6 @@ tabs_rearrange_group = 0
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
-
-[node name="Settings" parent="IDE/V/H/Right/RightDown" instance=ExtResource("7_cdf46")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-metadata/_tab_index = 1
 
 [node name="MainMenu" parent="." instance=ExtResource("11_me8rl")]
 unique_name_in_owner = true

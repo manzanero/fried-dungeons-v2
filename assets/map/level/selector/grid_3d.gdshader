@@ -1,6 +1,7 @@
 shader_type spatial;
 
 render_mode unshaded,blend_mix,depth_draw_opaque,cull_back,diffuse_burley,specular_schlick_ggx;
+//render_mode depth_test_disabled;
 
 uniform sampler2D texture_albedo : source_color,filter_nearest,repeat_enable;
 uniform vec3 mouse_position;

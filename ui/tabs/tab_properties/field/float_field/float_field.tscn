@@ -4,8 +4,6 @@
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/float_field/float_field.gd" id="2_7q35k"]
 
 [node name="FloatField" instance=ExtResource("1_rmi8c")]
-custom_minimum_size = Vector2(0, 31)
-anchors_preset = 10
 size_flags_vertical = 4
 script = ExtResource("2_7q35k")
 
@@ -18,3 +16,4 @@ allow_greater = true
 allow_lesser = true
 update_on_text_changed = true
 custom_arrow_step = 0.5
+select_all_on_focus = true

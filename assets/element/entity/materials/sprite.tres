@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=3 format=3 uid="uid://c1nel0ayea611"]
 
-[ext_resource type="Shader" path="res://assets/entity/materials/sprite.gdshader" id="1_5amkq"]
+[ext_resource type="Shader" path="res://assets/element/entity/materials/sprite.gdshader" id="1_5amkq"]
 [ext_resource type="Texture2D" uid="uid://crmobcm0up3ug" path="res://resources/entity_textures/monsters/undead/undead_102.png" id="1_b63yt"]
 
 [resource]

@@ -328,7 +328,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Light"
 
-[node name="ObjectButton" type="Button" parent="HBoxContainer/BoxContainer/BoxContainer2/C5/PanelContainer2/HBoxContainer"]
+[node name="ShapeButton" type="Button" parent="HBoxContainer/BoxContainer/BoxContainer2/C5/PanelContainer2/HBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0

@@ -16,8 +16,8 @@ func init(property_container: PropertyContainer, _property_name, _property_value
 
 
 func _ready() -> void:
-	color_picker_button.color_changed.connect(_on_value_changed)
+	color_picker_button.color_changed.connect(_on_color_value_changed)
 	
 
-func _on_value_changed(new_value: Color):
+func _on_color_value_changed(new_value: Color):
 	value_changed.emit(property_name, new_value)

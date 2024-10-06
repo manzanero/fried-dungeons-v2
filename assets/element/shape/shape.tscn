@@ -1,0 +1,53 @@
+[gd_scene load_steps=8 format=3 uid="uid://curk4vjra3lx5"]
+
+[ext_resource type="Script" path="res://assets/element/shape/shape.gd" id="1_spwb5"]
+[ext_resource type="PackedScene" uid="uid://upfcm5wo63fj" path="res://assets/element/shape/shape_slice/shape_slice.tscn" id="2_4juhu"]
+[ext_resource type="Shader" uid="uid://ccvt7m473m6ql" path="res://assets/element/shape/materials/shader.tres" id="2_r2us3"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_86s78"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("2_r2us3")
+shader_parameter/albedo = null
+shader_parameter/light = null
+shader_parameter/transparency = null
+
+[sub_resource type="TorusMesh" id="TorusMesh_ppx5h"]
+resource_local_to_scene = true
+outer_radius = 0.563
+rings = 32
+ring_segments = 8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_4ofid"]
+render_priority = 1
+transparency = 4
+depth_draw_mode = 1
+shading_mode = 0
+specular_mode = 2
+albedo_color = Color(0.75, 0.75, 0.75, 0.5)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_6ofy1"]
+resource_local_to_scene = true
+
+[node name="Shape" type="CharacterBody3D" node_paths=PackedStringArray("slices_parent")]
+collision_layer = 134807553
+script = ExtResource("1_spwb5")
+slices_parent = NodePath("Slices")
+material = SubResource("ShaderMaterial_86s78")
+
+[node name="Elements" type="Node3D" parent="."]
+
+[node name="Slices" type="Node3D" parent="."]
+
+[node name="SpriteMeshInstance" parent="Slices" instance=ExtResource("2_4juhu")]
+
+[node name="SelectorMeshInstance" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+layers = 256
+cast_shadow = 0
+mesh = SubResource("TorusMesh_ppx5h")
+surface_material_override/0 = SubResource("StandardMaterial3D_4ofid")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+unique_name_in_owner = true
+shape = SubResource("BoxShape3D_6ofy1")

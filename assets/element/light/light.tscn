@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://pkib2j8f0521"]
 
-[ext_resource type="Script" path="res://assets/light/light.gd" id="1_j4ayf"]
+[ext_resource type="Script" path="res://assets/element/light/light.gd" id="1_j4ayf"]
 [ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="3_dc0qo"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_q4m0d"]
@@ -17,7 +17,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.745098, 0.752941, 0.752941, 0.756863)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_gwaob"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_w2igi"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_3dj65"]
 radial_segments = 16
@@ -45,6 +45,7 @@ radius = 0.3
 collision_layer = 327680
 collision_mask = 262144
 script = ExtResource("1_j4ayf")
+is_ceiling_element = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(0.125, 0, 0, 0, 0.125, 0, 0, 0, 0.125, 0, 1, 0)
@@ -67,7 +68,7 @@ material_override = SubResource("StandardMaterial3D_aqxnx")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_gwaob")
+mesh = SubResource("ImmediateMesh_w2igi")
 script = ExtResource("3_dc0qo")
 start_thickness = 0.031
 end_thickness = 0.031

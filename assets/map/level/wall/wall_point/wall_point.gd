@@ -30,7 +30,7 @@ func init(_wall: Wall, _index: int, _position_3d: Vector3):
 	wall.level.map.points_parent.add_child(self)
 	index = _index
 	position_3d = _position_3d
-	name = Utils.random_string()
+	name = Utils.random_string(8, true)
 	visible = false
 	return self
 

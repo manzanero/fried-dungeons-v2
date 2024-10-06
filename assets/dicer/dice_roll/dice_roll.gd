@@ -5,15 +5,18 @@ extends Node3D
 signal finished(dice_string: String, result: Array)
 signal timeout_error()
 
-
+var origin_label: String
+var origin_color: Color
 var dice_string: String
 var is_finished := false
 
 
-func init(parent: Node, _dice_string: String):
+func init(parent: Node, _origin_label, _origin_color, _dice_string: String):
+	origin_label = _origin_label
+	origin_color = _origin_color
 	dice_string = _dice_string
 	parent.add_child(self)
-	name = Utils.random_string()
+	#name = Utils.random_string(8, true)
 	return self
 	
 
@@ -63,6 +66,6 @@ func _on_die_stopped():
 			return
 			
 	is_finished = true
-	finished.emit(dice_string, result)
+	finished.emit(origin_label, origin_color, dice_string, result)
 	
 	#get_tree().create_timer(5).timeout.connect(queue_free)

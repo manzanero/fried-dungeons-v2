@@ -27,10 +27,12 @@ var rect: Rect2i :
 		return viewport_3d.rect
 
 var is_ground_hovered: bool
+var exact_position_hovered: Vector2
 var position_hovered: Vector2
 var ceilling_hovered: Vector2
 var tile_hovered: Vector2i
 var selected_wall: Wall
+var drag_offset: Vector2
 var element_selected: Element :
 	set(value):
 		element_selected = value
@@ -210,7 +212,8 @@ func json() -> Dictionary:
 		
 	var elements_data := []
 	for element: Element in elements_parent.get_children():
-		elements_data.append(element.json())
+		if not element.is_preview:
+			elements_data.append(element.json())
 		
 	var level := {
 		"rect": {

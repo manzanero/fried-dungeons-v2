@@ -13,17 +13,17 @@ func _init(_username := username, _password := password, _color := color, _entit
 	password = _password
 	color = _color
 	entities = _entities
-	
-
-var slug: String :
-	get:
-		return Utils.slugify(username)
 
 
 static func load(player_data: Dictionary) -> Player:
 	return Player.new(player_data.username, player_data.password, 
 			Utils.html_color_to_color(player_data.get("color", "FFFFFF")), 
 			player_data.get("entities", {}))
+	
+
+var slug: String :
+	get:
+		return Utils.slugify(username)
 
 
 func json():

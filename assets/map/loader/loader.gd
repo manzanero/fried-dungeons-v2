@@ -146,7 +146,7 @@ func load_donjon_json_file(json_file_path):
 			if entity_counter < 0 and not cell_is_wall and not cell_is_door:
 				var entity_position := Vector2(x + 0.5, z + 0.5)
 				var entity: Entity = Game.entity_scene.instantiate().init(level, 
-						Utils.random_string(), entity_position, {
+						Utils.random_string(8, true), entity_position, {
 					"color": Color.RED
 				})
 				entity_counter = entity_frecuency
@@ -268,8 +268,8 @@ func load_map(map_data: Dictionary):
 		var tile_data := {"i": 1, "f": 0}
 		level.cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
 		tile_map.set_cell(0, tile, 0, Vector2i(tile_data.f, tile_data.i), 0)
-		map.instancer.create_entity(level, Utils.random_string(), Vector2(0.5, 0.5))
-		map.instancer.create_light(level, Utils.random_string(), Vector2(0.5, 0.5))
+		map.instancer.create_entity(level, Utils.random_string(8, true), Vector2(0.5, 0.5))
+		map.instancer.create_light(level, Utils.random_string(8, true), Vector2(0.5, 0.5))
 		
 	else:
 		for level_index in map_data.levels:
@@ -280,12 +280,15 @@ func load_map(map_data: Dictionary):
 			var viewport_3d := level.viewport_3d
 			var floor_2d := viewport_3d.floor_2d
 			var tile_map := floor_2d.tile_map
-			var tiles_data = level_data.tiles
-			var pos_x = level_data.rect.position[0]
-			var pos_z = level_data.rect.position[1]
-			var len_x = level_data.rect.size[0]
-			var len_z = level_data.rect.size[1]
-			level.rect = Rect2i(level_data.rect.position[0], level_data.rect.position[1], len_x, len_z)
+			var tiles_data = level_data.get("tiles", [])
+			var rect = level_data.get("rect", {})
+			var rect_position = rect.get("position", [0, 0])
+			var rect_size = rect.get("size", [0, 0])
+			var pos_x = rect_position[0]
+			var pos_z = rect_position[1]
+			var len_x = rect_size[0]
+			var len_z = rect_size[1]
+			level.rect = Rect2i(pos_x, pos_z, len_x, len_z)
 		
 			# ground
 			for x in range(len_x):
@@ -299,23 +302,20 @@ func load_map(map_data: Dictionary):
 					tile_map.set_cell(0, tile, 0, Vector2i(tile_data.f, tile_data.i), 0)
 					
 			# walls
-			for wall_data in level_data.walls:
-				var id: String = wall_data.get("id", Utils.random_string())
+			for wall_data in level_data.get("walls", []):
+				var id: String = wall_data.get("id", Utils.random_string(8, true))
 				var points_position_2d := Utils.aa2_to_pv2(wall_data.p)
 				map.instancer.create_wall(
 					level, id, points_position_2d, wall_data.i, wall_data.s, wall_data.l, wall_data["2"])
 					
 			# elements
 			for element_data in level_data.get("elements", []):
-				if element_data.properties["color"] is String:
+				if "color" in element_data.properties and element_data.properties["color"] is String:
 					element_data.properties["color"] = Utils.html_color_to_color(element_data.properties["color"])
-						
-				if element_data.type == "entity":
-					map.instancer.create_entity(level, element_data.id, 
-							Utils.a2_to_v2(element_data.position), element_data.properties)
-				elif element_data.type == "light":
-					map.instancer.create_light(level, element_data.id, 
-							Utils.a2_to_v2(element_data.position), element_data.properties)
+				
+				var rotation: float = element_data.get("rotation", 0.0)
+				map.instancer.create_element(element_data.type, level, element_data.id, 
+						Utils.a2_to_v2(element_data.position), element_data.properties, rotation)
 	
 	map.selected_level = map.levels_parent.get_children()[0]
 	

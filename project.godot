@@ -28,9 +28,9 @@ DebugMenu="*res://addons/debug_menu/debug_menu.tscn"
 
 [debug]
 
-multirun/number_of_windows=2
 multirun/add_custom_args=true
 multirun/window_args=["listen", "join"]
+multirun/number_of_windows=2
 
 [display]
 
@@ -86,9 +86,10 @@ save={
 "events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":0,"window_id":0,"alt_pressed":false,"shift_pressed":true,"ctrl_pressed":true,"meta_pressed":false,"pressed":false,"keycode":83,"physical_keycode":0,"key_label":0,"unicode":0,"location":0,"echo":false,"script":null)
 ]
 }
-doble_left_click={
+rotate={
 "deadzone": 0.5,
-"events": []
+"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":0,"physical_keycode":82,"key_label":0,"unicode":114,"location":0,"echo":false,"script":null)
+]
 }
 
 [layer_names]
@@ -98,7 +99,7 @@ doble_left_click={
 3d_render/layer_3="ceilling"
 3d_render/layer_4="light"
 3d_render/layer_5="entity"
-3d_render/layer_6="object"
+3d_render/layer_6="shape"
 3d_render/layer_7="die"
 3d_render/layer_9="selector"
 3d_render/layer_10="entity_base"
@@ -110,7 +111,7 @@ doble_left_click={
 3d_physics/layer_17="element"
 3d_physics/layer_18="entity"
 3d_physics/layer_19="light"
-3d_physics/layer_20="object"
+3d_physics/layer_20="shape"
 3d_physics/layer_21="area"
 3d_physics/layer_25="ground"
 3d_physics/layer_26="wall"
@@ -120,7 +121,6 @@ doble_left_click={
 
 [physics]
 
-3d/run_on_separate_thread=true
 3d/physics_engine="JoltPhysics3D"
 
 [rendering]
