@@ -2,7 +2,9 @@ class_name StringField
 extends PropertyField
 
 
-var property_value := ""
+var property_value : String :
+	set(value): line_edit.value = value
+	get: return line_edit.value
 
 
 @onready var line_edit: LineEdit = %LineEdit

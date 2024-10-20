@@ -1,7 +1,11 @@
-[gd_scene load_steps=3 format=3 uid="uid://d0j15bs28gt3i"]
+[gd_scene load_steps=5 format=3 uid="uid://d0j15bs28gt3i"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_scene/tab_scene.gd" id="1_yqq7h"]
 [ext_resource type="PackedScene" uid="uid://cfyusau8c7lt0" path="res://assets/map/map.tscn" id="2_mj6vq"]
+[ext_resource type="PackedScene" uid="uid://pojmf4m23i0" path="res://addons/fade_transition/fade_transition.tscn" id="3_xb7ce"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ooqw2"]
+bg_color = Color(0, 0, 0, 1)
 
 [node name="TabMap" type="Control"]
 layout_mode = 3
@@ -11,6 +15,15 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_yqq7h")
+
+[node name="Panel" type="Panel" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ooqw2")
 
 [node name="SubViewportContainer" type="SubViewportContainer" parent="."]
 layout_mode = 1
@@ -24,6 +37,7 @@ stretch = true
 
 [node name="SubViewport" type="SubViewport" parent="SubViewportContainer"]
 own_world_3d = true
+transparent_bg = true
 handle_input_locally = false
 snap_2d_transforms_to_pixel = true
 snap_2d_vertices_to_pixel = true
@@ -35,6 +49,13 @@ render_target_update_mode = 4
 
 [node name="Map" parent="SubViewportContainer/SubViewport" instance=ExtResource("2_mj6vq")]
 unique_name_in_owner = true
+
+[node name="FadeTransition" parent="." instance=ExtResource("3_xb7ce")]
+unique_name_in_owner = true
+visible = true
+layout_mode = 1
+default_cover_duration = 0.0
+default_uncover_duration = 0.5
 
 [node name="CursorControl" type="Control" parent="."]
 layout_mode = 1

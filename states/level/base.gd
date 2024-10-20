@@ -7,7 +7,6 @@ var map: Map
 var selector: Selector
 
 var level_ray := PhysicsRayQueryParameters3D.new()
-var drag_offset: Vector3
 
 
 func _enter_state(previous_state: String) -> void:
@@ -15,20 +14,37 @@ func _enter_state(previous_state: String) -> void:
 	map = level.map
 	selector = level.selector
 	select(null)
-	Debug.print_message(Debug.DEBUG, "Level leaving state: %s" % previous_state)
+	Debug.print_message(Debug.DEBUG, "Level %s of map \"%s\" leaved state: %s" % [level.index, map.slug, previous_state])
 
 
 func _exit_state(next_state: String) -> void:
 	Game.ui.state_label_value.text = next_state
-	Debug.print_message(Debug.INFO, "Level entering state: %s" % next_state)
+	Debug.print_message(Debug.INFO, "Level %s of map \"%s\" entering state: %s" % [level.index, map.slug, next_state])
+
+
+func process_change_grid() -> void:
+	if not Game.ui.is_mouse_over_scene_tab:
+		return
+		
+	selector.move_grid_to(level.position_hovered)
+
+
+func process_change_column() -> void:
+	if not Game.ui.is_mouse_over_scene_tab:
+		return
+		
+	var point_position := level.position_hovered
+	if not Input.is_key_pressed(KEY_CTRL):
+		point_position = point_position.snapped(Game.PIXEL_SNAPPING_QUARTER)
+		
+	selector.column.position = Utils.v2_to_v3(point_position)
 
 
 func process_wall_selection():
-	if Game.handled_input:
+	if not Game.ui.is_mouse_over_scene_tab or Game.handled_input:
 		return
+	
 	if not Input.is_action_just_pressed("left_click"):
-		return
-	if not Game.ui.is_mouse_over_scene_tab:
 		return
 
 	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.WALL_BITMASK)
@@ -44,10 +60,10 @@ func process_wall_selection():
 
 
 func process_element_selection():
-	if not Input.is_action_just_pressed("left_click") or Game.handled_input:
+	if not Game.ui.is_mouse_over_scene_tab or Game.handled_input:
 		return
-		
-	if not Game.ui.is_mouse_over_scene_tab:
+	
+	if not Input.is_action_just_pressed("left_click"):
 		return
 	
 	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
@@ -56,8 +72,10 @@ func process_element_selection():
 		var element_hitted := collider as Element
 		if not element_hitted:
 			element_hitted = collider.get_parent() as Element
-			
-		if Game.is_master or element_hitted.id in Game.player.entities:
+		
+		Debug.print_debug_message("Element hitted \"%s\"" % element_hitted.id)
+		
+		if Game.campaign.is_master or element_hitted.id in Game.player.entities:
 			select(element_hitted)
 			Game.handled_input = true
 			
@@ -78,17 +96,21 @@ func process_element_movement():
 		
 	if Input.is_action_just_released("left_click"):
 		level.element_selected.is_dragged = false
+		level.drag_offset = Vector2.ZERO
 	
 	if not Game.ui.is_mouse_over_scene_tab:
 		return
-		
+	
+	if not Game.campaign.is_master and Game.flow.is_paused:
+		return
+	
 	if Input.is_action_just_pressed("left_click"):
+		level.element_selected.is_dragged = true
 		if level.element_selected.is_ceiling_element:
 			level.drag_offset = level.ceilling_hovered - level.element_selected.position_2d
 		else:
 			level.drag_offset = level.position_hovered - level.element_selected.position_2d
-		level.element_selected.is_dragged = true
-			
+		
 
 func process_entity_follow():
 	if not level.element_selected:

@@ -1,0 +1,118 @@
+[gd_scene load_steps=10 format=3 uid="uid://bxt6nwjxeo4i8"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_jukebox/tab_jukebox.gd" id="1_enohi"]
+[ext_resource type="Script" path="res://assets/game_manager/audio/audio.gd" id="2_eujgv"]
+[ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_o2hp0"]
+[ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="3_inyrj"]
+[ext_resource type="Texture2D" uid="uid://ph36o52jrb1h" path="res://resources/icons/cross_icon.png" id="4_h0nbq"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7lfy0"]
+content_margin_left = 4.0
+content_margin_top = 8.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l5k5x"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u13fr"]
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+expand_margin_left = 4.0
+expand_margin_right = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6axi7"]
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+expand_margin_left = 4.0
+expand_margin_right = 4.0
+
+[node name="TabJukebox" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_enohi")
+
+[node name="Audio" type="AudioStreamPlayer" parent="."]
+unique_name_in_owner = true
+volume_db = -20.0
+bus = &"Jukebox"
+script = ExtResource("2_eujgv")
+
+[node name="C" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+
+[node name="C2" type="HBoxContainer" parent="C"]
+layout_mode = 2
+
+[node name="MuteButton" type="Button" parent="C/C2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+text = "Mute All"
+
+[node name="StopButton" type="Button" parent="C/C2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Stop All"
+
+[node name="C" type="PanelContainer" parent="C"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_7lfy0")
+
+[node name="C" type="VBoxContainer" parent="C/C"]
+layout_mode = 2
+
+[node name="DraggableTree" parent="C/C/C" instance=ExtResource("2_o2hp0")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_l5k5x")
+theme_override_styles/selected = SubResource("StyleBoxFlat_u13fr")
+theme_override_styles/selected_focus = SubResource("StyleBoxFlat_6axi7")
+columns = 2
+column_titles_visible = true
+allow_reselect = true
+hide_folding = true
+drop_mode_flags = 0
+scroll_horizontal_enabled = false
+
+[node name="C" type="HBoxContainer" parent="C/C/C"]
+layout_mode = 2
+
+[node name="ImportButton" type="Button" parent="C/C/C/C"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("3_inyrj")
+icon_alignment = 1
+
+[node name="ClearButton" type="Button" parent="C/C/C/C"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("4_h0nbq")
+icon_alignment = 1

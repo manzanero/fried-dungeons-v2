@@ -1,0 +1,235 @@
+[gd_scene load_steps=9 format=3 uid="uid://d2x02vgtidrgn"]
+
+[ext_resource type="PackedScene" uid="uid://dl0m5fa0feqgj" path="res://ui/tabs/tab_properties/container/property_container.tscn" id="1_0a7i1"]
+[ext_resource type="Script" path="res://ui/tabs/tab_resources/import_texture/import_texture.gd" id="1_2wa7l"]
+[ext_resource type="PackedScene" uid="uid://be5bb4sa6st5j" path="res://ui/tabs/tab_properties/field/vector_2_field/vector_2_field.tscn" id="2_f4wgr"]
+[ext_resource type="PackedScene" uid="uid://cvlbw6pjdx7sd" path="res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn" id="3_bel5q"]
+[ext_resource type="PackedScene" uid="uid://ddbco64u43nkk" path="res://ui/tabs/tab_properties/field/float_field/float_field.tscn" id="4_y0l2e"]
+[ext_resource type="Texture2D" uid="uid://j04vtki4o5mi" path="res://resources/textures/bookshelf.png" id="5_c56ql"]
+[ext_resource type="PackedScene" uid="uid://d0ch44utbuhby" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn" id="6_rnfph"]
+[ext_resource type="Texture2D" uid="uid://deshy6dmtqy4c" path="res://resources/entity_textures/monsters/field/field_501.png" id="7_8agyp"]
+
+[node name="ImportTexture" type="BoxContainer"]
+clip_contents = true
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 32
+script = ExtResource("1_2wa7l")
+
+[node name="V" type="BoxContainer" parent="."]
+custom_minimum_size = Vector2(180.87, 0)
+layout_mode = 2
+theme_override_constants/separation = 8
+vertical = true
+
+[node name="Label" type="Label" parent="V"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 0
+text = "Texture:"
+
+[node name="TextureImportFieldsContainer" parent="V" instance=ExtResource("1_0a7i1")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="CollapseButton" parent="V/TextureImportFieldsContainer" index="0"]
+visible = false
+text = "Ambient"
+
+[node name="Background" parent="V/TextureImportFieldsContainer/M" index="0"]
+visible = false
+
+[node name="SizeField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="0" instance=ExtResource("2_f4wgr")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+
+[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/SizeField/H" index="0"]
+text = "Size
+"
+
+[node name="XSpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/SizeField/H/C" index="0"]
+min_value = 1.0
+max_value = 64.0
+step = 1.0
+value = 16.0
+rounded = true
+allow_greater = false
+allow_lesser = false
+suffix = "px"
+custom_arrow_step = 1.0
+
+[node name="YSpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/SizeField/H/C" index="1"]
+min_value = 1.0
+max_value = 64.0
+step = 1.0
+value = 16.0
+rounded = true
+allow_greater = false
+allow_lesser = false
+suffix = "px"
+custom_arrow_step = 1.0
+
+[node name="FramesField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="1" instance=ExtResource("3_bel5q")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+
+[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/FramesField/H" index="0"]
+text = "Frames"
+
+[node name="SpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/FramesField/H" index="1"]
+min_value = 1.0
+max_value = 64.0
+value = 1.0
+allow_greater = false
+allow_lesser = false
+
+[node name="SlicesField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="2" instance=ExtResource("3_bel5q")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+
+[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/SlicesField/H" index="0"]
+text = "Slices"
+
+[node name="SpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/SlicesField/H" index="1"]
+min_value = 1.0
+max_value = 64.0
+value = 1.0
+allow_greater = false
+allow_lesser = false
+
+[node name="DepthField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="3" instance=ExtResource("3_bel5q")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+
+[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/DepthField/H" index="0"]
+text = "Depth"
+
+[node name="SpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/DepthField/H" index="1"]
+min_value = 1.0
+max_value = 64.0
+value = 1.0
+allow_greater = false
+allow_lesser = false
+suffix = "px"
+
+[node name="ScaleField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="4" instance=ExtResource("4_y0l2e")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+
+[node name="H" parent="V/TextureImportFieldsContainer/M/PropertyFields/ScaleField" index="0"]
+size_flags_horizontal = 3
+
+[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/ScaleField/H" index="0"]
+text = "Scale
+"
+
+[node name="SpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/ScaleField/H" index="1"]
+min_value = 0.125
+max_value = 64.0
+step = 0.125
+value = 0.5
+allow_greater = false
+allow_lesser = false
+suffix = "u"
+
+[node name="TiltedField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="5" instance=ExtResource("6_rnfph")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+
+[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/TiltedField/H" index="0"]
+text = "Tilted"
+
+[node name="V2" type="BoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 8
+vertical = true
+
+[node name="C" type="BoxContainer" parent="V2"]
+layout_mode = 2
+alignment = 1
+
+[node name="PreviousFrameButton" type="Button" parent="V2/C"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "<"
+
+[node name="FrameLabel" type="Label" parent="V2/C"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+text = "1"
+horizontal_alignment = 2
+
+[node name="SeparatotLabel" type="Label" parent="V2/C"]
+layout_mode = 2
+text = "/"
+
+[node name="FramesLabel" type="Label" parent="V2/C"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(16, 0)
+layout_mode = 2
+text = "1"
+
+[node name="NextFrameButton" type="Button" parent="V2/C"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = ">"
+
+[node name="Slices" type="Control" parent="V2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(160, 160)
+layout_mode = 2
+
+[node name="TextureRect" type="TextureRect" parent="V2/Slices"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 6
+size_flags_vertical = 0
+texture = ExtResource("7_8agyp")
+expand_mode = 1
+stretch_mode = 5
+
+[node name="ResetButton" type="Button" parent="V2"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+text = "Reset"
+
+[node name="S" type="ScrollContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="FullTexture" type="TextureRect" parent="S"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 128)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+texture = ExtResource("5_c56ql")
+expand_mode = 1
+stretch_mode = 4
+
+[editable path="V/TextureImportFieldsContainer"]
+[editable path="V/TextureImportFieldsContainer/M/PropertyFields/SizeField"]
+[editable path="V/TextureImportFieldsContainer/M/PropertyFields/FramesField"]
+[editable path="V/TextureImportFieldsContainer/M/PropertyFields/SlicesField"]
+[editable path="V/TextureImportFieldsContainer/M/PropertyFields/DepthField"]
+[editable path="V/TextureImportFieldsContainer/M/PropertyFields/ScaleField"]
+[editable path="V/TextureImportFieldsContainer/M/PropertyFields/TiltedField"]

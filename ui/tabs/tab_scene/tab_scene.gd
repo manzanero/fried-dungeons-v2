@@ -6,6 +6,8 @@ extends Control
 
 @onready var map: Map = %Map
 
+@onready var fade_transition: FadeTransition = %FadeTransition
+
 @onready var cursor_control: Control = $CursorControl
 
 var is_mouse_over := false
@@ -25,7 +27,14 @@ func init(map_slug: String, map_data: Dictionary):
 	map.camera.fps_enabled.connect(_on_camera_fps_enabled)
 	
 	name = map_data.label
+	
+	Game.ui.tab_settings.reset()
 	return self
+
+
+func remove():
+	Game.maps.erase(map.slug)
+	queue_free()
 
 
 func _ready() -> void:
@@ -34,7 +43,7 @@ func _ready() -> void:
 	mouse_entered.connect(func(): 
 		is_mouse_over = true
 		
-		# prevent have previous shape
+		# prevent have cursor previous shape
 		cursor_control.visible = false
 		
 		# prevent move focus when controlling cam with arrows
@@ -59,7 +68,7 @@ func _on_camera_fps_enabled(value: bool):
 	map.current_ambient_color = map.ambient_color
 	
 	if not value:
-		if Game.is_master:
+		if Game.campaign.is_master:
 			map.is_master_view = Game.ui.tab_settings.master_view_check.button_pressed
 			if map.is_master_view:
 				if Game.ui.tab_settings.override_ambient_light_check.button_pressed:
@@ -75,8 +84,5 @@ func _on_camera_fps_enabled(value: bool):
 		var state_machine := Game.ui.selected_map.selected_level.state_machine
 		state_machine.change_state("Idle")
 		builder_button_pressed.button_pressed = false
-	
-	if Game.is_master:
-		get_tree().set_group("lights", "hidden", value)
 	
 	get_tree().set_group("base", "visible", not value)

@@ -25,10 +25,6 @@ const ATLAS_TEXTURE_BUTTON = preload("res://ui/tabs/tab_builder/atlas_texture_bu
 @onready var tile_button: Button = %TileButton
 @onready var rect_button: Button = %RectButton
 
-@onready var entity_button: Button = %EntityButton
-@onready var light_button: Button = %LightButton
-@onready var shape_button: Button = %ShapeButton
-
 
 func _ready() -> void:
 	for child in materials.get_children():
@@ -42,23 +38,19 @@ func _ready() -> void:
 		if material_index_selected == i:
 			button.button_pressed = true
 		
-	one_side_button.pressed.connect(_on_button_pressed.bind(one_side_button, ONE_SIDED))
-	two_side_button.pressed.connect(_on_button_pressed.bind(two_side_button, TWO_SIDED))
-	room_button.pressed.connect(_on_button_pressed.bind(room_button, ROOM))
-	obstable_button.pressed.connect(_on_button_pressed.bind(obstable_button, OBSTACLE))
+	one_side_button.pressed.connect(_on_button_pressed.bind(one_side_button, LevelBuildingState.ONE_SIDED))
+	two_side_button.pressed.connect(_on_button_pressed.bind(two_side_button, LevelBuildingState.TWO_SIDED))
+	room_button.pressed.connect(_on_button_pressed.bind(room_button, LevelBuildingState.ROOM))
+	obstable_button.pressed.connect(_on_button_pressed.bind(obstable_button, LevelBuildingState.OBSTACLE))
 	
-	move_button.pressed.connect(_on_button_pressed.bind(move_button, MOVE))
-	cut_button.pressed.connect(_on_button_pressed.bind(cut_button, CUT))
-	change_button.pressed.connect(_on_button_pressed.bind(change_button, CHANGE))
-	flip_button.pressed.connect(_on_button_pressed.bind(flip_button, FLIP))
-	wall_button.pressed.connect(_on_button_pressed.bind(wall_button, PAINT_WALL))
+	move_button.pressed.connect(_on_button_pressed.bind(move_button, LevelBuildingState.MOVE))
+	cut_button.pressed.connect(_on_button_pressed.bind(cut_button, LevelBuildingState.CUT))
+	change_button.pressed.connect(_on_button_pressed.bind(change_button, LevelBuildingState.CHANGE))
+	flip_button.pressed.connect(_on_button_pressed.bind(flip_button, LevelBuildingState.FLIP))
+	wall_button.pressed.connect(_on_button_pressed.bind(wall_button, LevelBuildingState.PAINT_WALL))
 	
-	tile_button.pressed.connect(_on_button_pressed.bind(tile_button, PAINT_TILE))
-	rect_button.pressed.connect(_on_button_pressed.bind(rect_button, PAINT_RECT))
-	
-	entity_button.pressed.connect(_on_button_pressed.bind(entity_button, NEW_ENTITY))
-	light_button.pressed.connect(_on_button_pressed.bind(light_button, NEW_LIGHT))
-	shape_button.pressed.connect(_on_button_pressed.bind(shape_button, NEW_SHAPE))
+	tile_button.pressed.connect(_on_button_pressed.bind(tile_button, LevelBuildingState.PAINT_TILE))
+	rect_button.pressed.connect(_on_button_pressed.bind(rect_button, LevelBuildingState.PAINT_RECT))
 
 	visibility_changed.connect(_on_visibility_changed)
 
@@ -80,9 +72,7 @@ func _on_visibility_changed():
 	if not visible:
 		if state_machine.state == "Building":
 			state_machine.change_state("Idle")
-		var button := tile_button.button_group.get_pressed_button()
-		if button:
-			button.button_pressed = false
+			Utils.reset_button_group(tile_button.button_group)
 			
 
 func reset():
@@ -91,11 +81,3 @@ func reset():
 
 	if Game.ui.selected_map and Game.ui.selected_map.selected_level:
 		Game.ui.selected_map.selected_level.state_machine.change_state("Idle")
-
-
-enum {
-	ONE_SIDED, TWO_SIDED, ROOM, OBSTACLE,
-	MOVE, CUT, CHANGE, FLIP, PAINT_WALL,
-	PAINT_TILE, PAINT_RECT,
-	NEW_ENTITY, NEW_LIGHT, NEW_SHAPE,
-}

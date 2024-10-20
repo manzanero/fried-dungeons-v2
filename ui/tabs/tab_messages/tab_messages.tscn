@@ -1,35 +1,8 @@
-[gd_scene load_steps=12 format=3 uid="uid://dhbx748ct8awa"]
+[gd_scene load_steps=13 format=3 uid="uid://dhbx748ct8awa"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_messages/tab_messages.gd" id="1_kklqb"]
 [ext_resource type="PackedScene" uid="uid://6pq2k4jg8hbv" path="res://ui/tabs/tab_messages/panel_dice/tab_messages_panel_dice.tscn" id="2_e88ub"]
 [ext_resource type="PackedScene" uid="uid://dw4t2g37sotcj" path="res://ui/tabs/tab_messages/panel_history/tab_messages_panel_history.tscn" id="3_e3rt8"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5qn83"]
-content_margin_left = 4.0
-content_margin_right = 4.0
-bg_color = Color(0.219608, 0.239216, 0.266667, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cs0lv"]
-content_margin_left = 4.0
-content_margin_right = 4.0
-bg_color = Color(0.12549, 0.156863, 0.192157, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_17m7u"]
-content_margin_left = 4.0
-content_margin_right = 4.0
-draw_center = false
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_6y5qp"]
 allow_unpress = true
@@ -40,11 +13,11 @@ content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 5.0
 bg_color = Color(0, 0, 0, 0.901961)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7xcjj"]
 
@@ -54,7 +27,51 @@ content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1y7qd"]
+bg_color = Color(0.133333, 0.12549, 0.117647, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
 [sub_resource type="ButtonGroup" id="ButtonGroup_udd2s"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5qn83"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.346865, 0.330038, 0.266229, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cs0lv"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.175048, 0.148912, 0.115497, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_17m7u"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+draw_center = false
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
 [node name="TabMessages" type="Control"]
 layout_mode = 3
@@ -85,21 +102,24 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_6y5qp")
 text = "Dice"
 
+[node name="ActionButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_6y5qp")
+text = "Actions"
+
 [node name="HistoryButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_6y5qp")
 text = "History"
@@ -123,17 +143,18 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="History" type="PanelContainer" parent="VBoxContainer/VSplitContainer"]
+[node name="C" type="PanelContainer" parent="VBoxContainer/VSplitContainer"]
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_8jh3g")
 
-[node name="HBoxContainer2" type="VBoxContainer" parent="VBoxContainer/VSplitContainer/History"]
+[node name="C" type="VBoxContainer" parent="VBoxContainer/VSplitContainer/C"]
 layout_mode = 2
 
-[node name="OutputText" type="RichTextLabel" parent="VBoxContainer/VSplitContainer/History/HBoxContainer2"]
+[node name="OutputText" type="RichTextLabel" parent="VBoxContainer/VSplitContainer/C/C"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -148,12 +169,12 @@ threaded = true
 selection_enabled = true
 deselect_on_focus_loss_enabled = false
 
-[node name="HBoxContainer" type="BoxContainer" parent="VBoxContainer/VSplitContainer/History/HBoxContainer2"]
+[node name="C" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C"]
 layout_mode = 2
 alignment = 1
 vertical = true
 
-[node name="MessageLineEdit" type="LineEdit" parent="VBoxContainer/VSplitContainer/History/HBoxContainer2/HBoxContainer"]
+[node name="MessageLineEdit" type="LineEdit" parent="VBoxContainer/VSplitContainer/C/C/C"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
@@ -161,35 +182,38 @@ size_flags_horizontal = 3
 size_flags_vertical = 8
 placeholder_text = ">"
 
-[node name="HelperButtons" type="BoxContainer" parent="VBoxContainer/VSplitContainer/History/HBoxContainer2/HBoxContainer"]
+[node name="HelperButtons" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C"]
 layout_mode = 2
 size_flags_vertical = 3
 alignment = 1
 
-[node name="AsPlayerButton" type="Button" parent="VBoxContainer/VSplitContainer/History/HBoxContainer2/HBoxContainer/HelperButtons"]
+[node name="C" type="PanelContainer" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons"]
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_1y7qd")
+
+[node name="C" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons/C"]
+layout_mode = 2
+
+[node name="AsPlayerButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons/C/C"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_udd2s")
 text = "Player"
 
-[node name="AsSelectionButton" type="Button" parent="VBoxContainer/VSplitContainer/History/HBoxContainer2/HBoxContainer/HelperButtons"]
+[node name="AsSelectionButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons/C/C"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_udd2s")
 text = "Selection"
 
-[node name="SendMessageButton" type="Button" parent="VBoxContainer/VSplitContainer/History/HBoxContainer2/HBoxContainer/HelperButtons"]
+[node name="SendMessageButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 10

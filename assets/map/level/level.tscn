@@ -62,7 +62,6 @@ border_color = Color(0.105882, 0.113725, 0.121569, 1)
 viewport_path = NodePath("Ground/Viewport3D/FloorViewport")
 
 [sub_resource type="CanvasItemMaterial" id="CanvasItemMaterial_tsqpm"]
-blend_mode = 3
 
 [sub_resource type="ViewportTexture" id="ViewportTexture_wjyid"]
 viewport_path = NodePath("Ground/Viewport3D/LightViewport")
@@ -164,21 +163,31 @@ unique_name_in_owner = true
 [node name="Selector" parent="." instance=ExtResource("10_isfb4")]
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="Panel" type="PanelContainer" parent="CanvasLayer"]
+visible = false
 offset_right = 2.0
 offset_bottom = 2.0
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_kkd3b")
 
 [node name="DebugFloorTexture" type="TextureRect" parent="CanvasLayer/Panel"]
+visible = false
 texture_filter = 2
 layout_mode = 2
 texture = SubResource("ViewportTexture_e1ii1")
 expand_mode = 3
 
 [node name="DebugLightTexture" type="TextureRect" parent="CanvasLayer/Panel"]
+visible = false
+texture_filter = 2
+material = SubResource("CanvasItemMaterial_tsqpm")
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+texture = SubResource("ViewportTexture_wjyid")
+
+[node name="DebugLightTexture2" type="TextureRect" parent="CanvasLayer/Panel"]
 texture_filter = 2
 material = SubResource("CanvasItemMaterial_tsqpm")
 layout_mode = 2

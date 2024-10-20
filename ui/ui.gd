@@ -10,7 +10,9 @@ signal reload_campaign_pressed
 @onready var nav_campaing: PopupMenu = %Campaing
 @onready var nav_preferences: PopupMenu = %Preferences
 @onready var nav_help: PopupMenu = %Help
+@onready var flow_controller: FlowController = %FlowController
 
+@onready var flow_border: Panel = %FlowBorder
 @onready var ide: MarginContainer = %IDE
 @onready var main_menu: MainMenu = %MainMenu
 
@@ -19,6 +21,7 @@ signal reload_campaign_pressed
 @onready var left_up: Control = %LeftUp
 @onready var left_down: Control = %LeftDown
 @onready var tab_elements: TabElements = %Elements
+@onready var tab_jukebox: TabJukebox = %Jukebox
 @onready var tab_world: TabWorld = %World
 @onready var tab_players: TabPlayers = %Players
 
@@ -31,46 +34,31 @@ signal reload_campaign_pressed
 @onready var tab_messages: TabMessages = %Messages
 
 # center section
+@onready var middle_up: Control = %MiddleUp
+@onready var middle_down: Control = %MiddleDown
 @onready var scene_tabs: TabContainer = %TabScenes
-@onready var tab_builder: TabBuilder = %Builder
-@onready var tab_resources: TabResources = %Resources
+@onready var scene_coverings: Control = %SceneCoverings
+@onready var fade_transition: FadeTransition = %FadeTransition
+@onready var master_cover: FadeTransition = %MasterCover
 @onready var build_border: Panel = %BuildBorder
 @onready var dicer: Dicer = %Dicer
 @onready var state_label_value: Label = %StateLabelValue
 @onready var player_label_value: Label = %PlayerLabelValue
-@onready var middle_up: Control = %MiddleUp
-@onready var middle_down: Control = %MiddleDown
+@onready var tab_builder: TabBuilder = %Builder
+@onready var tab_instancer: TabInstancer = %Instancer
 @onready var minimize_down_button: Button = %MinimizeDownButton
 @onready var restore_down_button: Button = %RestoreDownButton
 
 
-var opened_maps: Array[Map] :
-	get:
-		var maps: Array[Map] = []
-		for i in scene_tabs.get_tab_count():
-			maps.append(scene_tabs.get_tab_control(i).map)
-		return maps
-
-
-var opened_map_slugs: Array[String] :
-	get:
-		var slugs: Array[String] = []
-		for i in scene_tabs.get_tab_count():
-			slugs.append(scene_tabs.get_tab_control(i).map.slug)
-		return slugs
-		
-		
 var selected_scene_tab: TabScene :
-	get:
-		return scene_tabs.get_current_tab_control() if scene_tabs else null
+	get: return scene_tabs.get_current_tab_control() if scene_tabs else null
 		
 var selected_map: Map :
-	get:
-		return selected_scene_tab.map if selected_scene_tab else null
+	get: return selected_scene_tab.map if selected_scene_tab else null
 		
 var is_mouse_over_scene_tab: bool :
-	get:
-		return selected_scene_tab.is_mouse_over and not main_menu.visible
+	get: return selected_scene_tab.is_mouse_over and not main_menu.visible
+
 
 func _ready() -> void:
 	nav_campaing.id_pressed.connect(_on_nav_campaing_id_pressed)
@@ -97,14 +85,21 @@ func save_campaign():
 
 
 func change_campaign():
+	Game.manager.save_campaign()
+	if Game.server.peer:
+		Game.server.peer.close()
+	main_menu.scan_campaigns()
+	main_menu.scan_servers()
 	main_menu.visible = true
 
 
 func reload_campaign():
+	Game.manager.save_campaign()
 	reload_campaign_pressed.emit()
 
 
 func quit():
+	Game.manager.save_campaign()
 	get_tree().quit()
 
 

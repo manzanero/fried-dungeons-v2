@@ -53,8 +53,9 @@ func _ready() -> void:
 
 
 func _on_info_edited():
-	var label := title_edit.text
-	info_changed.emit(label.strip_edges() if label else "Untitled")
+	var label := title_edit.text.strip_edges()
+	
+	info_changed.emit(label if label else "Untitled")
 
 
 func _on_ambient_edited():

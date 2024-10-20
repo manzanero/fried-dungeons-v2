@@ -72,3 +72,4 @@ unique_name_in_owner = true
 [node name="AudioStreamPlayer" type="AudioStreamPlayer" parent="."]
 stream = ExtResource("2_ypsil")
 volume_db = -15.0
+bus = &"FX"

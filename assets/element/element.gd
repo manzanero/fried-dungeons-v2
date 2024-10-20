@@ -7,13 +7,14 @@ signal property_changed(property_name: StringName, old_value: Variant, new_value
 
 var map: Map
 var level: Level
-var snapping := Game.PIXEL_SNAPPING_QUARTER 
 
 
+@export var snapping := Game.PIXEL_SNAPPING_QUARTER 
 @export var is_ceiling_element: bool
-@export var properties := {}
+@export var init_properties := []
 
 
+var properties := {}
 var id: String :
 	set(value): 
 		id = value
@@ -21,7 +22,9 @@ var id: String :
 
 var label := "Unknown"
 var color := Color.BLUE
+var description := ""
 var icon: Texture2D = null
+
 
 var is_dragged: bool : set = _set_dragged
 var is_selected: bool : set = _set_selected
@@ -57,13 +60,20 @@ func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {}, 
 	return self
 
 
-## override in subclass
 func _init_property_list(_properties):
-	pass
+	for property_array in init_properties:
+		var property_name: String = property_array[1]
+		var value = _properties.get(property_name, property_array[3])
+		init_property(property_array[0], property_name, property_array[2], value)
+		change_property(property_name, value)
+	
+	
+func _on_property_changed(property_name: String, _old_value: Variant, new_value: Variant) -> void:
+	change_property(property_name, new_value)
 
 
 ## override in subclass
-func _on_property_changed(_property_name: String, _old_value: Variant, _new_value: Variant) -> void:
+func change_property(_property_name: String, _new_value: Variant) -> void:
 	pass
 
 
@@ -129,27 +139,23 @@ func _set_selected(value: bool) -> void:
 
 
 func get_target_hovered() -> Vector3:
-	if is_ceiling_element:
-		if Input.is_key_pressed(KEY_ALT):
-			return Utils.v2_to_v3(level.ceilling_hovered - level.drag_offset)
-		else:
-			return Utils.v2_to_v3((level.ceilling_hovered - level.drag_offset).snapped(snapping))
-	else:
-		if is_rotated:
-			return Utils.v2_to_v3(level.exact_position_hovered - level.drag_offset)
-		else:
-			if Input.is_key_pressed(KEY_ALT):
-				return Utils.v2_to_v3(level.position_hovered - level.drag_offset)
-			else:
-				return Utils.v2_to_v3((level.position_hovered - level.drag_offset).snapped(snapping))
-				
-				
+	if is_rotated: 
+		return Utils.v2_to_v3(level.exact_position_hovered)
+		
+	var drag_position := level.ceilling_hovered if is_ceiling_element else level.position_hovered
+	drag_position -= level.drag_offset
+	if not Input.is_key_pressed(KEY_ALT): 
+		drag_position = drag_position.snapped(snapping)
+		
+	return Utils.v2_to_v3(drag_position)
+
+
 func look_target(target_hovered: Vector3):
-	if target_hovered.distance_to(position) > 0.125:
-		look_at(target_hovered, Vector3.UP, true)
-	
-	if not Input.is_key_pressed(KEY_ALT):
-		rotation.y = snapped(rotation.y, PI / 8)
+	if target_hovered.distance_to(position) < 0.125:
+		return
+		
+	look_at(target_hovered, Vector3.UP, true)
+	rotation.y = snapped(rotation.y, 0.001 if Input.is_key_pressed(KEY_ALT) else PI / 8)
 
 
 func _physics_process(delta: float) -> void:
@@ -175,12 +181,15 @@ func _physics_process(delta: float) -> void:
 			
 			
 func _preview_process() -> void:
-	var target_hovered := get_target_hovered()
-	if is_rotated:
-		look_target(target_hovered)
+	if Game.ui.is_mouse_over_scene_tab:
+		var target_hovered := get_target_hovered()
+		if is_rotated:
+			look_target(target_hovered)
+		else:
+			position = target_hovered
 	else:
-		position = target_hovered
-			
+		position = Game.ui.selected_map.camera.focus_hint_3d.global_position
+		
 			
 func _dragged_process() -> void:
 	is_rotated = Input.is_action_pressed("rotate")
@@ -203,12 +212,13 @@ func _dragged_process() -> void:
 	Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation_y)
 
 
+## override
 func remove():
 	queue_free()
 	level.elements.erase(id)
 	
 	Game.ui.tab_elements.remove_element(self)
-	Game.ui.tab_properties.element_selected = null
+	Game.ui.tab_properties.reset()
 	
 
 class Property:
@@ -236,9 +246,11 @@ class Property:
 				return value
 
 	class Hints:
-		const BOOL = &"bool_hint"
-		const COLOR = &"color_hint"
-		const FLOAT = &"float_hint"
-		const INTEGER = &"integer_hint"
-		const STRING = &"string_hint"
-		const TEXT_AREA = &"text_area_hint"
+		const BOOL = "bool_hint"
+		const COLOR = "color_hint"
+		const FLOAT = "float_hint"
+		const INTEGER = "integer_hint"
+		const STRING = "string_hint"
+		const TEXT_AREA = "text_area_hint"
+		const VECTOR_2 = "vector_2_hint"
+		const TEXTURE = "texture_hint"

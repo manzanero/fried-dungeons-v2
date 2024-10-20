@@ -13,8 +13,6 @@ var levels := {}
 @export var levels_parent: Node3D
 @export var camera: Camera
 
-@export var is_master := false
-
 @export var label := "Untitled"
 @export var slug := "untitled"
 @export var ambient_light := 0.0
@@ -77,8 +75,10 @@ func _ready():
 	point_options.visible = false
 	
 	# player type settings
-	is_master_view = is_master
-	current_ambient_light = master_ambient_light if is_master else ambient_light
+	is_master_view = Game.campaign.is_master
+	current_ambient_light = master_ambient_light if Game.campaign.is_master else ambient_light
+	
+	
 	
 
 func init_test_data():

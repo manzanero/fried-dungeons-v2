@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://curk4vjra3lx5"]
+[gd_scene load_steps=9 format=3 uid="uid://curk4vjra3lx5"]
 
 [ext_resource type="Script" path="res://assets/element/shape/shape.gd" id="1_spwb5"]
 [ext_resource type="PackedScene" uid="uid://upfcm5wo63fj" path="res://assets/element/shape/shape_slice/shape_slice.tscn" id="2_4juhu"]
@@ -29,6 +29,12 @@ albedo_color = Color(0.75, 0.75, 0.75, 0.5)
 [sub_resource type="BoxShape3D" id="BoxShape3D_6ofy1"]
 resource_local_to_scene = true
 
+[sub_resource type="LabelSettings" id="LabelSettings_mchtc"]
+resource_local_to_scene = true
+font_size = 8
+outline_size = 8
+outline_color = Color(0, 0, 0, 1)
+
 [node name="Shape" type="CharacterBody3D" node_paths=PackedStringArray("slices_parent")]
 collision_layer = 134807553
 script = ExtResource("1_spwb5")
@@ -38,6 +44,7 @@ material = SubResource("ShaderMaterial_86s78")
 [node name="Elements" type="Node3D" parent="."]
 
 [node name="Slices" type="Node3D" parent="."]
+unique_name_in_owner = true
 
 [node name="SpriteMeshInstance" parent="Slices" instance=ExtResource("2_4juhu")]
 
@@ -51,3 +58,32 @@ surface_material_override/0 = SubResource("StandardMaterial3D_4ofid")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 unique_name_in_owner = true
 shape = SubResource("BoxShape3D_6ofy1")
+
+[node name="CanvasLayer" type="CanvasLayer" parent="."]
+unique_name_in_owner = true
+
+[node name="Info" type="Control" parent="CanvasLayer" groups=["info"]]
+unique_name_in_owner = true
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Info"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+
+[node name="LabelLabel" type="Label" parent="CanvasLayer/Info/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Unkown"
+label_settings = SubResource("LabelSettings_mchtc")
+horizontal_alignment = 1
+
+[node name="BarsContainer" type="VBoxContainer" parent="CanvasLayer/Info/VBoxContainer"]
+layout_mode = 2

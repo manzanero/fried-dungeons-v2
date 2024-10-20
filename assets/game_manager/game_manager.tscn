@@ -15,3 +15,5 @@ rpcs = NodePath("RPCS")
 
 [node name="RPCS" type="Node" parent="ServerManager"]
 script = ExtResource("3_cutg1")
+
+[node name="ResourcePreloader" type="ResourcePreloader" parent="."]

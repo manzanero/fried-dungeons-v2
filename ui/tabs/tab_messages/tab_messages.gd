@@ -46,7 +46,7 @@ func _on_panel_button_pressed(panel: Control, button: Button):
 
 
 func _on_add_dice(number: int, faces: int) -> void:
-	var dice_string := "%sd%s" % [number, faces]
+	var dice_string := "%sd%s" % [number, faces] if faces else str(number)
 	var text := "/roll " + dice_string
 	history_panel.add_command(text)
 	
@@ -152,7 +152,7 @@ func roll_command(dice_string: String) -> String:
 
 
 @rpc("call_local", "any_peer", "reliable")
-func new_message(label: String, color: Color, text: String):		
+func new_message(label: String, color: Color, text: String):
 	var label_rich := label
 	if color.get_luminance() < 0.5:
 		label_rich = "[outline_color=white][outline_size=8]%s[/outline_size][/outline_color]" % label
@@ -160,3 +160,7 @@ func new_message(label: String, color: Color, text: String):
 	output_text_label.append_text("[center][b][color=dark_gray]·[/color][/b][/center]\n")
 	
 	Debug.print_info_message("New message from \"%s\" (%s)" % [label, color.to_html()])
+	
+
+func reset():
+	output_text_label.clear()

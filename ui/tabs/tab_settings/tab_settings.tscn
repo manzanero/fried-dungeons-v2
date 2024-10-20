@@ -80,7 +80,9 @@ text = "Ambient Light
 "
 
 [node name="SpinBox" parent="ScrollContainer/VBoxContainer/AmbientContainer/M/PropertyFields/AmbientLightField/H" index="1"]
+step = 1.0
 suffix = "%"
+custom_arrow_step = 5.0
 
 [node name="AmbientColorField" parent="ScrollContainer/VBoxContainer/AmbientContainer/M/PropertyFields" index="1" instance=ExtResource("6_rmua0")]
 unique_name_in_owner = true
@@ -135,7 +137,7 @@ text = "Master Light"
 step = 1.0
 value = 25.0
 suffix = "%"
-custom_arrow_step = 1.0
+custom_arrow_step = 5.0
 
 [node name="OverrideAmbientColorField" parent="ScrollContainer/VBoxContainer/AmbientContainer/M/PropertyFields" index="5" instance=ExtResource("7_uwijb")]
 unique_name_in_owner = true

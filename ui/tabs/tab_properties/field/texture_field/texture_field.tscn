@@ -1,0 +1,46 @@
+[gd_scene load_steps=7 format=3 uid="uid://xgr6imtskgmc"]
+
+[ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_5606e"]
+[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/texture_field/texture_field.gd" id="2_cohox"]
+[ext_resource type="Texture2D" uid="uid://clpptfcqgf1ox" path="res://resources/icons/empty_texture_icon.png" id="3_4mw8o"]
+[ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="3_y7udq"]
+[ext_resource type="Texture2D" uid="uid://ck7mi0v3had7i" path="res://resources/icons/texture_icon.png" id="4_g0wf8"]
+[ext_resource type="Texture2D" uid="uid://ph36o52jrb1h" path="res://resources/icons/cross_icon.png" id="4_kfe3x"]
+
+[node name="TextureField" instance=ExtResource("1_5606e")]
+size_flags_vertical = 4
+script = ExtResource("2_cohox")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="H" index="1"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 2
+
+[node name="EmptyTextureButton" type="Button" parent="H/HBoxContainer" index="0"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("3_4mw8o")
+icon_alignment = 1
+
+[node name="TextureButton" type="Button" parent="H/HBoxContainer" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("4_g0wf8")
+icon_alignment = 1
+
+[node name="ImportButton" type="Button" parent="H/HBoxContainer" index="2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("3_y7udq")
+icon_alignment = 1
+
+[node name="ClearButton" type="Button" parent="H/HBoxContainer" index="3"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+icon = ExtResource("4_kfe3x")
+icon_alignment = 1

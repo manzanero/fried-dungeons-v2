@@ -54,7 +54,11 @@ func create_dice_roll(origin_label: String, origin_color: Color, dice_string: St
 				10: die = D10.instantiate()
 				12: die = D12.instantiate()
 				20: die = D20.instantiate()
-			die.init(dice_roll, rr.dice_side, origin_color, randi_range(0, 999999))
+			
+			if die:
+				die.init(dice_roll, rr.dice_side, origin_color, randi_range(0, 999999))
+			#else:
+				#roll_parsed(origin_label, origin_color, dice_string, parsed_dice)
 
 
 func _on_dice_roll_finished(origin_label: String, origin_color: Color, dice_string: String, result: Array):
@@ -63,7 +67,10 @@ func _on_dice_roll_finished(origin_label: String, origin_color: Color, dice_stri
 
 func roll_parsed(origin_label: String, origin_color: Color, dice_string: String, parsed_dice: Dictionary):
 	var result_data := dice_syntax.roll_parsed(parsed_dice)
-	roll_result.emit(origin_label, origin_color, dice_string, result_data.rolls[0].dice) 
+	if result_data.rolls:
+		roll_result.emit(origin_label, origin_color, dice_string, result_data.rolls[0].dice)
+	#else:
+		#roll_result.emit(origin_label, origin_color, dice_string, []) 
 	
 	
 	

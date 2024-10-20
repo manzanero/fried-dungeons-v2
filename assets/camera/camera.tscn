@@ -79,5 +79,4 @@ unique_name_in_owner = true
 
 [node name="Collider" type="CollisionShape3D" parent="TargetPosition"]
 unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("CylinderShape3D_edg4s")

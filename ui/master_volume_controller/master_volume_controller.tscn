@@ -1,0 +1,38 @@
+[gd_scene load_steps=4 format=3 uid="uid://mbh4bgg0t31y"]
+
+[ext_resource type="Texture2D" uid="uid://ckd03gcqkho3n" path="res://resources/icons/sound_icon.png" id="1_jo6ik"]
+[ext_resource type="Script" path="res://ui/master_volume_controller/master_volume_controller.gd" id="1_mi2re"]
+[ext_resource type="Texture2D" uid="uid://djrrjy2inqvtq" path="res://resources/icons/cross_red_icon.png" id="2_s8j74"]
+
+[node name="MasterVolumeController" type="HBoxContainer"]
+theme_override_constants/separation = 16
+script = ExtResource("1_mi2re")
+
+[node name="TextureRect" type="TextureRect" parent="."]
+layout_mode = 2
+texture = ExtResource("1_jo6ik")
+stretch_mode = 3
+
+[node name="MasterMuteVolume" type="TextureButton" parent="TextureRect"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(31.675, 0)
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+toggle_mode = true
+texture_pressed = ExtResource("2_s8j74")
+stretch_mode = 3
+
+[node name="MasterVolumeSlider" type="HSlider" parent="."]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(128, 0)
+layout_mode = 2
+size_flags_horizontal = 8
+size_flags_vertical = 4
+max_value = 120.0
+value = 1.0
+rounded = true

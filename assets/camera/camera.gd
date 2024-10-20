@@ -55,7 +55,7 @@ var offset_mouse_move: Vector2
 var is_rotate: bool
 var is_move: bool
 var eyes_hight: float = 0.5
-var zoom: float = 1.0
+var zoom: float = 10.0
 var fov: float = 30.0
 var floor_projection := Vector3.ZERO
 
@@ -80,15 +80,35 @@ var is_fps : bool :
 
 var _has_changed : bool
 
+var position_2d := Vector2.ZERO : 
+	set(value): 
+		target_position.position = Vector3(value.x, eyes_hight, value.y)
+		focus.position = target_position.position
+	get: 
+		var target_position_2d := target_position.position
+		return Vector2(target_position_2d.x, target_position_2d.y)
+
+
+func lerp_position_2d(target_position_2d: Vector2) -> void: 
+	target_position.position = Vector3(target_position_2d.x, eyes_hight, target_position_2d.y)
+
 
 func _ready():
+	# init position
 	target_position.position = Vector3(init_x, eyes_hight, init_z)
-	target_rotation.rotation.x = clampf(deg_to_rad(init_rot_x), deg_to_rad(min_rot_x), deg_to_rad(max_rot_x))
-	target_rotation.rotation.y = deg_to_rad(init_rot_y)
-	target_rotation.rotation.z = 0
 	focus.position = target_position.position
+	
+	# init rotation
+	target_rotation.rotation.x = clampf(deg_to_rad(init_rot_x), deg_to_rad(min_rot_x), deg_to_rad(max_rot_x))
+	target_rotation.rotation.x = snappedf(minf(target_rotation.rotation.x, -PI / 8), PI / 8)
+	target_rotation.rotation.y = snappedf(deg_to_rad(init_rot_y), PI / 4)
+	target_rotation.rotation.z = 0
 	pivot.rotation = target_rotation.rotation
+	
+	# init zoom
 	zoom = clampf(init_zoom, min_zoom, max_zoom)
+	eyes.position.z = zoom
+	
 	focus_hint_2d.visible = is_fps
 	focus_hint_3d.visible = not is_fps
 	collider.disabled = not is_fps
@@ -203,12 +223,12 @@ func _input(event):
 				mouse_position.x -= size.x
 				viewport.warp_mouse(mouse_position)
 			
-			if mouse_position.y < 0:
-				mouse_position.y += size.y
-				viewport.warp_mouse(mouse_position)
-			elif mouse_position.y > size.y:
-				mouse_position.y -= size.y
-				viewport.warp_mouse(mouse_position)
+			#if mouse_position.y < 0:
+				#mouse_position.y += size.y
+				#viewport.warp_mouse(mouse_position)
+			#elif mouse_position.y > size.y:
+				#mouse_position.y -= size.y
+				#viewport.warp_mouse(mouse_position)
 			
 			if event.relative.length() < 256:
 				offset_mouse_move += event.relative

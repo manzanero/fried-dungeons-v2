@@ -33,7 +33,7 @@ content_margin_bottom = 9.0
 script = ExtResource("2_3oo5e")
 
 [node name="Panel" type="Panel" parent="H" index="1"]
-custom_minimum_size = Vector2(64, 24)
+custom_minimum_size = Vector2(64, 0)
 layout_mode = 2
 size_flags_horizontal = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_plgpg")

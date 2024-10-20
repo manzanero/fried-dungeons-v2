@@ -1,6 +1,8 @@
 extends Node
-	
-	
+
+
+#region type tranformation
+
 func v2_to_v3(v2: Vector2) -> Vector3:
 	return Vector3(v2.x, 0, v2.y)
 	
@@ -111,6 +113,14 @@ func html_color_to_color(string : String) -> Color:
 	return Color.html(string)
 
 
+func get_bitmask(x : int) -> int:
+	return int(pow(2, x - 1))
+
+
+#endregion
+
+#region node shortcuts
+
 func safe_connect(disconnect_signal : Signal, callabe : Callable):
 	if not disconnect_signal.is_connected(callabe):
 		disconnect_signal.connect(callabe)
@@ -121,14 +131,25 @@ func safe_disconnect(connect_signal : Signal, callabe : Callable):
 		connect_signal.disconnect(callabe)
 
 
+func queue_free_children(node: Node):
+	for child in node.get_children():
+		child.queue_free()
+
+
+func reset_button_group(button_group: ButtonGroup):
+	var pressed_button := button_group.get_pressed_button()
+	if pressed_button:
+		pressed_button.button_pressed = false
+
+
 func safe_queue_free(node: Variant):
 	if is_instance_valid(node):
 		node.queue_free()
-		
 
-func get_bitmask(x : int) -> int:
-	return int(pow(2, x - 1))
 
+#endregion
+
+#region node tools
 
 func get_hit(from : Node3D, to_point : Vector3, raycast : PhysicsRayQueryParameters3D, 
 		collision_mask : int, hit_back_faces: bool = true) -> Dictionary:
@@ -161,21 +182,60 @@ func get_mouse_hit(camera: Camera3D, from_center: bool, raycast: PhysicsRayQuery
 	raycast.collision_mask = collision_mask
 	raycast.hit_back_faces = hit_back_faces
 	return space_state.intersect_ray(raycast)
-	
-	
-func reset_button_group(button_group: ButtonGroup):
-	var pressed_button := button_group.get_pressed_button()
-	if pressed_button:
-		pressed_button.button_pressed = false
-		
-		
+
+
+func temp_tooltip(text: String, timeout: float = 1.0, mirrowed := false) -> Control:
+	var control := Label.new()
+	var panel := PanelContainer.new()
+	panel.add_child(control)
+	get_tree().root.add_child(panel)
+	get_tree().create_timer(timeout).timeout.connect(panel.queue_free)
+	control.text = text
+	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	panel.position = get_viewport().get_mouse_position()
+	if mirrowed:
+		panel.position.x -= panel.size.x
+	return control
+
+
 func action_shortcut(action_name):
 	var input_event := InputEventAction.new()
 	input_event.action = action_name
 	var shortcut := Shortcut.new()
 	shortcut.events = [input_event]
 	return shortcut
-	
+
+
+func png_to_texture(path: String) -> Texture2D:
+	if not FileAccess.file_exists(path):
+		return
+		
+	var image := Image.load_from_file(path)
+	if not image:
+		printerr("PNG load failed")
+		return
+
+	return ImageTexture.create_from_image(image)
+
+
+func png_to_atlas(path: String) -> AtlasTexture:
+	var atlas_texture := AtlasTexture.new()
+	var texture := png_to_texture(path)
+	if not texture:
+		printerr("PNG load failed")
+		return
+		
+	atlas_texture.atlas = texture
+	return atlas_texture
+
+
+func get_outline_color(color: Color) -> Color:
+	return Color.WHITE if color.get_luminance() < 0.5 else Color.BLACK
+
+
+#endregion
+
+#region text tool
 
 func loads_json(data : String) -> Dictionary:
 	var json := JSON.new()
@@ -204,19 +264,28 @@ func dumps_json(data) -> String:
 	return JSON.stringify(data, "", false)
 
 
-func dump_json(path: String, data: Dictionary) -> void:
+func dump_json(path: String, data: Dictionary) -> Error:
 	var json_string := dumps_json(data)
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	var open_error := FileAccess.get_open_error()
 	if open_error:
 		printerr("error writing json: %s" % error_string(open_error))
+		return FAILED
 	file.store_line(json_string)
+	return OK
+	
+	
+func open_in_file_manager(path: String) -> void:
+	var global_path := ProjectSettings.globalize_path(path)
+	OS.shell_show_in_file_manager(global_path)
 
 
 func make_dirs(path: String) -> void:
+	if DirAccess.dir_exists_absolute(path):
+		return
 	var error := DirAccess.make_dir_recursive_absolute(path)
 	if error:
-		printerr("Error creating dirs: " + str(error))
+		printerr("Error creating dirs (%s): %s" % [error, DirAccess.get_open_error()])
 		
 		
 func remove_dirs(path: String) -> void:
@@ -322,24 +391,12 @@ func random_string(lenght := 8, reset_seed := false) -> String:
 	return string
 
 
-func png_to_texture(path: String) -> Texture2D:
-	if not FileAccess.file_exists(path):
-		return
-		
-	var image := Image.load_from_file(path)
-	if not image:
-		printerr("PNG load failed")
-		return
-
-	return ImageTexture.create_from_image(image)
+#endregion
 
 
-func png_to_atlas(path: String) -> AtlasTexture:
-	var atlas_texture := AtlasTexture.new()
-	var texture := png_to_texture(path)
-	if not texture:
-		printerr("PNG load failed")
-		return
-		
-	atlas_texture.atlas = texture
-	return atlas_texture
+func get_time() -> float:
+	return Time.get_ticks_msec() / 1000.0
+
+
+func get_elapsed_time(init_time: float) -> float:
+	return snappedf(Time.get_ticks_msec() / 1000.0 - init_time, 0.001)

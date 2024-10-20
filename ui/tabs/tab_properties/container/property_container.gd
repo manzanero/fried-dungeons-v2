@@ -14,7 +14,6 @@ var collapsable := true :
 	set(value):
 		collapsable = value
 		properties_button.visible = value
-		properties_button.visible = value
 		background.visible = value
 var collapsed := false :
 	set(value):

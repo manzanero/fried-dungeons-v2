@@ -325,7 +325,7 @@ func load_map(map_data: Dictionary):
 		map.master_ambient_light = map_data.settings.master_ambient_light
 		map.master_ambient_color = Utils.html_color_to_color(map_data.settings.master_ambient_color)
 		
-		if not Game.is_master:
+		if not Game.campaign.is_master:
 			map.current_ambient_light = map.ambient_light
 			map.current_ambient_color = map.ambient_color
 			

@@ -2,7 +2,8 @@ class_name TabWorld
 extends Control
 
 
-const TAB_SCENE = preload("res://ui/tabs/tab_scene/tab_scene.tscn")
+const TAB_SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
+const PLAY_ICON := preload("res://resources/icons/play_icon.png")
 
 
 var campaign_selected: Campaign : 
@@ -18,6 +19,7 @@ var selected_map_slug: String :
 
 
 var cached_maps := {}
+var players_map := ""
 
 
 @onready var new_button: Button = %NewButton
@@ -29,6 +31,15 @@ var cached_maps := {}
 @onready var remove_button: Button = %RemoveButton
 
 
+var root: TreeItem
+
+func _set_opened(map_item: TreeItem, value: bool):
+	if value:
+		map_item.set_icon(0, preload("res://resources/icons/arrow_right.png"))
+	else:
+		map_item.set_icon(0, null)
+
+
 func _ready() -> void:
 	new_button.pressed.connect(_on_new_button_pressed)
 	scan_button.pressed.connect(_on_scan_button_pressed)
@@ -38,6 +49,7 @@ func _ready() -> void:
 	remove_button.pressed.connect(_on_remove_button_pressed)
 	tree.hide_root = true
 	tree.item_activated.connect(_on_open_button_pressed)
+	tree.button_clicked.connect(_on_button_clicked)
 
 
 func _on_new_button_pressed():
@@ -68,14 +80,14 @@ func scan(campaign: Campaign):
 		return
 	
 	for map_slug in Utils.sort_strings_ended_with_number(campaign.maps):
-		cached_maps[map_slug] = campaign.get_map(map_slug)
+		cached_maps[map_slug] = campaign.get_map_data(map_slug)
 
 
 func refresh_tree():
 	var filter := filter_line_edit.text
 	
 	tree.clear()
-	var root = tree.create_item()
+	root = tree.create_item()
 	
 	for map_slug in cached_maps:
 		var map_data: Dictionary = cached_maps[map_slug]
@@ -84,32 +96,47 @@ func refresh_tree():
 			
 		var map_item = tree.create_item(root)
 		
-		if map_slug in Game.ui.opened_map_slugs:
-			map_item.set_icon(0, preload("res://resources/icons/arrow_right.png"))
+		if map_slug in Game.maps:
+			_set_opened(map_item, true)
 	
 		map_item.set_text(0, map_data.label)
 		map_item.set_tooltip_text(0, map_slug)
 		map_item.set_metadata(0, map_data)
+	
+		map_item.add_button(0, PLAY_ICON, 0)
+		map_item.set_button_color(0, 0, Color.DARK_GRAY)
 
 
 func _on_open_button_pressed():
 	var map_item := tree.get_selected()
 	if not map_item:
 		return
-	
-	if selected_map_slug in Game.ui.opened_map_slugs:
-		var tab_index = Game.ui.opened_map_slugs.find(selected_map_slug)
+		
+	if selected_map_slug in Game.maps:
+		var tab_index = Game.maps.keys().find(selected_map_slug)
 		Game.ui.scene_tabs.current_tab = tab_index
 		return
-	
+
+	_set_opened(map_item, true)
 	var new_tab_index := Game.ui.scene_tabs.get_tab_count()
 	var tab_scene: TabScene = TAB_SCENE.instantiate().init(selected_map_slug, cached_maps[selected_map_slug])
 	Game.ui.scene_tabs.current_tab = new_tab_index
-	refresh_tree()
 	
-	#Game.ui.tab_elements.reset()
 	
 	tab_scene.map.camera.target_position.position = Utils.v2i_to_v3(tab_scene.map.selected_level.rect.get_center())
+
+
+func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:
+	item.select(column)
+	if selected_map_slug == players_map:
+		return
+		
+	_on_open_button_pressed()
+	for child_item in root.get_children(): 
+		child_item.set_button_color(0, 0, Color.DARK_GRAY)
+	
+	item.set_button_color(0, 0, Color.GREEN)
+	Game.server.request_map_notification.rpc(selected_map_slug)
 
 
 func _on_folder_button_pressed() -> void:
@@ -128,8 +155,8 @@ func _on_remove_button_pressed():
 		
 	var path := campaign_selected.maps_path.path_join(selected_map_slug)
 	Utils.remove_dirs(path)
-	if selected_map_slug in Game.ui.opened_map_slugs:
-		Game.ui.scene_tabs.get_tab_control(Game.ui.opened_map_slugs.find(selected_map_slug)).queue_free()
+	if selected_map_slug in Game.ui.opened_maps.keys():
+		Game.ui.scene_tabs.get_tab_control(Game.ui.opened_maps.keys().find(selected_map_slug)).queue_free()
 	
 	scan(campaign_selected)
 	refresh_tree()

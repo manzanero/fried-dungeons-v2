@@ -15,10 +15,9 @@ signal curve_changed()
 		curve_changed.emit()
 @export var material_layer := 1 :
 	set(value):
+		if is_inside_tree(): collision.set_collision_layer_value(material_layer, false)
 		material_layer = value
-		if is_inside_tree():
-			collision.set_collision_layer_value(material_layer, false)
-			collision.set_collision_layer_value(value, true)
+		if is_inside_tree(): collision.set_collision_layer_value(material_layer, true)
 @export var two_sided := false :
 	set(value):
 		two_sided = value
@@ -31,7 +30,7 @@ signal curve_changed()
 				mesh_instance_3d.material_overlay = null
 				#const BACK: Material = preload("res://assets/map/level/wall/materials/back.tres")
 				#mesh_instance_3d.material_overlay = BACK
-				#mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+				mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 
 var map: Map
 var level: Level

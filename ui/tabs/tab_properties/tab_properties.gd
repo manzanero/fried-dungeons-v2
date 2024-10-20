@@ -8,6 +8,8 @@ const COLOR_FIELD := preload("res://ui/tabs/tab_properties/field/color_field/col
 const BOOL_FIELD := preload("res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn")
 const FLOAT_FIELD := preload("res://ui/tabs/tab_properties/field/float_field/float_field.tscn")
 const INTEGER_FIELD := preload("res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn")
+const VECTOR_2_FIELD := preload("res://ui/tabs/tab_properties/field/vector_2_field/vector_2_field.tscn")
+const TEXTURE_FIELD := preload("res://ui/tabs/tab_properties/field/texture_field/texture_field.tscn")
 
 
 var element_selected: Element : set = _set_element_selected
@@ -51,6 +53,10 @@ func _set_element_selected(element: Element):
 				field = FLOAT_FIELD.instantiate().init(property_container, property_name, property.value)
 			Element.Property.Hints.INTEGER:
 				field = INTEGER_FIELD.instantiate().init(property_container, property_name, property.value)
+			Element.Property.Hints.VECTOR_2:
+				field = VECTOR_2_FIELD.instantiate().init(property_container, property_name, property.value)
+			Element.Property.Hints.TEXTURE:
+				field = TEXTURE_FIELD.instantiate().init(property_container, property_name, property.value)
 			_:
 				Debug.print_message(Debug.ERROR, "Unkown type \"%s\" of property \"%s\"" % [typeof(property.value), property_name]) 
 		field.value_changed.connect(_on_field_value_changed)

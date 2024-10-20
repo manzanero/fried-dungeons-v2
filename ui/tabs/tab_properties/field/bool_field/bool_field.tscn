@@ -1,14 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://d0ch44utbuhby"]
+[gd_scene load_steps=3 format=3 uid="uid://d0ch44utbuhby"]
 
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_bsggv"]
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.gd" id="2_tbtjr"]
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tmjtw"]
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
 
 [node name="BoolField" instance=ExtResource("1_bsggv")]
 offset_bottom = 31.0
@@ -18,5 +11,4 @@ script = ExtResource("2_tbtjr")
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/focus = SubResource("StyleBoxFlat_tmjtw")
-text = "On"
+text = "Yes"

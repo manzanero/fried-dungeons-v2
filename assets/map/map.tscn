@@ -28,8 +28,6 @@ map = NodePath("..")
 [node name="Levels" type="Node3D" parent="."]
 
 [node name="Camera" parent="." instance=ExtResource("2_ty8om")]
-init_x = 16.5
-init_z = 13.5
 max_rot_x = 0.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
@@ -221,16 +219,14 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="PreventsArtifactsInShader" type="DirectionalLight3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+[node name="LightShaderForcer" type="OmniLight3D" parent="."]
 layers = 1025
 light_color = Color(0, 0, 0, 1)
 light_energy = 0.0
 light_indirect_energy = 0.0
 light_volumetric_fog_energy = 0.0
+light_specular = 0.0
 light_bake_mode = 0
-directional_shadow_mode = 0
-directional_shadow_fade_start = 0.0
-directional_shadow_max_distance = 0.0
-directional_shadow_pancake_size = 0.0
-sky_mode = 1
+light_cull_mask = 4293919751
+omni_range = 1000.0
+omni_attenuation = 0.0

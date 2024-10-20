@@ -3,12 +3,12 @@
 [ext_resource type="Script" path="res://ui/main_menu/campaign_button/campaign_button.gd" id="1_e114v"]
 [ext_resource type="Texture2D" uid="uid://dgq2ci5rqb6w1" path="res://resources/cursors/cursor.png" id="1_pk7k7"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pnkg6"]
-bg_color = Color(0.180392, 0.188235, 0.2, 1)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_erhl6"]
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 corner_detail = 1
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_xtds8"]
@@ -19,18 +19,22 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 corner_detail = 1
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_375u8"]
 bg_color = Color(0.6, 0.6, 0.6, 0.458824)
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_06mwu"]
@@ -39,11 +43,15 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 corner_detail = 1
+expand_margin_left = 2.0
+expand_margin_top = 2.0
+expand_margin_right = 2.0
+expand_margin_bottom = 2.0
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_0lf13"]
 
@@ -56,7 +64,7 @@ anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 34.0
 grow_horizontal = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_pnkg6")
+theme_override_styles/panel = SubResource("StyleBoxFlat_erhl6")
 script = ExtResource("1_e114v")
 
 [node name="H" type="HBoxContainer" parent="."]

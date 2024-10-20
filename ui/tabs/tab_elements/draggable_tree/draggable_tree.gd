@@ -31,8 +31,15 @@ func _can_drop_data(at_position: Vector2, items: Variant) -> bool:
 
 
 func _drop_data(at_position: Vector2, items: Variant) -> void:
+	if not items:
+		return
+
 	var drop_section := get_drop_section_at_position(at_position)
 	var other_item := get_item_at_position(at_position)
+	
+	if items[0].get_tree() != other_item.get_tree():
+		return
+	
 	if drop_section == -1:
 		items_moved.emit(items, other_item.get_index())
 	else:

@@ -64,10 +64,14 @@ albedo_color = Color(0.75, 0.75, 0.75, 0.25)
 [sub_resource type="ArrayMesh" id="ArrayMesh_tfb43"]
 resource_local_to_scene = true
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_rwuka"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_jxk61"]
 
-[node name="Selector" type="Node3D"]
+[node name="Selector" type="Node3D" node_paths=PackedStringArray("area", "grid", "wall", "column")]
 script = ExtResource("1_yrs1k")
+area = NodePath("Area")
+grid = NodePath("Grid")
+wall = NodePath("Wall")
+column = NodePath("Column")
 
 [node name="Area" type="MeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.5, 0.05, 0.5)
@@ -92,7 +96,6 @@ generated_sprite_mesh = SubResource("Resource_ygvbn")
 
 [node name="VanishTimer" type="Timer" parent="."]
 one_shot = true
-autostart = true
 
 [node name="Wall" type="MeshInstance3D" parent="."]
 layers = 256
@@ -107,7 +110,7 @@ material_override = SubResource("StandardMaterial3D_bqjo7")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_rwuka")
+mesh = SubResource("ImmediateMesh_jxk61")
 script = ExtResource("6_in7wo")
 points = Array[Vector3]([Vector3(0, 0, 0), Vector3(0, 1, 0)])
 start_thickness = 0.031

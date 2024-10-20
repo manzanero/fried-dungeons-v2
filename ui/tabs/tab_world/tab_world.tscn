@@ -1,12 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://lye1ti1uqjjr"]
+[gd_scene load_steps=6 format=3 uid="uid://lye1ti1uqjjr"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_world/tab_world.gd" id="1_75xg6"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h407n"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
 bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
@@ -14,21 +10,27 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m8wya"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u2vvi"]
 draw_center = false
 border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
-corner_radius_top_left = 2
-corner_radius_top_right = 2
-corner_radius_bottom_right = 2
-corner_radius_bottom_left = 2
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cdj30"]
 content_margin_top = 6.0
-bg_color = Color(1, 1, 1, 0.309804)
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -44,6 +46,8 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 mouse_filter = 2
 script = ExtResource("1_75xg6")
 
@@ -61,25 +65,44 @@ layout_mode = 2
 [node name="NewButton" type="Button" parent="VBoxContainer2/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "New +"
 
 [node name="ScanButton" type="Button" parent="VBoxContainer2/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "Scan"
 
-[node name="TitleLineEdit" type="LineEdit" parent="VBoxContainer2/HBoxContainer2"]
+[node name="PanelContainer" type="PanelContainer" parent="VBoxContainer2"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_h407n")
+
+[node name="C" type="VBoxContainer" parent="VBoxContainer2/PanelContainer"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer2/PanelContainer/C"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 0
+
+[node name="TitleLineEdit" type="LineEdit" parent="VBoxContainer2/PanelContainer/C/MarginContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "title..."
 clear_button_enabled = true
 
-[node name="Tree" type="Tree" parent="VBoxContainer2"]
+[node name="Tree" type="Tree" parent="VBoxContainer2/PanelContainer/C"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_h407n")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_m8wya")
 theme_override_styles/focus = SubResource("StyleBoxFlat_u2vvi")
 theme_override_styles/selected = SubResource("StyleBoxFlat_cdj30")
 theme_override_styles/selected_focus = SubResource("StyleBoxFlat_cdj30")

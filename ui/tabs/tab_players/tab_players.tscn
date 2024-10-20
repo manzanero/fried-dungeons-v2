@@ -1,4 +1,4 @@
-[gd_scene load_steps=3 format=3 uid="uid://bgemyy0f7bxdq"]
+[gd_scene load_steps=5 format=3 uid="uid://bgemyy0f7bxdq"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_players/tab_players.gd" id="1_mll3s"]
 
@@ -8,6 +8,30 @@ content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
 bg_color = Color(0, 0, 0, 0.901961)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c8qg0"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.180392, 0.188235, 0.2, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h7w1f"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.180392, 0.188235, 0.2, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -38,26 +62,35 @@ layout_mode = 2
 [node name="NewButton" type="Button" parent="V/H"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 text = "New +"
 
 [node name="ScanButton" type="Button" parent="V/H"]
 unique_name_in_owner = true
 layout_mode = 2
-text = "Scan"
-
-[node name="NameLineEdit" type="LineEdit" parent="V/H"]
-unique_name_in_owner = true
-layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "name..."
-clear_button_enabled = true
+text = "Scan"
 
 [node name="ScrollContainer" type="ScrollContainer" parent="V"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_n0rb3")
 
-[node name="PlayerButtons" type="VBoxContainer" parent="V/ScrollContainer"]
+[node name="C" type="VBoxContainer" parent="V/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/separation = 8
+
+[node name="NameLineEdit" type="LineEdit" parent="V/ScrollContainer/C"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 32)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "name..."
+clear_button_enabled = true
+
+[node name="PlayerButtons" type="VBoxContainer" parent="V/ScrollContainer/C"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -88,6 +121,7 @@ columns = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_c8qg0")
 placeholder_text = "Username..."
 
 [node name="UsernameButton" type="Button" parent="V/GridContainer"]
@@ -98,7 +132,10 @@ text = "Set Username"
 [node name="PasswordLineEdit" type="LineEdit" parent="V/GridContainer"]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_h7w1f")
 placeholder_text = "Password..."
+virtual_keyboard_type = 6
+secret = true
 
 [node name="PasswordButton" type="Button" parent="V/GridContainer"]
 unique_name_in_owner = true

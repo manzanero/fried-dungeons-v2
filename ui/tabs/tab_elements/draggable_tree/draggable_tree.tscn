@@ -1,4 +1,4 @@
-[gd_scene load_steps=5 format=3 uid="uid://b6o13q7qteh2i"]
+[gd_scene load_steps=8 format=3 uid="uid://b6o13q7qteh2i"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.gd" id="1_cmxne"]
 
@@ -14,27 +14,48 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8car7"]
-content_margin_top = 6.0
-bg_color = Color(1, 1, 1, 0.309804)
-draw_center = false
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vnh2n"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
 corner_detail = 1
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a848h"]
-content_margin_top = 6.0
-bg_color = Color(1, 1, 1, 0.309804)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pe258"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.133333, 0.12549, 0.117647, 1)
 corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_n7ulh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5eoct"]
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+corner_radius_top_left = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+expand_margin_left = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6d2qt"]
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+corner_radius_top_left = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+expand_margin_left = 4.0
 
 [node name="DraggableTree" type="Tree"]
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_if1vr")
-theme_override_styles/selected = SubResource("StyleBoxFlat_8car7")
-theme_override_styles/selected_focus = SubResource("StyleBoxFlat_a848h")
+theme_override_styles/title_button_hover = SubResource("StyleBoxFlat_vnh2n")
+theme_override_styles/title_button_pressed = SubResource("StyleBoxFlat_pe258")
+theme_override_styles/title_button_normal = SubResource("StyleBoxFlat_pe258")
+theme_override_styles/focus = SubResource("StyleBoxEmpty_n7ulh")
+theme_override_styles/selected = SubResource("StyleBoxFlat_5eoct")
+theme_override_styles/selected_focus = SubResource("StyleBoxFlat_6d2qt")
 allow_rmb_select = true
 hide_root = true
 drop_mode_flags = 3

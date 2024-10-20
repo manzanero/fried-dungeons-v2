@@ -6,11 +6,13 @@ signal player_connected(username)
 signal player_disconnected(username)
 signal server_disconnected
 
-const PORT := 25565
+const PORT := 2020
 
 @export var rpcs: Rpcs
 
-var peer := ENetMultiplayerPeer.new()
+var peer: ENetMultiplayerPeer
+var server_address := "127.0.0.0"
+var server_port := PORT
 var player_id := 1
 var player_username := "Unnamed"
 var player_password := ""
@@ -26,8 +28,10 @@ func _ready():
 
 
 func host_multiplayer() -> Error:
-	if multiplayer.multiplayer_peer:
-		multiplayer.multiplayer_peer.close()
+	if peer:
+		peer.close()
+		
+	peer = ENetMultiplayerPeer.new()
 	var error := peer.create_server(PORT)
 	if error:
 		Debug.print_error_message("create_server == %s" % error)
@@ -37,16 +41,23 @@ func host_multiplayer() -> Error:
 	return OK
 	
 
-func join_multiplayer(server_data: Dictionary) -> Error:
-	if multiplayer.multiplayer_peer:
-		multiplayer.multiplayer_peer.close()
-	var error := peer.create_client(server_data.host, PORT)
+func join_multiplayer(host: String, username: String, password: String) -> Error:
+	if peer:
+		peer.close()
+	
+	peer = ENetMultiplayerPeer.new()
+	server_address = host
+	if host.split(":").size() == 2:
+		server_address = host.split(":")[0]
+		var port: String = host.split(":")[1]
+		server_port =  port.to_int() if port.is_valid_int() else PORT
+	var error := peer.create_client(server_address, server_port)
 	if error:
 		Debug.print_error_message("create_client == %s" % error)
 		return error
 	
-	player_username = server_data.username
-	player_password = server_data.password
+	player_username = username
+	player_password = password
 	multiplayer.multiplayer_peer = peer
 	return OK
 	
@@ -54,7 +65,7 @@ func join_multiplayer(server_data: Dictionary) -> Error:
 func _on_player_connected(id: int):
 	Debug.print_info_message("Player connected: %s" % id)
 	
-	# introduce to the master
+	# introduce yourself to the master
 	if not multiplayer.is_server():
 		_register_player.rpc_id(id, player_username, player_password)
 
@@ -67,7 +78,7 @@ func _register_player(username: String, password: String):
 	# master accomodates new player
 	if multiplayer.is_server():
 		if _is_player_registered(username, password):
-			_set_up_player(new_player_id, username)
+			set_up_player(new_player_id)
 		else:
 			peer.disconnect_peer(new_player_id)
 
@@ -91,7 +102,7 @@ func _on_connected_fail():
 	Debug.print_info_message("Connected fail")
 	multiplayer.multiplayer_peer = null
 	players.clear()
-	server_disconnected.emit(player_username)
+	server_disconnected.emit()
 
 
 func _on_server_disconnected():
@@ -104,57 +115,140 @@ func _on_server_disconnected():
 ## rpcs
 
 func _is_player_registered(username, password) -> bool:
-	Debug.print_info_message("Player login: %s" % username)
-	var player_slug := Utils.slugify(username)
+	Debug.print_info_message("New Player login: %s" % username)
+	var username_slug := Utils.slugify(username)
 	var campaign := Game.ui.tab_players.campaign_selected
 	
-	if not player_slug in campaign.players:
-		Debug.print_info_message("Player login failed: %s" % username)
-		return false
-	
-	if not password == campaign.get_player(player_slug).password:
-		Debug.print_info_message("Player login failed: %s" % username)
-		return false
-	
-	return true
+	if username_slug in campaign.players:
+		for player_slug in campaign.players:
+			var player_data := campaign.get_player_data(player_slug)
+			if username == player_data.username and password == player_data.password:
+				return true
+			
+	Debug.print_info_message("Player login failed: %s" % username)
+	return false
 
 
-func _set_up_player(id: int, username: String):
+func set_up_player(id: int):
 	Debug.print_info_message("Setting up player %s" % id)
 	var campaign := Game.campaign
-	_load_campaign.rpc_id(id, campaign.slug, campaign.json)
-	var map := Game.ui.selected_map
-	_load_map.rpc_id(id, map.slug, map.json())
-	var player_slug := Utils.slugify(username)
-	var player := Game.campaign.get_player(player_slug)
-	_load_player.rpc_id(id, player_slug, player)
+	load_campaign.rpc_id(id, campaign.slug, campaign.json())
+	
+	var map_slug := Game.ui.tab_world.players_map
+	var map: Map = Game.maps[map_slug] if map_slug else Game.ui.selected_map
+	load_map.rpc_id(id, map.slug, map.json())
 
 
 @rpc("any_peer", "reliable")
-func _load_campaign(campaign_slug: String, campaign_data: Dictionary):
+func load_campaign(campaign_slug: String, campaign_data: Dictionary):
 	Debug.print_info_message("Loading campaign %s" % campaign_slug)
-	Game.campaign = Campaign.new()
-	Game.campaign.label = campaign_data.label
+	Game.campaign = Campaign.new(false, campaign_data.label, campaign_data.imports)
+	Game.manager.reset()
+	
+	var server_path := Game.campaign.campaign_path
+	Utils.make_dirs(server_path.path_join("resources"))
+	var server_error := Utils.dump_json(server_path.path_join("server.json"), {
+		"label": campaign_data.label,
+		"host": server_address,
+	})
+	if server_error:
+		Debug.print_error_message("Failed to create Server file")
+		
+	var player_path := server_path.path_join("players").path_join(Utils.slugify(player_username))
+	Utils.make_dirs(player_path)
+	var player_error := Utils.dump_json(player_path.path_join("player.json"), {
+		"username": player_username,
+		"password": player_password,
+	})
+	if player_error:
+		Debug.print_error_message("Failed to create Player file")
 
+	# init jukebox
+	for sound_data in campaign_data.jukebox.sounds:
+		var sound := Game.manager.get_resource(CampaignResource.Type.SOUND, sound_data.sound)
+		if not sound.loaded:
+			await sound.resource_loaded
+		var from_position: float = sound_data.get("position", 0.0)
+		Game.ui.tab_jukebox.add_sound(sound, sound_data.loop, from_position)
 
-const TAB_SCENE = preload("res://ui/tabs/tab_scene/tab_scene.tscn")
 
 @rpc("any_peer", "reliable")
-func _load_map(map_slug: String, map_data: Dictionary):
+func request_map_notification(map_slug: String):
+	request_map.rpc_id(1, map_slug)
+
+
+@rpc("any_peer", "reliable")
+func request_map(map_slug: String):
+	Debug.print_info_message("Requested map %s" % map_slug)
+	var id := multiplayer.get_remote_sender_id()
+	var map_data: Dictionary = Game.maps[map_slug].json()
+	load_map.rpc_id(id, map_slug, map_data)
+
+
+@rpc("any_peer", "reliable")
+func load_map(map_slug: String, map_data: Dictionary):
 	Debug.print_info_message("Loading map %s" % map_slug)
-	var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, map_data)
-	tab_scene.map.is_master_view = false
-	tab_scene.map.current_ambient_light = tab_scene.map.ambient_light
-	tab_scene.map.current_ambient_color = tab_scene.map.ambient_color
-	get_tree().set_group("lights", "hidden", true)
+	
+	if not Game.ui.selected_map or map_slug != Game.ui.selected_map.slug:
+		for scene_tab in Game.ui.scene_tabs.get_children():
+			scene_tab.remove()
+		
+		const TAB_SCENE = preload("res://ui/tabs/tab_scene/tab_scene.tscn")
+		var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, map_data)
+		tab_scene.map.is_master_view = false
+		tab_scene.map.current_ambient_light = tab_scene.map.ambient_light
+		tab_scene.map.current_ambient_color = tab_scene.map.ambient_color
+	
+	request_player.rpc_id(1, Utils.slugify(player_username))
 
 
 @rpc("any_peer", "reliable")
-func _load_player(player_slug: String, player_data: Dictionary):
+func request_player(player_slug: String):
+	Debug.print_info_message("Requested player %s" % player_slug)
+	var id := multiplayer.get_remote_sender_id() 
+	var player_data := Game.campaign.get_player_data(player_slug)
+	load_player.rpc_id(id, player_slug, player_data)
+
+
+@rpc("any_peer", "reliable")
+func load_player(player_slug: String, player_data: Dictionary):
 	Debug.print_info_message("Loading player %s" % player_slug)
 	Game.player = Player.load(player_data)
+	
+	for element in Game.ui.selected_map.selected_level.elements:
+		if element is Entity:
+			element.eye.visible = false
+	
 	for entity_id in Game.player.entities:
 		var entity: Entity = Game.ui.selected_map.selected_level.elements.get(entity_id)
 		if entity:
 			entity.eye.visible = true
+			Game.ui.selected_map.camera.position_2d = entity.position_2d
 			Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, entity_id])
+
+
+@rpc("any_peer", "reliable")
+func request_resource(resource_path: String):
+	Debug.print_info_message("Requested resource %s" % resource_path)
+	var id := multiplayer.get_remote_sender_id() 
+	var resource_abspath := Game.campaign.resources_path.path_join(resource_path)
+	var resource_bytes := FileAccess.get_file_as_bytes(resource_abspath)
+	if not resource_bytes:
+		Debug.print_error_message("Requested resource %s not found" % resource_abspath)
+		return
+	
+	var import_data = Game.ui.tab_instancer.resources[resource_path].import_data
+	load_resource.rpc_id(id, resource_bytes, resource_path, import_data)
+
+
+@rpc("any_peer", "reliable")
+func load_resource(resource_bytes: PackedByteArray, resource_path: String, import_data: Dictionary):
+	Debug.print_info_message("Requested resource %s" % resource_path)
+	var resource_abspath := Game.campaign.resources_path.path_join(resource_path)
+	Utils.make_dirs(resource_abspath.get_base_dir())
+	var resource_file := FileAccess.open(resource_abspath, FileAccess.WRITE)
+	resource_file.store_buffer(resource_bytes)
+	
+	var resource: CampaignResource = Game.ui.tab_instancer.resources[resource_path]
+	resource.import_data = import_data
+	resource.loaded = true

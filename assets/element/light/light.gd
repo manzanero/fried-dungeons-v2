@@ -2,13 +2,19 @@ class_name Light
 extends Element
 
 
-@export var range_radius := 5.0 :
+var cached_light: Color :
+	set(value): cached_light = value; 
+	
+var is_watched: bool : 
+	get: return cached_light.a
+
+## properties
+var range_radius := 5.0 :
 	set(value):
 		range_radius = value
-		if omni_light_3d:
-			omni_light_3d.omni_range = value
+		omni_light_3d.omni_range = value
 
-@export var active := true :
+var active := true :
 	set(value):
 		active = value
 		omni_light_3d.visible = value
@@ -20,24 +26,26 @@ extends Element
 			# Only a certain number of lights can be active at a time
 			if level.active_lights.size() > Game.MAX_LIGHTS:
 				Debug.print_message(Debug.ERROR, "Max. lights exceeded")
-				var first_light : Light = level.active_lights.pop_front()
+				var first_light: Light = level.active_lights.pop_front()
 				first_light.active = false
 				
 		else:
 			level.active_lights.erase(self)
 			inner_material.albedo_color = Color.BLACK
 
-@export var light_color := Color.WHITE :
+var light_color := Color.WHITE :
 	set(value):
+		light_color = value
 		color = value
-		if omni_light_3d:
-			outer_material.albedo_color = value
-			omni_light_3d.light_color = value
+		outer_material.albedo_color = value
+		omni_light_3d.light_color = value
 
 var hidden := true :
-	set(value):
-		hidden = value
-		body.visible = not value
+	set(value): hidden = value; body.visible = not value
+
+
+var dirty_light := false
+var dirty_mesh := false
 
 
 @onready var omni_light_3d := $OmniLight3D as OmniLight3D
@@ -49,59 +57,62 @@ var hidden := true :
 @onready var line_renderer_3d := %LineRenderer3D as LineRenderer
 
 
+## properties
+const LABEL := "label"; const LABEL_DEFAULT_VALUE := "Light Unknown"
+const DESCRIPTION := "description"; const DESCRIPTION_DEFAULT_VALUE := ""
+const ACTIVE = "active"; const ACTIVE_DEFAULT_VALUE := true
+const RANGE = "range"; const RANGE_DEFAULT_VALUE := 5.0
+const COLOR = "color"; const COLOR_DEFAULT_VALUE := Color.WHITE
+
+
 func _ready() -> void:
+	init_properties = [
+		["info", LABEL, Property.Hints.STRING, LABEL_DEFAULT_VALUE],
+		["info", DESCRIPTION, Property.Hints.STRING, DESCRIPTION_DEFAULT_VALUE],
+		["physics", ACTIVE, Property.Hints.BOOL, ACTIVE_DEFAULT_VALUE],
+		["physics", RANGE, Property.Hints.FLOAT, RANGE_DEFAULT_VALUE],
+		["physics", COLOR, Property.Hints.COLOR, COLOR_DEFAULT_VALUE],
+	]
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
 	line_renderer_3d.points.append_array([Vector3.ZERO, Vector3.UP * 0.75])
-
-
-func _set_selected(value: bool) -> void:
-	is_selected = value
-	if value:
-		level.element_selected = self
-		Game.ui.tab_properties.element_selected = self
-	elif Game.ui.tab_properties.element_selected == self:
-		Game.ui.tab_properties.element_selected = null
-		
-	line_renderer_3d.disabled = not value
-
-
-## Properties
-
-const SHOW_LABEL = "show_label"
-const LABEL = "label"
-const ACTIVE = "active"
-const RANGE = "range"
-const COLOR = "color"
-
-
-func _init_property_list(_properties):
-	var init_properties = [
-		["info", ACTIVE, Property.Hints.BOOL, _properties.get(ACTIVE, true)],
-		["info", LABEL, Property.Hints.STRING, _properties.get(LABEL, "Unknown")],
-		["info", SHOW_LABEL, Property.Hints.BOOL, _properties.get(SHOW_LABEL, true)],
-		["light", RANGE, Property.Hints.FLOAT, _properties.get(RANGE, 5)],
-		["light", COLOR, Property.Hints.COLOR, _properties.get(COLOR, Color.WHITE)],
-	]
-	for property_array in init_properties:
-		init_property(property_array[0], property_array[1], property_array[2], property_array[3])
-		change_property(property_array[1], property_array[3])
-
-
-func _on_property_changed(property_name: String, _old_value: Variant, new_value: Variant) -> void:
-	change_property(property_name, new_value)
 	
 
 func change_property(property_name: String, new_value: Variant) -> void:
 	match property_name:
-		ACTIVE:
-			active = new_value
-		LABEL:
-			label = new_value
-		RANGE:
-			range_radius = new_value
-		COLOR:
-			light_color = new_value
+		LABEL: label = new_value
+		DESCRIPTION: description = new_value
+		ACTIVE: active = new_value
+		RANGE: range_radius = new_value
+		COLOR: light_color = new_value
+
+
+func _process(_delta: float) -> void:
+	var ligth = level.get_light(position_2d)
+	if ligth != cached_light:
+		dirty_light = true
+	cached_light = ligth
+
+	if dirty_light:
+		update_light()
+		dirty_light = false
+
+
+func update_light():
+	hidden = not is_watched
+
+
+func _set_selected(value: bool) -> void:
+	super._set_selected(value)
+		
+	line_renderer_3d.disabled = not value
+
+
+func remove():
+	super.remove()
+	
+	if active:
+		level.active_lights.erase(self)
 
 
 ###############

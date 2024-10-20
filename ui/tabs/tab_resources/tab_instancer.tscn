@@ -1,0 +1,145 @@
+[gd_scene load_steps=7 format=3 uid="uid://c3oq3t62qadp0"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_resources/tab_instancer.gd" id="1_3wrxx"]
+[ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_s3uyf"]
+[ext_resource type="PackedScene" uid="uid://d2x02vgtidrgn" path="res://ui/tabs/tab_resources/import_texture/import_texture.tscn" id="3_c2axs"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4xoop"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 3.0
+bg_color = Color(0, 0, 0, 0.901961)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_0dk4o"]
+allow_unpress = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5334t"]
+content_margin_left = 8.0
+content_margin_top = 8.0
+content_margin_right = 8.0
+content_margin_bottom = 8.0
+bg_color = Color(0, 0, 0, 0.901961)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[node name="TabInstancer" type="Control"]
+layout_mode = 3
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+script = ExtResource("1_3wrxx")
+
+[node name="C" type="BoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 3
+vertical = true
+
+[node name="C" type="BoxContainer" parent="C"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+
+[node name="C2" type="BoxContainer" parent="C/C"]
+layout_mode = 2
+
+[node name="ScanButton" type="Button" parent="C/C/C2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Scan"
+
+[node name="FolderButton" type="Button" parent="C/C/C2"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Folder
+"
+
+[node name="C" type="BoxContainer" parent="C/C"]
+layout_mode = 2
+size_flags_horizontal = 3
+alignment = 1
+
+[node name="L" type="Label" parent="C/C/C"]
+layout_mode = 2
+text = "Instance:"
+horizontal_alignment = 1
+
+[node name="C" type="PanelContainer" parent="C/C/C"]
+clip_contents = true
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_4xoop")
+
+[node name="C" type="BoxContainer" parent="C/C/C/C"]
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="EntityButton" type="Button" parent="C/C/C/C/C"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+button_group = SubResource("ButtonGroup_0dk4o")
+text = "Entity"
+
+[node name="LightButton" type="Button" parent="C/C/C/C/C"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+button_group = SubResource("ButtonGroup_0dk4o")
+text = "Light"
+
+[node name="ShapeButton" type="Button" parent="C/C/C/C/C"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+toggle_mode = true
+button_group = SubResource("ButtonGroup_0dk4o")
+text = "Shape"
+
+[node name="S" type="HSplitContainer" parent="C"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="DraggableTree" parent="C/S" instance=ExtResource("2_s3uyf")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(100, 0)
+layout_mode = 2
+hide_root = false
+drop_mode_flags = 0
+scroll_horizontal_enabled = false
+
+[node name="ImportContainers" type="PanelContainer" parent="C/S"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 3.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_5334t")
+
+[node name="C" type="VBoxContainer" parent="C/S/ImportContainers"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="ImportTexture" parent="C/S/ImportContainers/C" instance=ExtResource("3_c2axs")]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(480, 0)
+layout_mode = 2

@@ -9,7 +9,7 @@ draw_center = false
 border_color = Color(0.105882, 0.113725, 0.121569, 1)
 
 [node name="PropertyField" type="PanelContainer"]
-custom_minimum_size = Vector2(0, 31)
+custom_minimum_size = Vector2(0, 32)
 anchors_preset = 10
 anchor_right = 1.0
 offset_bottom = 23.0

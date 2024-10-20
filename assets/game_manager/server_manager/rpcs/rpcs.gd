@@ -3,6 +3,11 @@ extends Node
 
 
 @rpc("any_peer", "reliable")
+func change_flow_state(state: FlowController.STATE):
+	Game.flow.change_flow_state(state)
+
+
+@rpc("any_peer", "reliable")
 func change_ambient(map_slug: String, 
 		light: float, color: Color, master_light: float, master_color: Color):
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
@@ -15,10 +20,18 @@ func change_ambient(map_slug: String,
 	
 
 @rpc("any_peer", "reliable")
-func set_player_entity_control(player_slug: String, id: String, control: bool):
+func set_player_entity_control(player_slug: String, id: String, control: bool, entity_data := {}):
+	if Game.player.slug != player_slug: return
 	var level := Game.ui.selected_map.selected_level
 	var element := _get_element_by_id(level, id); if not element: return
 	element.eye.visible = control
+	if control:
+		Game.player.entities[id] = entity_data
+	else:
+		Game.player.entities.erase(id)
+		if Game.ui.selected_map.selected_level.element_selected == element:
+			element.is_selected = false
+
 	Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, id])
 
 
@@ -26,9 +39,45 @@ func set_player_entity_control(player_slug: String, id: String, control: bool):
 func create_player_signal(map_slug: String, level_index: int, position_2d: Vector2, color: Color):
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	if Game.is_master or level.is_watched(position_2d):
+	if Game.campaign.is_master or level.is_watched(position_2d):
+	#if Game.campaign.is_master or multiplayer.get_remote_sender_id() == 1 or level.is_watched(position_2d):
 		map.instancer.create_player_signal(level, position_2d, color)
 
+
+@rpc("any_peer", "reliable")
+func change_resource_import_data(resource_type: String, resource_path: String, import_data: Dictionary) -> void:
+	Game.manager.set_resource(resource_type, resource_path, import_data)
+	Debug.print_info_message("Resource \"%s\" (%s) changed" % [resource_path, resource_type])
+
+
+#region music
+
+@rpc("any_peer", "reliable")
+func load_theme_song(resource_path: String) -> void:
+	var sound := Game.manager.get_resource(CampaignResource.Type.SOUND, resource_path)
+	Debug.print_info_message("Theme song \"%s\" loaded" % [resource_path])
+
+
+@rpc("any_peer", "reliable")
+func play_theme_song(resource_path: String) -> void:
+	if not resource_path:
+		Game.ui.tab_jukebox.audio.stop()
+		Debug.print_info_message("Theme song stopped")
+		return
+		
+	var sound := Game.manager.get_resource(CampaignResource.Type.SOUND, resource_path)
+	Game.ui.tab_jukebox.audio.file_path = sound.abspath
+	Game.ui.tab_jukebox.audio.play()
+	Debug.print_info_message("Theme song \"%s\" started" % [resource_path])
+
+
+@rpc("any_peer", "reliable")
+func change_theme_volume(new_volumen_level: float) -> void:
+	Game.ui.tab_jukebox.audio.volume_db = linear_to_db(new_volumen_level)
+	Debug.print_info_message("Theme volume changed to %s%%" % [new_volumen_level * 100])
+
+
+#endregion
 
 #region building
 
@@ -109,6 +158,10 @@ func set_wall_properties(map_slug: String, level_index: int, id: String,
 	Debug.print_info_message("Wall \"%s\" changed" % wall.id)
 
 
+#endregion
+
+#region instancing
+
 @rpc("any_peer", "reliable")
 func create_entity(map_slug: String, level_index: int, id: String, 
 		position_2d: Vector2, properties_values := {}, rotation_y := 0.0) -> void:
@@ -179,6 +232,8 @@ func remove_element(map_slug: String, level_index: int, id: String) -> void:
 	element.remove()
 	Debug.print_info_message("Element \"%s\" (%s) removed" % [element.label, element.id])
 
+#endregion
+
 
 func _get_map_by_slug(slug: String) -> Map:
 	var map: Map = Game.maps.get(slug)
@@ -207,5 +262,3 @@ func _get_element_by_id(level: Level, id: String) -> Element:
 		Debug.print_debug_message("Entity \"%s\" not exist" % [id])
 		
 	return element
-
-#endregion

@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://b4oy5ukjusdyj"]
+[gd_scene load_steps=10 format=3 uid="uid://b4oy5ukjusdyj"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_4djbp"]
 [ext_resource type="Script" path="res://ui/tabs/tab_builder/tab_builder.gd" id="2_ovrmx"]
@@ -13,34 +13,11 @@ content_margin_top = 2.0
 content_margin_right = 2.0
 content_margin_bottom = 3.0
 bg_color = Color(0, 0, 0, 0.901961)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3ao7j"]
-content_margin_left = 4.0
-content_margin_right = 4.0
-bg_color = Color(0.219608, 0.239216, 0.266667, 1)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nhdcw"]
-bg_color = Color(0.12549, 0.156863, 0.192157, 1)
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1hhjx"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-draw_center = false
+corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_rmbeg"]
 content_margin_left = 8.0
@@ -48,23 +25,23 @@ content_margin_top = 8.0
 content_margin_right = 8.0
 content_margin_bottom = 8.0
 bg_color = Color(0, 0, 0, 0.901961)
-corner_radius_top_left = 3
-corner_radius_top_right = 3
-corner_radius_bottom_right = 3
-corner_radius_bottom_left = 3
-corner_detail = 4
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
-[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_q4rxl"]
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_jparq"]
 load_path = "res://.godot/imported/default.png-0e9f675106827d23bc6cc997654100b9.ctex"
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_3644y"]
 resource_local_to_scene = true
-atlas = SubResource("CompressedTexture2D_q4rxl")
+atlas = SubResource("CompressedTexture2D_jparq")
 region = Rect2(0, 160, 16, 16)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_g5y20"]
 resource_local_to_scene = true
-atlas = SubResource("CompressedTexture2D_q4rxl")
+atlas = SubResource("CompressedTexture2D_jparq")
 region = Rect2(0, 64, 16, 16)
 
 [node name="TabBuilder" type="Control" node_paths=PackedStringArray("materials")]
@@ -124,9 +101,6 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Wall
@@ -136,9 +110,6 @@ text = "Wall
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Fence"
@@ -147,9 +118,6 @@ text = "Fence"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Room
@@ -159,9 +127,6 @@ text = "Room
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Obstacle"
@@ -191,9 +156,6 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Edit"
@@ -202,9 +164,6 @@ text = "Edit"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Cut"
@@ -213,9 +172,6 @@ text = "Cut"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Change"
@@ -224,9 +180,6 @@ text = "Change"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Flip"
@@ -235,9 +188,6 @@ text = "Flip"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Paint"
@@ -267,9 +217,6 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Tile"
@@ -278,66 +225,9 @@ text = "Tile"
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
 toggle_mode = true
 button_group = SubResource("ButtonGroup_upllj")
 text = "Rect"
-
-[node name="C5" type="BoxContainer" parent="HBoxContainer/BoxContainer/BoxContainer2"]
-layout_mode = 2
-alignment = 1
-
-[node name="Label2" type="Label" parent="HBoxContainer/BoxContainer/BoxContainer2/C5"]
-layout_mode = 2
-text = "Instance:"
-horizontal_alignment = 1
-
-[node name="PanelContainer2" type="PanelContainer" parent="HBoxContainer/BoxContainer/BoxContainer2/C5"]
-clip_contents = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_8jh3g")
-
-[node name="HBoxContainer" type="BoxContainer" parent="HBoxContainer/BoxContainer/BoxContainer2/C5/PanelContainer2"]
-layout_mode = 2
-theme_override_constants/separation = 0
-alignment = 1
-
-[node name="EntityButton" type="Button" parent="HBoxContainer/BoxContainer/BoxContainer2/C5/PanelContainer2/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_upllj")
-text = "Entity"
-
-[node name="LightButton" type="Button" parent="HBoxContainer/BoxContainer/BoxContainer2/C5/PanelContainer2/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_upllj")
-text = "Light"
-
-[node name="ShapeButton" type="Button" parent="HBoxContainer/BoxContainer/BoxContainer2/C5/PanelContainer2/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_3ao7j")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_nhdcw")
-theme_override_styles/normal = SubResource("StyleBoxFlat_1hhjx")
-toggle_mode = true
-button_group = SubResource("ButtonGroup_upllj")
-text = "Object"
 
 [node name="PanelContainer" type="ScrollContainer" parent="HBoxContainer/BoxContainer"]
 layout_mode = 2

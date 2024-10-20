@@ -3,11 +3,13 @@ extends Node
 
 var master: Player = Player.new("Master", "", Color.WHITE)
 var player: Player
-var is_master := false
 var campaign: Campaign
 
 var manager: GameManager
 var server: ServerManager
+var flow: FlowController
+var preloader: ResourcePreloader
+var audio: Audio
 var ui: UI
 
 var maps := {}

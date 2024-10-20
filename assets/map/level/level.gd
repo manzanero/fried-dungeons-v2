@@ -87,9 +87,12 @@ func init(_map: Map, _index: int):
 func _ready():
 	map.camera.changed.connect(_on_camera_changed)
 	map.camera.fps_enabled.connect(func (value):
+		Game.ui.selected_scene_tab.fade_transition.cover()
+		get_tree().create_timer(0.2).timeout.connect(Game.ui.selected_scene_tab.fade_transition.uncover)
 		if value:
 			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 		else:
+			_on_refreshed_light()
 			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 			
 			#map.camera.eyes.position.z = map.camera.init_zoom
@@ -97,10 +100,7 @@ func _ready():
 	)
 	ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 	
-	element_selection.connect(func (element: Element):
-		if element:
-			Game.ui.tab_elements.elements[element.id].select(0)
-	)
+	state_machine.change_state("Idle")
 		
 	refresh_light_timer.wait_time = refresh_light_frecuency
 	refresh_light_timer.timeout.connect(_on_refreshed_light)
@@ -136,8 +136,9 @@ func get_light(point: Vector2) -> Color:
 		return Color.TRANSPARENT
 	if pixel_position.y < 0 or pixel_position.y >= light_sample_2d.get_height():
 		return Color.TRANSPARENT
-	return light_sample_2d.get_pixelv(pixel_position)
 	
+	return light_sample_2d.get_pixelv(pixel_position)
+
 
 func is_watched(point: Vector2) -> bool:
 	return get_light(point).a

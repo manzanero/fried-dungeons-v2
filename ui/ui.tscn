@@ -1,30 +1,49 @@
-[gd_scene load_steps=19 format=3 uid="uid://bn7uvkfq24dl4"]
+[gd_scene load_steps=26 format=3 uid="uid://bn7uvkfq24dl4"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
 [ext_resource type="PackedScene" uid="uid://b4l1ilsp0i1is" path="res://ui/tabs/tab_elements/tab_elements.tscn" id="3_636ai"]
 [ext_resource type="PackedScene" uid="uid://lye1ti1uqjjr" path="res://ui/tabs/tab_world/tab_world.tscn" id="3_e6fcj"]
 [ext_resource type="PackedScene" uid="uid://dfwkx5bxrpk35" path="res://assets/dicer/dicer.tscn" id="3_hqwy8"]
+[ext_resource type="PackedScene" uid="uid://83d8jfjfqtrl" path="res://ui/flow_controller/flow_controller.tscn" id="3_tupaq"]
 [ext_resource type="PackedScene" uid="uid://b1i1ky18bbaqf" path="res://ui/tabs/tab_debug/tab_debug.tscn" id="4_g7vlm"]
 [ext_resource type="Texture2D" uid="uid://dk4i0euhe2t1q" path="res://resources/icons/arrow_down.png" id="5_5f26e"]
+[ext_resource type="PackedScene" uid="uid://mbh4bgg0t31y" path="res://ui/master_volume_controller/master_volume_controller.tscn" id="5_8xl5e"]
 [ext_resource type="PackedScene" uid="uid://cd6g3qduls3n1" path="res://ui/tabs/tab_properties/tab_properties.tscn" id="5_groax"]
 [ext_resource type="PackedScene" uid="uid://bgemyy0f7bxdq" path="res://ui/tabs/tab_players/tab_players.tscn" id="5_w7n2g"]
 [ext_resource type="PackedScene" uid="uid://b4oy5ukjusdyj" path="res://ui/tabs/tab_builder/tab_builder.tscn" id="6_jy8ng"]
+[ext_resource type="PackedScene" uid="uid://pojmf4m23i0" path="res://addons/fade_transition/fade_transition.tscn" id="6_mw1aj"]
 [ext_resource type="Texture2D" uid="uid://cf4nrufodnamj" path="res://resources/icons/arrow_up.png" id="6_o08ft"]
 [ext_resource type="PackedScene" uid="uid://dhbx748ct8awa" path="res://ui/tabs/tab_messages/tab_messages.tscn" id="6_r4wjl"]
 [ext_resource type="PackedScene" uid="uid://qg2jutjaad46" path="res://ui/tabs/tab_settings/tab_settings.tscn" id="7_cdf46"]
-[ext_resource type="PackedScene" uid="uid://c3oq3t62qadp0" path="res://ui/tabs/tab_resources/tab_resources.tscn" id="9_l1602"]
+[ext_resource type="PackedScene" uid="uid://bxt6nwjxeo4i8" path="res://ui/tabs/tab_jukebox/tab_jukebox.tscn" id="7_s1ltk"]
+[ext_resource type="PackedScene" uid="uid://c3oq3t62qadp0" path="res://ui/tabs/tab_resources/tab_instancer.tscn" id="9_l1602"]
 [ext_resource type="PackedScene" uid="uid://ds0ekrxvqkcwk" path="res://ui/main_menu/main_menu.tscn" id="11_me8rl"]
+[ext_resource type="StyleBox" uid="uid://kfbbn8gligsk" path="res://ui/flow_controller/flow_border.tres" id="19_xvfg2"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_2q8jd"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7gey6"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+corner_detail = 1
+expand_margin_top = 26.0
+anti_aliasing = false
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_knwtu"]
 draw_center = false
-border_width_left = 4
-border_width_top = 4
-border_width_right = 4
-border_width_bottom = 4
-border_color = Color(0.733333, 0.458824, 0.329412, 1)
+border_width_left = 16
+border_width_top = 16
+border_width_right = 16
+border_width_bottom = 16
+border_color = Color(0.443, 0.408, 0.292, 1)
+border_blend = true
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_uj4rh"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_e1kdt"]
 allow_unpress = true
@@ -42,6 +61,17 @@ size_flags_vertical = 3
 theme = ExtResource("1_607li")
 script = ExtResource("2_axtiy")
 
+[node name="FlowBorder" type="Panel" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = ExtResource("19_xvfg2")
+
 [node name="IDE" type="MarginContainer" parent="."]
 unique_name_in_owner = true
 layout_mode = 1
@@ -50,10 +80,10 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-theme_override_constants/margin_left = 8
-theme_override_constants/margin_top = 8
-theme_override_constants/margin_right = 8
-theme_override_constants/margin_bottom = 8
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
 
 [node name="V" type="VBoxContainer" parent="IDE"]
 layout_mode = 2
@@ -63,12 +93,15 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_2q8jd")
 
-[node name="MenuBar" type="MenuBar" parent="IDE/V/NavBar"]
+[node name="C" type="HBoxContainer" parent="IDE/V/NavBar"]
 layout_mode = 2
-size_flags_horizontal = 3
+
+[node name="MenuBar" type="MenuBar" parent="IDE/V/NavBar/C"]
+layout_mode = 2
+size_flags_horizontal = 0
 flat = true
 
-[node name="Campaing" type="PopupMenu" parent="IDE/V/NavBar/MenuBar"]
+[node name="Campaing" type="PopupMenu" parent="IDE/V/NavBar/C/MenuBar"]
 unique_name_in_owner = true
 size = Vector2i(181, 100)
 item_count = 6
@@ -85,14 +118,14 @@ item_4/separator = true
 item_5/text = "Quit"
 item_5/id = 9
 
-[node name="Preferences" type="PopupMenu" parent="IDE/V/NavBar/MenuBar"]
+[node name="Preferences" type="PopupMenu" parent="IDE/V/NavBar/C/MenuBar"]
 unique_name_in_owner = true
 item_count = 2
 item_0/text = "Layout..."
 item_1/text = "Style..."
 item_1/id = 1
 
-[node name="Help" type="PopupMenu" parent="IDE/V/NavBar/MenuBar"]
+[node name="Help" type="PopupMenu" parent="IDE/V/NavBar/C/MenuBar"]
 unique_name_in_owner = true
 item_count = 3
 item_0/text = "Documentation"
@@ -101,21 +134,17 @@ item_1/separator = true
 item_2/text = "About..."
 item_2/id = 1
 
-[node name="H" type="HBoxContainer" parent="IDE/V/NavBar"]
+[node name="FlowController" parent="IDE/V/NavBar" instance=ExtResource("3_tupaq")]
+unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 4
 
-[node name="PlayButton" type="Button" parent="IDE/V/NavBar/H"]
+[node name="C2" type="MarginContainer" parent="IDE/V/NavBar"]
 layout_mode = 2
-text = "Play"
+size_flags_horizontal = 8
+theme_override_constants/margin_right = 16
 
-[node name="PauseButton" type="Button" parent="IDE/V/NavBar/H"]
+[node name="MasterVolumeController" parent="IDE/V/NavBar/C2" instance=ExtResource("5_8xl5e")]
 layout_mode = 2
-text = "Pause"
-
-[node name="StopButton" type="Button" parent="IDE/V/NavBar/H"]
-layout_mode = 2
-text = "Stop"
 
 [node name="H" type="HSplitContainer" parent="IDE/V"]
 layout_mode = 2
@@ -140,18 +169,26 @@ theme_override_constants/separation = 0
 [node name="LeftUp" type="TabContainer" parent="IDE/V/H/H/Left"]
 unique_name_in_owner = true
 clip_contents = true
+custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 size_flags_vertical = 3
-current_tab = 0
+current_tab = 1
 
 [node name="Elements" parent="IDE/V/H/H/Left/LeftUp" instance=ExtResource("3_636ai")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 metadata/_tab_index = 0
+
+[node name="Jukebox" parent="IDE/V/H/H/Left/LeftUp" instance=ExtResource("7_s1ltk")]
+unique_name_in_owner = true
+layout_mode = 2
+metadata/_tab_index = 1
 
 [node name="LeftDown" type="TabContainer" parent="IDE/V/H/H/Left"]
 unique_name_in_owner = true
 clip_contents = true
+custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
@@ -178,7 +215,7 @@ split_offset = 2820
 
 [node name="MiddleUp" type="Control" parent="IDE/V/H/H/Middle"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 200)
+custom_minimum_size = Vector2(640, 320)
 layout_mode = 2
 
 [node name="TabScenes" type="TabContainer" parent="IDE/V/H/H/Middle/MiddleUp"]
@@ -192,32 +229,89 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_7gey6")
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
+tab_focus_mode = 1
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="IDE/V/H/H/Middle/MiddleUp"]
+[node name="SceneCoverings" type="Control" parent="IDE/V/H/H/Middle/MiddleUp"]
+unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
-offset_top = 32.0
+offset_left = 4.0
+offset_top = 29.0
+offset_right = -4.0
+offset_bottom = -4.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="IDE/V/H/H/Middle/MiddleUp/AspectRatioContainer"]
+[node name="FadeTransition" parent="IDE/V/H/H/Middle/MiddleUp/SceneCoverings" instance=ExtResource("6_mw1aj")]
+unique_name_in_owner = true
+visible = true
+layout_mode = 1
+default_cover_duration = 0.0
+default_uncover_duration = 0.4
+
+[node name="MasterCover" parent="IDE/V/H/H/Middle/MiddleUp/SceneCoverings" instance=ExtResource("6_mw1aj")]
+unique_name_in_owner = true
+visible = true
+layout_mode = 1
+default_cover_duration = 0.0
+default_uncover_duration = 0.4
+
+[node name="BuildBorder" type="Panel" parent="IDE/V/H/H/Middle/MiddleUp/SceneCoverings"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_knwtu")
+
+[node name="Label" type="Label" parent="IDE/V/H/H/Middle/MiddleUp/SceneCoverings/BuildBorder"]
+layout_mode = 1
+anchors_preset = -1
+anchor_left = 0.5
+anchor_top = 1.0
+anchor_right = 0.5
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 0
+theme_override_colors/font_color = Color(0.443137, 0.407843, 0.290196, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 4
+theme_override_font_sizes/font_size = 8
+text = "Build mode (press \"escape\" to exit)"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="IDE/V/H/H/Middle/MiddleUp/SceneCoverings"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+
+[node name="SubViewportContainer" type="SubViewportContainer" parent="IDE/V/H/H/Middle/MiddleUp/SceneCoverings/AspectRatioContainer"]
 layout_mode = 2
 mouse_filter = 2
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="IDE/V/H/H/Middle/MiddleUp/AspectRatioContainer/SubViewportContainer"]
+[node name="SubViewport" type="SubViewport" parent="IDE/V/H/H/Middle/MiddleUp/SceneCoverings/AspectRatioContainer/SubViewportContainer"]
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(379, 379)
+size = Vector2i(319, 319)
 render_target_update_mode = 4
 
-[node name="Dicer" parent="IDE/V/H/H/Middle/MiddleUp/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
+[node name="Dicer" parent="IDE/V/H/H/Middle/MiddleUp/SceneCoverings/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
 unique_name_in_owner = true
 
 [node name="RestoreDownButton" type="Button" parent="IDE/V/H/H/Middle/MiddleUp"]
@@ -236,39 +330,6 @@ offset_bottom = -3.0
 grow_horizontal = 0
 grow_vertical = 0
 icon = ExtResource("6_o08ft")
-
-[node name="BuildBorder" type="Panel" parent="IDE/V/H/H/Middle/MiddleUp"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = -1
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 2.0
-offset_top = 28.0
-offset_right = -2.0
-offset_bottom = -2.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_knwtu")
-
-[node name="Label" type="Label" parent="IDE/V/H/H/Middle/MiddleUp/BuildBorder"]
-layout_mode = 1
-anchors_preset = -1
-anchor_left = 0.5
-anchor_top = 1.0
-anchor_right = 0.5
-anchor_bottom = 1.0
-offset_left = -99.0
-offset_top = -24.0
-offset_right = 100.0
-offset_bottom = -4.0
-grow_horizontal = 2
-grow_vertical = 0
-theme_override_colors/font_color = Color(0.733333, 0.458824, 0.329412, 1)
-theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
-theme_override_constants/outline_size = 4
-text = "Build mode (press \"escape\" to exit)"
 
 [node name="InfoContainer" type="MarginContainer" parent="IDE/V/H/H/Middle/MiddleUp"]
 visible = false
@@ -311,13 +372,14 @@ text = "None"
 
 [node name="MiddleDown" type="PanelContainer" parent="IDE/V/H/H/Middle"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 320)
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_uj4rh")
 
 [node name="DownTabs" type="TabContainer" parent="IDE/V/H/H/Middle/MiddleDown"]
 unique_name_in_owner = true
 clip_contents = true
-custom_minimum_size = Vector2(256, 256)
 layout_mode = 2
 current_tab = 1
 drag_to_rearrange_enabled = true
@@ -330,12 +392,12 @@ layout_mode = 2
 mode_button_group = SubResource("ButtonGroup_e1kdt")
 metadata/_tab_index = 0
 
-[node name="Resources" parent="IDE/V/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("9_l1602")]
+[node name="Instancer" parent="IDE/V/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("9_l1602")]
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Debug" parent="IDE/V/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("4_g7vlm")]
+[node name="Debugger" parent="IDE/V/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("4_g7vlm")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -358,7 +420,7 @@ theme_override_constants/separation = 0
 [node name="RightUp" type="TabContainer" parent="IDE/V/H/Right"]
 unique_name_in_owner = true
 clip_contents = true
-custom_minimum_size = Vector2(0, 128)
+custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
@@ -379,7 +441,7 @@ metadata/_tab_index = 1
 [node name="RightDown" type="TabContainer" parent="IDE/V/H/Right"]
 unique_name_in_owner = true
 clip_contents = true
-custom_minimum_size = Vector2(0, 128)
+custom_minimum_size = Vector2(0, 300)
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0

@@ -1,10 +1,18 @@
 class_name LevelBuildingState
 extends LevelBaseState
 
+
+enum {
+	ONE_SIDED, TWO_SIDED, ROOM, OBSTACLE,
+	MOVE, CUT, CHANGE, FLIP, PAINT_WALL,
+	PAINT_TILE, PAINT_RECT,
+	NEW_ENTITY, NEW_LIGHT, NEW_SHAPE,
+}
+
+
 var mode: int
 var material_index_selected: int :
-	get:
-		return Game.ui.tab_builder.material_index_selected
+	get: return Game.ui.tab_builder.material_index_selected
 
 var st := SurfaceTool.new()
 
@@ -18,8 +26,7 @@ var _wall_hovered: Wall
 
 
 var _is_something_being_builded: bool :
-	get:
-		return _is_rect_being_builded or _wall_being_builded
+	get: return _is_rect_being_builded or _wall_being_builded
 
 
 func _enter_state(previous_state: String) -> void:
@@ -29,11 +36,10 @@ func _enter_state(previous_state: String) -> void:
 	selector.column.visible = true
 	selector.position_2d = Game.NULL_POSITION_2D
 	
-	if mode in [TabBuilder.MOVE, TabBuilder.NEW_ENTITY, TabBuilder.NEW_LIGHT, TabBuilder.NEW_SHAPE, 
-			TabBuilder.PAINT_TILE, TabBuilder.PAINT_RECT]:
+	if mode in [MOVE, NEW_ENTITY, NEW_LIGHT, NEW_SHAPE, PAINT_TILE, PAINT_RECT]:
 		selector.column.visible = false
 	
-	if mode in [TabBuilder.CHANGE, TabBuilder.FLIP, TabBuilder.PAINT_WALL]:
+	if mode in [CHANGE, FLIP, PAINT_WALL]:
 		selector.grid.visible = false
 
 
@@ -41,9 +47,6 @@ func _enter_state(previous_state: String) -> void:
 func _exit_state(next_state: String) -> void:
 	super._exit_state(next_state)
 	Game.ui.build_border.visible = false
-	selector.grid.visible = false
-	selector.column.visible = false
-	selector.wall.visible = false
 	selector.wall.mesh = null
 	_is_rect_being_builded = false
 	_wall_being_builded = null
@@ -54,86 +57,70 @@ func _exit_state(next_state: String) -> void:
 
 
 func _physics_process_state(_delta: float) -> String:
+	if level != Game.ui.selected_map.selected_level:
+		return ""
+	
 	process_ground_hitted()
 	
 	if Input.is_action_just_pressed("ui_cancel") and not _is_something_being_builded:
-		var button := Game.ui.tab_builder.tile_button.button_group.get_pressed_button()
-		if button:
-			button.button_pressed = false
+		Utils.reset_button_group(Game.ui.tab_builder.tile_button.button_group)
+		Utils.reset_button_group(Game.ui.tab_instancer.entity_button.button_group)
 		return "Idle"
 	
 	match mode:
-		TabBuilder.ONE_SIDED:
+		ONE_SIDED:
 			process_change_grid()
 			process_change_column()
 			process_build_one_sided()
-		TabBuilder.TWO_SIDED:
+		TWO_SIDED:
 			process_change_grid()
 			process_change_column()
 			process_build_two_sided()
-		TabBuilder.ROOM:
+		ROOM:
 			process_change_grid()
 			process_change_column()
 			process_build_room()
-		TabBuilder.OBSTACLE:
+		OBSTACLE:
 			process_change_grid()
 			process_change_column()
 			process_build_room(true)
 			
-		TabBuilder.MOVE:
+		MOVE:
 			process_change_grid()
 			process_wall_selection()
-		TabBuilder.CUT:
+		CUT:
 			process_change_grid()
 			process_cutted_wall()
 			process_cut_wall()
-		TabBuilder.CHANGE:
+		CHANGE:
 			process_hover_wall()
 			process_change_wall()
-		TabBuilder.FLIP:
+		FLIP:
 			process_hover_wall()
 			process_flip_wall()
-		TabBuilder.PAINT_WALL:
+		PAINT_WALL:
 			process_hover_wall()
 			process_paint_wall()
 			
-		TabBuilder.PAINT_TILE:
+		PAINT_TILE:
 			process_change_grid()
 			process_build_point()
-		TabBuilder.PAINT_RECT:
+		PAINT_RECT:
 			process_change_grid()
 			process_build_rect()
 			
-		TabBuilder.NEW_ENTITY:
+		NEW_ENTITY:
 			process_change_grid()
 			process_instance_entity()
-		TabBuilder.NEW_LIGHT:
+		NEW_LIGHT:
 			process_ceilling_hitted()
 			process_change_grid()
 			process_instance_light()
-		TabBuilder.NEW_SHAPE:
+		NEW_SHAPE:
 			process_change_grid()
 			process_instance_shape()
 			
 	return ""
-
-
-func process_change_grid() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
-		return
-		
-	selector.move_grid_to(level.position_hovered)
-
-
-func process_change_column() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
-		return
-		
-	var point_position := level.position_hovered
-	if not Input.is_key_pressed(KEY_CTRL):
-		point_position = point_position.snapped(Game.PIXEL_SNAPPING_QUARTER)
-		
-	selector.column.position = Utils.v2_to_v3(point_position)
 
 
 func process_build_point() -> void:

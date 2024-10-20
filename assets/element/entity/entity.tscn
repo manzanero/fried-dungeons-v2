@@ -1,4 +1,4 @@
-[gd_scene load_steps=21 format=4 uid="uid://cfu5gxos3nxx7"]
+[gd_scene load_steps=23 format=4 uid="uid://cfu5gxos3nxx7"]
 
 [ext_resource type="PackedScene" uid="uid://c546it4fefagq" path="res://assets/element/element.tscn" id="1_fqk2b"]
 [ext_resource type="Script" path="res://assets/element/entity/entity.gd" id="1_scptp"]
@@ -10,6 +10,15 @@
 [ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="7_ih4st"]
 [ext_resource type="Material" uid="uid://c1nel0ayea611" path="res://assets/element/entity/materials/sprite.tres" id="8_b4q87"]
 [ext_resource type="PackedScene" uid="uid://bg2g2ca2xolm6" path="res://assets/element/entity/eye/eye.tscn" id="9_5arlo"]
+[ext_resource type="PackedScene" uid="uid://upfcm5wo63fj" path="res://assets/element/shape/shape_slice/shape_slice.tscn" id="10_oxgfl"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_o5im7"]
+resource_local_to_scene = true
+render_priority = 0
+shader = ExtResource("4_esgyb")
+shader_parameter/albedo = null
+shader_parameter/light = null
+shader_parameter/transparency = null
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_6qsiy"]
 resource_local_to_scene = true
@@ -82,11 +91,14 @@ font_size = 8
 outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
-[node name="Entity" groups=["entities"] instance=ExtResource("1_fqk2b")]
-collision_layer = 196608
+[node name="Entity" node_paths=PackedStringArray("slices_parent") groups=["entities"] instance=ExtResource("1_fqk2b")]
+collision_layer = 196609
 script = ExtResource("1_scptp")
+slices_parent = NodePath("Body/Slices")
+material = SubResource("ShaderMaterial_o5im7")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="." index="0"]
+unique_name_in_owner = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 shape = SubResource("CylinderShape3D_6qsiy")
 
@@ -111,6 +123,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.063, 0)
 
 [node name="SpriteMeshInstance" type="MeshInstance3D" parent="Body" index="0"]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.25, 0)
+visible = false
 layers = 16
 material_override = SubResource("ShaderMaterial_2mk1e")
 cast_shadow = 0
@@ -130,6 +143,11 @@ layers = 16
 material_override = ExtResource("8_b4q87")
 pixel_size = 0.031
 texture = ExtResource("2_4djgx")
+
+[node name="Slices" type="Node3D" parent="Body" index="2"]
+unique_name_in_owner = true
+
+[node name="SpriteMeshInstance" parent="Body/Slices" index="0" instance=ExtResource("10_oxgfl")]
 
 [node name="SelectorCollider" type="StaticBody3D" parent="." index="4"]
 unique_name_in_owner = true

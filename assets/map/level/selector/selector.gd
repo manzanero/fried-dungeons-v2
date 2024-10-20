@@ -1,12 +1,13 @@
 class_name Selector
 extends Node3D
 
-@onready var area: MeshInstance3D = $Area
-@onready var grid: MeshInstance3D = $Grid
+@export var area: MeshInstance3D
+@export var grid: MeshInstance3D
+@export var wall: MeshInstance3D
+@export var column: LineRenderer
+
 @onready var grid_material: Material = grid.material_override
 @onready var vanish_timer: Timer = $VanishTimer
-@onready var wall: MeshInstance3D = $Wall
-@onready var column: LineRenderer = %Column
 
 
 var position_2d: Vector2 :
@@ -25,10 +26,9 @@ var _cached_area_position := Vector2.ZERO
 
 func _ready() -> void:
 	area.visible = false
-	grid.visible = false
-	#wall.visible = false
-	column.visible = false
-	reset_vanish()
+	grid.transparency = 1.0
+	column.transparency = 1.0
+
 	
 
 func reset_vanish():

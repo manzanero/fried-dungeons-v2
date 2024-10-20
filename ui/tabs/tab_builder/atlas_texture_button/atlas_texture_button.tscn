@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://fk4ms248dm5y"]
+[gd_scene load_steps=10 format=3 uid="uid://fk4ms248dm5y"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_builder/atlas_texture_button/atlas_texture_button.gd" id="1_kqpbx"]
 
@@ -12,8 +12,25 @@ region = Rect2(0, 176, 16, 16)
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_trkt0"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yapwf"]
+bg_color = Color(0.75, 0.75, 0.75, 0.25)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+expand_margin_left = 5.0
+expand_margin_top = 5.0
+expand_margin_right = 5.0
+expand_margin_bottom = 5.0
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jwlbw"]
 bg_color = Color(0.75, 0.75, 0.75, 0.25)
+corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sqksp"]
 draw_center = false
@@ -54,6 +71,7 @@ layout_mode = 2
 offset_right = 64.0
 offset_bottom = 64.0
 theme_override_styles/focus = SubResource("StyleBoxEmpty_trkt0")
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_yapwf")
 theme_override_styles/hover = SubResource("StyleBoxFlat_jwlbw")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_sqksp")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_l04eb")

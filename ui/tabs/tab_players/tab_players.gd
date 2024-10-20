@@ -80,7 +80,7 @@ func scan(campaign: Campaign):
 		return
 	
 	for players_slug in Utils.sort_strings_ended_with_number(campaign.players):
-		cached_players[players_slug] = campaign.get_player(players_slug)
+		cached_players[players_slug] = campaign.get_player_data(players_slug)
 	
 	player_slug_selected = ""
 
@@ -121,11 +121,12 @@ func _on_add_entity_pressed():
 		return
 	
 	player_button.add_player_entity(entity)
-	player.entities[entity.id] = player_button.player_entities_data[entity.id]
+	var entity_data: Dictionary = player_button.player_entities_data[entity.id]
+	player.entities[entity.id] = entity_data
 	
 	save_player(player_slug_selected)
 	
-	Game.server.rpcs.set_player_entity_control.rpc(player_slug_selected, entity.id, true)
+	Game.server.rpcs.set_player_entity_control.rpc(player_slug_selected, entity.id, true, entity_data)
 	
 	Debug.print_info_message("Entity \"%s\" added to player \"%s\"" % [entity.id, player_slug_selected])
 

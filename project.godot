@@ -45,7 +45,7 @@ mouse_cursor/custom_image_hotspot=Vector2(15, 15)
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/dice_syntax/plugin.cfg", "res://addons/multirun/plugin.cfg", "res://addons/sprite_mesh/plugin.cfg", "res://addons/state_machine_nodes/plugin.cfg", "res://addons/tnowe_extra_controls/plugin.cfg")
+enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/dice_syntax/plugin.cfg", "res://addons/multirun/plugin.cfg", "res://addons/sprite_mesh/plugin.cfg", "res://addons/state_machine_nodes/plugin.cfg")
 
 [global_group]
 
@@ -133,7 +133,7 @@ textures/decals/filter=2
 textures/light_projectors/filter=2
 limits/opengl/max_renderable_lights=64
 limits/opengl/max_lights_per_object=64
-environment/defaults/default_clear_color=Color(0.113725, 0.133333, 0.160784, 1)
+environment/defaults/default_clear_color=Color(0.239216, 0.254902, 0.254902, 1)
 2d/snap/snap_2d_transforms_to_pixel=true
 2d/snap/snap_2d_vertices_to_pixel=true
 
