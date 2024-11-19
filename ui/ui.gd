@@ -85,21 +85,31 @@ func save_campaign():
 
 
 func change_campaign():
-	Game.manager.save_campaign()
+	if Game.campaign.is_master:
+		Game.manager.save_campaign()
+		
 	if Game.server.peer:
 		Game.server.peer.close()
+	
 	main_menu.scan_campaigns()
 	main_menu.scan_servers()
 	main_menu.visible = true
 
 
 func reload_campaign():
-	Game.manager.save_campaign()
+	if Game.campaign.is_master:
+		Game.manager.save_campaign()
+	
+	# finish ongoing rpcs
+	await get_tree().process_frame
+	
 	reload_campaign_pressed.emit()
 
 
 func quit():
-	Game.manager.save_campaign()
+	if Game.campaign.is_master:
+		Game.manager.save_campaign()
+		
 	get_tree().quit()
 
 

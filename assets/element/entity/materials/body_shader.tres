@@ -12,7 +12,11 @@ uniform sampler2D texture_albedo : source_color, filter_nearest, repeat_enable;
 
 void fragment() {
 	vec4 albedo_tex = texture(texture_albedo, UV);
-	ALBEDO = albedo.rgb * albedo_tex.rgb * light.rgb;
+	vec3 world_normal = (INV_VIEW_MATRIX * vec4(NORMAL.xyz, 0.0)).xyz;
+	if (world_normal.y > 0.5)
+		ALBEDO = albedo.rgb * albedo_tex.rgb * light.rgb * 1.2;
+	else
+		ALBEDO = albedo.rgb * albedo_tex.rgb * light.rgb * 0.8;
 	ALPHA = albedo_tex.a * light.a * (1. - transparency);
 }
 "

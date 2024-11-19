@@ -15,7 +15,6 @@ extends Control
 
 
 func _ready() -> void:
-	Debug.level = Debug.INFO
 	Debug.send_message.connect(_on_send_message)
 	
 	clear_button.pressed.connect(_on_clear_button_pressed)

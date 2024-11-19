@@ -1,6 +1,8 @@
 class_name Shape
 extends Element
 
+const SCENE := preload("res://assets/element/shape/shape.tscn")
+
 const SHAPE_SLICE := preload("res://assets/element/shape/shape_slice/shape_slice.tscn")
 
 @export var slices_parent: Node3D
@@ -54,9 +56,9 @@ const LABEL := "label"; const LABEL_DEFAULT_VALUE := "Shape Unknown"
 const SHOW_LABEL := "show label"; const SHOW_LABEL_DEFAULT_VALUE := false
 const COLOR := "color"; const COLOR_DEFAULT_VALUE := Color.WHITE
 const DESCRIPTION := "description"; const DESCRIPTION_DEFAULT_VALUE := ""
+const SCALE := "scale"; const SCALE_DEFAULT_VALUE := 1.0
 const TEXTURE := "texture"; const TEXTURE_DEFAULT_VALUE := ""
 const FRAME := "frame"; const FRAME_DEFAULT_VALUE := 0
-const SCALE := "scale"; const SCALE_DEFAULT_VALUE := 1.0
 const INVISIBLE := "invisible"; const INVISIBLE_DEFAULT_VALUE := false
 const OPAQUE := "opaque"; const OPAQUE_DEFAULT_VALUE := true
 const SOLID := "solid"; const SOLID_DEFAULT_VALUE := true
@@ -212,10 +214,19 @@ func update_mesh():
 		slice.position.z = i * depth * Game.U
 		slice.update_sprite_mesh()
 		slice.mesh = slice.generated_sprite_mesh.meshes[0]
+		slice.collider.set_collision_layer_value(Game.SELECTOR_LAYER, is_selectable)
+		slice.collider_shape.shape = slice.mesh.create_trimesh_shape()
 		slice.material_override = material
 		slice.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		
 	Debug.print_info_message("Mesh of Shape \"%s\" updated" % id)
+
+
+func _set_selectable(value: bool) -> void:
+	super._set_selectable(value)
+		
+	for slice in slices_parent.get_children():
+		slice.collider.set_collision_layer_value(Game.SELECTOR_LAYER, value)
 
 
 func _set_selected(value: bool) -> void:
@@ -245,7 +256,7 @@ func json():
 	return {
 		"type": "shape",
 		"id": id,
-		"position": Utils.v3_to_a2(position),
+		"position": Utils.v3_to_a2(global_position),
 		"rotation": snappedf(rotation_y, 0.001),
 		"properties": values,
 	}

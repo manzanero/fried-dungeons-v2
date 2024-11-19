@@ -237,7 +237,7 @@ func get_outline_color(color: Color) -> Color:
 
 #region text tool
 
-func loads_json(data : String) -> Dictionary:
+func loads_json(data: String) -> Dictionary:
 	var json := JSON.new()
 	json.parse(data)
 	var result := json.data as Dictionary
@@ -260,12 +260,12 @@ func load_json(path : String) -> Dictionary:
 	return dict
 
 
-func dumps_json(data) -> String:
-	return JSON.stringify(data, "", false)
+func dumps_json(data, indent := 0) -> String:
+	return JSON.stringify(data, " ".repeat(indent), false)
 
 
-func dump_json(path: String, data: Dictionary) -> Error:
-	var json_string := dumps_json(data)
+func dump_json(path: String, data: Dictionary, indent := 0) -> Error:
+	var json_string := dumps_json(data, indent)
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	var open_error := FileAccess.get_open_error()
 	if open_error:

@@ -15,22 +15,21 @@ signal curve_changed()
 		curve_changed.emit()
 @export var material_layer := 1 :
 	set(value):
-		if is_inside_tree(): collision.set_collision_layer_value(material_layer, false)
+		collision.set_collision_layer_value(material_layer, false)
 		material_layer = value
-		if is_inside_tree(): collision.set_collision_layer_value(material_layer, true)
+		collision.set_collision_layer_value(material_layer, true)
 @export var two_sided := false :
 	set(value):
 		two_sided = value
-		if is_inside_tree():
-			if value:
-				const BACK_SOLID: Material = preload("res://assets/map/level/wall/materials/back_solid.tres")
-				mesh_instance_3d.material_overlay = BACK_SOLID
-				mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
-			else:
-				mesh_instance_3d.material_overlay = null
-				#const BACK: Material = preload("res://assets/map/level/wall/materials/back.tres")
-				#mesh_instance_3d.material_overlay = BACK
-				mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+		if value:
+			const BACK_SOLID: Material = preload("res://assets/map/level/wall/materials/back_solid.tres")
+			mesh_instance_3d.material_overlay = BACK_SOLID
+			mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		else:
+			#mesh_instance_3d.material_overlay = null
+			const BACK: Material = preload("res://assets/map/level/wall/materials/back.tres")
+			mesh_instance_3d.material_overlay = BACK
+			mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
 
 var map: Map
 var level: Level
@@ -104,7 +103,7 @@ func _process_wall_edit():
 		
 		# change end of the wall
 		var point_position_2d := level.position_hovered
-		if not Input.is_key_pressed(KEY_CTRL):
+		if not Input.is_key_pressed(KEY_ALT):
 			point_position_2d = point_position_2d.snapped(Game.PIXEL_SNAPPING_QUARTER)
 		set_point(edited_point, point_position_2d)
 		

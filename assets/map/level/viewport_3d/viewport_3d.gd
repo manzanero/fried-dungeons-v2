@@ -11,13 +11,13 @@ var rect : Rect2 :
 		rect_changed.emit(rect)
 
 
-@onready var floor_viewport: SubViewport = %FloorViewport
-@onready var floor_2d := $FloorViewport/Floor2D as Floor2D
-@onready var tile_map := floor_2d.tile_map as TileMap
+@onready var floor_viewport: SubViewport = $FloorViewport
+@onready var floor_2d: Floor2D = $FloorViewport/Floor2D
+@onready var tile_map: TileMap = floor_2d.tile_map
 
 @onready var refresh_light_timer: Timer = %RefreshLightTimer
-@onready var light_viewport: SubViewport = %LightViewport
-@onready var camera_3d: Camera3D = %Camera3D
+@onready var light_viewport: SubViewport = $LightViewport
+@onready var light_camera: Camera3D = %LightCamera
 
 
 func _ready():
@@ -42,8 +42,8 @@ func _on_rect_changed(new_rect: Rect2):
 	
 	# light viewport
 	light_viewport.size = floor_viewport.size / 4
-	camera_3d.size = rect_size.x
-	camera_3d.position = position + Vector3.UP
+	light_camera.size = rect_size.x
+	light_camera.position = position + Vector3.UP
 	
 	light_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	floor_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS

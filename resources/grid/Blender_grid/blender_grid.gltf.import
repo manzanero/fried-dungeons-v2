@@ -3,13 +3,13 @@
 importer="scene"
 importer_version=1
 type="PackedScene"
-uid="uid://bfqg20lehugrq"
-path="res://.godot/imported/d100_mesh.gltf-7d1851f45a2a127d4cb4a48ec9bca1ec.scn"
+uid="uid://bdyibixh434jj"
+path="res://.godot/imported/blender_grid.gltf-1b659f3880e557a7f80c96c42292bdc4.scn"
 
 [deps]
 
-source_file="res://resources/dice/d100/d100_mesh.gltf"
-dest_files=["res://.godot/imported/d100_mesh.gltf-7d1851f45a2a127d4cb4a48ec9bca1ec.scn"]
+source_file="res://resources/grid/Blender_grid/blender_grid.gltf"
+dest_files=["res://.godot/imported/blender_grid.gltf-1b659f3880e557a7f80c96c42292bdc4.scn"]
 
 [params]
 

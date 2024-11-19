@@ -27,14 +27,16 @@ var icon: Texture2D = null
 
 
 var is_dragged: bool : set = _set_dragged
+var is_selectable: bool : set = _set_selectable
 var is_selected: bool : set = _set_selected
 var is_preview: bool : set = _set_preview
 var is_rotated: bool : set = _set_rotated
 
+var next_update_ticks_msec := Time.get_ticks_msec()
 var target_position: Vector3
 var is_moving_to_target: bool
 var position_2d: Vector2 :
-	get: return Utils.v3_to_v2(position)
+	get: return Utils.v3_to_v2(global_position)
 var rotation_y: float :
 	get: return rotation.y
 
@@ -45,16 +47,19 @@ var properties_values: Dictionary :
 			property_values[property_name] = properties[property_name].value
 		return property_values
 
-@onready var elements: Node3D = $Elements
+var parent: Element : set = _set_parent
+
+@onready var elements_parent: Node3D = $Elements
 
 
 func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {}, _rotation_y := 0.0):
 	id = _id
 	level = _level
 	map = level.map
-	position = Vector3(_position_2d.x, 0, _position_2d.y)
-	rotation.y = _rotation_y
 	level.elements_parent.add_child(self)
+	global_position = Vector3(_position_2d.x, 0, _position_2d.y)
+	rotation.y = _rotation_y
+	is_selectable = Game.campaign.is_master
 	_init_property_list(_properties)
 	property_changed.connect(_on_property_changed)
 	return self
@@ -112,6 +117,9 @@ func update_properties():
 ## override
 func _set_dragged(value: bool) -> void:
 	is_dragged = value
+	
+	if not value:
+		Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
 
 
 ## override
@@ -122,6 +130,11 @@ func _set_rotated(value: bool) -> void:
 ## override
 func _set_preview(value: bool) -> void:
 	is_preview = value
+
+
+## override
+func _set_selectable(value: bool) -> void:
+	is_selectable = value
 
 
 ## override
@@ -136,9 +149,11 @@ func _set_selected(value: bool) -> void:
 		
 	elif Game.ui.tab_properties.element_selected == self:
 		Game.ui.tab_properties.element_selected = null
+		
+		is_dragged = false
 
 
-func get_target_hovered() -> Vector3:
+func _get_target_hovered() -> Vector3:
 	if is_rotated: 
 		return Utils.v2_to_v3(level.exact_position_hovered)
 		
@@ -164,56 +179,88 @@ func _physics_process(delta: float) -> void:
 		return
 		
 	if is_dragged:
+		set_multiplayer_authority(Game.server.player_id)
 		_dragged_process()
 	
 	if is_moving_to_target:
-		var vector_to_target := target_position - position
-		if not vector_to_target.is_zero_approx():
+		var vector_to_target := target_position - global_position
+		if vector_to_target.length() > 0.001:
 			var distance_to_target := vector_to_target.length()
 			var direction_to_target := vector_to_target.normalized()
 			const input_velocity: float = 1000
 			var velocity_to_target := clampf(delta * distance_to_target * input_velocity, 0, 10)
 			velocity = direction_to_target * velocity_to_target
 			if velocity and move_and_slide():
-				target_position = position
+				if is_multiplayer_authority():
+					var ticks_msec := Time.get_ticks_msec()
+					if next_update_ticks_msec < ticks_msec:
+						next_update_ticks_msec = ticks_msec + 100
+						Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation_y)
+						
+					target_position = global_position
 		else:
 			is_moving_to_target = false
+			if is_multiplayer_authority():
+				Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
 			
 			
 func _preview_process() -> void:
-	if Game.ui.is_mouse_over_scene_tab:
-		var target_hovered := get_target_hovered()
-		if is_rotated:
-			look_target(target_hovered)
-		else:
-			position = target_hovered
-	else:
-		position = Game.ui.selected_map.camera.focus_hint_3d.global_position
+	if not Game.ui.is_mouse_over_scene_tab:
+		global_position = Game.ui.selected_map.camera.focus_hint_3d.global_position
+		return
 		
-			
+	var target_hovered := _get_target_hovered()
+	if is_rotated:
+		look_target(target_hovered)
+	else:
+		global_position = target_hovered
+		target_position = target_hovered
+
+
 func _dragged_process() -> void:
 	is_rotated = Input.is_action_pressed("rotate")
 	
-	var target_hovered := get_target_hovered()
+	var target_hovered := _get_target_hovered()
+	var ticks_msec := Time.get_ticks_msec()
+	
+	# forced change
 	if multiplayer.is_server() and Input.is_key_pressed(KEY_CTRL):
 		if is_rotated:
 			look_target(target_hovered)
 		else:
-			position = target_hovered
+			global_position = target_hovered
+
+		if next_update_ticks_msec < ticks_msec:
+			next_update_ticks_msec = ticks_msec + 100
+			Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
 			
-		Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, position, rotation_y)
+		return
 	
+	# target change
 	if is_rotated:
 		look_target(target_hovered)
 	else:
+		var vector_to_target := target_hovered - global_position
+		if vector_to_target.length() < 0.001:
+			return
+			
 		target_position = target_hovered
 		is_moving_to_target = true
+	
+	if next_update_ticks_msec < ticks_msec:
+		next_update_ticks_msec = ticks_msec + 100
+		Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation_y)
 		
-	Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation_y)
+
+func _set_parent(value: Element):
+	reparent(value.elements_parent if value else level.elements_parent, true)
 
 
 ## override
 func remove():
+	for element: Element in elements_parent.get_children():
+		element.remove()
+		
 	queue_free()
 	level.elements.erase(id)
 	

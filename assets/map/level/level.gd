@@ -65,12 +65,12 @@ func get_entity_by_id(element_id) -> Entity:
 
 @onready var viewport_3d: Viewport3D = %Viewport3D
 @onready var floor_viewport := viewport_3d.floor_viewport
-@onready var floor_2d := %Floor2D as Floor2D
+@onready var floor_2d := viewport_3d.floor_2d
 
 @onready var refresh_light_timer: Timer = %RefreshLightTimer
-@onready var light_viewport: SubViewport = %LightViewport
-@onready var light_texture: ViewportTexture = light_viewport.get_texture()
-@onready var camera_3d: Camera3D = %Camera3D
+@onready var light_viewport: SubViewport = viewport_3d.light_viewport
+@onready var light_camera := viewport_3d.light_camera
+@onready var light_texture: ViewportTexture
 
 @onready var ceilling_mesh_instance_3d: MeshInstance3D = $Ceilling/MeshInstance3D
 
@@ -101,7 +101,9 @@ func _ready():
 	ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 	
 	state_machine.change_state("Idle")
-		
+	
+	#region light
+	light_texture = light_viewport.get_texture()
 	refresh_light_timer.wait_time = refresh_light_frecuency
 	refresh_light_timer.timeout.connect(_on_refreshed_light)
 	
@@ -112,6 +114,8 @@ func _ready():
 	#light_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	#floor_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
 	
+	#endregion
+
 
 func _on_refreshed_light():
 	
@@ -162,9 +166,7 @@ func build_point(tile: Vector2i, tile_data: Dictionary):
 	viewport_3d.tile_map_set_cell(tile, Vector2i(tile_data.f, tile_data.i))
 
 
-#########
-# input #
-#########
+#region input
 
 func _input(event):
 	if event is InputEventMouseButton:
@@ -172,9 +174,9 @@ func _input(event):
 			Debug.print_debug_message("Tile clicked: %s" % tile_hovered)
 
 
-###########
-# objects #
-###########
+#endregion
+
+#region objects 
 
 class Cell:
 	var index: int
@@ -187,9 +189,10 @@ class Cell:
 	func json() -> Dictionary:
 		return {"i": index, "f": frame}
 
-###############
-# Serializing #
-###############
+
+#endregion
+
+#region serializing
 
 func json() -> Dictionary:
 	var pos_x := rect.position.x
@@ -212,7 +215,10 @@ func json() -> Dictionary:
 		walls_data.append(wall.json())
 		
 	var elements_data := []
-	for element: Element in elements_parent.get_children():
+	for element: Element in elements.values():
+		if not element or not is_instance_valid(element):
+			Debug.print_warning_message("Element \"%s\" was freed" % element.id)
+			continue
 		if not element.is_preview:
 			elements_data.append(element.json())
 		
@@ -227,3 +233,6 @@ func json() -> Dictionary:
 	}
 	
 	return level
+
+
+#endregion

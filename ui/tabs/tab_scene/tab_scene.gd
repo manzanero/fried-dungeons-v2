@@ -85,4 +85,5 @@ func _on_camera_fps_enabled(value: bool):
 		state_machine.change_state("Idle")
 		builder_button_pressed.button_pressed = false
 	
+	get_tree().set_group("ligths", "visible", not value)
 	get_tree().set_group("base", "visible", not value)

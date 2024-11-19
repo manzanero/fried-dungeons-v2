@@ -14,11 +14,11 @@ var campaign_selected: Campaign :
 		
 
 var selected_map_slug: String :
-	get: 
-		return tree.get_selected().get_tooltip_text(0)
+	get: return tree.get_selected().get_tooltip_text(0)
 
 
-var cached_maps := {}
+var cached_maps := {}  # {map_slug: map_data}
+var selected_map := ""
 var players_map := ""
 
 
@@ -42,13 +42,13 @@ func _set_opened(map_item: TreeItem, value: bool):
 
 func _ready() -> void:
 	new_button.pressed.connect(_on_new_button_pressed)
-	scan_button.pressed.connect(_on_scan_button_pressed)
-	filter_line_edit.text_changed.connect(_on_filter_text_changed)
-	open_button.pressed.connect(_on_open_button_pressed)
+	scan_button.pressed.connect(reset)
+	filter_line_edit.text_changed.connect(refresh_tree)
+	open_button.pressed.connect(open_selected_map)
 	folder_button.pressed.connect(_on_folder_button_pressed)
 	remove_button.pressed.connect(_on_remove_button_pressed)
 	tree.hide_root = true
-	tree.item_activated.connect(_on_open_button_pressed)
+	tree.item_activated.connect(open_selected_map)
 	tree.button_clicked.connect(_on_button_clicked)
 
 
@@ -61,17 +61,7 @@ func _on_new_button_pressed():
 		"label": "Untitled Map" if siblings == 1 else "Untitled Map %s" % siblings
 	})
 	
-	scan(campaign_selected) 
-	refresh_tree()
-
-
-func _on_scan_button_pressed():
-	scan(campaign_selected)
-	refresh_tree()
-
-
-func _on_filter_text_changed(_new_text: String):
-	refresh_tree()
+	reset()
 
 
 func scan(campaign: Campaign):
@@ -81,6 +71,8 @@ func scan(campaign: Campaign):
 	
 	for map_slug in Utils.sort_strings_ended_with_number(campaign.maps):
 		cached_maps[map_slug] = campaign.get_map_data(map_slug)
+		
+		#if selected_map == ope
 
 
 func refresh_tree():
@@ -95,31 +87,40 @@ func refresh_tree():
 			continue
 			
 		var map_item = tree.create_item(root)
-		
-		if map_slug in Game.maps:
-			_set_opened(map_item, true)
 	
 		map_item.set_text(0, map_data.label)
 		map_item.set_tooltip_text(0, map_slug)
 		map_item.set_metadata(0, map_data)
+		
+		if map_slug in Game.maps:
+			_set_opened(map_item, true)
 	
+		if selected_map == map_slug:
+			map_item.select(0)
+		
 		map_item.add_button(0, PLAY_ICON, 0)
-		map_item.set_button_color(0, 0, Color.DARK_GRAY)
+		if players_map == map_slug:
+			map_item.set_button_color(0, 0, Color.GREEN)
+		else:
+			map_item.set_button_color(0, 0, Color.DARK_GRAY)
 
 
-func _on_open_button_pressed():
+func open_selected_map():
 	var map_item := tree.get_selected()
 	if not map_item:
 		return
 		
-	if selected_map_slug in Game.maps:
-		var tab_index = Game.maps.keys().find(selected_map_slug)
+	var map_slug: String = selected_map_slug
+	selected_map = map_slug
+		
+	if map_slug in Game.maps:
+		var tab_index = Game.maps.keys().find(map_slug)
 		Game.ui.scene_tabs.current_tab = tab_index
 		return
 
 	_set_opened(map_item, true)
 	var new_tab_index := Game.ui.scene_tabs.get_tab_count()
-	var tab_scene: TabScene = TAB_SCENE.instantiate().init(selected_map_slug, cached_maps[selected_map_slug])
+	var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, cached_maps[map_slug])
 	Game.ui.scene_tabs.current_tab = new_tab_index
 	
 	
@@ -128,15 +129,19 @@ func _on_open_button_pressed():
 
 func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:
 	item.select(column)
-	if selected_map_slug == players_map:
-		return
-		
-	_on_open_button_pressed()
-	for child_item in root.get_children(): 
-		child_item.set_button_color(0, 0, Color.DARK_GRAY)
+	var map_slug: String = selected_map_slug
 	
-	item.set_button_color(0, 0, Color.GREEN)
-	Game.server.request_map_notification.rpc(selected_map_slug)
+	if map_slug == players_map:
+		return
+	
+	selected_map = map_slug
+	open_selected_map()
+	
+	players_map = map_slug
+	Game.server.request_map_notification.rpc(map_slug)
+	
+	refresh_tree()
+	
 
 
 func _on_folder_button_pressed() -> void:
@@ -158,5 +163,10 @@ func _on_remove_button_pressed():
 	if selected_map_slug in Game.ui.opened_maps.keys():
 		Game.ui.scene_tabs.get_tab_control(Game.ui.opened_maps.keys().find(selected_map_slug)).queue_free()
 	
+	reset()
+	
+
+func reset():
 	scan(campaign_selected)
 	refresh_tree()
+	

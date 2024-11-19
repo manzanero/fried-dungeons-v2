@@ -28,6 +28,8 @@ signal mouse_exited()
 @export var max_zoom: float = 100
 @export var fp_fov: float = 75
 @export var tp_fov: float = 30
+@export var allow_fp: bool = true
+@export var allow_tp: bool = true
 @export var is_ortogonal : bool = false : 
 	set(value):
 		is_ortogonal = value
@@ -160,9 +162,9 @@ func _physics_process(delta: float) -> void:
 func _process(delta: float) -> void:
 
 	# fov transition
-	if not is_fps and zoom <= 0:
+	if allow_fp and not is_fps and zoom <= 0:
 		is_fps = true
-	if is_fps and zoom > 0:
+	if allow_tp and is_fps and zoom > 0:
 		is_fps = false
 	
 	# focus position

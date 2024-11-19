@@ -14,22 +14,18 @@ global uniform sampler2D wall_atlas : source_color,filter_nearest;
 varying float alpha;
 
 
+void vertex() {
+	VERTEX -= NORMAL * 0.001;
+}
+
+
 void fragment() {
 	vec4 albedo_tex = texture(wall_atlas, UV);
 	ALBEDO = 0.5 * albedo_tex.rgb;
 	NORMAL = -NORMAL;
 	
-	//if (int(FRAGCOORD.x) % 2 == 0) discard;
-	//if ((int(FRAGCOORD.y) + 1) % 2 == 0) discard;
-	
-	if (int(FRAGCOORD.y) % 2 == 0)
-		if (int(FRAGCOORD.x) % 2 == 0)
-		//if ((int(FRAGCOORD.y) + 1) % 2 == 0)
-			discard;
-	
-	if ((int(FRAGCOORD.x) + 1) % 2 == 0)
-		if ((int(FRAGCOORD.y) + 1) % 2 == 0)
-			discard;
+	if (int(FRAGCOORD.y) % 2 == 0) if (int(FRAGCOORD.x) % 2 == 0) discard;
+	if ((int(FRAGCOORD.x) + 1) % 2 == 0) if ((int(FRAGCOORD.y) + 1) % 2 == 0) discard;
 		
 	alpha = albedo_tex.a;
 
@@ -39,10 +35,8 @@ void fragment() {
 
 void light() {
 	if (is_master_view) {
-		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR * 1.;
+		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
 		ALPHA = alpha;
-	} else if (LIGHT_IS_DIRECTIONAL) {
-		
 	} else {
 		
 		// if is in view for any viewer

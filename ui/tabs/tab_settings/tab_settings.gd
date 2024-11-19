@@ -64,6 +64,8 @@ func _on_ambient_edited():
 	map.ambient_color = ambient_color_button.color
 	map.master_ambient_light = master_ambient_light_spin.value / 100.0
 	map.master_ambient_color = master_ambient_color_button.color
+	map.override_ambient_light = override_ambient_light_check.button_pressed
+	map.override_ambient_color = override_ambient_color_check.button_pressed
 	map.current_ambient_light = map.ambient_light
 	map.current_ambient_color = map.ambient_color
 	
@@ -96,3 +98,5 @@ func reset():
 	ambient_color_button.color = map.ambient_color
 	master_ambient_light_spin.set_value_no_signal(map.master_ambient_light * 100)
 	master_ambient_color_button.color = map.master_ambient_color
+	override_ambient_light_check.set_pressed_no_signal(map.override_ambient_light)
+	override_ambient_color_check.set_pressed_no_signal(map.override_ambient_color)

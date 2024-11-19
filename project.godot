@@ -38,7 +38,6 @@ window/size/viewport_width=1280
 window/size/viewport_height=720
 window/size/mode=2
 window/size/initial_position_type=2
-window/size/initial_screen=1
 window/size/extend_to_title=true
 mouse_cursor/custom_image="res://resources/cursors/cursor.png"
 mouse_cursor/custom_image_hotspot=Vector2(15, 15)
@@ -52,6 +51,7 @@ enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/
 info=""
 base=""
 entities=""
+lights=""
 
 [gui]
 

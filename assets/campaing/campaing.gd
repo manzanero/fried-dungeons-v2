@@ -88,4 +88,4 @@ func get_player_data(player_slug: String) -> Dictionary:
 	return Utils.load_json(get_player_path(player_slug).path_join("player.json"))
 
 func set_player(player_slug: String, player_data: Dictionary) -> void:
-	return Utils.dump_json(get_player_path(player_slug).path_join("player.json"), player_data)
+	return Utils.dump_json(get_player_path(player_slug).path_join("player.json"), player_data, 2)

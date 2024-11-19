@@ -71,6 +71,7 @@ func _ready() -> void:
 
 	# new campaign
 	exit_new_campaign_button.pressed.connect(func (): new_campaign_container.visible = false)
+	new_campaign_name_line_edit.text_submitted.connect(_on_new_campaign_add_button_pressed)
 	new_campaign_add_button.pressed.connect(_on_new_campaign_add_button_pressed)
 	
 	# join
@@ -147,11 +148,11 @@ func _on_new_campaign_add_button_pressed():
 	Utils.make_dirs(campaign_path)
 	Utils.dump_json(campaign_path.path_join("campaign.json"), {
 		"label": campaign_name,
-	})
+	}, 2)
 	Utils.make_dirs(campaign_path.path_join("maps/untitled-map"))
 	Utils.dump_json(campaign_path.path_join("maps/untitled-map/map.json"), {
 		"label": "Untitled Map"
-	})
+	}, 2)
 	Utils.make_dirs(campaign_path.path_join("players"))
 	Utils.make_dirs(campaign_path.path_join("resources"))
 	
@@ -169,16 +170,10 @@ func _on_host_button_pressed():
 	if not campaing_pressed:
 		return
 		
-	if Game.server.host_multiplayer():
-		return
-	
-	campaing_pressed.button_pressed = false
-	
+	Utils.reset_button_group(server_buttons_group)
+		
 	var campaign_slug: String = campaing_pressed.get_parent().slug
-	var campaign_path := "user://campaigns".path_join(campaign_slug).path_join("campaign.json")
-	var campaign_data := Utils.load_json(campaign_path)
-	
-	host_campaign_pressed.emit(campaign_data)
+	host_campaign_pressed.emit(campaign_slug)
 
 
 func _on_folder_button_pressed():
@@ -199,7 +194,7 @@ func _on_delete_campaign_button_pressed():
 
 func _on_join_server_button_pressed():
 	var server_pressed := server_buttons_group.get_pressed_button()
-	if not server_pressed:
+	if not is_instance_valid(server_pressed):
 		return
 	
 	Utils.reset_button_group(server_buttons_group)
@@ -212,13 +207,15 @@ func _on_join_server_button_pressed():
 
 func _on_folder_server_button_pressed():
 	var server_pressed := server_buttons_group.get_pressed_button()
-	if server_pressed:
-		Utils.open_in_file_manager("user://servers/%s" % server_pressed.get_parent().slug)
+	if not is_instance_valid(server_pressed):
+		return
+	
+	Utils.open_in_file_manager("user://servers/%s" % server_pressed.get_parent().slug)
 
 
 func _on_remove_server_button_pressed():
 	var server_pressed := server_buttons_group.get_pressed_button()
-	if not server_pressed:
+	if not is_instance_valid(server_pressed):
 		return
 	
 	server_button_pressed = server_pressed.get_parent()

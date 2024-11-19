@@ -27,7 +27,7 @@ void fragment() {
 }
 
 
-void light() {	
+void light() {
 	if (is_master_view) {
 		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
 		ALPHA = alpha;

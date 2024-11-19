@@ -17,7 +17,8 @@ func change_ambient(map_slug: String,
 	map.ambient_color = color
 	map.current_ambient_light = light
 	map.current_ambient_color = color
-	
+	map.current_ambient_light = light
+
 
 @rpc("any_peer", "reliable")
 func set_player_entity_control(player_slug: String, id: String, control: bool, entity_data := {}):
@@ -54,7 +55,7 @@ func change_resource_import_data(resource_type: String, resource_path: String, i
 
 @rpc("any_peer", "reliable")
 func load_theme_song(resource_path: String) -> void:
-	var sound := Game.manager.get_resource(CampaignResource.Type.SOUND, resource_path)
+	var _sound := Game.manager.get_resource(CampaignResource.Type.SOUND, resource_path)
 	Debug.print_info_message("Theme song \"%s\" loaded" % [resource_path])
 
 
@@ -198,6 +199,8 @@ func set_element_target(map_slug: String, level_index: int, id: String,
 	element.target_position = position_3d
 	element.rotation.y = rotation_y
 	element.is_moving_to_target = true
+	var mid = multiplayer.get_remote_sender_id()
+	element.set_multiplayer_authority(mid)
 	Debug.print_info_message("Element \"%s\" has new target position" % [element.id])
 
 
@@ -208,7 +211,7 @@ func set_element_position(map_slug: String, level_index: int, id: String,
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var element := _get_element_by_id(level, id); if not element: return
 	element.target_position = position_3d
-	element.position = position_3d
+	element.global_position = position_3d
 	element.rotation.y = rotation_y
 	element.is_moving_to_target = false
 	Debug.print_info_message("Element \"%s\" has new position" % [element.id])

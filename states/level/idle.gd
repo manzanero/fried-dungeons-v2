@@ -19,7 +19,10 @@ func _physics_process_state(_delta: float) -> String:
 	if Input.is_action_pressed("left_click"):
 		process_ground_hitted()
 		process_ceilling_hitted()
-		process_change_grid()
+		
+		if Input.is_key_pressed(KEY_SHIFT):
+			selector.column.visible = true
+			process_change_grid()
 	
 	process_element_selection()
 	process_element_movement()

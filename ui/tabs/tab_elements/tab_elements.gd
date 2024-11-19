@@ -59,16 +59,20 @@ func remove_element(element: Element):
 		element_item.free()
 		
 
-func _on_item_mouse_selected(_mouse_position: Vector2, _mouse_button_index: int):
-	Game.ui.tab_builder.reset()
-	
+func _on_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int):
 	var item_selected := tree.get_selected()
 	element_selected.emit(item_selected)
-	
 	var element: Element = item_selected.get_metadata(0)
-	if is_instance_valid(element.level.element_selected):
-		element.level.element_selected.is_selected = false
-	element.is_selected = true
+	
+	if mouse_button_index == MOUSE_BUTTON_LEFT:
+		Game.ui.tab_builder.reset()
+		if is_instance_valid(element.level.element_selected):
+			element.level.element_selected.is_selected = false
+		element.is_selected = true
+	
+	if mouse_button_index == MOUSE_BUTTON_RIGHT:
+		DisplayServer.clipboard_set(element.id)
+		Utils.temp_tooltip("Copied!", 1)
 
 
 func _on_item_activated():
@@ -112,4 +116,7 @@ func reset():
 	if Game.ui.selected_map and Game.ui.selected_map.selected_level:
 		var elements_data := Game.ui.selected_map.selected_level.elements
 		for element: Element in elements_data.values():
+			if not element or not is_instance_valid(element):
+				Debug.print_warning_message("Element \"%s\" was freed" % element.id)
+				continue
 			add_element(element)

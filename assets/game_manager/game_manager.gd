@@ -42,19 +42,18 @@ func _ready() -> void:
 	ui.scene_tabs.get_tab_bar().tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ALWAYS
 	ui.scene_tabs.get_tab_bar().tab_close_pressed.connect(_on_tab_close_pressed)
 	ui.scene_tabs.tab_changed.connect(func (_tab: int):
+		ui.tab_world.reset()
 		ui.tab_builder.reset()
 		ui.tab_elements.reset()
 		ui.tab_properties.reset()
 		ui.tab_settings.reset()
 	)
 	
-	Game.maps.clear()
-	
 	Game.flow = ui.flow_controller
 
 
 func save_campaign():
-	if not Game.campaign.is_master:
+	if not Game.campaign or not Game.campaign.is_master:
 		return
 		
 	var campaign := Game.campaign; 
@@ -63,11 +62,12 @@ func save_campaign():
 
 	Utils.make_dirs(campaign.maps_path)
 	for map_slug in Game.maps:
-		save_map(Game.maps[map_slug])
+		var map: Map = Game.maps[map_slug] 
+		save_map(map)
 		
 	var campaign_data := campaign.json()
 	
-	Utils.dump_json(campaign.campaign_path.path_join("campaign.json"), campaign_data)
+	Utils.dump_json(campaign.campaign_path.path_join("campaign.json"), campaign_data, 2)
 	
 	Debug.print_info_message("Campaign \"%s\" saved" % Game.campaign.slug)
 	
@@ -92,8 +92,8 @@ func save_map(map: Map):
 
 
 func _on_reload_campaign_pressed():
-	if Game.campaign.is_master:
-		_on_host_campaign_pressed(Game.campaign.campaign_data)
+	if Game.campaign and Game.campaign.is_master:
+		_on_host_campaign_pressed(Game.campaign.slug)
 	else:
 		var main_menu := Game.ui.main_menu
 		_on_join_server_pressed(
@@ -102,37 +102,50 @@ func _on_reload_campaign_pressed():
 				main_menu.password_line_edit.text)
 
 
-func _on_host_campaign_pressed(campaign_data: Dictionary):
+func _on_host_campaign_pressed(campaign_slug: String):
+	var campaign_path := "user://campaigns".path_join(campaign_slug).path_join("campaign.json")
+	var campaign_data := Utils.load_json(campaign_path)
+	
+	if Game.server.host_multiplayer():
+		return
+		
 	var campaign := Campaign.new(true, campaign_data.label, campaign_data.get("imports", {}))
 	Game.campaign = campaign
 	
 	Game.ui.ide.visible = true
 	Game.ui.main_menu.visible = false
 	
-	set_profile(true)
-	reset()
-	
 	Game.ui.tab_world.campaign_selected = campaign
 	Game.ui.tab_players.campaign_selected = campaign
 	
-	# Get map to open
-	var selected_map: String = campaign.maps[0]
-	if campaign_data.has("selected_map"):
-		selected_map = campaign_data.selected_map
-	var map_data := Utils.load_json(campaign.maps_path.path_join(selected_map).path_join("map.json"))
-	if not map_data.has("label"):
-		selected_map = campaign.maps[0]
-		map_data = Utils.load_json(campaign.maps_path.path_join(selected_map).path_join("map.json"))
+	set_profile(true)
+	reset()
 	
 	await get_tree().process_frame
 	
-	TAB_SCENE.instantiate().init(selected_map, map_data)
+	var selected_map: String = campaign_data.selected_map
+	if selected_map not in campaign.maps:
+		selected_map = campaign.maps[0]
+		
+	var players_map: String = campaign_data.players_map
+	if players_map not in campaign.maps:
+		players_map = selected_map
+		 
+	TAB_SCENE.instantiate().init(players_map, campaign.get_map_data(players_map))
+
+	if players_map != selected_map:
+		TAB_SCENE.instantiate().init(selected_map, campaign.get_map_data(selected_map))
+		Game.ui.scene_tabs.current_tab = 1
+		
+	Game.ui.tab_world.players_map = players_map
+	Game.ui.tab_world.selected_map = selected_map
 	Game.ui.tab_world.refresh_tree()
 	
 	# init jukebox
 	for sound_data in campaign_data.get("jukebox", {}).get("sounds", []):
 		var sound := get_resource(CampaignResource.Type.SOUND, sound_data.sound)
-		Game.ui.tab_jukebox.add_sound(sound, sound_data.loop, sound_data.get("position", 0.0))
+		if sound:
+			Game.ui.tab_jukebox.add_sound(sound, sound_data.loop, sound_data.get("position", 0.0))
 		
 
 func _on_join_server_pressed(host: String, username: String, password: String):
@@ -152,6 +165,11 @@ func _on_server_disconected():
 func _on_tab_close_pressed(tab_index: int):
 	var tab_scene: TabScene = Game.ui.scene_tabs.get_tab_control(tab_index)
 	var map := tab_scene.map
+	
+	if map.slug == Game.ui.tab_world.players_map:
+		Utils.temp_tooltip("Player's map cannot be close. Send them to another map")
+		return
+	
 	save_map(map)
 	Game.maps.erase(map.slug)
 	tab_scene.queue_free()
@@ -184,8 +202,12 @@ func reset():
 	Game.ui.tab_instancer.reset()
 	Game.ui.tab_properties.reset()
 	Game.ui.tab_messages.reset()
+	
+	Game.maps.clear()
 	for tab_scene in Game.ui.scene_tabs.get_children():
 		tab_scene.queue_free()
+	
+	Game.flow.change_flow_state(FlowController.STATE.PLAYING)
 	
 	await get_tree().process_frame
 
@@ -206,6 +228,9 @@ func get_resource(resource_type, resource_path) -> CampaignResource:
 	var resource: CampaignResource = resources.get(resource_path)
 	if resource:
 		return resource
+		
+	if Game.campaign.is_master:
+		return
 	
 	# create a temporally empty resource
 	var import_data = Game.campaign.imports.get(resource_path, {})

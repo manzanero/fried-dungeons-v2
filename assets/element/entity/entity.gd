@@ -31,8 +31,8 @@ var transparency := 0. :
 var texture_resource_path := "" : set = _set_texture_resource_path
 var frame := BODY_FRAME_DEFAULT_VALUE :
 	set(value): frame = value; dirty_mesh = true
-var shape_scale := BODY_SCALE_DEFAULT_VALUE :
-	set(value): shape_scale = value; dirty_mesh = true
+var element_scale := SCALE_DEFAULT_VALUE :
+	set(value): element_scale = value; dirty_mesh = true
 var show_label: bool :
 	set(value): show_label = value; label_label.visible = value
 var show_base: bool :
@@ -61,13 +61,13 @@ const LABEL := "label"; const LABEL_DEFAULT_VALUE := "Entity Unknown"
 const SHOW_LABEL := "show label"; const SHOW_LABEL_DEFAULT_VALUE := false;
 const COLOR := "color"; const COLOR_DEFAULT_VALUE := Color.WHITE
 const DESCRIPTION := "description"; const DESCRIPTION_DEFAULT_VALUE := ""
-const SHOW_BASE = "show_base"; const SHOW_BASE_DEFAULT_VALUE := true
-const BASE_SIZE := "base_size"; const BASE_SIZE_DEFAULT_VALUE := 0.5
-const SHOW_BODY = "show_body"; const SHOW_BODY_DEFAULT_VALUE := true
-const BODY_SIZE := "body_size"; const BODY_SIZE_DEFAULT_VALUE := 1.0
 const BODY_TEXTURE := "body_texture"; const BODY_TEXTURE_DEFAULT_VALUE := ""
 const BODY_FRAME := "body_frame"; const BODY_FRAME_DEFAULT_VALUE := 0
-const BODY_SCALE := "body_scale"; const BODY_SCALE_DEFAULT_VALUE := 1.0
+const BODY_SIZE := "body_size"; const BODY_SIZE_DEFAULT_VALUE := 0.5
+const SHOW_BODY = "show_body"; const SHOW_BODY_DEFAULT_VALUE := true
+const BASE_SIZE := "base_size"; const BASE_SIZE_DEFAULT_VALUE := 0.5
+const SHOW_BASE = "show_base"; const SHOW_BASE_DEFAULT_VALUE := true
+const SCALE := "scale"; const SCALE_DEFAULT_VALUE := 1.0
 
 
 func _ready() -> void:
@@ -76,13 +76,13 @@ func _ready() -> void:
 		["info", SHOW_LABEL, Property.Hints.BOOL, SHOW_LABEL_DEFAULT_VALUE],
 		["info", COLOR, Property.Hints.COLOR, COLOR_DEFAULT_VALUE],
 		["info", DESCRIPTION, Property.Hints.STRING, DESCRIPTION_DEFAULT_VALUE],
-		["graphics", BASE_SIZE, Property.Hints.FLOAT, BASE_SIZE_DEFAULT_VALUE],
-		["graphics", SHOW_BASE, Property.Hints.BOOL, SHOW_BASE_DEFAULT_VALUE],
-		["graphics", BODY_SIZE, Property.Hints.FLOAT, BODY_SIZE_DEFAULT_VALUE],
-		["graphics", SHOW_BODY, Property.Hints.BOOL, SHOW_BODY_DEFAULT_VALUE],
 		["graphics", BODY_TEXTURE, Property.Hints.TEXTURE, BODY_TEXTURE_DEFAULT_VALUE],
 		["graphics", BODY_FRAME, Property.Hints.INTEGER, BODY_FRAME_DEFAULT_VALUE],
-		["graphics", BODY_SCALE, Property.Hints.FLOAT, BODY_SCALE_DEFAULT_VALUE],
+		["graphics", BODY_SIZE, Property.Hints.FLOAT, BODY_SIZE_DEFAULT_VALUE],
+		["graphics", SHOW_BODY, Property.Hints.BOOL, SHOW_BODY_DEFAULT_VALUE],
+		["graphics", BASE_SIZE, Property.Hints.FLOAT, BASE_SIZE_DEFAULT_VALUE],
+		["graphics", SHOW_BASE, Property.Hints.BOOL, SHOW_BASE_DEFAULT_VALUE],
+		["graphics", SCALE, Property.Hints.BOOL, SCALE_DEFAULT_VALUE],
 	]
 	selector_mesh_instance.visible = false
 
@@ -100,7 +100,11 @@ func change_property(property_name: String, new_value: Variant) -> void:
 			base_color = Color(color.r * luminance, color.g * luminance, color.b * luminance, color.a)
 		DESCRIPTION: description = new_value
 
-		# shape properties
+		# entity properties
+		BODY_TEXTURE: texture_resource_path = new_value
+		BODY_FRAME: frame = new_value
+		BODY_SIZE: body.scale = (Vector3.ONE * new_value * 2).clampf(0.5, 10)
+		SHOW_BODY: body.visible = new_value
 		BASE_SIZE:
 			base_mesh_instance.scale = Vector3(new_value * 2, 1, new_value * 2).clampf(0.5, 10)
 			selector_collider.scale = (Vector3.ONE * new_value * 2).clampf(0.5, 10)
@@ -108,11 +112,7 @@ func change_property(property_name: String, new_value: Variant) -> void:
 			selector_mesh.inner_radius = new_value / 2
 			selector_mesh.outer_radius = new_value / 2 + Game.U
 		SHOW_BASE: base.visible = new_value
-		BODY_SIZE: body.scale = (Vector3.ONE * new_value * 2).clampf(0.5, 10)
-		SHOW_BODY: body.visible = new_value
-		BODY_TEXTURE: texture_resource_path = new_value
-		BODY_FRAME: frame = new_value
-		BODY_SCALE: shape_scale = clamp(new_value, 0.125, 64)
+		SCALE: element_scale = clamp(new_value, 0.125, 64)
 	
 	
 func _set_texture_resource_path(_texture_resource_path: String) -> void:
@@ -191,7 +191,7 @@ func update_mesh():
 	var depth: int = texture_data.get("depth", ImportTexture.DEFAULT_DEPTH)
 	var tilted: bool = texture_data.get("tilted", ImportTexture.DEFAULT_TILTED)
 
-	var total_scale: float = shape_scale * texture_data.get("scale", ImportTexture.DEFAULT_SCALE)
+	var total_scale: float = element_scale * texture_data.get("scale", ImportTexture.DEFAULT_SCALE)
 	total_scale = clampf(total_scale, 0.125, 64)
 
 	# create mesh
@@ -205,7 +205,7 @@ func update_mesh():
 		slices_parent.position.y = size.y * 0.5 * Game.U * total_scale
 		slices_parent.rotation.x = 0
 	for i in range(slices):
-		var slice = SHAPE_SLICE.instantiate()
+		var slice: ShapeSlice = SHAPE_SLICE.instantiate()
 		slices_parent.add_child(slice)
 		slice.depth = depth
 		slice.double_sided = true
@@ -216,11 +216,20 @@ func update_mesh():
 		slice.position.z = i * depth * Game.U
 		slice.update_sprite_mesh()
 		slice.mesh = slice.generated_sprite_mesh.meshes[0]
+		slice.collider.set_collision_layer_value(Game.SELECTOR_LAYER, is_selectable)
+		slice.collider_shape.shape = slice.mesh.create_trimesh_shape()
 		slice.material_override = material
 		slice.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		
 	Debug.print_info_message("Mesh of Shape \"%s\" updated" % id)
 
+
+func _set_selectable(value: bool) -> void:
+	super._set_selectable(value)
+		
+	selector_collider.set_collision_layer_value(Game.SELECTOR_LAYER, value)
+	for slice in slices_parent.get_children():
+		slice.collider.set_collision_layer_value(Game.SELECTOR_LAYER, value)
 
 func _set_selected(value: bool) -> void:
 	super._set_selected(value)
@@ -249,7 +258,7 @@ func json():
 	return {
 		"type": "entity",
 		"id": id,
-		"position": Utils.v3_to_a2(position),
+		"position": Utils.v3_to_a2(global_position),
 		"rotation": snappedf(rotation_y, 0.001),
 		"properties": values,
 	}

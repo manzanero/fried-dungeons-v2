@@ -34,6 +34,7 @@ func _ready() -> void:
 	
 	tree.item_activated.connect(_on_item_activated)
 	tree.button_clicked.connect(_on_button_clicked)
+	tree.item_mouse_selected.connect(_on_item_mouse_selected)
 	
 	mute_button.button_pressed = false
 	_on_mute_button_pressed()
@@ -56,8 +57,12 @@ func _ready() -> void:
 func _on_audio_finished():
 	if not Game.campaign.is_master:
 		return
+	
+	var sound_playing = now_playing[0]
+	if not is_instance_valid(sound_playing):  # sometimes item is freed
+		return
 		
-	var sound_item: TreeItem = now_playing[0]
+	var sound_item: TreeItem = sound_playing
 	if sound_item.is_checked(0):
 		audio.play()
 		Game.server.rpcs.play_theme_song.rpc(item_resource(sound_item).path)
@@ -82,7 +87,6 @@ func add_sound(sound: CampaignResource, loop := false, from_position := 0.0) -> 
 	if from_position:
 		_set_playing(sound_item, true, from_position)
 	
-	#update_campaign()
 	return sound_item
 
 
@@ -123,11 +127,16 @@ func _on_item_activated():
 	
 
 func _set_playing(sound_item: TreeItem, is_playing: bool, from_position := 0.0) -> void:
+	var sound_path := item_resource(sound_item).abspath
+	if not FileAccess.file_exists(sound_path):
+		Utils.temp_tooltip("This file no longer exists")
+		return
+		
 	if is_playing:
 		sound_item.set_button_color(1, 0, Color.GREEN)
 		if sound_item not in now_playing:
 			now_playing.append(sound_item)
-			audio.file_path = item_resource(sound_item).abspath
+			audio.file_path = sound_path
 			audio.play(from_position)
 	else:
 		sound_item.set_button_color(1, 0, Color.DARK_GRAY)
@@ -147,6 +156,13 @@ func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_ind
 		_set_playing(child_item, false)
 	_set_playing(item, true)
 	Game.server.rpcs.play_theme_song.rpc(item_resource(item).path)
+	
+
+func _on_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int):
+	item_selected = tree.get_selected()
+	
+	if mouse_button_index == MOUSE_BUTTON_RIGHT:
+		item_selected.free()
 
 
 func _on_mute_button_pressed() -> void:

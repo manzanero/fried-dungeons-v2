@@ -19,6 +19,8 @@ var levels := {}
 @export var ambient_color := Color.WHITE
 @export var master_ambient_light := 0.25
 @export var master_ambient_color := Color.WHITE
+@export var override_ambient_light := true
+@export var override_ambient_color := false
 
 @export var is_master_view := false :
 	set(value):
@@ -77,9 +79,7 @@ func _ready():
 	# player type settings
 	is_master_view = Game.campaign.is_master
 	current_ambient_light = master_ambient_light if Game.campaign.is_master else ambient_light
-	
-	
-	
+	camera.allow_fp = Game.campaign.is_master
 
 func init_test_data():
 	loader.load_donjon_json_file("res://resources/maps/small/small_alt.json")
@@ -167,5 +167,7 @@ func json() -> Dictionary:
 			"ambient_color": Utils.color_to_html_color(ambient_color),
 			"master_ambient_light": master_ambient_light,
 			"master_ambient_color": Utils.color_to_html_color(master_ambient_color),
+			"override_ambient_light": override_ambient_light,
+			"override_ambient_color": override_ambient_color,
 		},
 	}

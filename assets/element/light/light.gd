@@ -54,12 +54,14 @@ var dirty_mesh := false
 @onready var inner_material := inner_mesh.get_surface_override_material(0) as StandardMaterial3D
 @onready var outer_mesh := %OuterMesh as MeshInstance3D
 @onready var outer_material := outer_mesh.get_surface_override_material(0) as StandardMaterial3D
+@onready var selector: StaticBody3D = %Selector
 @onready var line_renderer_3d := %LineRenderer3D as LineRenderer
 
 
 ## properties
 const LABEL := "label"; const LABEL_DEFAULT_VALUE := "Light Unknown"
 const DESCRIPTION := "description"; const DESCRIPTION_DEFAULT_VALUE := ""
+const PARENT := "parent"; const PARENT_DEFAULT_VALUE := ""
 const ACTIVE = "active"; const ACTIVE_DEFAULT_VALUE := true
 const RANGE = "range"; const RANGE_DEFAULT_VALUE := 5.0
 const COLOR = "color"; const COLOR_DEFAULT_VALUE := Color.WHITE
@@ -69,6 +71,7 @@ func _ready() -> void:
 	init_properties = [
 		["info", LABEL, Property.Hints.STRING, LABEL_DEFAULT_VALUE],
 		["info", DESCRIPTION, Property.Hints.STRING, DESCRIPTION_DEFAULT_VALUE],
+		["info", PARENT, Property.Hints.STRING, DESCRIPTION_DEFAULT_VALUE],
 		["physics", ACTIVE, Property.Hints.BOOL, ACTIVE_DEFAULT_VALUE],
 		["physics", RANGE, Property.Hints.FLOAT, RANGE_DEFAULT_VALUE],
 		["physics", COLOR, Property.Hints.COLOR, COLOR_DEFAULT_VALUE],
@@ -82,6 +85,7 @@ func change_property(property_name: String, new_value: Variant) -> void:
 	match property_name:
 		LABEL: label = new_value
 		DESCRIPTION: description = new_value
+		PARENT: parent = level.elements.get(new_value)
 		ACTIVE: active = new_value
 		RANGE: range_radius = new_value
 		COLOR: light_color = new_value
@@ -100,6 +104,12 @@ func _process(_delta: float) -> void:
 
 func update_light():
 	hidden = not is_watched
+
+
+func _set_selectable(value: bool) -> void:
+	super._set_selectable(value)
+		
+	selector.set_collision_layer_value(Game.SELECTOR_LAYER, value)
 
 
 func _set_selected(value: bool) -> void:
@@ -127,7 +137,7 @@ func json():
 	return {
 		"type": "light",
 		"id": id,
-		"position": Utils.v3_to_a2(position),
+		"position": Utils.v3_to_a2(global_position),
 		"rotation": snappedf(rotation_y, 0.001),
 		"properties": values,
 	}

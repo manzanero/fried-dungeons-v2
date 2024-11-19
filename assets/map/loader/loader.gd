@@ -324,10 +324,17 @@ func load_map(map_data: Dictionary):
 		map.ambient_color = Utils.html_color_to_color(map_data.settings.ambient_color)
 		map.master_ambient_light = map_data.settings.master_ambient_light
 		map.master_ambient_color = Utils.html_color_to_color(map_data.settings.master_ambient_color)
+		map.override_ambient_light = map_data.settings.get("override_ambient_light", true)
+		map.override_ambient_color = map_data.settings.get("override_ambient_color", false)
 		
-		if not Game.campaign.is_master:
-			map.current_ambient_light = map.ambient_light
-			map.current_ambient_color = map.ambient_color
+		map.current_ambient_light = map.ambient_light
+		map.current_ambient_color = map.ambient_color
+		
+		if Game.campaign.is_master:
+			if map.override_ambient_light:
+				map.current_ambient_light = map.master_ambient_light
+			if map.override_ambient_color:
+				map.current_ambient_color = map.master_ambient_color
 			
 		## settings
 		#Game.ui.tab_settings.title_edit.text = map.label

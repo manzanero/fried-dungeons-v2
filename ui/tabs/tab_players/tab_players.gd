@@ -54,7 +54,7 @@ func _on_new_button_pressed():
 	var player_unique_path := player_path if siblings == 1 else "%s-%s" % [player_path, siblings]
 	var username := "Unnamed Player" if siblings == 1 else "Unnamed Player %s" % siblings
 	Utils.dump_json(player_unique_path.path_join("player.json"), {
-			"username": username,"password": "","entities": {}})
+			"username": username,"password": "","entities": {}}, 2)
 	
 	scan(campaign_selected) 
 	

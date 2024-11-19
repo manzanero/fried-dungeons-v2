@@ -11,7 +11,7 @@ const PORT := 2020
 @export var rpcs: Rpcs
 
 var peer: ENetMultiplayerPeer
-var server_address := "127.0.0.0"
+var server_address := "127.0.0.1"
 var server_port := PORT
 var player_id := 1
 var player_username := "Unnamed"
@@ -103,6 +103,8 @@ func _on_connected_fail():
 	multiplayer.multiplayer_peer = null
 	players.clear()
 	server_disconnected.emit()
+		
+	Game.manager.reset()
 
 
 func _on_server_disconnected():
@@ -110,6 +112,8 @@ func _on_server_disconnected():
 	multiplayer.multiplayer_peer = null
 	players.clear()
 	server_disconnected.emit()
+		
+	Game.manager.reset()
 	
 
 ## rpcs
@@ -132,11 +136,8 @@ func _is_player_registered(username, password) -> bool:
 func set_up_player(id: int):
 	Debug.print_info_message("Setting up player %s" % id)
 	var campaign := Game.campaign
-	load_campaign.rpc_id(id, campaign.slug, campaign.json())
-	
-	var map_slug := Game.ui.tab_world.players_map
-	var map: Map = Game.maps[map_slug] if map_slug else Game.ui.selected_map
-	load_map.rpc_id(id, map.slug, map.json())
+	var campaign_data := campaign.json()
+	load_campaign.rpc_id(id, campaign.slug, campaign_data)
 
 
 @rpc("any_peer", "reliable")
@@ -150,7 +151,7 @@ func load_campaign(campaign_slug: String, campaign_data: Dictionary):
 	var server_error := Utils.dump_json(server_path.path_join("server.json"), {
 		"label": campaign_data.label,
 		"host": server_address,
-	})
+	}, 2)
 	if server_error:
 		Debug.print_error_message("Failed to create Server file")
 		
@@ -159,7 +160,7 @@ func load_campaign(campaign_slug: String, campaign_data: Dictionary):
 	var player_error := Utils.dump_json(player_path.path_join("player.json"), {
 		"username": player_username,
 		"password": player_password,
-	})
+	}, 2)
 	if player_error:
 		Debug.print_error_message("Failed to create Player file")
 
@@ -170,6 +171,10 @@ func load_campaign(campaign_slug: String, campaign_data: Dictionary):
 			await sound.resource_loaded
 		var from_position: float = sound_data.get("position", 0.0)
 		Game.ui.tab_jukebox.add_sound(sound, sound_data.loop, from_position)
+	
+	Game.flow.change_flow_state(campaign_data.state)
+	
+	request_map.rpc_id(1, campaign_data.players_map)
 
 
 @rpc("any_peer", "reliable")
@@ -181,7 +186,9 @@ func request_map_notification(map_slug: String):
 func request_map(map_slug: String):
 	Debug.print_info_message("Requested map %s" % map_slug)
 	var id := multiplayer.get_remote_sender_id()
-	var map_data: Dictionary = Game.maps[map_slug].json()
+	var map: Map = Game.maps.get(map_slug)
+	var map_data: Dictionary = map.json()
+	
 	load_map.rpc_id(id, map_slug, map_data)
 
 
@@ -223,6 +230,7 @@ func load_player(player_slug: String, player_data: Dictionary):
 		var entity: Entity = Game.ui.selected_map.selected_level.elements.get(entity_id)
 		if entity:
 			entity.eye.visible = true
+			entity.is_selectable = true
 			Game.ui.selected_map.camera.position_2d = entity.position_2d
 			Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, entity_id])
 

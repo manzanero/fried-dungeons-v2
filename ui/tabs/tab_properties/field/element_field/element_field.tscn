@@ -1,0 +1,14 @@
+[gd_scene load_steps=3 format=3 uid="uid://b3l2h2ptuktx"]
+
+[ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_wt1fj"]
+[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/element_field/element_field.gd" id="2_34ttf"]
+
+[node name="ElementField" instance=ExtResource("1_wt1fj")]
+offset_bottom = 31.0
+script = ExtResource("2_34ttf")
+
+[node name="LineEdit" type="LineEdit" parent="H" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+select_all_on_focus = true

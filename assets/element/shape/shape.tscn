@@ -1,8 +1,9 @@
-[gd_scene load_steps=9 format=3 uid="uid://curk4vjra3lx5"]
+[gd_scene load_steps=13 format=3 uid="uid://curk4vjra3lx5"]
 
 [ext_resource type="Script" path="res://assets/element/shape/shape.gd" id="1_spwb5"]
 [ext_resource type="PackedScene" uid="uid://upfcm5wo63fj" path="res://assets/element/shape/shape_slice/shape_slice.tscn" id="2_4juhu"]
 [ext_resource type="Shader" uid="uid://ccvt7m473m6ql" path="res://assets/element/shape/materials/shader.tres" id="2_r2us3"]
+[ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="4_3klkt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_86s78"]
 resource_local_to_scene = true
@@ -11,6 +12,15 @@ shader = ExtResource("2_r2us3")
 shader_parameter/albedo = null
 shader_parameter/light = null
 shader_parameter/transparency = null
+
+[sub_resource type="ArrayMesh" id="ArrayMesh_tp7hu"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ieev2"]
+
+[sub_resource type="Resource" id="Resource_ofkfa"]
+script = ExtResource("4_3klkt")
+meshes = Array[ArrayMesh]([])
+material = SubResource("StandardMaterial3D_ieev2")
 
 [sub_resource type="TorusMesh" id="TorusMesh_ppx5h"]
 resource_local_to_scene = true
@@ -36,7 +46,10 @@ outline_size = 8
 outline_color = Color(0, 0, 0, 1)
 
 [node name="Shape" type="CharacterBody3D" node_paths=PackedStringArray("slices_parent")]
-collision_layer = 134807553
+collision_layer = 589825
+axis_lock_linear_y = true
+axis_lock_angular_x = true
+axis_lock_angular_z = true
 script = ExtResource("1_spwb5")
 slices_parent = NodePath("Slices")
 material = SubResource("ShaderMaterial_86s78")
@@ -47,6 +60,8 @@ material = SubResource("ShaderMaterial_86s78")
 unique_name_in_owner = true
 
 [node name="SpriteMeshInstance" parent="Slices" instance=ExtResource("2_4juhu")]
+mesh = SubResource("ArrayMesh_tp7hu")
+generated_sprite_mesh = SubResource("Resource_ofkfa")
 
 [node name="SelectorMeshInstance" type="MeshInstance3D" parent="."]
 unique_name_in_owner = true

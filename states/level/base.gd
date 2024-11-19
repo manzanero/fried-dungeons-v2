@@ -69,24 +69,17 @@ func process_element_selection():
 	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
 	if hit_info:
 		var collider = hit_info["collider"]
-		var element_hitted := collider as Element
-		if not element_hitted:
-			element_hitted = collider.get_parent() as Element
+		while not collider is Element:
+			collider = collider.get_parent()
+		
+		var element_hitted: Element = collider
+		select(element_hitted)
+		Game.handled_input = true
 		
 		Debug.print_debug_message("Element hitted \"%s\"" % element_hitted.id)
 		
-		if Game.campaign.is_master or element_hitted.id in Game.player.entities:
-			select(element_hitted)
-			Game.handled_input = true
-			
-		elif is_instance_valid(level.element_selected): 
-			level.element_selected.is_selected = false
-			level.element_selected.is_dragged = false
-			level.element_selected = null
-		
 	elif is_instance_valid(level.element_selected): 
 		level.element_selected.is_selected = false
-		level.element_selected.is_dragged = false
 		level.element_selected = null
 
 
@@ -116,14 +109,14 @@ func process_entity_follow():
 	if not level.element_selected:
 		return
 		
-	if Input.is_action_just_pressed("shift_left_click"):
-		level.follower_entity = level.element_selected
-		level.element_selected = null
-		
-		#if level.follower_entity:
-			#map.camera.target_position.global_position = level.follower_entity.global_position + 0.5 * Vector3.UP
-			#map.camera.focus.position = level.follower_entity.global_position + 0.5 * Vector3.UP
-			#map.camera.eyes.position.z = 0
+	#if Input.is_action_just_pressed("shift_left_click"):
+		#level.follower_entity = level.element_selected
+		#level.element_selected = null
+		#
+		##if level.follower_entity:
+			##map.camera.target_position.global_position = level.follower_entity.global_position + 0.5 * Vector3.UP
+			##map.camera.focus.position = level.follower_entity.global_position + 0.5 * Vector3.UP
+			##map.camera.eyes.position.z = 0
 
 
 func process_ground_hitted():
