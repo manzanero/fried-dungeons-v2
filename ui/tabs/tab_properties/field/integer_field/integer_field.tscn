@@ -1,20 +1,15 @@
-[gd_scene load_steps=3 format=3 uid="uid://cvlbw6pjdx7sd"]
+[gd_scene load_steps=4 format=3 uid="uid://cvlbw6pjdx7sd"]
 
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_un0cd"]
-[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/float_field/float_field.gd" id="2_rew2y"]
+[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/integer_field/integer_field.gd" id="2_lnkne"]
+[ext_resource type="PackedScene" uid="uid://hwvpsllrlqk6" path="res://ui/tabs/tab_properties/field/number_edit/NumberEdit.tscn" id="3_2du62"]
 
 [node name="IntegerField" instance=ExtResource("1_un0cd")]
 size_flags_vertical = 4
-script = ExtResource("2_rew2y")
+script = ExtResource("2_lnkne")
 
-[node name="SpinBox" type="SpinBox" parent="H" index="1"]
+[node name="NumberEdit" parent="H" index="1" instance=ExtResource("3_2du62")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 rounded = true
-allow_greater = true
-allow_lesser = true
-alignment = 2
-update_on_text_changed = true
-custom_arrow_step = 1.0
-select_all_on_focus = true

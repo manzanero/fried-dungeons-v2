@@ -9,6 +9,7 @@ script = ExtResource("2_tbtjr")
 
 [node name="CheckBox" type="CheckBox" parent="H" index="1"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 text = "Yes"

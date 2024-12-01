@@ -8,6 +8,14 @@ func change_flow_state(state: FlowController.STATE):
 
 
 @rpc("any_peer", "reliable")
+func change_map_slug(old_slug: String, new_slug: String):
+	var map: Map = _get_map_by_slug(old_slug); if not map: return
+	Game.maps.erase(old_slug)
+	Game.maps[new_slug] = map
+	map.slug = new_slug
+
+
+@rpc("any_peer", "reliable")
 func change_ambient(map_slug: String, 
 		light: float, color: Color, master_light: float, master_color: Color):
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
@@ -24,14 +32,15 @@ func change_ambient(map_slug: String,
 func set_player_entity_control(player_slug: String, id: String, control: bool, entity_data := {}):
 	if Game.player.slug != player_slug: return
 	var level := Game.ui.selected_map.selected_level
-	var element := _get_element_by_id(level, id); if not element: return
-	element.eye.visible = control
+	var entity := _get_element_by_id(level, id); if not entity: return
+	entity.eye.visible = control
+	entity.is_selectable = control
 	if control:
 		Game.player.entities[id] = entity_data
 	else:
 		Game.player.entities.erase(id)
-		if Game.ui.selected_map.selected_level.element_selected == element:
-			element.is_selected = false
+		if Game.ui.selected_map.selected_level.element_selected == entity:
+			entity.is_selected = false
 
 	Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, id])
 
@@ -46,8 +55,8 @@ func create_player_signal(map_slug: String, level_index: int, position_2d: Vecto
 
 
 @rpc("any_peer", "reliable")
-func change_resource_import_data(resource_type: String, resource_path: String, import_data: Dictionary) -> void:
-	Game.manager.set_resource(resource_type, resource_path, import_data)
+func change_resource(resource_type: String, resource_path: String, resource_data: Dictionary) -> void:
+	Game.manager.set_resource(resource_type, resource_path, resource_data)
 	Debug.print_info_message("Resource \"%s\" (%s) changed" % [resource_path, resource_type])
 
 
@@ -60,15 +69,19 @@ func load_theme_song(resource_path: String) -> void:
 
 
 @rpc("any_peer", "reliable")
-func play_theme_song(resource_path: String) -> void:
+func play_theme_song(resource_path: String, muted := false) -> void:
 	if not resource_path:
 		Game.ui.tab_jukebox.audio.stop()
 		Debug.print_info_message("Theme song stopped")
 		return
 		
 	var sound := Game.manager.get_resource(CampaignResource.Type.SOUND, resource_path)
+	Game.ui.tab_jukebox.now_playing = [Game.ui.tab_jukebox.sound_items[sound.path]]
 	Game.ui.tab_jukebox.audio.file_path = sound.abspath
+	Game.ui.tab_jukebox.set_audio_attributes(sound)
 	Game.ui.tab_jukebox.audio.play()
+	if muted:
+		Game.ui.tab_jukebox.audio.volume_db = linear_to_db(0)
 	Debug.print_info_message("Theme song \"%s\" started" % [resource_path])
 
 

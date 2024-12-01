@@ -10,11 +10,12 @@ var property_value : String :
 @onready var line_edit: LineEdit = %LineEdit
 
 
-func init(property_container: PropertyContainer, _property_name, _property_value := property_value):
-	property_container.property_fields.add_child(self)
-	property_name = _property_name
-	line_edit.text = _property_value
-	return self
+func set_param(_param_name: String, _param_value: Variant):
+	pass
+
+
+func set_value(_value: Variant):
+	property_value = _value
 
 
 func _ready() -> void:

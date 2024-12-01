@@ -6,7 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://cvlbw6pjdx7sd" path="res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn" id="3_bel5q"]
 [ext_resource type="PackedScene" uid="uid://ddbco64u43nkk" path="res://ui/tabs/tab_properties/field/float_field/float_field.tscn" id="4_y0l2e"]
 [ext_resource type="Texture2D" uid="uid://j04vtki4o5mi" path="res://resources/textures/bookshelf.png" id="5_c56ql"]
-[ext_resource type="PackedScene" uid="uid://d0ch44utbuhby" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn" id="6_rnfph"]
+[ext_resource type="PackedScene" uid="uid://cj4varycy448i" path="res://ui/tabs/tab_properties/field/choice_field/choice_field.tscn" id="7_5m7st"]
 [ext_resource type="Texture2D" uid="uid://deshy6dmtqy4c" path="res://resources/entity_textures/monsters/field/field_501.png" id="7_8agyp"]
 
 [node name="ImportTexture" type="BoxContainer"]
@@ -20,135 +20,123 @@ size_flags_vertical = 3
 theme_override_constants/separation = 32
 script = ExtResource("1_2wa7l")
 
-[node name="V" type="BoxContainer" parent="."]
-custom_minimum_size = Vector2(180.87, 0)
+[node name="ScrollContainer" type="ScrollContainer" parent="."]
 layout_mode = 2
-theme_override_constants/separation = 8
-vertical = true
+horizontal_scroll_mode = 0
 
-[node name="Label" type="Label" parent="V"]
-visible = false
-layout_mode = 2
-size_flags_horizontal = 2
-size_flags_vertical = 0
-text = "Texture:"
-
-[node name="TextureImportFieldsContainer" parent="V" instance=ExtResource("1_0a7i1")]
+[node name="TextureImportFieldsContainer" parent="ScrollContainer" instance=ExtResource("1_0a7i1")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(216.705, 0)
 layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 
-[node name="CollapseButton" parent="V/TextureImportFieldsContainer" index="0"]
+[node name="CollapseButton" parent="ScrollContainer/TextureImportFieldsContainer" index="0"]
 visible = false
 text = "Ambient"
 
-[node name="Background" parent="V/TextureImportFieldsContainer/M" index="0"]
+[node name="Background" parent="ScrollContainer/TextureImportFieldsContainer/M" index="0"]
 visible = false
 
-[node name="SizeField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="0" instance=ExtResource("2_f4wgr")]
+[node name="SizeField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="0" instance=ExtResource("2_f4wgr")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 
-[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/SizeField/H" index="0"]
-text = "Size
-"
+[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SizeField/H" index="0"]
+text = "Size"
 
-[node name="XSpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/SizeField/H/C" index="0"]
+[node name="XNumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SizeField/H/C" index="0"]
+suffix = "px"
+rounded = true
 min_value = 1.0
 max_value = 64.0
 step = 1.0
-value = 16.0
-rounded = true
-allow_greater = false
 allow_lesser = false
-suffix = "px"
-custom_arrow_step = 1.0
+text = "16"
 
-[node name="YSpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/SizeField/H/C" index="1"]
+[node name="YNumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SizeField/H/C" index="1"]
+suffix = "px"
+rounded = true
 min_value = 1.0
 max_value = 64.0
 step = 1.0
-value = 16.0
-rounded = true
-allow_greater = false
 allow_lesser = false
+text = "16"
+
+[node name="ThicknessField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="1" instance=ExtResource("3_bel5q")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ThicknessField/H" index="0"]
+text = "Thickness"
+
+[node name="NumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ThicknessField/H" index="1"]
 suffix = "px"
-custom_arrow_step = 1.0
-
-[node name="FramesField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="1" instance=ExtResource("3_bel5q")]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 31)
-layout_mode = 2
-
-[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/FramesField/H" index="0"]
-text = "Frames"
-
-[node name="SpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/FramesField/H" index="1"]
+has_arrows = true
 min_value = 1.0
 max_value = 64.0
-value = 1.0
-allow_greater = false
-allow_lesser = false
+text = "1"
 
-[node name="SlicesField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="2" instance=ExtResource("3_bel5q")]
+[node name="ScaleField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="2" instance=ExtResource("4_y0l2e")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 
-[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/SlicesField/H" index="0"]
-text = "Slices"
-
-[node name="SpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/SlicesField/H" index="1"]
-min_value = 1.0
-max_value = 64.0
-value = 1.0
-allow_greater = false
-allow_lesser = false
-
-[node name="DepthField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="3" instance=ExtResource("3_bel5q")]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 31)
-layout_mode = 2
-
-[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/DepthField/H" index="0"]
-text = "Depth"
-
-[node name="SpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/DepthField/H" index="1"]
-min_value = 1.0
-max_value = 64.0
-value = 1.0
-allow_greater = false
-allow_lesser = false
-suffix = "px"
-
-[node name="ScaleField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="4" instance=ExtResource("4_y0l2e")]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 31)
-layout_mode = 2
-
-[node name="H" parent="V/TextureImportFieldsContainer/M/PropertyFields/ScaleField" index="0"]
+[node name="H" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ScaleField" index="0"]
 size_flags_horizontal = 3
 
-[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/ScaleField/H" index="0"]
+[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ScaleField/H" index="0"]
 text = "Scale
 "
 
-[node name="SpinBox" parent="V/TextureImportFieldsContainer/M/PropertyFields/ScaleField/H" index="1"]
-min_value = 0.125
-max_value = 64.0
-step = 0.125
-value = 0.5
-allow_greater = false
-allow_lesser = false
-suffix = "u"
+[node name="NumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ScaleField/H" index="1"]
+suffix = "%"
+has_slider = true
+has_arrows = true
+rounded = true
+min_value = 5.0
+max_value = 200.0
+step = 5.0
+allow_greater = true
+text = "50"
 
-[node name="TiltedField" parent="V/TextureImportFieldsContainer/M/PropertyFields" index="5" instance=ExtResource("6_rnfph")]
+[node name="FramesField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="3" instance=ExtResource("3_bel5q")]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 
-[node name="Label" parent="V/TextureImportFieldsContainer/M/PropertyFields/TiltedField/H" index="0"]
-text = "Tilted"
+[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/FramesField/H" index="0"]
+text = "Frames"
+
+[node name="NumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/FramesField/H" index="1"]
+has_arrows = true
+min_value = 1.0
+max_value = 16.0
+text = "1"
+
+[node name="SlicesField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="4" instance=ExtResource("3_bel5q")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SlicesField/H" index="0"]
+text = "Slices"
+
+[node name="NumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SlicesField/H" index="1"]
+has_arrows = true
+min_value = 1.0
+max_value = 16.0
+text = "1"
+
+[node name="DirectionField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="5" instance=ExtResource("7_5m7st")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/DirectionField/H" index="0"]
+text = "Direction"
+
+[node name="OptionButton" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/DirectionField/H" index="1"]
+popup/item_0/text = "front"
+popup/item_1/text = "top"
+popup/item_2/text = "side"
 
 [node name="V2" type="BoxContainer" parent="."]
 layout_mode = 2
@@ -212,11 +200,25 @@ layout_mode = 2
 focus_mode = 0
 text = "Reset"
 
-[node name="S" type="ScrollContainer" parent="."]
+[node name="V" type="BoxContainer" parent="."]
+custom_minimum_size = Vector2(180.87, 0)
 layout_mode = 2
 size_flags_horizontal = 3
+theme_override_constants/separation = 0
+vertical = true
 
-[node name="FullTexture" type="TextureRect" parent="S"]
+[node name="Label" type="Label" parent="V"]
+layout_mode = 2
+size_flags_horizontal = 2
+size_flags_vertical = 0
+text = "Texture:"
+
+[node name="S" type="ScrollContainer" parent="V"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="FullTexture" type="TextureRect" parent="V/S"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
@@ -226,10 +228,10 @@ texture = ExtResource("5_c56ql")
 expand_mode = 1
 stretch_mode = 4
 
-[editable path="V/TextureImportFieldsContainer"]
-[editable path="V/TextureImportFieldsContainer/M/PropertyFields/SizeField"]
-[editable path="V/TextureImportFieldsContainer/M/PropertyFields/FramesField"]
-[editable path="V/TextureImportFieldsContainer/M/PropertyFields/SlicesField"]
-[editable path="V/TextureImportFieldsContainer/M/PropertyFields/DepthField"]
-[editable path="V/TextureImportFieldsContainer/M/PropertyFields/ScaleField"]
-[editable path="V/TextureImportFieldsContainer/M/PropertyFields/TiltedField"]
+[editable path="ScrollContainer/TextureImportFieldsContainer"]
+[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SizeField"]
+[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ThicknessField"]
+[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ScaleField"]
+[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/FramesField"]
+[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SlicesField"]
+[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/DirectionField"]

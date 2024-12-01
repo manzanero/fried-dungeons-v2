@@ -59,23 +59,60 @@ var dirty_mesh := false
 
 
 ## properties
-const LABEL := "label"; const LABEL_DEFAULT_VALUE := "Light Unknown"
-const DESCRIPTION := "description"; const DESCRIPTION_DEFAULT_VALUE := ""
-const PARENT := "parent"; const PARENT_DEFAULT_VALUE := ""
-const ACTIVE = "active"; const ACTIVE_DEFAULT_VALUE := true
-const RANGE = "range"; const RANGE_DEFAULT_VALUE := 5.0
-const COLOR = "color"; const COLOR_DEFAULT_VALUE := Color.WHITE
+const LABEL := "label"
+const DESCRIPTION := "description"
+const PARENT := "parent"
+const ACTIVE = "active"
+const RANGE = "range"
+const COLOR = "color"
 
 
 func _ready() -> void:
-	init_properties = [
-		["info", LABEL, Property.Hints.STRING, LABEL_DEFAULT_VALUE],
-		["info", DESCRIPTION, Property.Hints.STRING, DESCRIPTION_DEFAULT_VALUE],
-		["info", PARENT, Property.Hints.STRING, DESCRIPTION_DEFAULT_VALUE],
-		["physics", ACTIVE, Property.Hints.BOOL, ACTIVE_DEFAULT_VALUE],
-		["physics", RANGE, Property.Hints.FLOAT, RANGE_DEFAULT_VALUE],
-		["physics", COLOR, Property.Hints.COLOR, COLOR_DEFAULT_VALUE],
-	]
+	init_properties = {
+		LABEL: {
+			"container": "info",
+			"hint": Property.Hints.STRING,
+			"params": {},
+			"default": "Light Unknown",
+		},
+		DESCRIPTION: {
+			"container": "info",
+			"hint": Property.Hints.STRING,
+			"params": {},
+			"default": "",
+		},
+		PARENT: {
+			"container": "info",
+			"hint": Property.Hints.STRING,
+			"params": {},
+			"default": "",
+		},
+		ACTIVE: {
+			"container": "physics",
+			"hint": Property.Hints.BOOL,
+			"params": {},
+			"default": true,
+		},
+		RANGE: {
+			"container": "physics",
+			"hint": Property.Hints.FLOAT,
+			"params":  {
+				"suffix": "u",
+				"has_slider": true,
+				"has_arrows": true,
+				"min_value": 1,
+				"max_value": 10,
+				"step": 1,
+			},
+			"default": 5,
+		},
+		COLOR: {
+			"container": "physics",
+			"hint": Property.Hints.COLOR,
+			"params": {},
+			"default": Color.WHITE,
+		},
+	}
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
 	line_renderer_3d.points.append_array([Vector3.ZERO, Vector3.UP * 0.75])
@@ -125,9 +162,7 @@ func remove():
 		level.active_lights.erase(self)
 
 
-###############
-# Serializing #
-###############
+#region Serializing
 
 func json():
 	var values := {}
@@ -141,3 +176,6 @@ func json():
 		"rotation": snappedf(rotation_y, 0.001),
 		"properties": values,
 	}
+
+
+#endregion

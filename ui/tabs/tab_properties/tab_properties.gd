@@ -10,6 +10,7 @@ const FLOAT_FIELD := preload("res://ui/tabs/tab_properties/field/float_field/flo
 const INTEGER_FIELD := preload("res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn")
 const VECTOR_2_FIELD := preload("res://ui/tabs/tab_properties/field/vector_2_field/vector_2_field.tscn")
 const TEXTURE_FIELD := preload("res://ui/tabs/tab_properties/field/texture_field/texture_field.tscn")
+const CHOICE_FIELD := preload("res://ui/tabs/tab_properties/field/choice_field/choice_field.tscn")
 
 
 var element_selected: Element : set = _set_element_selected
@@ -44,21 +45,23 @@ func _set_element_selected(element: Element):
 		var field: PropertyField
 		match property.hint:
 			Element.Property.Hints.STRING:
-				field = STRING_FIELD.instantiate().init(property_container, property_name, property.value)
+				field = STRING_FIELD.instantiate().init(property_container, property_name, property)
 			Element.Property.Hints.COLOR:
-				field = COLOR_FIELD.instantiate().init(property_container, property_name, property.value)
+				field = COLOR_FIELD.instantiate().init(property_container, property_name, property)
+			Element.Property.Hints.CHOICE:
+				field = CHOICE_FIELD.instantiate().init(property_container, property_name, property)
 			Element.Property.Hints.BOOL:
-				field = BOOL_FIELD.instantiate().init(property_container, property_name, property.value)
+				field = BOOL_FIELD.instantiate().init(property_container, property_name, property)
 			Element.Property.Hints.FLOAT:
-				field = FLOAT_FIELD.instantiate().init(property_container, property_name, property.value)
+				field = FLOAT_FIELD.instantiate().init(property_container, property_name, property)
 			Element.Property.Hints.INTEGER:
-				field = INTEGER_FIELD.instantiate().init(property_container, property_name, property.value)
+				field = INTEGER_FIELD.instantiate().init(property_container, property_name, property)
 			Element.Property.Hints.VECTOR_2:
-				field = VECTOR_2_FIELD.instantiate().init(property_container, property_name, property.value)
+				field = VECTOR_2_FIELD.instantiate().init(property_container, property_name, property)
 			Element.Property.Hints.TEXTURE:
-				field = TEXTURE_FIELD.instantiate().init(property_container, property_name, property.value)
+				field = TEXTURE_FIELD.instantiate().init(property_container, property_name, property)
 			_:
-				Debug.print_message(Debug.ERROR, "Unkown type \"%s\" of property \"%s\"" % [typeof(property.value), property_name]) 
+				Debug.print_error_message("Unkown type \"%s\" of property \"%s\"" % [typeof(property.value), property_name]) 
 		field.value_changed.connect(_on_field_value_changed)
 		
 

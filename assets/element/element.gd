@@ -11,7 +11,7 @@ var level: Level
 
 @export var snapping := Game.PIXEL_SNAPPING_QUARTER 
 @export var is_ceiling_element: bool
-@export var init_properties := []
+@export var init_properties := {}
 
 
 var properties := {}
@@ -66,10 +66,11 @@ func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {}, 
 
 
 func _init_property_list(_properties):
-	for property_array in init_properties:
-		var property_name: String = property_array[1]
-		var value = _properties.get(property_name, property_array[3])
-		init_property(property_array[0], property_name, property_array[2], value)
+	for property_name in init_properties:
+		var property_data: Dictionary = init_properties[property_name]
+		var value = _properties.get(property_name, property_data.default)
+		
+		init_property(property_data.container, property_name, property_data.hint, property_data.params, value)
 		change_property(property_name, value)
 	
 	
@@ -82,14 +83,16 @@ func change_property(_property_name: String, _new_value: Variant) -> void:
 	pass
 
 
-func init_property(container: String, property_name: StringName, property_hint: StringName, default_value: Variant = null) -> void:
-	properties[property_name] = Property.new(container, property_hint, default_value)
+func init_property(container: String, property_name: String, 
+		hint: String, params: Dictionary, default: Variant) -> void:
+	properties[property_name] = Property.new(container, hint, params, default)
 
 
-func set_property_value(property_name: StringName, new_value: Variant) -> void:
+func set_property_value(property_name: String, new_value: Variant) -> void:
 	if new_value is Property:
 		if not properties.has(property_name):
-			init_property(properties.container, property_name, properties.hint, new_value.value)
+			init_property(properties.container, property_name, 
+					new_value.hint, new_value.params, new_value.value)
 			return
 
 		new_value = new_value.value
@@ -105,7 +108,7 @@ func set_property_value(property_name: StringName, new_value: Variant) -> void:
 		Game.ui.tab_elements.changed_element(self)
 
 
-func get_property(property_name: StringName, default: Variant = null) -> Property:
+func get_property(property_name: String, default: Variant = null) -> Property:
 	return properties.get(property_name, default)
 		
 		
@@ -119,7 +122,10 @@ func _set_dragged(value: bool) -> void:
 	is_dragged = value
 	
 	if not value:
-		Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
+		
+		# may disconnect while dragging
+		if Game.server.connected: 
+			Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
 
 
 ## override
@@ -269,14 +275,16 @@ func remove():
 	
 
 class Property:
-	var hint: StringName
-	var value: Variant
 	var container: String
+	var hint: StringName
+	var params: Dictionary
+	var value: Variant
 	
-	func _init(_container: String, _hint: StringName, _value: Variant):
-		hint = _hint
-		value = _value
+	func _init(_container: String, _hint: String, _params: Dictionary, _value: Variant):
 		container = _container
+		hint = _hint
+		params = _params
+		value = _value
 
 	func set_raw(_value):
 		match hint:
@@ -301,3 +309,4 @@ class Property:
 		const TEXT_AREA = "text_area_hint"
 		const VECTOR_2 = "vector_2_hint"
 		const TEXTURE = "texture_hint"
+		const CHOICE = "choice_hint"

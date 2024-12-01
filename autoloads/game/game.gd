@@ -9,9 +9,10 @@ var manager: GameManager
 var server: ServerManager
 var flow: FlowController
 var preloader: ResourcePreloader
-var audio: Audio
+#var audio: Audio
 var ui: UI
 
+var resources := {}
 var maps := {}
 
 

@@ -20,11 +20,12 @@ var property_value: String :
 @onready var clear_button: Button = %ClearButton
 
 
-func init(property_container: PropertyContainer, _property_name, _property_value := property_value):
-	property_container.property_fields.add_child(self)
-	property_name = _property_name
-	property_value = _property_value
-	return self
+func set_param(_param_name: String, _param_value: Variant):
+	pass
+
+
+func set_value(_value: Variant):
+	property_value = _value
 
 
 func _ready() -> void:
@@ -35,12 +36,12 @@ func _ready() -> void:
 	
 	
 func _on_empty_texture_button_pressed():
-	Game.ui.tab_instancer.visible = true
+	Game.ui.tab_resources.visible = true
 	
 	
 func _on_texture_button_pressed():
-	Game.ui.tab_instancer.visible = true
-	var resource_item := Game.ui.tab_instancer.resource_items.get(property_value) as TreeItem
+	Game.ui.tab_resources.visible = true
+	var resource_item := Game.ui.tab_resources.resource_items.get(property_value) as TreeItem
 	resource_item.uncollapse_tree()
 	resource_item.select(0)
 	var tree := resource_item.get_tree()
@@ -51,12 +52,12 @@ func _on_texture_button_pressed():
 
 
 func _on_import_button_pressed():
-	var resource: CampaignResource = Game.ui.tab_instancer.resource_selected
-	if not resource or resource.type != CampaignResource.Type.TEXTURE:
+	var resource: CampaignResource = Game.ui.tab_resources.resource_selected
+	if not resource or resource.resource_type != CampaignResource.Type.TEXTURE:
 		Utils.temp_tooltip("Select a Texture", 1, true)
 		return
 		
-	property_value = Game.ui.tab_instancer.resource_selected.path
+	property_value = Game.ui.tab_resources.resource_selected.path
 	value_changed.emit(property_name, property_value)
 	
 

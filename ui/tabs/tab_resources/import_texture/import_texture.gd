@@ -1,30 +1,30 @@
 class_name ImportTexture
 extends Control
 
-signal resource_changed(resource)
+signal attributes_changed(resource: CampaignResource, attributes: Dictionary)
 
 const DEFAULT_SIZE := [16, 16]
 const DEFAULT_FRAMES := 1
 const DEFAULT_SLICES := 1
-const DEFAULT_DEPTH := 1.0
+const DEFAULT_THICKNESS := 1.0
 const DEFAULT_SCALE := 0.5
-const DEFAULT_TILTED := false
+const DEFAULT_DIRECTION := "front"
 
 var resource: CampaignResource: set = _set_resource
-var import_data: Dictionary : set = _set_import_data, get = _get_import_data
+var attributes: Dictionary : set = _set_attributes, get = _get_attributes
 var frame := 0 :
 	set(value): frame = value; frame_label.text = str(value)
 var frames := 1 :
 	set(value): frames = value; frames_label.text = str(value - 1)
 
 
-@onready var import_fields := {
+@onready var attribute_fields := {
 	"size": %SizeField,
+	"thickness": %ThicknessField,
+	"scale": %ScaleField,
 	"frames": %FramesField,
 	"slices": %SlicesField,
-	"depth": %DepthField,
-	"scale": %ScaleField,
-	"tilted": %TiltedField,
+	"direction": %DirectionField,
 }
 
 @onready var frame_label: Label = %FrameLabel
@@ -41,67 +41,64 @@ func _set_resource(_resource: CampaignResource) -> void:
 	if not resource:
 		return
 	
-	import_data = Game.campaign.imports.get(resource.path, {})
+	attributes = Game.campaign.get_resource_data(resource.path).get("attributes", {})
 	_make_preview_image()
 
 
-func _set_import_data(_import_data: Dictionary) -> void:
+func _set_attributes(_attributes: Dictionary) -> void:
 	reset()
-	if _import_data.get("size"):
-		import_fields.size.property_value = Utils.a2_to_v2(_import_data.size)
-	if _import_data.get("frames"):
-		import_fields.frames.property_value = _import_data.frames
-		frames = _import_data.frames
-	if _import_data.get("slices"):
-		import_fields.slices.property_value = _import_data.slices
-	if _import_data.get("depth"):
-		import_fields.depth.property_value = _import_data.depth
-	if _import_data.get("scale"):
-		import_fields.scale.property_value = _import_data.scale
-	if _import_data.get("tilted"):
-		import_fields.tilted.property_value = _import_data.tilted
+	if _attributes.has("size"):
+		attribute_fields.size.property_value = Utils.a2_to_v2(_attributes.size)
+	if _attributes.has("frames"):
+		attribute_fields.frames.property_value = _attributes.frames
+		frames = _attributes.frames
+	if _attributes.has("slices"):
+		attribute_fields.slices.property_value = _attributes.slices
+	if _attributes.has("thickness"):
+		attribute_fields.thickness.property_value = _attributes.thickness
+	if _attributes.has("scale"):
+		attribute_fields.scale.property_value = _attributes.scale * 100
+	if _attributes.has("direction"):
+		attribute_fields.direction.property_value = _attributes.direction
 
 
-func _get_import_data() -> Dictionary:
+func _get_attributes() -> Dictionary:
 	return {
-		"size": Utils.v2_to_a2(import_fields.size.property_value),
-		"frames": import_fields.frames.property_value,
-		"slices": import_fields.slices.property_value,
-		"depth": import_fields.depth.property_value,
-		"scale": import_fields.scale.property_value,
-		"tilted": import_fields.tilted.property_value,
+		"size": Utils.v2_to_a2(attribute_fields.size.property_value),
+		"frames": attribute_fields.frames.property_value,
+		"slices": attribute_fields.slices.property_value,
+		"thickness": attribute_fields.thickness.property_value,
+		"scale": attribute_fields.scale.property_value / 100,
+		"direction": attribute_fields.direction.property_value,
 	}
 
 
 func reset() -> void:
 	var texture := Utils.png_to_texture(resource.abspath)
 	full_texture.texture = texture
-	import_fields.size.property_value = texture.get_size()
-	import_fields.frames.property_value = 1
-	import_fields.slices.property_value = 1
-	import_fields.depth.property_value = 1
-	import_fields.scale.property_value = 0.5
-	import_fields.tilted.property_value = false
+	attribute_fields.size.property_value = texture.get_size()
+	attribute_fields.frames.property_value = DEFAULT_FRAMES
+	attribute_fields.slices.property_value = DEFAULT_SLICES
+	attribute_fields.thickness.property_value = DEFAULT_THICKNESS
+	attribute_fields.scale.property_value = DEFAULT_SCALE * 100
+	attribute_fields.direction.property_value = DEFAULT_DIRECTION
 	
 
 func _ready() -> void:
-	for import_field in import_fields.values():
-		import_field.value_changed.connect(_on_import_data_changed.unbind(2))
+	for attribute_field in attribute_fields.values():
+		attribute_field.value_changed.connect(_on_attributes_changed.unbind(2))
 	
 	previous_frame_button.pressed.connect(_on_previous_frame_button_pressed)
 	next_frame_button.pressed.connect(_on_next_frame_button_pressed)
 	reset_button.pressed.connect(_on_reset_button_pressed)
 
 
-func _on_import_data_changed() -> void:
-	resource.import_data = import_data
-	resource_changed.emit(resource)
-	resource.resource_changed.emit()
-	frames = resource.import_data.frames
+func _on_attributes_changed() -> void:
+	frames = attributes.frames
 	frame = clampi(frame, 0, frames - 1)
 	_make_preview_image()
 	
-	Game.server.rpcs.change_resource_import_data.rpc(CampaignResource.Type.TEXTURE, resource.path, import_data)
+	attributes_changed.emit(resource, attributes)
 
 
 func _on_previous_frame_button_pressed() -> void:
@@ -118,7 +115,6 @@ func _on_next_frame_button_pressed() -> void:
 
 func _on_reset_button_pressed() -> void:
 	reset()
-	Game.campaign.imports.erase(resource.path)
 
 
 func _make_preview_image():
@@ -128,12 +124,12 @@ func _make_preview_image():
 	
 	var atlas_texture := Utils.png_to_atlas(resource.abspath)
 	
-	var cached_import_data = import_data
-	frames = cached_import_data.frames
+	var cached_attributes = attributes
+	frames = cached_attributes.frames
 	frame = clampi(frame, 0, frames - 1)
 	
-	var tex_size := Utils.a2_to_v2(cached_import_data.size)
-	for i in range(cached_import_data.slices):
+	var tex_size := Utils.a2_to_v2(cached_attributes.size)
+	for i in range(cached_attributes.slices):
 		var slice_texture := atlas_texture.duplicate()
 		slice_texture.region = Rect2(tex_size.x * frame, tex_size.y * i, tex_size.x, tex_size.y)
 		var slice := TextureRect.new()

@@ -46,49 +46,49 @@ func _ready() -> void:
 		ui.tab_builder.reset()
 		ui.tab_elements.reset()
 		ui.tab_properties.reset()
+		ui.tab_resources.reset()
 		ui.tab_settings.reset()
 	)
 	
+	autosave()
+	
 	Game.flow = ui.flow_controller
+
+
+func autosave():
+	get_tree().create_timer(60).timeout.connect(autosave)
+	save_campaign()
 
 
 func save_campaign():
 	if not Game.campaign or not Game.campaign.is_master:
 		return
-		
-	var campaign := Game.campaign; 
-	if not campaign: 
-		return
 
-	Utils.make_dirs(campaign.maps_path)
-	for map_slug in Game.maps:
-		var map: Map = Game.maps[map_slug] 
+	for map in Game.maps.values():
 		save_map(map)
-		
-	var campaign_data := campaign.json()
 	
-	Utils.dump_json(campaign.campaign_path.path_join("campaign.json"), campaign_data, 2)
+	Game.campaign.save_campaign_data()
+	Game.ui.tab_world.reset()
 	
 	Debug.print_info_message("Campaign \"%s\" saved" % Game.campaign.slug)
-	
-	Game.ui.tab_world.scan(campaign)
-	Game.ui.tab_world.refresh_tree()
 
 
 func save_map(map: Map):
-	var map_path := Game.campaign.maps_path.path_join(map.slug)
-	var map_data := map.json()
-	Utils.make_dirs(map_path)
-	Utils.dump_json(map_path.path_join("map.json"), map_data)
+	Game.campaign.set_map_data(map.slug, map.json())
 	
+	# check if the slug changes
 	var old_slug := map.slug
 	var new_slug := Utils.slugify(map.label)
-	if old_slug != new_slug:
-		Game.maps[new_slug] = map
+	if map.slug != new_slug:
+		Utils.rename(Game.campaign.get_map_path(old_slug), Game.campaign.get_map_path(new_slug))
 		Game.maps.erase(old_slug)
+		Game.maps[new_slug] = map
 		map.slug = new_slug
-		var map_new_path := Game.campaign.maps_path.path_join(new_slug)
-		Utils.rename(map_path, map_new_path)
+		
+		Game.server.rpcs.change_map_slug.rpc(old_slug, new_slug)
+		
+	
+	Debug.print_info_message("Map \"%s\" saved" % map.slug)
 
 
 func _on_reload_campaign_pressed():
@@ -109,7 +109,7 @@ func _on_host_campaign_pressed(campaign_slug: String):
 	if Game.server.host_multiplayer():
 		return
 		
-	var campaign := Campaign.new(true, campaign_data.label, campaign_data.get("imports", {}))
+	var campaign := Campaign.new(true, campaign_slug, campaign_data.label)
 	Game.campaign = campaign
 	
 	Game.ui.ide.visible = true
@@ -121,18 +121,21 @@ func _on_host_campaign_pressed(campaign_slug: String):
 	set_profile(true)
 	reset()
 	
+	# whitout this tabs are being duplicated
 	await get_tree().process_frame
 	
 	var selected_map: String = campaign_data.selected_map
 	if selected_map not in campaign.maps:
 		selected_map = campaign.maps[0]
-		
+	
+	# open map where players are
 	var players_map: String = campaign_data.players_map
 	if players_map not in campaign.maps:
 		players_map = selected_map
-		 
+		
 	TAB_SCENE.instantiate().init(players_map, campaign.get_map_data(players_map))
-
+	
+	# open map where mastes is (if different)
 	if players_map != selected_map:
 		TAB_SCENE.instantiate().init(selected_map, campaign.get_map_data(selected_map))
 		Game.ui.scene_tabs.current_tab = 1
@@ -142,11 +145,15 @@ func _on_host_campaign_pressed(campaign_slug: String):
 	Game.ui.tab_world.refresh_tree()
 	
 	# init jukebox
-	for sound_data in campaign_data.get("jukebox", {}).get("sounds", []):
+	for sound_data in campaign_data.jukebox.get("sounds", []):
 		var sound := get_resource(CampaignResource.Type.SOUND, sound_data.sound)
 		if sound:
 			Game.ui.tab_jukebox.add_sound(sound, sound_data.loop, sound_data.get("position", 0.0))
-		
+	Game.ui.tab_jukebox.muted = campaign_data.jukebox.get("muted", false)
+	
+	# state
+	Game.flow.change_flow_state(campaign_data.state)
+
 
 func _on_join_server_pressed(host: String, username: String, password: String):
 	if Game.server.join_multiplayer(host, username, password):
@@ -196,16 +203,18 @@ func reset():
 	if is_instance_valid(Game.ui.main_menu.server_buttons_group):
 		Utils.reset_button_group(Game.ui.main_menu.server_buttons_group)
 	
+	Game.resources.clear()
+	Game.maps.clear()
+	
+	for tab_scene in Game.ui.scene_tabs.get_children():
+		tab_scene.queue_free()
+	
 	Game.ui.tab_elements.reset()
 	Game.ui.tab_jukebox.reset()
 	Game.ui.tab_builder.reset()
-	Game.ui.tab_instancer.reset()
+	Game.ui.tab_resources.reset()
 	Game.ui.tab_properties.reset()
 	Game.ui.tab_messages.reset()
-	
-	Game.maps.clear()
-	for tab_scene in Game.ui.scene_tabs.get_children():
-		tab_scene.queue_free()
 	
 	Game.flow.change_flow_state(FlowController.STATE.PLAYING)
 	
@@ -224,31 +233,37 @@ func set_profile(is_master: bool):
 
 
 func get_resource(resource_type, resource_path) -> CampaignResource:
-	var resources := Game.ui.tab_instancer.resources
-	var resource: CampaignResource = resources.get(resource_path)
+	var resource: CampaignResource = Game.resources.get(resource_path)
 	if resource:
 		return resource
-		
-	if Game.campaign.is_master:
-		return
+	
+	# if master, the resource no longer exist
+	if Game.campaign.is_master: 
+		return  # TODO return a default resource
 	
 	# create a temporally empty resource
-	var import_data = Game.campaign.imports.get(resource_path, {})
-	resource = CampaignResource.new(resource_type, resource_path, import_data)
-	resources[resource_path] = resource
-	
-	# request the resource if not binary
-	if FileAccess.file_exists(resource.abspath):
-		resource.loaded = true
-	else:
-		Game.server.request_resource.rpc_id(1, resource_path)
-	
+	var resource_data := Game.campaign.get_resource_data(resource_path)
+	resource = CampaignResource.new(resource_type, resource_path, resource_data)
+	Game.resources[resource_path] = resource
+
+	Game.server.request_resource.rpc_id(1, resource_path, resource.timestamp)
 	return resource
 
 
-func set_resource(resource_type, resource_path, import_data) -> void:
+func set_resource(resource_type, resource_path, resource_data) -> void:
 	var resource := get_resource(resource_type, resource_path)
-	resource.import_data = import_data
+	var resource_updated := false
+	if resource.timestamp != resource_data.timestamp:
+		resource.timestamp = resource_data.timestamp
+		resource_updated = true
+	if resource.import_as != resource_data.import_as:
+		resource.import_as = resource_data.import_as
+		resource_updated = true
+	if str(resource.attributes) != str(resource_data.attributes):
+		resource.attributes = resource_data.attributes
+		resource_updated = true
+	if resource_updated:
+		Game.campaign.set_resource_data(resource.path, resource.json())
 
 
 func safe_quit():

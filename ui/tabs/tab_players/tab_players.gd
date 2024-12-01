@@ -48,7 +48,7 @@ func _ready() -> void:
 
 
 func _on_new_button_pressed():
-	var campaign_path := campaign_selected.campaign_path
+	var campaign_path := campaign_selected.path
 	var player_path := campaign_path.path_join("players/unnamed-player")
 	var siblings := Utils.create_unique_folder(player_path)
 	var player_unique_path := player_path if siblings == 1 else "%s-%s" % [player_path, siblings]

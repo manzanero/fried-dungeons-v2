@@ -1,4 +1,4 @@
-[gd_resource type="Theme" load_steps=15 format=3 uid="uid://03nuasohg4fh"]
+[gd_resource type="Theme" load_steps=18 format=3 uid="uid://03nuasohg4fh"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_lvcvm"]
 content_margin_left = 8.0
@@ -109,6 +109,41 @@ content_margin_left = 8.0
 content_margin_right = 8.0
 bg_color = Color(0.1, 0.1, 0.1, 1)
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_nra8m"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tnwgm"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.0941176, 0.101961, 0.109804, 1)
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
+border_color = Color(1, 1, 1, 0.74902)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxLine" id="StyleBoxLine_b1bk0"]
+color = Color(0.5, 0.5, 0.5, 1)
+grow_begin = -4.0
+grow_end = -4.0
+thickness = 2
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gwaxe"]
 content_margin_left = 4.0
 content_margin_top = 4.0
@@ -173,9 +208,18 @@ Button/styles/hover = SubResource("StyleBoxFlat_vrxf6")
 Button/styles/hover_pressed = SubResource("StyleBoxFlat_6m5j5")
 Button/styles/normal = SubResource("StyleBoxFlat_yruwj")
 Button/styles/pressed = SubResource("StyleBoxFlat_ucrqr")
+LineEdit/constants/caret_width = 2
+LineEdit/constants/minimum_character_width = 3
 LineEdit/styles/focus = SubResource("StyleBoxFlat_l48mj")
 LineEdit/styles/normal = SubResource("StyleBoxFlat_au2li")
 LineEdit/styles/read_only = SubResource("StyleBoxFlat_s4lpo")
+PopupMenu/constants/item_end_padding = 4
+PopupMenu/constants/item_start_padding = 4
+PopupMenu/constants/resize_margin = 0
+PopupMenu/constants/v_separation = 2
+PopupMenu/styles/hover = SubResource("StyleBoxFlat_nra8m")
+PopupMenu/styles/panel = SubResource("StyleBoxFlat_tnwgm")
+PopupMenu/styles/separator = SubResource("StyleBoxLine_b1bk0")
 TabContainer/constants/side_margin = 0
 TabContainer/styles/panel = SubResource("StyleBoxFlat_gwaxe")
 TabContainer/styles/tab_focus = SubResource("StyleBoxFlat_lxf54")

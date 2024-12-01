@@ -45,7 +45,7 @@ signal reload_campaign_pressed
 @onready var state_label_value: Label = %StateLabelValue
 @onready var player_label_value: Label = %PlayerLabelValue
 @onready var tab_builder: TabBuilder = %Builder
-@onready var tab_instancer: TabInstancer = %Instancer
+@onready var tab_resources: TabResources = %Resources
 @onready var minimize_down_button: Button = %MinimizeDownButton
 @onready var restore_down_button: Button = %RestoreDownButton
 
@@ -85,7 +85,7 @@ func save_campaign():
 
 
 func change_campaign():
-	if Game.campaign.is_master:
+	if Game.campaign and Game.campaign.is_master:
 		Game.manager.save_campaign()
 		
 	if Game.server.peer:
@@ -97,7 +97,7 @@ func change_campaign():
 
 
 func reload_campaign():
-	if Game.campaign.is_master:
+	if Game.campaign and Game.campaign.is_master:
 		Game.manager.save_campaign()
 	
 	# finish ongoing rpcs

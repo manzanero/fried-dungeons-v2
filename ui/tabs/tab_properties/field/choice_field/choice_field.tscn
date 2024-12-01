@@ -1,0 +1,34 @@
+[gd_scene load_steps=4 format=3 uid="uid://cj4varycy448i"]
+
+[ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_5ehfy"]
+[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/choice_field/choice_field.gd" id="2_g8qyo"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ytcrn"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 0.886275)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[node name="ChoiceField" instance=ExtResource("1_5ehfy")]
+offset_bottom = 31.0
+script = ExtResource("2_g8qyo")
+
+[node name="OptionButton" type="OptionButton" parent="H" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_ytcrn")
+selected = 0
+allow_reselect = true
+item_count = 3
+popup/item_0/text = "x"
+popup/item_1/text = "y"
+popup/item_1/id = 1
+popup/item_2/text = "z"
+popup/item_2/id = 2

@@ -2,17 +2,20 @@ class_name ColorField
 extends PropertyField
 
 
-var property_value := Color.WHITE
+var property_value := Color.WHITE :
+	set(value): color_picker_button.color = value
+	get: return color_picker_button.color
 
 
 @onready var color_picker_button: ColorPickerButton = %ColorPickerButton
 
 
-func init(property_container: PropertyContainer, _property_name, _property_value := property_value):
-	property_container.property_fields.add_child(self)
-	property_name = _property_name
-	color_picker_button.color = _property_value
-	return self
+func set_param(_param_name: String, _param_value: Variant):
+	pass
+
+
+func set_value(_value: Variant):
+	property_value = _value
 
 
 func _ready() -> void:

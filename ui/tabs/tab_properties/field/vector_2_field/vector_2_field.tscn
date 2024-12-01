@@ -1,43 +1,31 @@
-[gd_scene load_steps=3 format=3 uid="uid://be5bb4sa6st5j"]
+[gd_scene load_steps=4 format=3 uid="uid://be5bb4sa6st5j"]
 
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_4b8hm"]
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/vector_2_field/vector_2_field.gd" id="2_0cvdm"]
+[ext_resource type="PackedScene" uid="uid://hwvpsllrlqk6" path="res://ui/tabs/tab_properties/field/number_edit/NumberEdit.tscn" id="3_w8nyv"]
 
 [node name="Vector2Field" instance=ExtResource("1_4b8hm")]
 size_flags_vertical = 4
 script = ExtResource("2_0cvdm")
 
 [node name="C" type="BoxContainer" parent="H" index="1"]
-custom_minimum_size = Vector2(0, 47)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 2
 vertical = true
 
-[node name="XSpinBox" type="SpinBox" parent="H/C" index="0"]
+[node name="XNumberEdit" parent="H/C" index="0" instance=ExtResource("3_w8nyv")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-step = 0.25
-allow_greater = true
-allow_lesser = true
-alignment = 2
-update_on_text_changed = true
 prefix = "x"
-custom_arrow_step = 0.5
-select_all_on_focus = true
-
-[node name="YSpinBox" type="SpinBox" parent="H/C" index="1"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-step = 0.25
+step = 0.001
 allow_greater = true
 allow_lesser = true
-alignment = 2
-update_on_text_changed = true
+
+[node name="YNumberEdit" parent="H/C" index="1" instance=ExtResource("3_w8nyv")]
+unique_name_in_owner = true
+layout_mode = 2
 prefix = "y"
-custom_arrow_step = 0.5
-select_all_on_focus = true
+step = 0.001
+allow_greater = true
+allow_lesser = true

@@ -10,13 +10,22 @@ const PORT := 2020
 
 @export var rpcs: Rpcs
 
-var peer: ENetMultiplayerPeer
+var peer: ENetMultiplayerPeer :
+	set(value): 
+		if peer: 
+			peer.close()
+			multiplayer.multiplayer_peer = null
+		peer = value
+
 var server_address := "127.0.0.1"
 var server_port := PORT
 var player_id := 1
 var player_username := "Unnamed"
 var player_password := ""
 var players = {}
+
+var connected: bool :
+	get: return peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
 
 
 func _ready():
@@ -28,9 +37,6 @@ func _ready():
 
 
 func host_multiplayer() -> Error:
-	if peer:
-		peer.close()
-		
 	peer = ENetMultiplayerPeer.new()
 	var error := peer.create_server(PORT)
 	if error:
@@ -42,9 +48,6 @@ func host_multiplayer() -> Error:
 	
 
 func join_multiplayer(host: String, username: String, password: String) -> Error:
-	if peer:
-		peer.close()
-	
 	peer = ENetMultiplayerPeer.new()
 	server_address = host
 	if host.split(":").size() == 2:
@@ -58,6 +61,7 @@ func join_multiplayer(host: String, username: String, password: String) -> Error
 	
 	player_username = username
 	player_password = password
+	
 	multiplayer.multiplayer_peer = peer
 	return OK
 	
@@ -100,7 +104,8 @@ func _on_connected_ok():
 
 func _on_connected_fail():
 	Debug.print_info_message("Connected fail")
-	multiplayer.multiplayer_peer = null
+	if multiplayer:
+		multiplayer.multiplayer_peer = null
 	players.clear()
 	server_disconnected.emit()
 		
@@ -109,7 +114,8 @@ func _on_connected_fail():
 
 func _on_server_disconnected():
 	Debug.print_info_message("Server disconnected")
-	multiplayer.multiplayer_peer = null
+	if multiplayer:
+		multiplayer.multiplayer_peer = null
 	players.clear()
 	server_disconnected.emit()
 		
@@ -143,10 +149,10 @@ func set_up_player(id: int):
 @rpc("any_peer", "reliable")
 func load_campaign(campaign_slug: String, campaign_data: Dictionary):
 	Debug.print_info_message("Loading campaign %s" % campaign_slug)
-	Game.campaign = Campaign.new(false, campaign_data.label, campaign_data.imports)
+	Game.campaign = Campaign.new(false, campaign_slug, campaign_data.label)
 	Game.manager.reset()
 	
-	var server_path := Game.campaign.campaign_path
+	var server_path := Game.campaign.path
 	Utils.make_dirs(server_path.path_join("resources"))
 	var server_error := Utils.dump_json(server_path.path_join("server.json"), {
 		"label": campaign_data.label,
@@ -155,7 +161,7 @@ func load_campaign(campaign_slug: String, campaign_data: Dictionary):
 	if server_error:
 		Debug.print_error_message("Failed to create Server file")
 		
-	var player_path := server_path.path_join("players").path_join(Utils.slugify(player_username))
+	var player_path := Game.campaign.get_player_path(Utils.slugify(player_username))
 	Utils.make_dirs(player_path)
 	var player_error := Utils.dump_json(player_path.path_join("player.json"), {
 		"username": player_username,
@@ -171,7 +177,9 @@ func load_campaign(campaign_slug: String, campaign_data: Dictionary):
 			await sound.resource_loaded
 		var from_position: float = sound_data.get("position", 0.0)
 		Game.ui.tab_jukebox.add_sound(sound, sound_data.loop, from_position)
-	
+	if campaign_data.jukebox.get("muted", false):
+		Game.ui.tab_jukebox.audio.volume_db = linear_to_db(0)
+		
 	Game.flow.change_flow_state(campaign_data.state)
 	
 	request_map.rpc_id(1, campaign_data.players_map)
@@ -236,27 +244,46 @@ func load_player(player_slug: String, player_data: Dictionary):
 
 
 @rpc("any_peer", "reliable")
-func request_resource(resource_path: String):
+func request_resource(resource_path: String, timestamp: int):
 	Debug.print_info_message("Requested resource %s" % resource_path)
-	var id := multiplayer.get_remote_sender_id() 
-	var resource_abspath := Game.campaign.resources_path.path_join(resource_path)
+	var id := multiplayer.get_remote_sender_id()
+	var resource: CampaignResource = Game.resources[resource_path]
+	
+	# player has the file
+	if resource.timestamp == timestamp:
+		confirm_resource.rpc_id(id, resource_path, resource.json())
+		return
+		
+	var resource_abspath := Game.campaign.get_resource_abspath(resource_path)
 	var resource_bytes := FileAccess.get_file_as_bytes(resource_abspath)
 	if not resource_bytes:
 		Debug.print_error_message("Requested resource %s not found" % resource_abspath)
 		return
 	
-	var import_data = Game.ui.tab_instancer.resources[resource_path].import_data
-	load_resource.rpc_id(id, resource_bytes, resource_path, import_data)
+	load_resource.rpc_id(id, resource_bytes, resource_path, resource.json())
 
 
 @rpc("any_peer", "reliable")
-func load_resource(resource_bytes: PackedByteArray, resource_path: String, import_data: Dictionary):
+func confirm_resource(resource_path: String, resource_data: Dictionary):
+	Debug.print_info_message("Confirmed resource %s" % resource_path)
+	
+	var resource: CampaignResource = Game.resources[resource_path]
+	resource.loaded = true
+	Game.manager.set_resource(resource.resource_type, resource_path, resource_data)
+
+
+@rpc("any_peer", "reliable")
+func load_resource(resource_bytes: PackedByteArray, resource_path: String, resource_data: Dictionary):
 	Debug.print_info_message("Requested resource %s" % resource_path)
-	var resource_abspath := Game.campaign.resources_path.path_join(resource_path)
+	
+	var resource_abspath := Game.campaign.get_resource_abspath(resource_path)
+	Utils.remove_file(resource_abspath)  # remove outdated version
 	Utils.make_dirs(resource_abspath.get_base_dir())
+	
 	var resource_file := FileAccess.open(resource_abspath, FileAccess.WRITE)
 	resource_file.store_buffer(resource_bytes)
 	
-	var resource: CampaignResource = Game.ui.tab_instancer.resources[resource_path]
-	resource.import_data = import_data
+	var resource: CampaignResource = Game.resources[resource_path]
 	resource.loaded = true
+	Game.manager.set_resource(resource.resource_type, resource_path, resource_data)
+	

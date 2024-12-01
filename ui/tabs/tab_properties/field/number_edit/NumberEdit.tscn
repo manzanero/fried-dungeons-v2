@@ -1,0 +1,143 @@
+[gd_scene load_steps=11 format=3 uid="uid://hwvpsllrlqk6"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/number_edit/number_edit.gd" id="1_gghfl"]
+[ext_resource type="Texture2D" uid="uid://ddqqp0ni1aegm" path="res://resources/icons/grabber.png" id="2_cu3px"]
+[ext_resource type="Texture2D" uid="uid://bt3up1tul5ff4" path="res://resources/icons/arrow_left.png" id="2_oeb74"]
+[ext_resource type="Texture2D" uid="uid://cgou2gvplydjd" path="res://resources/icons/arrow_right.png" id="3_2hbd8"]
+[ext_resource type="Texture2D" uid="uid://cl44madgoje3e" path="res://resources/icons/grabber_highlight.png" id="3_cedsl"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sh42q"]
+bg_color = Color(0.105882, 0.113725, 0.121569, 0.886275)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bnbyp"]
+content_margin_left = 4.0
+content_margin_top = 0.0
+content_margin_right = 4.0
+content_margin_bottom = 0.0
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_s5tph"]
+content_margin_left = 0.0
+content_margin_top = 3.0
+content_margin_right = 0.0
+content_margin_bottom = 2.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jogsd"]
+border_color = Color(0.8, 0.8, 0.8, 0)
+corner_radius_top_left = 1
+corner_radius_top_right = 1
+corner_radius_bottom_right = 1
+corner_radius_bottom_left = 1
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8v524"]
+bg_color = Color(0.707967, 0.707967, 0.707966, 1)
+border_color = Color(0.8, 0.8, 0.8, 0)
+corner_radius_top_left = 2
+corner_radius_top_right = 2
+corner_radius_bottom_right = 2
+corner_radius_bottom_left = 2
+corner_detail = 1
+
+[node name="NumberEdit" type="PanelContainer"]
+custom_minimum_size = Vector2(60, 0)
+offset_right = 229.0
+offset_bottom = 25.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_sh42q")
+script = ExtResource("1_gghfl")
+
+[node name="V" type="VBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="H" type="HBoxContainer" parent="V"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="LeftButton" type="Button" parent="V/H"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, -0.635)
+layout_mode = 2
+icon = ExtResource("2_oeb74")
+icon_alignment = 1
+
+[node name="RightButton" type="Button" parent="V/H"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, -0.635)
+layout_mode = 2
+icon = ExtResource("3_2hbd8")
+icon_alignment = 1
+
+[node name="PrefixContainer" type="MarginContainer" parent="V/H"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_right = 4
+
+[node name="PrefixLabel" type="Label" parent="V/H/PrefixContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LineEdit" type="LineEdit" parent="V/H"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/normal = SubResource("StyleBoxEmpty_bnbyp")
+alignment = 2
+max_length = 9
+expand_to_text_length = true
+virtual_keyboard_type = 3
+caret_blink = true
+
+[node name="SuffixContainer" type="MarginContainer" parent="V/H"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 8
+
+[node name="SuffixLabel" type="Label" parent="V/H/SuffixContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="SliderContainer" type="MarginContainer" parent="V"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = -2
+theme_override_constants/margin_right = 8
+theme_override_constants/margin_bottom = -2
+
+[node name="Slider" type="HSlider" parent="V/SliderContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+theme_override_constants/center_grabber = 1
+theme_override_icons/grabber = ExtResource("2_cu3px")
+theme_override_icons/grabber_highlight = ExtResource("3_cedsl")
+theme_override_styles/slider = SubResource("StyleBoxEmpty_s5tph")
+theme_override_styles/grabber_area = SubResource("StyleBoxFlat_jogsd")
+theme_override_styles/grabber_area_highlight = SubResource("StyleBoxFlat_8v524")
+value = 34.0
+
+[node name="ArrowsContainer" type="HBoxContainer" parent="V"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2

@@ -25,9 +25,9 @@ var is_watched: bool :
 var show_label: bool :
 	set(value): show_label = value; canvas_layer.visible = value
 var texture_resource_path := "" : set = _set_texture_resource_path
-var frame := FRAME_DEFAULT_VALUE :
+var frame := 0 :
 	set(value): frame = value; dirty_mesh = true
-var shape_scale := SCALE_DEFAULT_VALUE :
+var shape_scale := 100.0 :
 	set(value): shape_scale = value; dirty_mesh = true
 var is_invisible: bool :
 	set(value): is_invisible = value; slices_parent.visible = not value
@@ -37,7 +37,7 @@ var is_opaque: bool  # TODO
 
 
 var texture_resource: CampaignResource
-var texture_data := {}
+var texture_attributes := {}
 
 var dirty_light := false
 var dirty_mesh := false
@@ -52,31 +52,95 @@ var dirty_mesh := false
 
 
 ## properties
-const LABEL := "label"; const LABEL_DEFAULT_VALUE := "Shape Unknown"
-const SHOW_LABEL := "show label"; const SHOW_LABEL_DEFAULT_VALUE := false
-const COLOR := "color"; const COLOR_DEFAULT_VALUE := Color.WHITE
-const DESCRIPTION := "description"; const DESCRIPTION_DEFAULT_VALUE := ""
-const SCALE := "scale"; const SCALE_DEFAULT_VALUE := 1.0
-const TEXTURE := "texture"; const TEXTURE_DEFAULT_VALUE := ""
-const FRAME := "frame"; const FRAME_DEFAULT_VALUE := 0
-const INVISIBLE := "invisible"; const INVISIBLE_DEFAULT_VALUE := false
-const OPAQUE := "opaque"; const OPAQUE_DEFAULT_VALUE := true
-const SOLID := "solid"; const SOLID_DEFAULT_VALUE := true
+const LABEL := "label"
+const SHOW_LABEL := "show label"
+const COLOR := "color"
+const DESCRIPTION := "description"
+const SCALE := "scale"
+const TEXTURE := "texture"
+const FRAME := "frame"
+const INVISIBLE := "invisible"
+const OPAQUE := "opaque"
+const SOLID := "solid"
 
 
 func _ready() -> void:
-	init_properties = [
-		["info", LABEL, Property.Hints.STRING, LABEL_DEFAULT_VALUE],
-		["info", SHOW_LABEL, Property.Hints.BOOL, SHOW_LABEL_DEFAULT_VALUE],
-		["info", COLOR, Property.Hints.COLOR, COLOR_DEFAULT_VALUE],
-		["info", DESCRIPTION, Property.Hints.STRING, DESCRIPTION_DEFAULT_VALUE],
-		["graphics", TEXTURE, Property.Hints.TEXTURE, TEXTURE_DEFAULT_VALUE],
-		["graphics", FRAME, Property.Hints.INTEGER, FRAME_DEFAULT_VALUE],
-		["graphics", SCALE, Property.Hints.FLOAT, SCALE_DEFAULT_VALUE],
-		["physics", INVISIBLE, Property.Hints.BOOL, INVISIBLE_DEFAULT_VALUE],
-		["physics", SOLID, Property.Hints.BOOL, SOLID_DEFAULT_VALUE],
-		["physics", OPAQUE, Property.Hints.BOOL, OPAQUE_DEFAULT_VALUE],
-	]
+	init_properties = {
+		LABEL: {
+			"container": "info",
+			"hint": Property.Hints.STRING,
+			"params": {},
+			"default": "Shape Unknown",
+		},
+		SHOW_LABEL: {
+			"container": "info",
+			"hint": Property.Hints.BOOL,
+			"params": {},
+			"default": false,
+		},
+		COLOR: {
+			"container": "info",
+			"hint": Property.Hints.COLOR,
+			"params": {},
+			"default": Color.WHITE,
+		},
+		DESCRIPTION: {
+			"container": "info",
+			"hint": Property.Hints.STRING,
+			"params": {},
+			"default": "",
+		},
+		TEXTURE: {
+			"container": "graphics",
+			"hint": Property.Hints.TEXTURE,
+			"params": {},
+			"default": "",
+		},
+		FRAME: {
+			"container": "graphics",
+			"hint": Property.Hints.INTEGER,
+			"params": {
+				"has_arrows": true,
+				"min_value": 0,
+				"max_value": 64,
+				"step": 1,
+				"allow_greater": true,
+			},
+			"default": 0,
+		},
+		SCALE: {
+			"container": "graphics",
+			"hint": Property.Hints.FLOAT,
+			"params":  {
+				"suffix": "%",
+				"has_slider": true,
+				"has_arrows": true,
+				"min_value": 0,
+				"max_value": 200,
+				"step": 5,
+				"allow_greater": true,
+			},
+			"default": 100.0,
+		},
+		INVISIBLE: {
+			"container": "physics",
+			"hint": Property.Hints.BOOL,
+			"params": {},
+			"default": false,
+		},
+		SOLID: {
+			"container": "physics",
+			"hint": Property.Hints.BOOL,
+			"params": {},
+			"default": true,
+		},
+		OPAQUE: {
+			"container": "physics",
+			"hint": Property.Hints.BOOL,
+			"params": {},
+			"default": true,
+		},
+	}
 	snapping = Game.PIXEL
 	selector_mesh_instance.visible = false
 	collider.disabled = true
@@ -97,7 +161,9 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		# shape properties
 		TEXTURE: texture_resource_path = new_value
 		FRAME: frame = new_value
-		SCALE: shape_scale = clamp(new_value, 0.125, 64)
+		SCALE: 
+			new_value /= 100
+			shape_scale = clamp(new_value, 0.125, 64)
 		INVISIBLE: is_invisible = new_value
 		OPAQUE: is_opaque = new_value
 		SOLID: is_solid = new_value
@@ -108,20 +174,20 @@ func _set_texture_resource_path(_texture_resource_path: String) -> void:
 		if texture_resource: texture_resource.resource_changed.disconnect(_on_texture_resource_changed)
 		texture_resource_path = ""
 		texture_resource = null
-		texture_data = {}
+		texture_attributes = {}
 		dirty_mesh = true
 	
 	elif texture_resource_path != _texture_resource_path:
 		texture_resource_path = _texture_resource_path
-		if texture_resource: texture_resource.resource_changed.disconnect(_on_texture_resource_changed)		
+		if texture_resource: texture_resource.resource_changed.disconnect(_on_texture_resource_changed)
 		texture_resource = Game.manager.get_resource(CampaignResource.Type.TEXTURE, _texture_resource_path)
 		texture_resource.resource_changed.connect(_on_texture_resource_changed)
-		texture_data = texture_resource.import_data
+		texture_attributes = texture_resource.attributes
 		dirty_mesh = true
 
 
 func _on_texture_resource_changed() -> void:
-	texture_data = texture_resource.import_data if texture_resource else {}
+	texture_attributes = texture_resource.attributes if texture_resource else {}
 	dirty_mesh = true
 
 
@@ -168,56 +234,73 @@ func update_mesh():
 	if not texture:
 		return
 		
-	var size = Utils.a2_to_v2(texture_data.size) if "size" in texture_data else texture.get_size()
-	var frames: int = texture_data.get("frames", ImportTexture.DEFAULT_FRAMES)
-	var effective_frame = clampi(frame, 0, frames - 1)
-	var slices: int = texture_data.get("slices", ImportTexture.DEFAULT_SLICES)
-	var depth: int = texture_data.get("depth", ImportTexture.DEFAULT_DEPTH)
-	var tilted: bool = texture_data.get("tilted", ImportTexture.DEFAULT_TILTED)
-	
-	var total_scale: float = shape_scale * texture_data.get("scale", ImportTexture.DEFAULT_SCALE)
-	total_scale = clampf(total_scale, 0.125, 64)
+	var size: Vector2 = Utils.a2_to_v2(texture_attributes.size) if "size" in texture_attributes else texture.get_size()
+	var frames: int = texture_attributes.get("frames", ImportTexture.DEFAULT_FRAMES)
+	var effective_frame := clampi(frame, 0, frames - 1)
+	var slices: int = texture_attributes.get("slices", ImportTexture.DEFAULT_SLICES)
+	var thickness: int = texture_attributes.get("thickness", ImportTexture.DEFAULT_THICKNESS)
+	var direction: String = texture_attributes.get("direction", ImportTexture.DEFAULT_DIRECTION)
+
+	var texture_scale: float = texture_attributes.get("scale", ImportTexture.DEFAULT_SCALE)
+	var total_scale := texture_scale * shape_scale
+	var texture_height := size.y * Game.U / total_scale
+	var ratio := 1.0 / texture_height
 		
 	# adjust collider
 	collider.disabled = false
-	collider.scale = Vector3.ONE * total_scale
-	if tilted:
-		collider_shape.size.x = size.x * Game.U
-		collider_shape.size.y = slices * depth * Game.U
-		collider_shape.size.z = size.y * Game.U
-		collider.position.y = 0.5 * slices * depth * total_scale * Game.U
-	else:
-		collider_shape.size.x = size.x * Game.U
-		collider_shape.size.y = size.y * Game.U
-		collider_shape.size.z = slices * depth * Game.U
-		collider.position.y = 0.5 * size.y * total_scale * Game.U
+	collider.scale = Vector3.ONE * ratio
+	match direction:
+		"top":
+			collider_shape.size.x = size.x * Game.U
+			collider_shape.size.y = slices * thickness * Game.U
+			collider_shape.size.z = size.y * Game.U
+			collider.position.y = 0.5 * slices * thickness * ratio * Game.U
+		"front":
+			collider_shape.size.x = size.x * Game.U
+			collider_shape.size.y = size.y * Game.U
+			collider_shape.size.z = slices * thickness * Game.U
+			collider.position.y = 0.5 * size.y * ratio * Game.U
+		"side":
+			collider_shape.size.x = slices * thickness * Game.U
+			collider_shape.size.y = size.y * Game.U
+			collider_shape.size.z = size.x * Game.U
+			collider.position.y = 0.5 * size.y * ratio * Game.U
 		
 	# create mesh
-	slices_parent.scale = Vector3.ONE * total_scale
-	if tilted:
-		slices_parent.position.z = 0
-		slices_parent.position.y = 0.5 * depth * Game.U * total_scale
-		slices_parent.rotation.x = -PI / 2
-	else:
-		slices_parent.position.z = (0.5 - 0.5 * slices) * depth * Game.U * total_scale
-		slices_parent.position.y = size.y * 0.5 * Game.U * total_scale
-		slices_parent.rotation.x = 0
+	slices_parent.scale = Vector3.ONE * ratio
+	match direction:
+		"top":
+			slices_parent.position.z = 0
+			slices_parent.position.y = 0.5 * thickness * ratio * Game.U
+			slices_parent.rotation.x = -PI / 2
+			slices_parent.rotation.y = 0
+		"front":
+			slices_parent.position.z = (0.5 - 0.5 * slices) * thickness * ratio * Game.U
+			slices_parent.position.y = size.y * ratio * Game.U * 0.5
+			slices_parent.rotation.x = 0
+			slices_parent.rotation.y = 0
+		"side":
+			slices_parent.position.z = (0.5 - 0.5 * slices) * thickness * ratio * Game.U
+			slices_parent.position.y = size.y * ratio * Game.U * 0.5
+			slices_parent.rotation.x = 0
+			slices_parent.rotation.y = -PI / 2
 	for i in range(slices):
 		var slice = SHAPE_SLICE.instantiate()
 		slices_parent.add_child(slice)
-		slice.depth = depth
+		slice.depth = thickness
 		slice.double_sided = true
 		slice.pixel_size = Game.U
 		slice.texture = texture
 		slice.region_enabled = true
 		slice.region_rect = Rect2(size.x * effective_frame, size.y * i, size.x, size.y)
-		slice.position.z = i * depth * Game.U
+		slice.position.z = i * thickness * Game.U
 		slice.update_sprite_mesh()
-		slice.mesh = slice.generated_sprite_mesh.meshes[0]
-		slice.collider.set_collision_layer_value(Game.SELECTOR_LAYER, is_selectable)
-		slice.collider_shape.shape = slice.mesh.create_trimesh_shape()
-		slice.material_override = material
-		slice.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
+		for mesh in slice.generated_sprite_mesh.meshes:
+			slice.mesh = mesh
+			slice.collider.set_collision_layer_value(Game.SELECTOR_LAYER, is_selectable)
+			slice.collider_shape.shape = slice.mesh.create_trimesh_shape()
+			slice.material_override = material
+			slice.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		
 	Debug.print_info_message("Mesh of Shape \"%s\" updated" % id)
 

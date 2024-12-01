@@ -3,23 +3,33 @@ extends PropertyField
 
 
 var property_value : int :
-	set(value): spin_box.value = value
-	get: return spin_box.value
+	set(value): number_edit.set_value_no_signal(value)
+	get: return int(number_edit.value)
 
 
-@onready var spin_box: SpinBox = %SpinBox
+@onready var number_edit: NumberEdit = %NumberEdit
 
 
-func init(property_container: PropertyContainer, _property_name, _property_value := property_value):
-	property_container.property_fields.add_child(self)
-	property_name = _property_name
-	property_value = _property_value
-	return self
+func set_param(_param_name: String, _param_value: Variant):
+	match _param_name:
+		"prefix": number_edit.prefix = _param_value
+		"suffix": number_edit.suffix = _param_value
+		"has_slider": number_edit.has_slider = _param_value
+		"has_arrows": number_edit.has_arrows = _param_value
+		"min_value": number_edit.min_value = _param_value
+		"max_value": number_edit.max_value = _param_value
+		"step": number_edit.step = _param_value
+		"allow_greater": number_edit.allow_greater = _param_value
+		"allow_lesser": number_edit.allow_lesser = _param_value
 
 
-func _ready() -> void:
-	spin_box.value_changed.connect(_on_number_value_changed)
+func set_value(_value: Variant):
+	property_value = _value
 	
 
-func _on_number_value_changed(new_value: float):
+func _ready() -> void:
+	number_edit.value_changed.connect(_on_int_value_changed)
+	
+
+func _on_int_value_changed(new_value: int):
 	value_changed.emit(property_name, new_value)

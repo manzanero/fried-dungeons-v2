@@ -135,6 +135,9 @@ func _generate_meshes() -> Array[ArrayMesh]:
 		algorithm.image = frame.image
 
 		var quads = algorithm.generate_quads()
+		
+		if not quads:
+			continue
 
 		st.begin(Mesh.PRIMITIVE_TRIANGLES)
 
@@ -143,7 +146,7 @@ func _generate_meshes() -> Array[ArrayMesh]:
 			quad.render(st)
 
 		st.index()
-
+		
 		st.generate_normals()
 		st.generate_tangents()
 

@@ -53,7 +53,7 @@ func _ready() -> void:
 
 
 func _on_new_button_pressed():
-	var campaign_path := campaign_selected.campaign_path
+	var campaign_path := campaign_selected.path
 	var map_path := campaign_path.path_join("maps/untitled-map")
 	var siblings := Utils.create_unique_folder(map_path)
 	var map_unique_path := map_path if siblings == 1 else "%s-%s" % [map_path, siblings]
@@ -123,8 +123,7 @@ func open_selected_map():
 	var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, cached_maps[map_slug])
 	Game.ui.scene_tabs.current_tab = new_tab_index
 	
-	
-	tab_scene.map.camera.target_position.position = Utils.v2i_to_v3(tab_scene.map.selected_level.rect.get_center())
+	tab_scene.map.camera.target_position.position = Utils.v2i_to_v3(tab_scene.map.selected_level.rect.get_center()) + Vector3.UP * 0.5
 
 
 func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:

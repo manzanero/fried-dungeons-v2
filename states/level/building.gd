@@ -64,7 +64,7 @@ func _physics_process_state(_delta: float) -> String:
 	
 	if Input.is_action_just_pressed("ui_cancel") and not _is_something_being_builded:
 		Utils.reset_button_group(Game.ui.tab_builder.tile_button.button_group)
-		Utils.reset_button_group(Game.ui.tab_instancer.entity_button.button_group)
+		Utils.reset_button_group(Game.ui.tab_resources.entity_button.button_group)
 		return "Idle"
 	
 	match mode:

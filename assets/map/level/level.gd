@@ -47,7 +47,7 @@ var follower_entity: Entity :
 		if follower_entity:
 			follower_entity.body.visible = false
 			follower_entity.is_selected = false
-			map.camera.target_position.global_position = follower_entity.global_position
+			map.camera.target_position.global_position = follower_entity.global_position + 0.5 * Vector3.UP
 			map.camera.is_fps = true
 			
 var active_lights: Array[Light] = []

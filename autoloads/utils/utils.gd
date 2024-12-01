@@ -240,7 +240,7 @@ func get_outline_color(color: Color) -> Color:
 func loads_json(data: String) -> Dictionary:
 	var json := JSON.new()
 	json.parse(data)
-	var result := json.data as Dictionary
+	var result = json.data
 	if result == null:
 		printerr("JSON load failed on line %s: %s" % [json.get_error_line(), json.get_error_message()])
 		return {}
@@ -248,11 +248,12 @@ func loads_json(data: String) -> Dictionary:
 	return result
 
 
-func load_json(path : String) -> Dictionary:
+func load_json(path: String, not_exist_ok := false) -> Dictionary:
 	var file = FileAccess.open(path, FileAccess.READ)
 	var open_error := FileAccess.get_open_error()
 	if open_error:
-		printerr("error reading json: %s" % error_string(open_error))
+		if not not_exist_ok:
+			printerr("error reading json: %s" % error_string(open_error))
 		return {}
 		
 	var text := file.get_as_text()
@@ -265,12 +266,14 @@ func dumps_json(data, indent := 0) -> String:
 
 
 func dump_json(path: String, data: Dictionary, indent := 0) -> Error:
-	var json_string := dumps_json(data, indent)
+	Utils.make_dirs(path.get_base_dir())
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	var open_error := FileAccess.get_open_error()
 	if open_error:
-		printerr("error writing json: %s" % error_string(open_error))
+		Debug.print_error_message("error writing json: %s" % error_string(open_error))
 		return FAILED
+		
+	var json_string := dumps_json(data, indent)
 	file.store_line(json_string)
 	return OK
 	
@@ -280,14 +283,28 @@ func open_in_file_manager(path: String) -> void:
 	OS.shell_show_in_file_manager(global_path)
 
 
+func remove_file(path: String, not_exist_ok := true) -> void:
+	if FileAccess.file_exists(path):
+		var error := DirAccess.remove_absolute(path)
+		if error:
+			printerr("Error removing \"%s\": \"%s\"" % [path, error])
+	elif not not_exist_ok:
+		printerr("Error removing \"%s\": file not exist" % path)
+
+
 func make_dirs(path: String) -> void:
 	if DirAccess.dir_exists_absolute(path):
 		return
+	
+	if not path.begins_with("user://"):
+		Debug.print_error_message("path \"%s\" is not inside user directory" % path)
+		return
+		
 	var error := DirAccess.make_dir_recursive_absolute(path)
 	if error:
 		printerr("Error creating dirs (%s): %s" % [error, DirAccess.get_open_error()])
-		
-		
+
+
 func remove_dirs(path: String) -> void:
 	var global_path := ProjectSettings.globalize_path(path)
 	OS.move_to_trash(global_path)

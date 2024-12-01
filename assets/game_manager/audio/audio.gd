@@ -17,7 +17,7 @@ extends AudioStreamPlayer
 				return
 				
 			stream.data = file.get_buffer(file.get_length())
-
+			
 
 var sound_position: float :
 	set(value):
