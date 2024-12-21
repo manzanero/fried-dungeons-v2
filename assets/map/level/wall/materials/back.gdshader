@@ -23,10 +23,10 @@ void fragment() {
 	vec4 albedo_tex = texture(wall_atlas, UV);
 	ALBEDO = 0.5 * albedo_tex.rgb;
 	NORMAL = -NORMAL;
-	
+
 	if (int(FRAGCOORD.y) % 2 == 0) if (int(FRAGCOORD.x) % 2 == 0) discard;
 	if ((int(FRAGCOORD.x) + 1) % 2 == 0) if ((int(FRAGCOORD.y) + 1) % 2 == 0) discard;
-		
+
 	alpha = albedo_tex.a;
 
 	ALPHA = 0.;
@@ -38,17 +38,17 @@ void light() {
 		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
 		ALPHA = alpha;
 	} else {
-		
+
 		// if is in view for any viewer
-		if (ATTENUATION * SPECULAR_AMOUNT > 0.001)
+		if (ATTENUATION * SPECULAR_AMOUNT > 0.01)
 			SPECULAR_LIGHT.x = 0.001;
 		else
 			DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR * 0.5;  // add the light of the lighter
-		
+
 		// if is in light for any lighter
-		if (has_ambient_light || DIFFUSE_LIGHT.x > 0.001)
+		if (has_ambient_light || DIFFUSE_LIGHT.x > 0.0001 || DIFFUSE_LIGHT.y > 0.0001 || DIFFUSE_LIGHT.z > 0.0001)
 			SPECULAR_LIGHT.y = 0.001;
-		
+
 		// if is in view and light
 		if (SPECULAR_LIGHT.x > 0. && SPECULAR_LIGHT.y > 0.)
 			ALPHA = alpha;

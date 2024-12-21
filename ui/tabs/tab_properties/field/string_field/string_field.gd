@@ -2,6 +2,9 @@ class_name StringField
 extends PropertyField
 
 
+const SCENE := preload("res://ui/tabs/tab_properties/field/string_field/string_field.tscn")
+
+
 var property_value : String :
 	set(value): line_edit.text = value
 	get: return line_edit.text

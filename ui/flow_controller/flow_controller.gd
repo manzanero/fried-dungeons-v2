@@ -1,8 +1,10 @@
 class_name FlowController
 extends PanelContainer
 
+const SCENE := preload("res://ui/flow_controller/flow_controller.tscn")
+
 const PAUSE_COLOR := Color(0.443, 0.408, 0.292)
-const STOP_COLOR := Color(0.393, 0.29, 0.264)
+const STOP_COLOR := Color(0.511, 0.245, 0.236)
 enum STATE {PLAYING, PAUSED, STOPPED}
 
 signal played
@@ -22,7 +24,21 @@ var is_stopped: bool
 @onready var play_button: Button = %PlayButton
 @onready var pause_button: Button = %PauseButton
 @onready var stop_button: Button = %StopButton
-@onready var player_blocker: Control = %PlayerBlocker
+
+
+func set_profile() -> void:
+	if Game.campaign:
+		visible = true
+		if Game.campaign.is_master:
+			play_button.mouse_filter = Control.MOUSE_FILTER_STOP
+			pause_button.mouse_filter = Control.MOUSE_FILTER_STOP
+			stop_button.mouse_filter = Control.MOUSE_FILTER_STOP
+		else:
+			play_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			pause_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			stop_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	else:
+		visible = false
 
 
 func _ready() -> void:

@@ -1,7 +1,19 @@
-[gd_scene load_steps=4 format=3 uid="uid://b4l1ilsp0i1is"]
+[gd_scene load_steps=5 format=3 uid="uid://b4l1ilsp0i1is"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_elements/tab_elements.gd" id="1_7e7qs"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_ryb6d"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ohxsh"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8e145"]
 draw_center = false
@@ -24,14 +36,17 @@ grow_horizontal = 2
 grow_vertical = 2
 script = ExtResource("1_7e7qs")
 
-[node name="DraggableTree" parent="." instance=ExtResource("2_ryb6d")]
-unique_name_in_owner = true
+[node name="PanelContainer" type="PanelContainer" parent="."]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ohxsh")
+
+[node name="DraggableTree" parent="PanelContainer" instance=ExtResource("2_ryb6d")]
+unique_name_in_owner = true
+layout_mode = 2
 theme_override_styles/focus = SubResource("StyleBoxFlat_8e145")
-drop_mode_flags = 0
 scroll_horizontal_enabled = false

@@ -24,14 +24,14 @@ void light() {
 		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
 	} else {
 		// if is in view for any viewer
-		if (ATTENUATION * SPECULAR_AMOUNT > 0.001)
-			SPECULAR_LIGHT.x = 0.001;
+		if (ATTENUATION * SPECULAR_AMOUNT > 0.01)
+			SPECULAR_LIGHT.x = 0.0001;
 		else
 			DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;  // add the light of the lighter
 
 		// if is in light for any lighter
-		if (has_ambient_light || DIFFUSE_LIGHT.x > 0.001)
-			SPECULAR_LIGHT.y = 0.001;
+		if (has_ambient_light || DIFFUSE_LIGHT.x > 0.0001 || DIFFUSE_LIGHT.y > 0.0001 || DIFFUSE_LIGHT.z > 0.0001)
+			SPECULAR_LIGHT.y = 0.0001;
 
 		// if is in view and light
 		//if (SPECULAR_LIGHT.y > 0.)

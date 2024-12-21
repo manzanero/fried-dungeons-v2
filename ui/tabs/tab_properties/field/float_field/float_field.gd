@@ -1,6 +1,10 @@
 class_name FloatField
 extends PropertyField
 
+
+static var SCENE := preload("res://ui/tabs/tab_properties/field/float_field/float_field.tscn")
+
+
 var property_value: float :
 	set(value): number_edit.set_value_no_signal(value)
 	get: return number_edit.value

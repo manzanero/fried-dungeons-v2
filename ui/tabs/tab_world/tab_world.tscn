@@ -1,43 +1,159 @@
-[gd_scene load_steps=6 format=3 uid="uid://lye1ti1uqjjr"]
+[gd_scene load_steps=20 format=3 uid="uid://lye1ti1uqjjr"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_world/tab_world.gd" id="1_75xg6"]
+[ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_gsh8i"]
+[ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="2_h77nd"]
+[ext_resource type="Texture2D" uid="uid://cximt675xkvkn" path="res://resources/icons/directory_icon.png" id="3_osrur"]
+[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="3_su7bm"]
+[ext_resource type="Texture2D" uid="uid://cd12rsmlptjoc" path="res://resources/icons/trash_icon.png" id="4_6pw6m"]
+[ext_resource type="Texture2D" uid="uid://djhtp0rlxmu50" path="res://resources/icons/play_icon.png" id="6_pxvnk"]
+[ext_resource type="Texture2D" uid="uid://dwfkjnyl85tqn" path="res://resources/icons/stop_icon.png" id="7_rv4fh"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h407n"]
-bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_y1p6u"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.184416, 0.32211, 0.305106, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.277821, 0.459445, 0.438482, 1)
+border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m8wya"]
-content_margin_left = 4.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ooeak"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.184416, 0.32211, 0.305106, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.277821, 0.459445, 0.438482, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3tiwx"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.145922, 0.262909, 0.248497, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.210106, 0.362414, 0.342017, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_3ps35"]
+content_margin_left = 8.0
 content_margin_top = 4.0
 content_margin_right = 8.0
 content_margin_bottom = 4.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_u2vvi"]
-draw_center = false
-border_width_left = 2
-border_width_top = 2
-border_width_right = 2
-border_width_bottom = 2
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_uqovk"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.492207, 0.453996, 0.329807, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.615316, 0.572901, 0.431425, 1)
+border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cdj30"]
-content_margin_top = 6.0
-bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_478i8"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.492207, 0.453996, 0.329807, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.615316, 0.572901, 0.431425, 1)
+border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
-expand_margin_left = 4.0
-expand_margin_right = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yhgu6"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.398979, 0.366055, 0.25905, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.51876, 0.476478, 0.34968, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m17m2"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h407n"]
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+border_color = Color(0.10748, 0.10748, 0.10748, 1)
+border_blend = true
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pknts"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+bg_color = Color(0.365432, 0.0764499, 0.0802642, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.502899, 0.121306, 0.12551, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ovumu"]
+content_margin_left = 8.0
+content_margin_right = 8.0
+bg_color = Color(0.365432, 0.0764499, 0.0802642, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.502899, 0.121306, 0.12551, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
 [node name="TabWorld" type="Control"]
 layout_mode = 3
@@ -66,68 +182,99 @@ layout_mode = 2
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "New +"
+tooltip_text = "Create a new Map"
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_y1p6u")
+theme_override_styles/hover = SubResource("StyleBoxFlat_ooeak")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_3tiwx")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_3ps35")
+icon = ExtResource("2_h77nd")
+icon_alignment = 1
+
+[node name="FoldersButton" type="Button" parent="VBoxContainer2/HBoxContainer2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Open Maps folder in file explorer"
+icon = ExtResource("3_osrur")
+icon_alignment = 1
 
 [node name="ScanButton" type="Button" parent="VBoxContainer2/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Scan"
+tooltip_text = "Scan Maps folder"
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_uqovk")
+theme_override_styles/hover = SubResource("StyleBoxFlat_478i8")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_yhgu6")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_m17m2")
+icon = ExtResource("3_su7bm")
+icon_alignment = 1
 
 [node name="PanelContainer" type="PanelContainer" parent="VBoxContainer2"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_h407n")
 
-[node name="C" type="VBoxContainer" parent="VBoxContainer2/PanelContainer"]
+[node name="V" type="VBoxContainer" parent="VBoxContainer2/PanelContainer"]
 layout_mode = 2
-theme_override_constants/separation = 4
+theme_override_constants/separation = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="VBoxContainer2/PanelContainer/C"]
+[node name="C2" type="MarginContainer" parent="VBoxContainer2/PanelContainer/V"]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 0
 
-[node name="TitleLineEdit" type="LineEdit" parent="VBoxContainer2/PanelContainer/C/MarginContainer"]
+[node name="H" type="HBoxContainer" parent="VBoxContainer2/PanelContainer/V/C2"]
+layout_mode = 2
+
+[node name="TitleLineEdit" type="LineEdit" parent="VBoxContainer2/PanelContainer/V/C2/H"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 32)
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
-placeholder_text = "title..."
+placeholder_text = "Title..."
 clear_button_enabled = true
 
-[node name="Tree" type="Tree" parent="VBoxContainer2/PanelContainer/C"]
+[node name="Tree" parent="VBoxContainer2/PanelContainer/V" instance=ExtResource("2_gsh8i")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxEmpty_m8wya")
-theme_override_styles/focus = SubResource("StyleBoxFlat_u2vvi")
-theme_override_styles/selected = SubResource("StyleBoxFlat_cdj30")
-theme_override_styles/selected_focus = SubResource("StyleBoxFlat_cdj30")
 hide_folding = true
-hide_root = true
 
-[node name="VBoxContainer" type="BoxContainer" parent="VBoxContainer2"]
+[node name="C" type="MarginContainer" parent="VBoxContainer2/PanelContainer/V"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="VBoxContainer" type="BoxContainer" parent="VBoxContainer2/PanelContainer/V/C"]
 layout_mode = 2
 
-[node name="OpenButton" type="Button" parent="VBoxContainer2/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Open"
-
-[node name="FolderButton" type="Button" parent="VBoxContainer2/VBoxContainer"]
+[node name="OpenButton" type="Button" parent="VBoxContainer2/PanelContainer/V/C/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Opens in file explored"
-text = "Folder"
+icon = ExtResource("6_pxvnk")
+icon_alignment = 1
 
-[node name="RemoveButton" type="Button" parent="VBoxContainer2/VBoxContainer"]
+[node name="CloseButton" type="Button" parent="VBoxContainer2/PanelContainer/V/C/VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Close selected map"
+icon = ExtResource("7_rv4fh")
+icon_alignment = 1
+
+[node name="RemoveButton" type="Button" parent="VBoxContainer2/PanelContainer/V/C/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Move to trash"
-text = "Remove"
+focus_mode = 0
+theme_override_styles/hover = SubResource("StyleBoxFlat_pknts")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ovumu")
+icon = ExtResource("4_6pw6m")
+icon_alignment = 1

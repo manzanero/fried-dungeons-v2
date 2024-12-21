@@ -3,6 +3,8 @@
 [ext_resource type="Script" path="res://ui/tabs/tab_messages/tab_messages.gd" id="1_kklqb"]
 [ext_resource type="PackedScene" uid="uid://6pq2k4jg8hbv" path="res://ui/tabs/tab_messages/panel_dice/tab_messages_panel_dice.tscn" id="2_e88ub"]
 [ext_resource type="PackedScene" uid="uid://dw4t2g37sotcj" path="res://ui/tabs/tab_messages/panel_history/tab_messages_panel_history.tscn" id="3_e3rt8"]
+[ext_resource type="Texture2D" uid="uid://cljhvimdq50ft" path="res://resources/icons/terminal_icon.png" id="4_7g2oo"]
+[ext_resource type="Texture2D" uid="uid://djhtp0rlxmu50" path="res://resources/icons/play_icon.png" id="4_wsjw0"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_6y5qp"]
 allow_unpress = true
@@ -11,12 +13,12 @@ allow_unpress = true
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
-content_margin_bottom = 5.0
-bg_color = Color(0, 0, 0, 0.901961)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+content_margin_bottom = 4.0
+bg_color = Color(0.0214346, 0.0214346, 0.0214346, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 corner_detail = 1
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_7xcjj"]
@@ -27,8 +29,14 @@ content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1y7qd"]
-bg_color = Color(0.133333, 0.12549, 0.117647, 1)
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ert40"]
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.143122, 0.152725, 0.162329, 1)
+border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -37,36 +45,14 @@ corner_detail = 1
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_udd2s"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5qn83"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.346865, 0.330038, 0.266229, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 1
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cs0lv"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.175048, 0.148912, 0.115497, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 1
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_17m7u"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-draw_center = false
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1y7qd"]
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.133333, 0.12549, 0.117647, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.0690075, 0.0638102, 0.0586124, 1)
+border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -171,56 +157,95 @@ deselect_on_focus_loss_enabled = false
 
 [node name="C" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C"]
 layout_mode = 2
+theme_override_constants/separation = 0
 alignment = 1
 vertical = true
 
-[node name="MessageLineEdit" type="LineEdit" parent="VBoxContainer/VSplitContainer/C/C/C"]
+[node name="C" type="PanelContainer" parent="VBoxContainer/VSplitContainer/C/C/C"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_ert40")
+
+[node name="V" type="VBoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/C"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="H" type="HBoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/C/V"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="TemplateButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/H"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 31)
+layout_mode = 2
+focus_mode = 0
+icon = ExtResource("4_7g2oo")
+
+[node name="MessageLineEdit" type="LineEdit" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/H"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 8
-placeholder_text = ">"
+placeholder_text = "/echo"
 
-[node name="HelperButtons" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C"]
-layout_mode = 2
-size_flags_vertical = 3
-alignment = 1
-
-[node name="C" type="PanelContainer" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons"]
-clip_contents = true
-layout_mode = 2
-size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_1y7qd")
-
-[node name="C" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons/C"]
-layout_mode = 2
-
-[node name="AsPlayerButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons/C/C"]
+[node name="SendMessageButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/H"]
 unique_name_in_owner = true
 layout_mode = 2
+tooltip_text = "Send message"
+focus_mode = 0
+icon = ExtResource("4_wsjw0")
+
+[node name="C2" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/C/V"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="AsMasterButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/C2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+toggle_mode = true
+button_group = SubResource("ButtonGroup_udd2s")
+text = "Master"
+
+[node name="AsPlayerButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/C2"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_udd2s")
 text = "Player"
 
-[node name="AsSelectionButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons/C/C"]
+[node name="AsSelectionButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/C2"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
 toggle_mode = true
 button_group = SubResource("ButtonGroup_udd2s")
 text = "Selection"
 
-[node name="SendMessageButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/HelperButtons"]
-unique_name_in_owner = true
+[node name="C" type="PanelContainer" parent="VBoxContainer/VSplitContainer/C/C/C/C/V"]
+visible = false
+clip_contents = true
 layout_mode = 2
-size_flags_horizontal = 10
-focus_mode = 0
-theme_override_styles/hover = SubResource("StyleBoxFlat_5qn83")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_cs0lv")
-theme_override_styles/normal = SubResource("StyleBoxFlat_17m7u")
-text = "Send"
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_1y7qd")
+
+[node name="H2" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C"]
+layout_mode = 2
+size_flags_vertical = 3
+alignment = 1
+
+[node name="H" type="HBoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/H2"]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="AsLabel" type="Label" parent="VBoxContainer/VSplitContainer/C/C/C/H2/H"]
+visible = false
+layout_mode = 2
+text = " As: "
 
 [editable path="VBoxContainer/VSplitContainer/HelperContainer/History"]

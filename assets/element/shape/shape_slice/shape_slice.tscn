@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=4 uid="uid://upfcm5wo63fj"]
+[gd_scene load_steps=9 format=4 uid="uid://upfcm5wo63fj"]
 
 [ext_resource type="Texture2D" uid="uid://j04vtki4o5mi" path="res://resources/textures/bookshelf.png" id="1_dll86"]
 [ext_resource type="Material" uid="uid://7u05bsnb3i4y" path="res://assets/element/shape/materials/shape_slice.tres" id="1_nxtt2"]
 [ext_resource type="Script" path="res://assets/element/shape/shape_slice/shape_slice.gd" id="3_t8vpq"]
+[ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="4_ivvom"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_lljfk"]
 _surfaces = [{
@@ -21,6 +22,13 @@ _surfaces = [{
 albedo_texture = ExtResource("1_dll86")
 texture_filter = 0
 
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_5r8iv"]
+
+[sub_resource type="Resource" id="Resource_pqr3a"]
+script = ExtResource("4_ivvom")
+meshes = Array[ArrayMesh]([])
+material = SubResource("StandardMaterial3D_5r8iv")
+
 [node name="SpriteMeshInstance" type="MeshInstance3D" node_paths=PackedStringArray("collider", "collider_shape")]
 material_override = ExtResource("1_nxtt2")
 cast_shadow = 0
@@ -29,6 +37,7 @@ surface_material_override/0 = SubResource("StandardMaterial3D_sr1yo")
 script = ExtResource("3_t8vpq")
 collider = NodePath("Collider")
 collider_shape = NodePath("Collider/ColliderShape")
+generated_sprite_mesh = SubResource("Resource_pqr3a")
 
 [node name="Collider" type="StaticBody3D" parent="."]
 collision_layer = 134217728

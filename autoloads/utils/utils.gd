@@ -184,18 +184,26 @@ func get_mouse_hit(camera: Camera3D, from_center: bool, raycast: PhysicsRayQuery
 	return space_state.intersect_ray(raycast)
 
 
-func temp_tooltip(text: String, timeout: float = 1.0, mirrowed := false) -> Control:
-	var control := Label.new()
+func temp_tooltip(text: String, timeout: float = 2.0, mirrowed := false) -> Control:
+	var label := Label.new()
 	var panel := PanelContainer.new()
-	panel.add_child(control)
+	panel.add_child(label)
+	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	get_tree().root.add_child(panel)
 	get_tree().create_timer(timeout).timeout.connect(panel.queue_free)
-	control.text = text
-	control.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	label.text = text
 	panel.position = get_viewport().get_mouse_position()
+	var style: StyleBoxFlat = panel.get_theme_stylebox("panel")
+	style.bg_color = Color.BLACK
+	style.bg_color.a = 0.85
+	style.content_margin_top = 4
+	style.content_margin_bottom = 4
+	style.content_margin_left = 8
+	style.content_margin_right = 8
 	if mirrowed:
 		panel.position.x -= panel.size.x
-	return control
+	return panel
 
 
 func action_shortcut(action_name):
@@ -222,7 +230,6 @@ func png_to_atlas(path: String) -> AtlasTexture:
 	var atlas_texture := AtlasTexture.new()
 	var texture := png_to_texture(path)
 	if not texture:
-		printerr("PNG load failed")
 		return
 		
 	atlas_texture.atlas = texture
@@ -253,7 +260,7 @@ func load_json(path: String, not_exist_ok := false) -> Dictionary:
 	var open_error := FileAccess.get_open_error()
 	if open_error:
 		if not not_exist_ok:
-			printerr("error reading json: %s" % error_string(open_error))
+			printerr("Error: \"%s\" when reading: %" % [error_string(open_error), path])
 		return {}
 		
 	var text := file.get_as_text()
@@ -265,13 +272,17 @@ func dumps_json(data, indent := 0) -> String:
 	return JSON.stringify(data, " ".repeat(indent), false)
 
 
-func dump_json(path: String, data: Dictionary, indent := 0) -> Error:
+func dump_json(path: String, data: Dictionary, indent := 0, allow_empty := false) -> Error:
+	if not allow_empty and not data:
+		printerr("Trying to write empty file: %" % [path])
+		return ERR_INVALID_DATA
+		
 	Utils.make_dirs(path.get_base_dir())
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	var open_error := FileAccess.get_open_error()
 	if open_error:
-		Debug.print_error_message("error writing json: %s" % error_string(open_error))
-		return FAILED
+		printerr("Error: \"%s\" when writing: %" % [error_string(open_error), path])
+		return open_error
 		
 	var json_string := dumps_json(data, indent)
 	file.store_line(json_string)
@@ -283,26 +294,29 @@ func open_in_file_manager(path: String) -> void:
 	OS.shell_show_in_file_manager(global_path)
 
 
-func remove_file(path: String, not_exist_ok := true) -> void:
+func remove_file(path: String, not_exist_ok := true) -> Error:
 	if FileAccess.file_exists(path):
-		var error := DirAccess.remove_absolute(path)
-		if error:
-			printerr("Error removing \"%s\": \"%s\"" % [path, error])
+		return DirAccess.remove_absolute(path)
 	elif not not_exist_ok:
-		printerr("Error removing \"%s\": file not exist" % path)
+		return ERR_FILE_NOT_FOUND
+	return OK
 
 
-func make_dirs(path: String) -> void:
+func make_dirs(path: String, is_user_path := true) -> Error:
 	if DirAccess.dir_exists_absolute(path):
-		return
-	
-	if not path.begins_with("user://"):
-		Debug.print_error_message("path \"%s\" is not inside user directory" % path)
-		return
-		
+		return OK
+	if is_user_path and not path.begins_with("user://"):
+		printerr("Path \"%s\" is not inside user directory" % path)
+		return ERR_FILE_BAD_PATH
 	var error := DirAccess.make_dir_recursive_absolute(path)
 	if error:
 		printerr("Error creating dirs (%s): %s" % [error, DirAccess.get_open_error()])
+		return error
+	return OK
+
+
+func remove_dir(path: String) -> Error:
+	return DirAccess.remove_absolute(path)
 
 
 func remove_dirs(path: String) -> void:

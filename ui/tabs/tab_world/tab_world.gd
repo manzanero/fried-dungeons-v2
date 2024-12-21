@@ -14,20 +14,20 @@ var campaign_selected: Campaign :
 		
 
 var selected_map_slug: String :
-	get: return tree.get_selected().get_tooltip_text(0)
+	get: return tree.get_selected().get_tooltip_text(0) if tree.get_selected() else ""
 
 
 var cached_maps := {}  # {map_slug: map_data}
-var selected_map := ""
 var players_map := ""
 
 
 @onready var new_button: Button = %NewButton
+@onready var folders_button: Button = %FoldersButton
 @onready var scan_button: Button = %ScanButton
 @onready var filter_line_edit: LineEdit = %TitleLineEdit
 @onready var tree: Tree = %Tree
 @onready var open_button: Button = %OpenButton
-@onready var folder_button: Button = %FolderButton
+@onready var close_button: Button = %CloseButton
 @onready var remove_button: Button = %RemoveButton
 
 
@@ -42,14 +42,17 @@ func _set_opened(map_item: TreeItem, value: bool):
 
 func _ready() -> void:
 	new_button.pressed.connect(_on_new_button_pressed)
+	folders_button.pressed.connect(_on_folders_button_pressed)
 	scan_button.pressed.connect(reset)
-	filter_line_edit.text_changed.connect(refresh_tree)
-	open_button.pressed.connect(open_selected_map)
-	folder_button.pressed.connect(_on_folder_button_pressed)
-	remove_button.pressed.connect(_on_remove_button_pressed)
+	
+	filter_line_edit.text_changed.connect(refresh_tree.unbind(1))
 	tree.hide_root = true
 	tree.item_activated.connect(open_selected_map)
 	tree.button_clicked.connect(_on_button_clicked)
+	
+	open_button.pressed.connect(open_selected_map)
+	close_button.pressed.connect(_on_close_selected_map_pressed)
+	remove_button.pressed.connect(_on_remove_button_pressed)
 
 
 func _on_new_button_pressed():
@@ -71,15 +74,15 @@ func scan(campaign: Campaign):
 	
 	for map_slug in Utils.sort_strings_ended_with_number(campaign.maps):
 		cached_maps[map_slug] = campaign.get_map_data(map_slug)
-		
-		#if selected_map == ope
 
 
 func refresh_tree():
 	var filter := filter_line_edit.text
+	var cached_slug := selected_map_slug
 	
 	tree.clear()
 	root = tree.create_item()
+	tree.set_column_title(0, "Maps")
 	
 	for map_slug in cached_maps:
 		var map_data: Dictionary = cached_maps[map_slug]
@@ -95,7 +98,7 @@ func refresh_tree():
 		if map_slug in Game.maps:
 			_set_opened(map_item, true)
 	
-		if selected_map == map_slug:
+		if cached_slug == map_slug:
 			map_item.select(0)
 		
 		map_item.add_button(0, PLAY_ICON, 0)
@@ -105,13 +108,17 @@ func refresh_tree():
 			map_item.set_button_color(0, 0, Color.DARK_GRAY)
 
 
+#func _on_item_selected():
+	#var map_item := tree.get_selected()
+	
+
 func open_selected_map():
 	var map_item := tree.get_selected()
 	if not map_item:
+		Utils.temp_tooltip("Select a map to be opened")
 		return
 		
 	var map_slug: String = selected_map_slug
-	selected_map = map_slug
 		
 	if map_slug in Game.maps:
 		var tab_index = Game.maps.keys().find(map_slug)
@@ -131,9 +138,9 @@ func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_ind
 	var map_slug: String = selected_map_slug
 	
 	if map_slug == players_map:
+		Utils.temp_tooltip("Players already are in this map")
 		return
 	
-	selected_map = map_slug
 	open_selected_map()
 	
 	players_map = map_slug
@@ -142,30 +149,56 @@ func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_ind
 	refresh_tree()
 	
 
-
-func _on_folder_button_pressed() -> void:
-	var map_item := tree.get_selected()
-	if not map_item:
-		return
-	
-	var path := campaign_selected.maps_path.path_join(selected_map_slug)
+func _on_folders_button_pressed() -> void:
+	var path := campaign_selected.maps_path
 	OS.shell_show_in_file_manager(ProjectSettings.globalize_path(path))
 	
+
+func _close_selected_map():
+	for tab_index in range(Game.ui.scene_tabs.get_tab_count()):
+		var tab_scene: TabScene = Game.ui.scene_tabs.get_tab_control(tab_index)
+		var map := tab_scene.map
+			
+		if map.slug == selected_map_slug:
+			tab_scene.queue_free()
+			break
+
+
+func _on_close_selected_map_pressed():
+	var map_item := tree.get_selected()
+	if not map_item:
+		Utils.temp_tooltip("Select a map to be closed")
+		return
+	
+	if selected_map_slug not in Game.maps:
+		Utils.temp_tooltip("Selected map is not open")
+		return
+	
+	if selected_map_slug == players_map:
+		Utils.temp_tooltip("Player's map cannot be closed. Send them to another map")
+		return
+		
+	_close_selected_map()
+	Game.maps.erase(selected_map_slug)
+	reset()
+
 
 func _on_remove_button_pressed():
 	var map_item := tree.get_selected()
 	if not map_item:
+		Utils.temp_tooltip("Select a map to be removed")
+		return
+	
+	if selected_map_slug == players_map:
+		Utils.temp_tooltip("Player's map cannot be removed. Send them to another map")
 		return
 		
-	var path := campaign_selected.maps_path.path_join(selected_map_slug)
-	Utils.remove_dirs(path)
-	if selected_map_slug in Game.ui.opened_maps.keys():
-		Game.ui.scene_tabs.get_tab_control(Game.ui.opened_maps.keys().find(selected_map_slug)).queue_free()
-	
+	_close_selected_map()
+	Game.maps.erase(selected_map_slug)
+	Utils.remove_dirs(campaign_selected.get_map_path(selected_map_slug))
 	reset()
-	
+
 
 func reset():
 	scan(campaign_selected)
 	refresh_tree()
-	

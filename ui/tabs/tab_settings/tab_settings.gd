@@ -14,6 +14,9 @@ var cached_valid_label: String
 @onready var title_field: StringField = %TitleField
 @onready var title_edit: LineEdit = title_field.line_edit
 
+# info
+@onready var atlas_texture_field: TextureField = %AtlasTextureField
+
 # ambient
 @onready var ambient_container: PropertyContainer = %AmbientContainer
 @onready var ambient_light_field: FloatField = %AmbientLightField
@@ -36,13 +39,12 @@ var cached_valid_label: String
 func _ready() -> void:
 	
 	# info
-	info_container.collapsable = false
-	info_container.collapsed = false
 	title_edit.text_changed.connect(_on_info_edited.unbind(1))
 	
+	# graphics
+	atlas_texture_field.texture_changed.connect(_on_atlas_texture_changed)
+	
 	# ambient
-	ambient_container.collapsable = true
-	ambient_container.collapsed = false
 	ambient_light_field_edit.value_changed.connect(_on_ambient_edited.unbind(1))
 	ambient_color_button.color_changed.connect(_on_ambient_edited.unbind(1))
 	master_view_check.pressed.connect(_on_ambient_edited)
@@ -56,6 +58,14 @@ func _on_info_edited():
 	var label := title_edit.text.strip_edges()
 	
 	info_changed.emit(label if label else "Untitled")
+
+
+func _on_atlas_texture_changed(_property_name: String, resource_path: String):
+	var resource := Game.manager.get_resource(CampaignResource.Type.TEXTURE, resource_path)
+	var map := Game.ui.selected_map
+	map.atlas_texture_resource = resource
+	
+	Game.server.rpcs.change_atlas_texture.rpc(map.slug, resource_path)
 
 
 func _on_ambient_edited():
@@ -93,6 +103,12 @@ func reset():
 	# info
 	title_edit.text = Game.ui.selected_scene_tab.name
 	
+	# graphics
+	if map.atlas_texture_resource:
+		atlas_texture_field.property_value = map.atlas_texture_resource.path
+	else:
+		atlas_texture_field.property_value = ""
+		
 	# ambient
 	ambient_light_field_edit.set_value_no_signal(map.ambient_light * 100.0)
 	ambient_color_button.color = map.ambient_color

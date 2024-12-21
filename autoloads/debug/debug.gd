@@ -18,7 +18,7 @@ const _CRITICAL_STR := "[color=dark_red][b][CRITICAL][/b][/color]"
 
 var id := 1
 var is_debug := true
-var level := WARNING
+var level := INFO
 
 
 func print_debug_message(message: Variant):

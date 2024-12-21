@@ -1,0 +1,21 @@
+[gd_scene load_steps=2 format=3 uid="uid://7nb55lf7n7k"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_oh8w7"]
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.0791198, 0.0856792, 0.0922385, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[node name="FriedConcavePanel" type="PanelContainer"]
+custom_minimum_size = Vector2(24, 24)
+offset_right = 16.0
+offset_bottom = 16.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_oh8w7")

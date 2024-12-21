@@ -39,6 +39,7 @@ var position_2d: Vector2 :
 	get: return Utils.v3_to_v2(global_position)
 var rotation_y: float :
 	get: return rotation.y
+var flipped := false : set = _set_flipped
 
 var properties_values: Dictionary :
 	get:
@@ -52,13 +53,15 @@ var parent: Element : set = _set_parent
 @onready var elements_parent: Node3D = $Elements
 
 
-func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {}, _rotation_y := 0.0):
+func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {}, 
+		_rotation_y := 0.0, _flipped := false):
 	id = _id
 	level = _level
 	map = level.map
 	level.elements_parent.add_child(self)
 	global_position = Vector3(_position_2d.x, 0, _position_2d.y)
 	rotation.y = _rotation_y
+	flipped = _flipped
 	is_selectable = Game.campaign.is_master
 	_init_property_list(_properties)
 	property_changed.connect(_on_property_changed)
@@ -122,15 +125,18 @@ func _set_dragged(value: bool) -> void:
 	is_dragged = value
 	
 	if not value:
-		
-		# may disconnect while dragging
-		if Game.server.connected: 
+		if Game.server.is_peer_connected:  # may disconnect while dragging
 			Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
 
 
 ## override
 func _set_rotated(value: bool) -> void:
 	is_rotated = value
+
+
+## override
+func _set_flipped(value: bool) -> void:
+	flipped = value
 
 
 ## override
@@ -183,9 +189,10 @@ func _physics_process(delta: float) -> void:
 	if is_preview:
 		_preview_process()
 		return
-		
+	
 	if is_dragged:
-		set_multiplayer_authority(Game.server.player_id)
+		set_multiplayer_authority(Game.server.presence.id)
+		_flip_process()
 		_dragged_process()
 	
 	if is_moving_to_target:
@@ -201,7 +208,7 @@ func _physics_process(delta: float) -> void:
 					var ticks_msec := Time.get_ticks_msec()
 					if next_update_ticks_msec < ticks_msec:
 						next_update_ticks_msec = ticks_msec + 100
-						Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation_y)
+						Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position)
 						
 					target_position = global_position
 		else:
@@ -221,6 +228,12 @@ func _preview_process() -> void:
 	else:
 		global_position = target_hovered
 		target_position = target_hovered
+
+
+func _flip_process() -> void:
+	if Input.is_action_just_pressed("flip"):
+		flipped = not flipped
+		Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y, flipped)
 
 
 func _dragged_process() -> void:
@@ -255,7 +268,7 @@ func _dragged_process() -> void:
 	
 	if next_update_ticks_msec < ticks_msec:
 		next_update_ticks_msec = ticks_msec + 100
-		Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation_y)
+		Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation)
 		
 
 func _set_parent(value: Element):
@@ -267,11 +280,13 @@ func remove():
 	for element: Element in elements_parent.get_children():
 		element.remove()
 		
-	queue_free()
-	level.elements.erase(id)
-	
 	Game.ui.tab_elements.remove_element(self)
 	Game.ui.tab_properties.reset()
+	
+	level.elements.erase(id)
+	
+	queue_free()
+	
 	
 
 class Property:

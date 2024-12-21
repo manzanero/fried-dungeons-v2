@@ -3,12 +3,16 @@
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_5ehfy"]
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/choice_field/choice_field.gd" id="2_g8qyo"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ytcrn"]
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_p80q5"]
 content_margin_left = 8.0
 content_margin_top = 4.0
 content_margin_right = 8.0
 content_margin_bottom = 4.0
-bg_color = Color(0.105882, 0.113725, 0.121569, 0.886275)
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.143122, 0.152725, 0.162329, 1)
+border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -23,7 +27,7 @@ script = ExtResource("2_g8qyo")
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/normal = SubResource("StyleBoxFlat_ytcrn")
+theme_override_styles/normal = SubResource("StyleBoxFlat_p80q5")
 selected = 0
 allow_reselect = true
 item_count = 3

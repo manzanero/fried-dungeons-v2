@@ -27,6 +27,12 @@ var frames := 1 :
 	"direction": %DirectionField,
 }
 
+var texture_index_attribute_fields := {}
+
+@onready var import_as_choice_field: ChoiceField = %ImportAsChoiceField
+@onready var sliced_shape_attributes_container: PropertyContainer = %SlicedShapeAttributesContainer
+@onready var texture_index_attributes_container: PropertyContainer = %TextureIndexAttributesContainer
+
 @onready var frame_label: Label = %FrameLabel
 @onready var frames_label: Label = %FramesLabel
 @onready var previous_frame_button: Button = %PreviousFrameButton
@@ -46,7 +52,7 @@ func _set_resource(_resource: CampaignResource) -> void:
 
 
 func _set_attributes(_attributes: Dictionary) -> void:
-	reset()
+	reset_texture()
 	if _attributes.has("size"):
 		attribute_fields.size.property_value = Utils.a2_to_v2(_attributes.size)
 	if _attributes.has("frames"):
@@ -73,7 +79,7 @@ func _get_attributes() -> Dictionary:
 	}
 
 
-func reset() -> void:
+func reset_texture() -> void:
 	var texture := Utils.png_to_texture(resource.abspath)
 	full_texture.texture = texture
 	attribute_fields.size.property_value = texture.get_size()
@@ -87,7 +93,36 @@ func reset() -> void:
 func _ready() -> void:
 	for attribute_field in attribute_fields.values():
 		attribute_field.value_changed.connect(_on_attributes_changed.unbind(2))
+			#func _init(_container: String, _hint: String, _params: Dictionary, _value: Variant):
+		#container = _container
+		#hint = _hint
+		#params = _params
+		#value = _value
 	
+	texture_index_attribute_fields = {
+		"size": Vector2Field.SCENE.instantiate().init(texture_index_attributes_container,
+				"size", Element.Property.new("", Element.Property.Hints.VECTOR_2, {
+					"x_suffix": "px",
+					"y_suffix": "px",
+					"rounded": true,
+				}, Vector2.ONE * 16)),
+		"textures": IntegerField.SCENE.instantiate().init(texture_index_attributes_container, 
+				"textures", Element.Property.new("", Element.Property.Hints.INTEGER, {
+					"has_arrows": true,
+					"has_slider": false,
+					"min_value": 1,
+					"max_value": 256,
+				}, 1)),
+		"variations": IntegerField.SCENE.instantiate().init(texture_index_attributes_container, 
+				"variations", Element.Property.new("", Element.Property.Hints.INTEGER, {
+					"has_arrows": true,
+					"has_slider": false,
+					"min_value": 1,
+					"max_value": 256,
+				}, 1)),
+	}
+	
+	import_as_choice_field.value_changed.connect(_on_import_as_value_changed)
 	previous_frame_button.pressed.connect(_on_previous_frame_button_pressed)
 	next_frame_button.pressed.connect(_on_next_frame_button_pressed)
 	reset_button.pressed.connect(_on_reset_button_pressed)
@@ -99,6 +134,16 @@ func _on_attributes_changed() -> void:
 	_make_preview_image()
 	
 	attributes_changed.emit(resource, attributes)
+
+
+func _on_import_as_value_changed(property_name: String, new_value: Variant) -> void:
+	var import_as := import_as_choice_field.property_value
+	if import_as == "Sliced Shape":
+		sliced_shape_attributes_container.visible = true
+		texture_index_attributes_container.visible = false
+	else:
+		sliced_shape_attributes_container.visible = false
+		texture_index_attributes_container.visible = true
 
 
 func _on_previous_frame_button_pressed() -> void:
@@ -114,7 +159,8 @@ func _on_next_frame_button_pressed() -> void:
 
 
 func _on_reset_button_pressed() -> void:
-	reset()
+	reset_texture()
+	attributes_changed.emit(resource, attributes)
 
 
 func _make_preview_image():

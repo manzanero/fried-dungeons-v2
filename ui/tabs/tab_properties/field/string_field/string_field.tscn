@@ -5,6 +5,7 @@
 
 [node name="StringField" instance=ExtResource("1_271ju")]
 offset_bottom = 31.0
+size_flags_vertical = 4
 script = ExtResource("2_t30o5")
 
 [node name="LineEdit" type="LineEdit" parent="H" index="1"]

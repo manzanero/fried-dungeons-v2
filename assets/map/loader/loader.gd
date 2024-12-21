@@ -255,9 +255,31 @@ func load_map(map_data: Dictionary):
 	
 	map.label = map_data.label
 	
+	if map_data.has("settings"):
+		var atlas_texture_resource_path: String = map_data.settings.get("atlas_texture", "")
+		map.atlas_texture_resource = Game.manager.get_resource(
+				CampaignResource.Type.TEXTURE, atlas_texture_resource_path)
+		
+		map.ambient_light = map_data.settings.ambient_light
+		map.ambient_color = Utils.html_color_to_color(map_data.settings.ambient_color)
+		map.master_ambient_light = map_data.settings.master_ambient_light
+		map.master_ambient_color = Utils.html_color_to_color(map_data.settings.master_ambient_color)
+		map.override_ambient_light = map_data.settings.get("override_ambient_light", true)
+		map.override_ambient_color = map_data.settings.get("override_ambient_color", false)
+		
+		map.current_ambient_light = map.ambient_light
+		map.current_ambient_color = map.ambient_color
+		
+		if Game.campaign.is_master:
+			if map.override_ambient_light:
+				map.current_ambient_light = map.master_ambient_light
+			if map.override_ambient_color:
+				map.current_ambient_color = map.master_ambient_color
+				
+	
 	# It is an empty map
 	if not map_data.has("levels"):
-		var level: Level = Game.level_scene.instantiate().init(map, 0)
+		var level: Level = Level.SCENE.instantiate().init(map, 0)
 		level.rect = Rect2i(0, 0, 1, 1)
 		
 		var viewport_3d := level.viewport_3d
@@ -272,10 +294,11 @@ func load_map(map_data: Dictionary):
 		map.instancer.create_light(level, Utils.random_string(8, true), Vector2(0.5, 0.5))
 		
 	else:
+		
 		for level_index in map_data.levels:
 			var level_data: Dictionary = map_data.levels[level_index]
 			var index := int(level_index)
-			var level: Level = Game.level_scene.instantiate().init(map, index)
+			var level: Level = Level.SCENE.instantiate().init(map, index)
 			
 			var viewport_3d := level.viewport_3d
 			var floor_2d := viewport_3d.floor_2d
@@ -313,36 +336,10 @@ func load_map(map_data: Dictionary):
 				if "color" in element_data.properties and element_data.properties["color"] is String:
 					element_data.properties["color"] = Utils.html_color_to_color(element_data.properties["color"])
 				
-				var rotation: float = element_data.get("rotation", 0.0)
+				var rotation_y: float = element_data.get("rotation", 0.0)
+				var flipped: float = element_data.get("flipped", false)
 				map.instancer.create_element(element_data.type, level, element_data.id, 
-						Utils.a2_to_v2(element_data.position), element_data.properties, rotation)
+						Utils.a2_to_v2(element_data.position), 
+						element_data.properties, rotation_y, flipped)
 	
 	map.selected_level = map.levels_parent.get_children()[0]
-	
-	if map_data.has("settings"):
-		map.ambient_light = map_data.settings.ambient_light
-		map.ambient_color = Utils.html_color_to_color(map_data.settings.ambient_color)
-		map.master_ambient_light = map_data.settings.master_ambient_light
-		map.master_ambient_color = Utils.html_color_to_color(map_data.settings.master_ambient_color)
-		map.override_ambient_light = map_data.settings.get("override_ambient_light", true)
-		map.override_ambient_color = map_data.settings.get("override_ambient_color", false)
-		
-		map.current_ambient_light = map.ambient_light
-		map.current_ambient_color = map.ambient_color
-		
-		if Game.campaign.is_master:
-			if map.override_ambient_light:
-				map.current_ambient_light = map.master_ambient_light
-			if map.override_ambient_color:
-				map.current_ambient_color = map.master_ambient_color
-			
-		## settings
-		#Game.ui.tab_settings.title_edit.text = map.label
-		#Game.ui.tab_settings.ambient_light_spin.value = map.ambient_light * 100
-		#Game.ui.tab_settings.ambient_color_button.color = map.ambient_color
-		#Game.ui.tab_settings.override_ambient_light_check.button_pressed = map_data.settings.get("override_ambient_light", true)
-		#Game.ui.tab_settings.master_ambient_light_spin.value = map.master_ambient_light * 100
-		#Game.ui.tab_settings.override_ambient_color_check.button_pressed = map_data.settings.get("override_ambient_color", false)
-		#Game.ui.tab_settings.master_ambient_color_button.color = map.master_ambient_color
-		#Game.ui.tab_settings._on_ambient_edited()
-	

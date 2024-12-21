@@ -1,8 +1,10 @@
-[gd_scene load_steps=4 format=3 uid="uid://bwmhcqk0qsymk"]
+[gd_scene load_steps=6 format=3 uid="uid://bwmhcqk0qsymk"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_resources/import_sound/import_sound.gd" id="1_ebk8j"]
 [ext_resource type="PackedScene" uid="uid://dl0m5fa0feqgj" path="res://ui/tabs/tab_properties/container/property_container.tscn" id="2_xekfo"]
+[ext_resource type="PackedScene" uid="uid://d0ch44utbuhby" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn" id="3_pmyk0"]
 [ext_resource type="PackedScene" uid="uid://cvlbw6pjdx7sd" path="res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn" id="4_f3qwf"]
+[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="5_iydvl"]
 
 [node name="ImportSound" type="BoxContainer"]
 clip_contents = true
@@ -32,7 +34,17 @@ text = "Ambient"
 [node name="Background" parent="V/FieldsContainer/M" index="0"]
 visible = false
 
-[node name="VolumeField" parent="V/FieldsContainer/M/PropertyFields" index="0" instance=ExtResource("4_f3qwf")]
+[node name="LoopField" parent="V/FieldsContainer/M/PropertyFields" index="0" instance=ExtResource("3_pmyk0")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="V/FieldsContainer/M/PropertyFields/LoopField/H" index="0"]
+text = "Loop"
+
+[node name="CheckBox" parent="V/FieldsContainer/M/PropertyFields/LoopField/H" index="1"]
+button_pressed = true
+
+[node name="VolumeField" parent="V/FieldsContainer/M/PropertyFields" index="1" instance=ExtResource("4_f3qwf")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
@@ -42,13 +54,11 @@ text = "Volume"
 
 [node name="NumberEdit" parent="V/FieldsContainer/M/PropertyFields/VolumeField/H" index="1"]
 suffix = "%"
-has_slider = true
-has_arrows = true
 max_value = 200.0
 step = 5.0
 text = "100"
 
-[node name="PitchField" parent="V/FieldsContainer/M/PropertyFields" index="1" instance=ExtResource("4_f3qwf")]
+[node name="PitchField" parent="V/FieldsContainer/M/PropertyFields" index="2" instance=ExtResource("4_f3qwf")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
@@ -58,8 +68,6 @@ text = "Pitch"
 
 [node name="NumberEdit" parent="V/FieldsContainer/M/PropertyFields/PitchField/H" index="1"]
 suffix = "%"
-has_slider = true
-has_arrows = true
 min_value = 1.0
 max_value = 200.0
 step = 5.0
@@ -74,7 +82,8 @@ vertical = true
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-text = "Reset"
+icon = ExtResource("5_iydvl")
+icon_alignment = 1
 
 [node name="V3" type="BoxContainer" parent="."]
 custom_minimum_size = Vector2(180.87, 0)
@@ -92,8 +101,9 @@ text = "Sound:"
 [node name="SoundEditedLabel" type="Label" parent="V3"]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 2
-size_flags_vertical = 0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+autowrap_mode = 3
 
 [node name="S" type="ScrollContainer" parent="V3"]
 layout_mode = 2
@@ -101,5 +111,6 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [editable path="V/FieldsContainer"]
+[editable path="V/FieldsContainer/M/PropertyFields/LoopField"]
 [editable path="V/FieldsContainer/M/PropertyFields/VolumeField"]
 [editable path="V/FieldsContainer/M/PropertyFields/PitchField"]

@@ -2,30 +2,60 @@ class_name ServerManager
 extends Node
 
 
-signal player_connected(username)
-signal player_disconnected(username)
+signal presence_connected(presence: Presence)
+signal presence_disconnected(presence: Presence)
 signal server_disconnected
 
+# Steam
+signal lobbies_loaded(lobbies_list: Array)
+
+
 const PORT := 2020
+const MAX_PEERS := 16
+const APP_ID = 3352000
+
 
 @export var rpcs: Rpcs
 
-var peer: ENetMultiplayerPeer :
+var peer: MultiplayerPeer :
 	set(value): 
 		if peer: 
 			peer.close()
 			multiplayer.multiplayer_peer = null
 		peer = value
 
-var server_address := "127.0.0.1"
-var server_port := PORT
-var player_id := 1
-var player_username := "Unnamed"
-var player_password := ""
-var players = {}
-
-var connected: bool :
+var is_peer_connected: bool :
 	get: return peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
+
+var presence := Presence.new(-1, "Unnamed", "unnamed")
+var presences: Array[Presence] = []
+
+class Presence:
+	var id: int
+	var username: String
+	var slug: String
+	
+	func _init(_id: int, _username: String, _slug: String) -> void:
+		id = _id
+		username = _username
+		slug = _slug
+
+var is_steam_game := false
+
+## enet
+var enet_host := "127.0.0.1"
+var enet_port := PORT
+var enet_username: String
+var enet_password: String
+
+## steam
+var is_steam_ready := false
+var lobby_id := -1
+var owner_steam_id := -1
+var is_online: bool
+var is_owned: bool
+var steam_id: int
+var steam_username: String
 
 
 func _ready():
@@ -34,104 +64,212 @@ func _ready():
 	multiplayer.connected_to_server.connect(_on_connected_ok)
 	multiplayer.connection_failed.connect(_on_connected_fail)
 	multiplayer.server_disconnected.connect(_on_server_disconnected)
+	
+	## Steam
+	var steam_init_response: Dictionary = Steam.steamInitEx(true, APP_ID)
+	var steam_error: int = steam_init_response['status']
+	if steam_error:
+		is_steam_ready = false
+		Debug.print_error_message("Failed to initialize Steam: %s" % steam_init_response['verbal'])
+	else:
+		is_steam_ready = true
+		is_online = Steam.loggedOn()
+		is_owned = Steam.isSubscribed()
+		steam_id = Steam.getSteamID()
+		steam_username = Steam.getPersonaName()
+		Debug.print_info_message("Steam connected")
+		
+		Steam.lobby_created.connect(_on_lobby_created)
+		Steam.lobby_joined.connect(_on_lobby_joined)
+		Steam.lobby_match_list.connect(_on_lobby_match_list)
 
 
-func host_multiplayer() -> Error:
+func _process(_delta):
+	Steam.run_callbacks()
+	
+
+func host_multiplayer(steam: bool) -> Error:
+	if steam:
+		return host_steam_multiplayer()
+	else:
+		return host_enet_multiplayer()
+
+
+func host_steam_multiplayer():
+	Debug.print_info_message("Creating Lobby")
+	
+	presence.username = steam_username
+	presence.slug = str(steam_id)
+	
+	Steam.createLobby(Steam.LOBBY_TYPE_PUBLIC, MAX_PEERS)
+	#Steam.createLobby(Steam.LOBBY_TYPE_FRIENDS_ONLY, MAX_PEERS)
+	
+	return OK
+
+
+func _on_lobby_created(_connect: int, _lobby_id: int):
+	if _connect != 1:
+		Debug.print_error_message("Error on create lobby!")
+		return
+	
+	Debug.print_info_message("Creating lobby id: %s" % _lobby_id)
+	
+	lobby_id = _lobby_id
+	Steam.setLobbyJoinable(_lobby_id, true)
+	Steam.setLobbyData(_lobby_id, "label", Game.campaign.label)
+	Steam.setLobbyData(_lobby_id, "slug", Game.campaign.slug)
+	Steam.setLobbyData(_lobby_id, "time", Time.get_time_string_from_system())
+	
+	peer = SteamMultiplayerPeer.new()
+	peer.create_host(0, [])
+	multiplayer.multiplayer_peer = peer
+	is_steam_game = true
+
+
+func join_steam_multiplayer(_lobby_id: int):
+	Debug.print_info_message("Joining lobby id: %s" % _lobby_id)
+	
+	presence.username = steam_username
+	presence.slug = str(steam_id)
+	
+	Steam.joinLobby(_lobby_id)
+
+
+func _on_lobby_joined(_lobby_id: int, _permissions: int, _locked: bool, response: int):
+	if response != 1:
+		Debug.print_error_message({
+			2: "This lobby no longer exists",
+			3: "You don't have permission to join this lobby",
+			4: "The lobby is now full",
+			5: "Uh... something unexpected happened!",
+			6: "You are banned from this lobby",
+			7: "You cannot join due to having a limited account",
+			8: "This lobby is locked or disabled",
+			9: "This lobby is community locked",
+			10: "A user in the lobby has blocked you from joining",
+			11: "A user you have blocked is in the lobby",
+		}[response])
+		return
+		
+	owner_steam_id = Steam.getLobbyOwner(_lobby_id)
+	if owner_steam_id == Steam.getSteamID():
+		Debug.print_info_message("You already own the lobby")
+		return
+	
+	Debug.print_info_message("Joined lobby id: %s" % _lobby_id)
+	peer = SteamMultiplayerPeer.new()
+	peer.create_client(owner_steam_id, 0, [])
+	multiplayer.multiplayer_peer = peer
+	is_steam_game = true
+
+
+func request_steam_lobbies():
+	Debug.print_info_message("Requesting Steam Lobbies")
+	
+	#Steam.addRequestLobbyListDistanceFilter(Steam.LobbyDistanceFilter.LOBBY_DISTANCE_FILTER_DEFAULT)
+	Steam.addRequestLobbyListDistanceFilter(Steam.LobbyDistanceFilter.LOBBY_DISTANCE_FILTER_WORLDWIDE)
+	Steam.requestLobbyList()
+	
+
+func _on_lobby_match_list(lobbies: Array):
+	Debug.print_info_message("Steam Lobbies received")
+	
+	lobbies_loaded.emit(lobbies)
+
+
+func host_enet_multiplayer() -> Error:
 	peer = ENetMultiplayerPeer.new()
-	var error := peer.create_server(PORT)
+	var error: Error = peer.create_server(PORT)
 	if error:
 		Debug.print_error_message("create_server == %s" % error)
 		return error
 		
 	multiplayer.multiplayer_peer = peer
+	is_steam_game = false
 	return OK
-	
 
-func join_multiplayer(host: String, username: String, password: String) -> Error:
+
+func join_enet_multiplayer(host: String, username: String, password: String) -> Error:
 	peer = ENetMultiplayerPeer.new()
-	server_address = host
+	enet_host = host
 	if host.split(":").size() == 2:
-		server_address = host.split(":")[0]
+		enet_host = host.split(":")[0]
 		var port: String = host.split(":")[1]
-		server_port =  port.to_int() if port.is_valid_int() else PORT
-	var error := peer.create_client(server_address, server_port)
+		enet_port =  port.to_int() if port.is_valid_int() else PORT
+	var error: Error = peer.create_client(enet_host, enet_port)
 	if error:
 		Debug.print_error_message("create_client == %s" % error)
 		return error
 	
-	player_username = username
-	player_password = password
+	presence.username = username
+	presence.slug = Utils.slugify(username)
+	enet_username = username
+	enet_password = password
 	
 	multiplayer.multiplayer_peer = peer
+	is_steam_game = false
+	Debug.print_info_message("Enet client created")
 	return OK
-	
+
 
 func _on_player_connected(id: int):
 	Debug.print_info_message("Player connected: %s" % id)
 	
-	# introduce yourself to the master
+	## introduce yourself to the master
 	if not multiplayer.is_server():
-		_register_player.rpc_id(id, player_username, player_password)
-
-
-@rpc("any_peer", "reliable")
-func _register_player(username: String, password: String):
-	var new_player_id := multiplayer.get_remote_sender_id()
-	players[username] = new_player_id
-	
-	# master accomodates new player
-	if multiplayer.is_server():
-		if _is_player_registered(username, password):
-			set_up_player(new_player_id)
+		if is_steam_game:
+			_register_steam_player.rpc_id(1, presence.username, steam_id)
 		else:
-			peer.disconnect_peer(new_player_id)
+			_register_enet_player.rpc_id(1, presence.username, enet_password)
 
 
-func _on_player_disconnected(id):
-	Debug.print_info_message("Player disconnected: %s" % id)
-	players.erase(id)
-	player_disconnected.emit(player_username)
-
-
-func _on_connected_ok():
-	Debug.print_info_message("Server connected")
-	player_id = multiplayer.get_unique_id()
+# master
+@rpc("any_peer", "reliable")
+func _register_steam_player(username: String, _steam_id: int):
+	Debug.print_info_message("Player registration: %s" % username)
 	
-	Debug.id = player_id
-	players[player_username] = player_id
-	player_connected.emit(player_username)
-
-
-func _on_connected_fail():
-	Debug.print_info_message("Connected fail")
-	if multiplayer:
-		multiplayer.multiplayer_peer = null
-	players.clear()
-	server_disconnected.emit()
-		
-	Game.manager.reset()
-
-
-func _on_server_disconnected():
-	Debug.print_info_message("Server disconnected")
-	if multiplayer:
-		multiplayer.multiplayer_peer = null
-	players.clear()
-	server_disconnected.emit()
-		
-	Game.manager.reset()
+	var new_player_id := multiplayer.get_remote_sender_id()
+	var slug := str(_steam_id)
 	
+	if slug not in Game.campaign.players:
+		var player_data := {
+			"username": username
+		}
+		Game.campaign.set_player_data(slug, player_data)
+	
+	var new_presence := Presence.new(new_player_id, username, slug)
+	presences.append(new_presence)
+	
+	load_campaign.rpc_id(new_player_id, Game.campaign.slug, Game.campaign.json(), false)
+	Debug.print_info_message("Player registered: %s" % new_player_id)
 
-## rpcs
 
+# master
+@rpc("any_peer", "reliable")
+func _register_enet_player(username: String, password: String):
+	Debug.print_info_message("Player registration: %s" % username)
+	
+	var new_player_id := multiplayer.get_remote_sender_id()
+	var slug := str(username)
+	
+	if not _is_player_registered(username, password):
+		peer.disconnect_peer(new_player_id)
+		return
+	
+	var new_presence := Presence.new(new_player_id, username, slug)
+	presences.append(new_presence)
+	
+	load_campaign.rpc_id(new_player_id, Game.campaign.slug, Game.campaign.json(), false)
+	Debug.print_info_message("Player registered: %s" % new_player_id)
+
+# master
 func _is_player_registered(username, password) -> bool:
 	Debug.print_info_message("New Player login: %s" % username)
-	var username_slug := Utils.slugify(username)
-	var campaign := Game.ui.tab_players.campaign_selected
+	var campaign := Game.campaign
 	
-	if username_slug in campaign.players:
-		for player_slug in campaign.players:
-			var player_data := campaign.get_player_data(player_slug)
+	if Utils.slugify(username) in Game.campaign.players:
+		for slug in Game.campaign.players:
+			var player_data := Game.campaign.get_player_data(slug)
 			if username == player_data.username and password == player_data.password:
 				return true
 			
@@ -139,57 +277,103 @@ func _is_player_registered(username, password) -> bool:
 	return false
 
 
-func set_up_player(id: int):
-	Debug.print_info_message("Setting up player %s" % id)
-	var campaign := Game.campaign
-	var campaign_data := campaign.json()
-	load_campaign.rpc_id(id, campaign.slug, campaign_data)
+func _on_player_disconnected(id):
+	Debug.print_info_message("Player disconnected: %s" % id)
+	for p in presences:
+		if p.id == id:
+			presences.erase(p)
+	presence_disconnected.emit(presence)
 
 
+func _on_connected_ok():
+	Debug.print_info_message("Server connected")
+	
+	presence.id = multiplayer.get_unique_id()
+	Debug.id = presence.id
+	presence_connected.emit(presence)
+
+
+func _on_connected_fail():
+	Debug.print_info_message("Connected fail")
+	if multiplayer:
+		multiplayer.multiplayer_peer = null
+	presences.clear()
+	server_disconnected.emit()
+
+
+func _on_server_disconnected():
+	Debug.print_info_message("Server disconnected")
+	if multiplayer:
+		multiplayer.multiplayer_peer = null
+	presences.clear()
+	server_disconnected.emit()
+
+
+## rpcs
+
+# player
 @rpc("any_peer", "reliable")
-func load_campaign(campaign_slug: String, campaign_data: Dictionary):
+func load_campaign(campaign_slug: String, campaign_data: Dictionary, is_steam_campaign := false):
 	Debug.print_info_message("Loading campaign %s" % campaign_slug)
-	Game.campaign = Campaign.new(false, campaign_slug, campaign_data.label)
+	Game.master = Player.new("master", campaign_data.get("master", {}))
+	Game.campaign = Campaign.new(false, campaign_slug, campaign_data)
 	Game.manager.reset()
 	
-	var server_path := Game.campaign.path
-	Utils.make_dirs(server_path.path_join("resources"))
-	var server_error := Utils.dump_json(server_path.path_join("server.json"), {
-		"label": campaign_data.label,
-		"host": server_address,
-	}, 2)
-	if server_error:
-		Debug.print_error_message("Failed to create Server file")
-		
-	var player_path := Game.campaign.get_player_path(Utils.slugify(player_username))
-	Utils.make_dirs(player_path)
-	var player_error := Utils.dump_json(player_path.path_join("player.json"), {
-		"username": player_username,
-		"password": player_password,
-	}, 2)
-	if player_error:
-		Debug.print_error_message("Failed to create Player file")
+	if is_steam_campaign:
+		if Game.campaign.save_server_data({
+			"steam": is_steam_campaign,
+			"label": campaign_data.label,
+			"password": enet_password,
+		}):
+			Debug.print_error_message("Failed to create Server file")
+	
+	else:
+		if Game.campaign.save_server_data({
+			"steam": is_steam_campaign,
+			"label": campaign_data.label,
+			"host": enet_host,
+			"username": presence.username,
+			"password": enet_password,
+		}):
+			Debug.print_error_message("Failed to create Server file")
+			
+	# purge resources
+	var remote_resource_timestamps: Dictionary = campaign_data.get("resources", {})
+	for resource: CampaignResource in Game.resources.values():
+		if resource.path not in remote_resource_timestamps:
+			resource.remove()
+			continue
+		if resource.timestamp < remote_resource_timestamps[resource.path]:
+			resource.update()
 
 	# init jukebox
-	for sound_data in campaign_data.jukebox.sounds:
-		var sound := Game.manager.get_resource(CampaignResource.Type.SOUND, sound_data.sound)
-		if not sound.loaded:
-			await sound.resource_loaded
-		var from_position: float = sound_data.get("position", 0.0)
-		Game.ui.tab_jukebox.add_sound(sound, sound_data.loop, from_position)
-	if campaign_data.jukebox.get("muted", false):
-		Game.ui.tab_jukebox.audio.volume_db = linear_to_db(0)
+	var jukebox_data: Dictionary = campaign_data.get("jukebox", {})
+	var music_data: Dictionary = jukebox_data.get("music", {})
+	for music_path in music_data:
+		var sound_data: Dictionary = music_data[music_path]
+		var sound := Game.manager.get_resource(CampaignResource.Type.SOUND, sound_data.resource)
+		if not sound.resource_loaded:
+			await sound.loaded
+			
+		Game.ui.tab_jukebox.add_sound(sound, sound_data.get("position", 0.0))
 		
+	if jukebox_data.get("muted", false):
+		Game.ui.tab_jukebox.audio.volume_db = linear_to_db(0)
+	
+	# init state
 	Game.flow.change_flow_state(campaign_data.state)
 	
+	# init map
 	request_map.rpc_id(1, campaign_data.players_map)
 
 
+# player
 @rpc("any_peer", "reliable")
 func request_map_notification(map_slug: String):
 	request_map.rpc_id(1, map_slug)
 
 
+# master
 @rpc("any_peer", "reliable")
 func request_map(map_slug: String):
 	Debug.print_info_message("Requested map %s" % map_slug)
@@ -200,6 +384,7 @@ func request_map(map_slug: String):
 	load_map.rpc_id(id, map_slug, map_data)
 
 
+# player
 @rpc("any_peer", "reliable")
 func load_map(map_slug: String, map_data: Dictionary):
 	Debug.print_info_message("Loading map %s" % map_slug)
@@ -208,27 +393,28 @@ func load_map(map_slug: String, map_data: Dictionary):
 		for scene_tab in Game.ui.scene_tabs.get_children():
 			scene_tab.remove()
 		
-		const TAB_SCENE = preload("res://ui/tabs/tab_scene/tab_scene.tscn")
-		var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, map_data)
+		var tab_scene: TabScene = TabScene.SCENE.instantiate().init(map_slug, map_data)
 		tab_scene.map.is_master_view = false
 		tab_scene.map.current_ambient_light = tab_scene.map.ambient_light
 		tab_scene.map.current_ambient_color = tab_scene.map.ambient_color
 	
-	request_player.rpc_id(1, Utils.slugify(player_username))
+	request_player.rpc_id(1, presence.slug)
 
 
+# master
 @rpc("any_peer", "reliable")
-func request_player(player_slug: String):
-	Debug.print_info_message("Requested player %s" % player_slug)
-	var id := multiplayer.get_remote_sender_id() 
-	var player_data := Game.campaign.get_player_data(player_slug)
-	load_player.rpc_id(id, player_slug, player_data)
+func request_player(_player_slug: String):
+	Debug.print_info_message("Requested player %s" % _player_slug)
+	var player_id := multiplayer.get_remote_sender_id() 
+	var player_data := Game.campaign.get_player_data(_player_slug)
+	load_player.rpc_id(player_id, _player_slug, player_data)
 
 
+# player
 @rpc("any_peer", "reliable")
-func load_player(player_slug: String, player_data: Dictionary):
-	Debug.print_info_message("Loading player %s" % player_slug)
-	Game.player = Player.load(player_data)
+func load_player(_player_slug: String, player_data: Dictionary):
+	Debug.print_info_message("Loading player %s" % _player_slug)
+	Game.player = Player.new(_player_slug, player_data)
 	
 	for element in Game.ui.selected_map.selected_level.elements:
 		if element is Entity:
@@ -240,50 +426,160 @@ func load_player(player_slug: String, player_data: Dictionary):
 			entity.eye.visible = true
 			entity.is_selectable = true
 			Game.ui.selected_map.camera.position_2d = entity.position_2d
-			Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, entity_id])
+			Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [presence.username, entity_id])
 
 
+# player
 @rpc("any_peer", "reliable")
-func request_resource(resource_path: String, timestamp: int):
+func resource_change_notification(resource_path: String, timestamp := -1):
+	var resource: CampaignResource = Game.resources[resource_path]
+	resource.resource_loaded = false
+	request_resource.rpc_id(1, resource_path, timestamp)
+
+
+# master
+@rpc("any_peer", "reliable")
+func request_resource(resource_path: String, timestamp := -1):
 	Debug.print_info_message("Requested resource %s" % resource_path)
 	var id := multiplayer.get_remote_sender_id()
 	var resource: CampaignResource = Game.resources[resource_path]
 	
-	# player has the file
-	if resource.timestamp == timestamp:
-		confirm_resource.rpc_id(id, resource_path, resource.json())
-		return
-		
-	var resource_abspath := Game.campaign.get_resource_abspath(resource_path)
-	var resource_bytes := FileAccess.get_file_as_bytes(resource_abspath)
-	if not resource_bytes:
-		Debug.print_error_message("Requested resource %s not found" % resource_abspath)
-		return
+	# if player has the file and it is updated
+	if resource.timestamp <= timestamp:
+		comfirm_resource.rpc_id(id, resource_path, resource.json())
+	else:
+		send_resource(id, resource)
 	
-	load_resource.rpc_id(id, resource_bytes, resource_path, resource.json())
-
-
+	
+# player
 @rpc("any_peer", "reliable")
-func confirm_resource(resource_path: String, resource_data: Dictionary):
-	Debug.print_info_message("Confirmed resource %s" % resource_path)
+func comfirm_resource(resource_path: String, resource_data: Dictionary):
+	Debug.print_info_message("Comfirmed resource %s" % resource_path)
+	
+	var resource_abspath := Game.campaign.get_resource_abspath(resource_path)
+	Debug.print_info_message("Comfirmed resource abspath: %s" % resource_abspath)
+	if not FileAccess.file_exists(resource_abspath):
+		Debug.print_error_message("Resource %s not present" % resource_path)
 	
 	var resource: CampaignResource = Game.resources[resource_path]
-	resource.loaded = true
+	resource.resource_loaded = true
 	Game.manager.set_resource(resource.resource_type, resource_path, resource_data)
 
 
+#region tranfers
+
+# master
+func send_resource(id: int, resource: CampaignResource):
+	Debug.print_info_message("sending resource %s to %s" % [resource.path, id])
+	
+	while is_transferring:
+		await transfer_completed
+	is_transferring = true
+	
+	var bytes = resource.bytes
+	if not bytes:
+		Debug.print_error_message("Requested resource %s not found" % resource.path)
+		is_transferring = false
+		transfer_completed.emit()
+		return
+		
+	var resource_size = bytes.size()
+	new_transfer.rpc_id(id, resource.resource_type, resource.path, resource.json(), resource_size)
+	await new_transfer_ready_signal
+	
+	Debug.print_info_message("Resource tranfer starts: %s (%s b)" % [resource.path, resource_size])
+	
+	const CHUNK_SIZE := 1024 * 256
+	var slices := ceili(float(resource_size) / CHUNK_SIZE)
+	Debug.print_info_message("Resource divided into %s slices" % slices)
+	for i in range(slices):
+		var start_byte := i * CHUNK_SIZE
+		var end_byte := start_byte + CHUNK_SIZE
+		load_chunk.rpc_id(id, bytes.slice(start_byte, end_byte))
+		await chunk_loaded_signal
+	
+	is_transferring = false
+	Debug.print_info_message("Transfer complete: %s" % resource.path)
+	transfer_completed.emit()
+
+signal transfer_completed
+var is_transferring := false
+var transferred_bytes := PackedByteArray()
+var transferred_type := ""
+var transferred_path := ""
+var transferred_data := {}
+var transferred_size := 0
+
+# player
 @rpc("any_peer", "reliable")
-func load_resource(resource_bytes: PackedByteArray, resource_path: String, resource_data: Dictionary):
-	Debug.print_info_message("Requested resource %s" % resource_path)
+func new_transfer(resource_type: String, resource_path: String, resource_data: Dictionary, resource_size: int):
+	Debug.print_info_message("Resource tranfer queued: %s (%s b)" % [resource_path, resource_size])
+	
+	while is_transferring:
+		await transfer_completed
+	is_transferring = true
 	
 	var resource_abspath := Game.campaign.get_resource_abspath(resource_path)
 	Utils.remove_file(resource_abspath)  # remove outdated version
+	
+	Debug.print_info_message("Resource tranfer starts: %s (%s b)" % [resource_path, resource_size])
+	transferred_bytes.clear()
+	transferred_type = resource_type
+	transferred_path = resource_path
+	transferred_data = resource_data
+	transferred_size = resource_size
+	new_transfer_ready.rpc_id(1)
+
+# master
+@rpc("any_peer", "reliable")
+func new_transfer_ready():
+	new_transfer_ready_signal.emit()
+
+signal new_transfer_ready_signal
+
+# player
+@rpc("any_peer", "reliable")
+func load_chunk(bytes_slice: PackedByteArray):
+	chunk_loaded.rpc_id(1)
+	
+	transferred_bytes.append_array(bytes_slice)
+	
+	# check if it is the last chunk
+	if transferred_size == transferred_bytes.size():
+		finish_transfer()
+
+# player
+func finish_transfer():
+	Debug.print_info_message("Received the entire resource %s" % transferred_path)
+	var resource_abspath := Game.campaign.get_resource_abspath(transferred_path)
+	
 	Utils.make_dirs(resource_abspath.get_base_dir())
 	
 	var resource_file := FileAccess.open(resource_abspath, FileAccess.WRITE)
-	resource_file.store_buffer(resource_bytes)
+	resource_file.store_buffer(transferred_bytes)
+	resource_file.close()
 	
-	var resource: CampaignResource = Game.resources[resource_path]
-	resource.loaded = true
-	Game.manager.set_resource(resource.resource_type, resource_path, resource_data)
+	if not FileAccess.file_exists(resource_abspath):
+		Debug.print_error_message("Resource %s not stored" % transferred_path)
+		
+	var resource: CampaignResource = Game.resources.get(transferred_path)
+	if not resource:
+		resource = CampaignResource.new(transferred_type, transferred_path, transferred_data)
+		Game.resources[transferred_path] = resource
+	else:
+		Game.manager.set_resource(transferred_type, transferred_path, transferred_data)
 	
+	resource.resource_loaded = true
+	is_transferring = false
+	Debug.print_info_message("Transfer complete: %s" % transferred_path)
+	transfer_completed.emit()
+
+# master
+@rpc("any_peer", "reliable")
+func chunk_loaded():
+	chunk_loaded_signal.emit()
+
+signal chunk_loaded_signal
+
+
+#endregion

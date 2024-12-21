@@ -11,6 +11,7 @@ var attributes: Dictionary : set = _set_attributes, get = _get_attributes
 
 
 @onready var attribute_fields := {
+	"loop": %LoopField,
 	"volume": %VolumeField,
 	"pitch": %PitchField,
 }
@@ -30,6 +31,8 @@ func _set_resource(_resource: CampaignResource) -> void:
 
 func _set_attributes(_attributes: Dictionary) -> void:
 	reset()
+	if _attributes.has("loop"):
+		attribute_fields.loop.property_value = _attributes.loop
 	if _attributes.has("volume"):
 		attribute_fields.volume.property_value = _attributes.volume * 100.0
 	if _attributes.has("pitch"):
@@ -38,12 +41,14 @@ func _set_attributes(_attributes: Dictionary) -> void:
 
 func _get_attributes() -> Dictionary:
 	return {
+		"loop": attribute_fields.loop.property_value,
 		"volume": attribute_fields.volume.property_value / 100.0,
 		"pitch": attribute_fields.pitch.property_value / 100.0,
 	}
 
 
 func reset() -> void:
+	attribute_fields.loop.property_value = true
 	attribute_fields.volume.property_value = DEFAULT_VOLUME * 100.0
 	attribute_fields.pitch.property_value = DEFAULT_PITCH * 100.0
 	

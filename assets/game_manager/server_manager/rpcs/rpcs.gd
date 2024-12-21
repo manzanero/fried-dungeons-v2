@@ -16,6 +16,15 @@ func change_map_slug(old_slug: String, new_slug: String):
 
 
 @rpc("any_peer", "reliable")
+func change_atlas_texture(map_slug: String, resource_path: String):
+	var map: Map = _get_map_by_slug(map_slug); if not map: return
+	var texture_resource := Game.manager.get_resource(CampaignResource.Type.TEXTURE, resource_path)
+	if texture_resource and not texture_resource.resource_loaded:
+		await texture_resource.loaded
+	map.atlas_texture_resource = texture_resource
+
+
+@rpc("any_peer", "reliable")
 func change_ambient(map_slug: String, 
 		light: float, color: Color, master_light: float, master_color: Color):
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
@@ -64,7 +73,9 @@ func change_resource(resource_type: String, resource_path: String, resource_data
 
 @rpc("any_peer", "reliable")
 func load_theme_song(resource_path: String) -> void:
-	var _sound := Game.manager.get_resource(CampaignResource.Type.SOUND, resource_path)
+	var sound := Game.manager.get_resource(CampaignResource.Type.SOUND, resource_path)
+	if not sound.resource_loaded:
+		await sound.loaded
 	Debug.print_info_message("Theme song \"%s\" loaded" % [resource_path])
 
 
@@ -76,7 +87,9 @@ func play_theme_song(resource_path: String, muted := false) -> void:
 		return
 		
 	var sound := Game.manager.get_resource(CampaignResource.Type.SOUND, resource_path)
-	Game.ui.tab_jukebox.now_playing = [Game.ui.tab_jukebox.sound_items[sound.path]]
+	if not sound.resource_loaded:
+		await sound.loaded
+	
 	Game.ui.tab_jukebox.audio.file_path = sound.abspath
 	Game.ui.tab_jukebox.set_audio_attributes(sound)
 	Game.ui.tab_jukebox.audio.play()
@@ -86,8 +99,9 @@ func play_theme_song(resource_path: String, muted := false) -> void:
 
 
 @rpc("any_peer", "reliable")
-func change_theme_volume(new_volumen_level: float) -> void:
+func change_theme(new_volumen_level: float, new_pitch: float) -> void:
 	Game.ui.tab_jukebox.audio.volume_db = linear_to_db(new_volumen_level)
+	Game.ui.tab_jukebox.audio.pitch_scale = new_pitch
 	Debug.print_info_message("Theme volume changed to %s%%" % [new_volumen_level * 100])
 
 
@@ -177,55 +191,59 @@ func set_wall_properties(map_slug: String, level_index: int, id: String,
 #region instancing
 
 @rpc("any_peer", "reliable")
-func create_entity(map_slug: String, level_index: int, id: String, 
-		position_2d: Vector2, properties_values := {}, rotation_y := 0.0) -> void:
+func create_entity(map_slug: String, level_index: int, id: String, position_2d: Vector2, 
+		properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	var entity := map.instancer.create_entity(level, id, position_2d, properties_values, rotation_y)
+	var entity := map.instancer.create_entity(level, id, position_2d,
+			properties_values, rotation_y, flipped)
 	Debug.print_info_message("Entity \"%s\" created" % entity.id)
 
 
 @rpc("any_peer", "reliable")
-func create_light(map_slug: String, level_index: int, id: String, 
-		position_2d: Vector2, properties_values := {}, rotation_y := 0.0) -> void:
+func create_light(map_slug: String, level_index: int, id: String, position_2d: Vector2, 
+		properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	var light := map.instancer.create_light(level, id, position_2d, properties_values, rotation_y)
+	var light := map.instancer.create_light(level, id, position_2d,
+			properties_values, rotation_y, flipped)
 	Debug.print_info_message("Light \"%s\" created" % light.id)
 
 
 @rpc("any_peer", "reliable")
-func create_shape(map_slug: String, level_index: int, id: String, 
-		position_2d: Vector2, properties_values := {}, rotation_y := 0.0) -> void:
+func create_shape(map_slug: String, level_index: int, id: String, position_2d: Vector2,
+		properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	var shape := map.instancer.create_shape(level, id, position_2d, properties_values, rotation_y)
+	var shape := map.instancer.create_shape(level, id, position_2d, 
+			properties_values, rotation_y, flipped)
 	Debug.print_info_message("Shape \"%s\" created" % shape.id)
 
 
 @rpc("any_peer", "reliable")
 func set_element_target(map_slug: String, level_index: int, id: String, 
-		position_3d: Vector3, rotation_y := 0.0) -> void:
+		target_position: Vector3, target_rotation: Vector3) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var element := _get_element_by_id(level, id); if not element: return
-	element.target_position = position_3d
-	element.rotation.y = rotation_y
+	element.target_position = target_position
+	element.rotation = target_rotation
 	element.is_moving_to_target = true
 	var mid = multiplayer.get_remote_sender_id()
 	element.set_multiplayer_authority(mid)
-	Debug.print_info_message("Element \"%s\" has new target position" % [element.id])
+	Debug.print_debug_message("Element \"%s\" has new target position" % [element.id])
 
 
 @rpc("any_peer", "reliable")
 func set_element_position(map_slug: String, level_index: int, id: String, 
-		position_3d: Vector3, rotation_y := 0.0) -> void:
+		position_3d: Vector3, rotation_y := 0.0, flipped := false) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var element := _get_element_by_id(level, id); if not element: return
 	element.target_position = position_3d
 	element.global_position = position_3d
 	element.rotation.y = rotation_y
+	element.flipped = flipped
 	element.is_moving_to_target = false
 	Debug.print_info_message("Element \"%s\" has new position" % [element.id])
 

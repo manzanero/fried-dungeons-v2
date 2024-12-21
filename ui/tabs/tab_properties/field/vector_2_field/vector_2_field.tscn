@@ -1,31 +1,93 @@
-[gd_scene load_steps=4 format=3 uid="uid://be5bb4sa6st5j"]
+[gd_scene load_steps=7 format=3 uid="uid://be5bb4sa6st5j"]
 
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_4b8hm"]
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/vector_2_field/vector_2_field.gd" id="2_0cvdm"]
+[ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_2hlnn"]
 [ext_resource type="PackedScene" uid="uid://hwvpsllrlqk6" path="res://ui/tabs/tab_properties/field/number_edit/NumberEdit.tscn" id="3_w8nyv"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_57xvn"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_27dyp"]
 
 [node name="Vector2Field" instance=ExtResource("1_4b8hm")]
 size_flags_vertical = 4
 script = ExtResource("2_0cvdm")
 
-[node name="C" type="BoxContainer" parent="H" index="1"]
+[node name="C" parent="H" index="1" instance=ExtResource("3_2hlnn")]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 2
+
+[node name="V" type="BoxContainer" parent="H/C" index="0"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = -1
 vertical = true
 
-[node name="XNumberEdit" parent="H/C" index="0" instance=ExtResource("3_w8nyv")]
+[node name="XNumberEdit" parent="H/C/V" index="0" instance=ExtResource("3_w8nyv")]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_57xvn")
 prefix = "x"
+has_slider = false
+has_arrows = false
+step = 0.001
+allow_greater = true
+allow_lesser = true
+metadata/_edit_group_ = true
+
+[node name="LeftButton" parent="H/C/V/XNumberEdit/V/H" index="0"]
+visible = false
+
+[node name="RightButton" parent="H/C/V/XNumberEdit/V/H" index="1"]
+visible = false
+
+[node name="PrefixContainer" parent="H/C/V/XNumberEdit/V/H" index="2"]
+visible = true
+
+[node name="PrefixLabel" parent="H/C/V/XNumberEdit/V/H/PrefixContainer" index="0"]
+theme_override_colors/font_color = Color(0.75, 0, 0, 1)
+text = "x"
+
+[node name="SliderContainer" parent="H/C/V/XNumberEdit/V" index="1"]
+visible = false
+
+[node name="Slider" parent="H/C/V/XNumberEdit/V/SliderContainer" index="0"]
 step = 0.001
 allow_greater = true
 allow_lesser = true
 
-[node name="YNumberEdit" parent="H/C" index="1" instance=ExtResource("3_w8nyv")]
+[node name="YNumberEdit" parent="H/C/V" index="1" instance=ExtResource("3_w8nyv")]
 unique_name_in_owner = true
 layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_27dyp")
 prefix = "y"
+has_slider = false
+has_arrows = false
 step = 0.001
 allow_greater = true
 allow_lesser = true
+metadata/_edit_group_ = true
+
+[node name="LeftButton" parent="H/C/V/YNumberEdit/V/H" index="0"]
+visible = false
+
+[node name="RightButton" parent="H/C/V/YNumberEdit/V/H" index="1"]
+visible = false
+
+[node name="PrefixContainer" parent="H/C/V/YNumberEdit/V/H" index="2"]
+visible = true
+
+[node name="PrefixLabel" parent="H/C/V/YNumberEdit/V/H/PrefixContainer" index="0"]
+theme_override_colors/font_color = Color(0, 0.75, 0, 1)
+text = "y"
+
+[node name="SliderContainer" parent="H/C/V/YNumberEdit/V" index="1"]
+visible = false
+
+[node name="Slider" parent="H/C/V/YNumberEdit/V/SliderContainer" index="0"]
+step = 0.001
+allow_greater = true
+allow_lesser = true
+
+[editable path="H/C/V/XNumberEdit"]
+[editable path="H/C/V/YNumberEdit"]

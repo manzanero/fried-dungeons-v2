@@ -13,7 +13,7 @@ shader_parameter/albedo = null
 shader_parameter/light = null
 shader_parameter/transparency = null
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_03wmf"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_vp5hl"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ieev2"]
 
@@ -60,7 +60,7 @@ material = SubResource("ShaderMaterial_86s78")
 unique_name_in_owner = true
 
 [node name="SpriteMeshInstance" parent="Slices" instance=ExtResource("2_4juhu")]
-mesh = SubResource("ArrayMesh_03wmf")
+mesh = SubResource("ArrayMesh_vp5hl")
 generated_sprite_mesh = SubResource("Resource_ofkfa")
 
 [node name="SelectorMeshInstance" type="MeshInstance3D" parent="."]

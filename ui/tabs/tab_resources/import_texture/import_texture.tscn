@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://d2x02vgtidrgn"]
+[gd_scene load_steps=12 format=3 uid="uid://d2x02vgtidrgn"]
 
 [ext_resource type="PackedScene" uid="uid://dl0m5fa0feqgj" path="res://ui/tabs/tab_properties/container/property_container.tscn" id="1_0a7i1"]
 [ext_resource type="Script" path="res://ui/tabs/tab_resources/import_texture/import_texture.gd" id="1_2wa7l"]
@@ -8,6 +8,22 @@
 [ext_resource type="Texture2D" uid="uid://j04vtki4o5mi" path="res://resources/textures/bookshelf.png" id="5_c56ql"]
 [ext_resource type="PackedScene" uid="uid://cj4varycy448i" path="res://ui/tabs/tab_properties/field/choice_field/choice_field.tscn" id="7_5m7st"]
 [ext_resource type="Texture2D" uid="uid://deshy6dmtqy4c" path="res://resources/entity_textures/monsters/field/field_501.png" id="7_8agyp"]
+[ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="7_c05cm"]
+[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="9_qebvm"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t0iib"]
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.0828378, 0.0895761, 0.0963149, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
 [node name="ImportTexture" type="BoxContainer"]
 clip_contents = true
@@ -24,75 +40,91 @@ script = ExtResource("1_2wa7l")
 layout_mode = 2
 horizontal_scroll_mode = 0
 
-[node name="TextureImportFieldsContainer" parent="ScrollContainer" instance=ExtResource("1_0a7i1")]
+[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+layout_mode = 2
+
+[node name="ImportAsChoiceField" parent="ScrollContainer/VBoxContainer" instance=ExtResource("7_5m7st")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="ScrollContainer/VBoxContainer/ImportAsChoiceField/H" index="0"]
+text = "Import As"
+
+[node name="OptionButton" parent="ScrollContainer/VBoxContainer/ImportAsChoiceField/H" index="1"]
+item_count = 2
+popup/item_0/text = "Sliced Shape"
+popup/item_1/text = "Texture Index"
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+
+[node name="SlicedShapeAttributesContainer" parent="ScrollContainer/VBoxContainer" instance=ExtResource("1_0a7i1")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(216.705, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CollapseButton" parent="ScrollContainer/TextureImportFieldsContainer" index="0"]
+[node name="CollapseButton" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer" index="0"]
 visible = false
 text = "Ambient"
 
-[node name="Background" parent="ScrollContainer/TextureImportFieldsContainer/M" index="0"]
+[node name="Background" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M" index="0"]
 visible = false
 
-[node name="SizeField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="0" instance=ExtResource("2_f4wgr")]
+[node name="SizeField" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields" index="0" instance=ExtResource("2_f4wgr")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 
-[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SizeField/H" index="0"]
+[node name="Label" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField/H" index="0"]
 text = "Size"
 
-[node name="XNumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SizeField/H/C" index="0"]
+[node name="XNumberEdit" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField/H/C/V" index="0"]
 suffix = "px"
-rounded = true
-min_value = 1.0
-max_value = 64.0
-step = 1.0
-allow_lesser = false
-text = "16"
 
-[node name="YNumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SizeField/H/C" index="1"]
+[node name="SuffixContainer" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField/H/C/V/XNumberEdit/V/H" index="4"]
+visible = true
+
+[node name="SuffixLabel" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField/H/C/V/XNumberEdit/V/H/SuffixContainer" index="0"]
+text = "px"
+
+[node name="YNumberEdit" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField/H/C/V" index="1"]
 suffix = "px"
-rounded = true
-min_value = 1.0
-max_value = 64.0
-step = 1.0
-allow_lesser = false
-text = "16"
 
-[node name="ThicknessField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="1" instance=ExtResource("3_bel5q")]
+[node name="SuffixContainer" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField/H/C/V/YNumberEdit/V/H" index="4"]
+visible = true
+
+[node name="SuffixLabel" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField/H/C/V/YNumberEdit/V/H/SuffixContainer" index="0"]
+text = "px"
+
+[node name="ThicknessField" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields" index="1" instance=ExtResource("3_bel5q")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ThicknessField/H" index="0"]
+[node name="Label" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/ThicknessField/H" index="0"]
 text = "Thickness"
 
-[node name="NumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ThicknessField/H" index="1"]
+[node name="NumberEdit" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/ThicknessField/H" index="1"]
 suffix = "px"
-has_arrows = true
+has_slider = false
 min_value = 1.0
 max_value = 64.0
 text = "1"
 
-[node name="ScaleField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="2" instance=ExtResource("4_y0l2e")]
+[node name="ScaleField" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields" index="2" instance=ExtResource("4_y0l2e")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="H" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ScaleField" index="0"]
+[node name="H" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/ScaleField" index="0"]
 size_flags_horizontal = 3
 
-[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ScaleField/H" index="0"]
+[node name="Label" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/ScaleField/H" index="0"]
 text = "Scale
 "
 
-[node name="NumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ScaleField/H" index="1"]
+[node name="NumberEdit" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/ScaleField/H" index="1"]
 suffix = "%"
-has_slider = true
-has_arrows = true
 rounded = true
 min_value = 5.0
 max_value = 200.0
@@ -100,79 +132,111 @@ step = 5.0
 allow_greater = true
 text = "50"
 
-[node name="FramesField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="3" instance=ExtResource("3_bel5q")]
+[node name="FramesField" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields" index="3" instance=ExtResource("3_bel5q")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/FramesField/H" index="0"]
+[node name="Label" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/FramesField/H" index="0"]
 text = "Frames"
 
-[node name="NumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/FramesField/H" index="1"]
-has_arrows = true
+[node name="NumberEdit" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/FramesField/H" index="1"]
+has_slider = false
 min_value = 1.0
 max_value = 16.0
 text = "1"
 
-[node name="SlicesField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="4" instance=ExtResource("3_bel5q")]
+[node name="SlicesField" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields" index="4" instance=ExtResource("3_bel5q")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SlicesField/H" index="0"]
+[node name="Label" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SlicesField/H" index="0"]
 text = "Slices"
 
-[node name="NumberEdit" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SlicesField/H" index="1"]
-has_arrows = true
+[node name="NumberEdit" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SlicesField/H" index="1"]
+has_slider = false
 min_value = 1.0
 max_value = 16.0
 text = "1"
 
-[node name="DirectionField" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields" index="5" instance=ExtResource("7_5m7st")]
+[node name="DirectionField" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields" index="5" instance=ExtResource("7_5m7st")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Label" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/DirectionField/H" index="0"]
+[node name="Label" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/DirectionField/H" index="0"]
 text = "Direction"
 
-[node name="OptionButton" parent="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/DirectionField/H" index="1"]
+[node name="OptionButton" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/DirectionField/H" index="1"]
 popup/item_0/text = "front"
 popup/item_1/text = "top"
 popup/item_2/text = "side"
+
+[node name="TextureIndexAttributesContainer" parent="ScrollContainer/VBoxContainer" instance=ExtResource("1_0a7i1")]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(216.705, 0)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CollapseButton" parent="ScrollContainer/VBoxContainer/TextureIndexAttributesContainer" index="0"]
+visible = false
+text = "Ambient"
+
+[node name="Background" parent="ScrollContainer/VBoxContainer/TextureIndexAttributesContainer/M" index="0"]
+visible = false
 
 [node name="V2" type="BoxContainer" parent="."]
 layout_mode = 2
 theme_override_constants/separation = 8
 vertical = true
 
-[node name="C" type="BoxContainer" parent="V2"]
+[node name="FriedPanel" parent="V2" instance=ExtResource("7_c05cm")]
+custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
+size_flags_vertical = 0
+
+[node name="C" type="BoxContainer" parent="V2/FriedPanel"]
+layout_mode = 2
+theme_override_constants/separation = 0
 alignment = 1
 
-[node name="PreviousFrameButton" type="Button" parent="V2/C"]
+[node name="PreviousFrameButton" type="Button" parent="V2/FriedPanel/C"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
 text = "<"
 
-[node name="FrameLabel" type="Label" parent="V2/C"]
+[node name="FriedPanel" parent="V2/FriedPanel/C" instance=ExtResource("7_c05cm")]
+custom_minimum_size = Vector2(96, 0)
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_t0iib")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="V2/FriedPanel/C/FriedPanel"]
+layout_mode = 2
+alignment = 1
+
+[node name="FrameLabel" type="Label" parent="V2/FriedPanel/C/FriedPanel/HBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 text = "1"
 horizontal_alignment = 2
 
-[node name="SeparatotLabel" type="Label" parent="V2/C"]
+[node name="SeparatotLabel" type="Label" parent="V2/FriedPanel/C/FriedPanel/HBoxContainer"]
 layout_mode = 2
 text = "/"
 
-[node name="FramesLabel" type="Label" parent="V2/C"]
+[node name="FramesLabel" type="Label" parent="V2/FriedPanel/C/FriedPanel/HBoxContainer"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 text = "1"
 
-[node name="NextFrameButton" type="Button" parent="V2/C"]
+[node name="NextFrameButton" type="Button" parent="V2/FriedPanel/C"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
 text = ">"
 
@@ -198,16 +262,17 @@ stretch_mode = 5
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
-text = "Reset"
+icon = ExtResource("9_qebvm")
+icon_alignment = 1
 
 [node name="V" type="BoxContainer" parent="."]
-custom_minimum_size = Vector2(180.87, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 vertical = true
 
 [node name="Label" type="Label" parent="V"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 0
@@ -220,18 +285,28 @@ size_flags_vertical = 3
 
 [node name="FullTexture" type="TextureRect" parent="V/S"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(128, 128)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 texture = ExtResource("5_c56ql")
-expand_mode = 1
 stretch_mode = 4
 
-[editable path="ScrollContainer/TextureImportFieldsContainer"]
-[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SizeField"]
-[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ThicknessField"]
-[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/ScaleField"]
-[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/FramesField"]
-[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/SlicesField"]
-[editable path="ScrollContainer/TextureImportFieldsContainer/M/PropertyFields/DirectionField"]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="V/S/FullTexture"]
+visible = false
+layout_mode = 2
+offset_right = 832.0
+offset_bottom = 720.0
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[editable path="ScrollContainer/VBoxContainer/ImportAsChoiceField"]
+[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer"]
+[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField"]
+[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField/H/C/V/XNumberEdit"]
+[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SizeField/H/C/V/YNumberEdit"]
+[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/ThicknessField"]
+[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/ScaleField"]
+[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/FramesField"]
+[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/SlicesField"]
+[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M/PropertyFields/DirectionField"]
+[editable path="ScrollContainer/VBoxContainer/TextureIndexAttributesContainer"]

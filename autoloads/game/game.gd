@@ -1,7 +1,7 @@
 extends Node
 
 
-var master: Player = Player.new("Master", "", Color.WHITE)
+var master: Player
 var player: Player
 var campaign: Campaign
 
@@ -58,5 +58,5 @@ var WALL_BITMASK := Utils.get_bitmask(Game.WALL_LAYER)
 var CEILLING_BITMASK := Utils.get_bitmask(Game.CEILLING_LAYER)
 var SELECTOR_BITMASK := Utils.get_bitmask(Game.SELECTOR_LAYER)
 
-const level_scene := preload("res://assets/map/level/level.tscn")
+#const level_scene := preload("res://assets/map/level/level.tscn")
 const wall_point_scene := preload("res://assets/map/level/wall/wall_point/wall_point.tscn")

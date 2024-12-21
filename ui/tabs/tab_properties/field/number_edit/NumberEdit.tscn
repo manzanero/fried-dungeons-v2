@@ -1,24 +1,38 @@
-[gd_scene load_steps=11 format=3 uid="uid://hwvpsllrlqk6"]
+[gd_scene load_steps=9 format=3 uid="uid://hwvpsllrlqk6"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/number_edit/number_edit.gd" id="1_gghfl"]
 [ext_resource type="Texture2D" uid="uid://ddqqp0ni1aegm" path="res://resources/icons/grabber.png" id="2_cu3px"]
-[ext_resource type="Texture2D" uid="uid://bt3up1tul5ff4" path="res://resources/icons/arrow_left.png" id="2_oeb74"]
-[ext_resource type="Texture2D" uid="uid://cgou2gvplydjd" path="res://resources/icons/arrow_right.png" id="3_2hbd8"]
 [ext_resource type="Texture2D" uid="uid://cl44madgoje3e" path="res://resources/icons/grabber_highlight.png" id="3_cedsl"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sh42q"]
-bg_color = Color(0.105882, 0.113725, 0.121569, 0.886275)
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.143122, 0.152725, 0.162329, 1)
+border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_bnbyp"]
-content_margin_left = 4.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4cbtk"]
+content_margin_left = 8.0
 content_margin_top = 0.0
-content_margin_right = 4.0
+content_margin_right = 8.0
 content_margin_bottom = 0.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.0791198, 0.0856792, 0.0922385, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_s5tph"]
 content_margin_left = 0.0
@@ -45,10 +59,12 @@ corner_detail = 1
 
 [node name="NumberEdit" type="PanelContainer"]
 custom_minimum_size = Vector2(60, 0)
-offset_right = 229.0
-offset_bottom = 25.0
+offset_right = 128.0
+offset_bottom = 37.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_sh42q")
 script = ExtResource("1_gghfl")
+has_slider = true
+has_arrows = true
 
 [node name="V" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -61,18 +77,17 @@ theme_override_constants/separation = 0
 
 [node name="LeftButton" type="Button" parent="V/H"]
 unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(0, -0.635)
+custom_minimum_size = Vector2(26, 0)
 layout_mode = 2
-icon = ExtResource("2_oeb74")
+text = "-"
 icon_alignment = 1
 
 [node name="RightButton" type="Button" parent="V/H"]
 unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(0, -0.635)
+custom_minimum_size = Vector2(26, 0)
 layout_mode = 2
-icon = ExtResource("3_2hbd8")
+text = "+
+"
 icon_alignment = 1
 
 [node name="PrefixContainer" type="MarginContainer" parent="V/H"]
@@ -95,7 +110,7 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_styles/normal = SubResource("StyleBoxEmpty_bnbyp")
+theme_override_styles/normal = SubResource("StyleBoxFlat_4cbtk")
 alignment = 2
 max_length = 9
 expand_to_text_length = true
@@ -118,7 +133,6 @@ vertical_alignment = 1
 
 [node name="SliderContainer" type="MarginContainer" parent="V"]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = -2

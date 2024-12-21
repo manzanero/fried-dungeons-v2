@@ -20,7 +20,7 @@ var elements := {}
 func _ready() -> void:
 	reset()
 	tree.item_activated.connect(_on_item_activated)
-	tree.items_moved.connect(_on_items_moved)
+	tree.items_dropped.connect(_on_items_dropped)
 	tree.item_mouse_selected.connect(_on_item_mouse_selected)
 
 
@@ -47,6 +47,8 @@ func changed_element(element: Element):
 
 
 func remove_element(element: Element):
+	Debug.print_info_message("Deleting element item of \"%s\"" % element.id)
+	
 	var element_item: TreeItem = elements.get(element.id)
 	if not element_item:
 		Debug.print_warning_message("Can't delete element item of \"%s\"" % element.id)
@@ -86,26 +88,27 @@ func _on_item_activated():
 	element.map.camera.target_position.position = element.position + Vector3.UP * 0.5
 
 
-func _on_items_moved(items: Array[TreeItem], index: int):
-	if not items:
-		return
-		
-	var elements_moved: Array[Element] = []
-	var ids: Array[String] = []
-	for item: TreeItem in items:
-		var element: Element = item.get_metadata(0)
-		elements_moved.append(element)
-		ids.append(element.id)
-		
-	Debug.print_info_message("Elements %s moved to index %s" % [ids, index])
-	
-	# TODO multiselection
-	
-	var element_moved := elements_moved[0]
-	Game.ui.selected_map.selected_level.elements_parent.move_child(element_moved, index)
-	Game.ui.selected_map.selected_level.elements.clear()
-	for element: Element in Game.ui.selected_map.selected_level.elements_parent.get_children():
-		Game.ui.selected_map.selected_level.elements[element.id] = element
+func _on_items_dropped(_items_data: Array[Dictionary], _parent_item: TreeItem, _item_index: int):
+	return
+	#if not items: 
+		#return
+	#
+	#var elements_moved: Array[Element] = []
+	#var ids: Array[String] = []
+	#for item: TreeItem in items:
+		#var element: Element = item.get_metadata(0)
+		#elements_moved.append(element)
+		#ids.append(element.id)
+		#
+	#Debug.print_info_message("Elements %s moved to index %s" % [ids, index])
+	#
+	## TODO multiselection
+	#
+	#var element_moved := elements_moved[0]
+	#Game.ui.selected_map.selected_level.elements_parent.move_child(element_moved, index)
+	#Game.ui.selected_map.selected_level.elements.clear()
+	#for element: Element in Game.ui.selected_map.selected_level.elements_parent.get_children():
+		#Game.ui.selected_map.selected_level.elements[element.id] = element
 	
 
 func reset():

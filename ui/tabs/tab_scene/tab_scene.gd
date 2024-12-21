@@ -1,6 +1,10 @@
 class_name TabScene
 extends Control
 
+
+static var SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
+
+
 @onready var sub_viewport: SubViewport = $SubViewportContainer/SubViewport
 @onready var world_3d: World3D = sub_viewport.world_3d
 
@@ -17,7 +21,6 @@ func init(map_slug: String, map_data: Dictionary):
 	Game.ui.scene_tabs.add_child(self)
 	Game.maps[map_slug] = map
 	
-	#map.init_test_data()
 	map.loader.load_map(map_data)
 	map.slug = map_slug
 	for level: Level in map.levels_parent.get_children():

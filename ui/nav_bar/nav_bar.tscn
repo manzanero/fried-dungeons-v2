@@ -1,0 +1,60 @@
+[gd_scene load_steps=4 format=3 uid="uid://dgyjhnnjkhl20"]
+
+[ext_resource type="PackedScene" uid="uid://83d8jfjfqtrl" path="res://ui/flow_controller/flow_controller.tscn" id="1_cargd"]
+[ext_resource type="Script" path="res://ui/nav_bar/nav_bar.gd" id="1_qtvx2"]
+[ext_resource type="PackedScene" uid="uid://mbh4bgg0t31y" path="res://ui/master_volume_controller/master_volume_controller.tscn" id="2_xc25p"]
+
+[node name="NavBar" type="MarginContainer"]
+offset_right = 1280.0
+offset_bottom = 28.0
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+script = ExtResource("1_qtvx2")
+
+[node name="C" type="HBoxContainer" parent="."]
+layout_mode = 2
+
+[node name="MenuBar" type="MenuBar" parent="C"]
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 4
+flat = true
+
+[node name="Campaing" type="PopupMenu" parent="C/MenuBar"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+size = Vector2i(181, 100)
+
+[node name="Preferences" type="PopupMenu" parent="C/MenuBar"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+item_count = 2
+item_0/text = "Sound..."
+item_1/text = "Style..."
+item_1/id = 1
+
+[node name="Help" type="PopupMenu" parent="C/MenuBar"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+item_count = 3
+item_0/text = "Wiki..."
+item_0/id = 1
+item_1/id = 1
+item_1/separator = true
+item_2/text = "About..."
+item_2/id = 2
+
+[node name="FlowController" parent="." instance=ExtResource("1_cargd")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="C2" type="MarginContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/margin_right = 16
+
+[node name="MasterVolumeController" parent="C2" instance=ExtResource("2_xc25p")]
+unique_name_in_owner = true
+layout_mode = 2

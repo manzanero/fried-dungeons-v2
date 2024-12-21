@@ -1,6 +1,7 @@
 class_name Level
 extends Node3D
 
+static var SCENE := preload("res://assets/map/level/level.tscn")
 
 signal element_selection(element: Element)
 
@@ -75,7 +76,7 @@ func get_entity_by_id(element_id) -> Entity:
 @onready var ceilling_mesh_instance_3d: MeshInstance3D = $Ceilling/MeshInstance3D
 
 
-func init(_map: Map, _index: int):
+func init(_map: Map, _index: int) -> Level:
 	map = _map
 	index = _index
 	map.levels[index] = self
@@ -85,6 +86,8 @@ func init(_map: Map, _index: int):
 
 
 func _ready():
+	floor_2d.tile_map.tile_set.get_source(0).texture = map.atlas_texture 
+	
 	map.camera.changed.connect(_on_camera_changed)
 	map.camera.fps_enabled.connect(func (value):
 		Game.ui.selected_scene_tab.fade_transition.cover()
@@ -149,16 +152,35 @@ func is_watched(point: Vector2) -> bool:
 
 
 func _process(_delta: float) -> void:
-	if Input.is_key_pressed(KEY_DELETE):
-		if is_instance_valid(selected_wall):
-			selected_wall.remove()
-			
-			Game.server.rpcs.remove_wall.rpc(map.slug, index, selected_wall.id)
-			
-		if is_instance_valid(element_selected):
-			element_selected.remove()
-			
-			Game.server.rpcs.remove_element.rpc(map.slug, index, element_selected.id)
+	if Game.campaign and Game.campaign.is_master and Game.ui.is_mouse_over_scene_tab:
+		
+		# Delete without ask
+		if Input.is_action_just_pressed("force_delete"):
+			if is_instance_valid(selected_wall):
+				selected_wall.remove()
+				
+				Game.server.rpcs.remove_wall.rpc(map.slug, index, selected_wall.id)
+				
+			if is_instance_valid(element_selected):
+				element_selected.remove()
+				
+				Game.server.rpcs.remove_element.rpc(map.slug, index, element_selected.id)
+				
+		elif Input.is_action_just_pressed("delete"):
+			if is_instance_valid(selected_wall):
+				selected_wall.remove()
+				
+				Game.server.rpcs.remove_wall.rpc(map.slug, index, selected_wall.id)
+				
+			if is_instance_valid(element_selected):
+				Game.ui.mouse_blocker.visible = true
+				Game.ui.delete_element_window.visible = true
+				Game.ui.delete_element_window.element_selected = element_selected
+				
+				var response = await Game.ui.delete_element_window.response
+				if response:
+					element_selected.remove()
+					Game.server.rpcs.remove_element.rpc(map.slug, index, element_selected.id)
 
 
 func build_point(tile: Vector2i, tile_data: Dictionary):

@@ -86,7 +86,7 @@ func scan(campaign: Campaign):
 
 
 func save_player(players_slug):
-	campaign_selected.set_player(players_slug, cached_players[players_slug])
+	campaign_selected.set_player_data(players_slug, cached_players[players_slug])
 
 
 func refresh_tree():

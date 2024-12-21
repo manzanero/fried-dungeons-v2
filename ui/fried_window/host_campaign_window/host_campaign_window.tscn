@@ -1,0 +1,129 @@
+[gd_scene load_steps=9 format=3 uid="uid://cxb7ssvks0wlj"]
+
+[ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_wmk2c"]
+[ext_resource type="Script" path="res://ui/fried_window/host_campaign_window/host_campaign_window.gd" id="2_fr76l"]
+[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="3_g12vm"]
+[ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="3_p624n"]
+[ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="3_tyu7f"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_g6i2j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+border_color = Color(0.0705882, 0.0705882, 0.0705882, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2p2k"]
+
+[node name="HostCampaignWindow" instance=ExtResource("1_wmk2c")]
+offset_right = 0.0
+offset_bottom = 0.0
+script = ExtResource("2_fr76l")
+
+[node name="TitleLabel" parent="M/VBoxContainer/TitleBar/H" index="0"]
+text = "Host Campaign"
+
+[node name="ServerContainer" type="MarginContainer" parent="M/VBoxContainer/TitleBar/H" index="1"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_right = 2
+
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/TitleBar/H/ServerContainer" index="0"]
+layout_mode = 2
+
+[node name="SteamButton" type="Button" parent="M/VBoxContainer/TitleBar/H/ServerContainer/H" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_g6i2j")
+text = "Steam Network"
+
+[node name="EnetButton" type="Button" parent="M/VBoxContainer/TitleBar/H/ServerContainer/H" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+toggle_mode = true
+button_group = SubResource("ButtonGroup_g6i2j")
+text = "Direct Connection"
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body" index="0"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="M2" type="MarginContainer" parent="M/VBoxContainer/Body/V" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/M2" index="0"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="M/VBoxContainer/Body/V/M2/H" index="0"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "Saved campaigns:"
+vertical_alignment = 2
+
+[node name="C" type="PanelContainer" parent="M/VBoxContainer/Body/V" index="1"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body/V/C" index="0"]
+layout_mode = 2
+theme_override_constants/separation = -4
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/C/V" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/C/V/M" index="0"]
+layout_mode = 2
+
+[node name="NewButton" type="Button" parent="M/VBoxContainer/Body/V/C/V/M/H" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("3_tyu7f")
+
+[node name="FilterLineEdit" type="LineEdit" parent="M/VBoxContainer/Body/V/C/V/M/H" index="1"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "filter..."
+
+[node name="RefreshButton" type="Button" parent="M/VBoxContainer/Body/V/C/V/M/H" index="2"]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("3_g12vm")
+
+[node name="C" type="ScrollContainer" parent="M/VBoxContainer/Body/V/C/V" index="1"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_y2p2k")
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/C/V/C" index="0"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="Tree" parent="M/VBoxContainer/Body/V/C/V/C/M" index="0" instance=ExtResource("3_p624n")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/draw_guides = 1
+columns = 2
+column_titles_visible = true
+hide_folding = true
+select_mode = 1

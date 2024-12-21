@@ -171,7 +171,8 @@ func change_property(property_name: String, new_value: Variant) -> void:
 	
 func _set_texture_resource_path(_texture_resource_path: String) -> void:
 	if not _texture_resource_path:
-		if texture_resource: texture_resource.resource_changed.disconnect(_on_texture_resource_changed)
+		if texture_resource: 
+			texture_resource.resource_changed.disconnect(_on_texture_resource_changed)
 		texture_resource_path = ""
 		texture_resource = null
 		texture_attributes = {}
@@ -179,7 +180,8 @@ func _set_texture_resource_path(_texture_resource_path: String) -> void:
 	
 	elif texture_resource_path != _texture_resource_path:
 		texture_resource_path = _texture_resource_path
-		if texture_resource: texture_resource.resource_changed.disconnect(_on_texture_resource_changed)
+		if texture_resource: 
+			texture_resource.resource_changed.disconnect(_on_texture_resource_changed)
 		texture_resource = Game.manager.get_resource(CampaignResource.Type.TEXTURE, _texture_resource_path)
 		texture_resource.resource_changed.connect(_on_texture_resource_changed)
 		texture_attributes = texture_resource.attributes
@@ -187,7 +189,7 @@ func _set_texture_resource_path(_texture_resource_path: String) -> void:
 
 
 func _on_texture_resource_changed() -> void:
-	texture_attributes = texture_resource.attributes if texture_resource else {}
+	texture_attributes = texture_resource.attributes
 	dirty_mesh = true
 
 

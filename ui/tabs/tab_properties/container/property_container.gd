@@ -1,6 +1,9 @@
 class_name PropertyContainer
 extends Control
 
+
+static var SCENE := preload("res://ui/tabs/tab_properties/container/property_container.tscn")
+
 const ARROW_DOWN = preload("res://resources/icons/arrow_down.png")
 const ARROW_RIGHT = preload("res://resources/icons/arrow_right.png")
 

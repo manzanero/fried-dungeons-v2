@@ -1,6 +1,7 @@
 class_name IntegerField
 extends PropertyField
 
+static var SCENE := preload("res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn")
 
 var property_value : int :
 	set(value): number_edit.set_value_no_signal(value)

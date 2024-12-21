@@ -2,8 +2,8 @@ class_name TabMessages
 extends Control
 
 
-#signal command_roll(origin: Element, dice_string: String)
-signal command_echo(origin: Element, text_string: String)
+var origin_label := "Anonymus"
+var origin_color := Color.WHITE
 
 
 @onready var helper: Control = %HelperContainer
@@ -14,6 +14,7 @@ signal command_echo(origin: Element, text_string: String)
 @onready var dice_panel: PanelDice = %Dice
 @onready var history_panel: PanelHistory = %History
 
+@onready var master_as_origin_button: Button = %AsMasterButton
 @onready var player_as_origin_button: Button = %AsPlayerButton
 @onready var selection_as_origin_button: Button = %AsSelectionButton
 @onready var output_text_label: RichTextLabel = %OutputText
@@ -37,6 +38,15 @@ func _ready() -> void:
 	
 	await get_tree().process_frame
 	Game.ui.dicer.roll_result.connect(_on_dicer_roll_result)
+	
+
+func set_profile():
+	if Game.campaign and Game.campaign.is_master:
+		master_as_origin_button.visible = true
+		master_as_origin_button.button_pressed = true
+	else:
+		master_as_origin_button.visible = false
+		player_as_origin_button.button_pressed = true
 
 
 func _on_panel_button_pressed(panel: Control, button: Button):
@@ -46,31 +56,17 @@ func _on_panel_button_pressed(panel: Control, button: Button):
 
 
 func _on_add_dice(number: int, faces: int) -> void:
+	if not _get_origin():
+		return
+		
 	var dice_string := "%sd%s" % [number, faces] if faces else str(number)
 	var text := "/roll " + dice_string
 	history_panel.add_command(text)
 	
-	var map = Game.ui.selected_map
-	var origin: Element = null
-	if map and selection_as_origin_button.button_pressed:
-		origin = map.selected_level.element_selected
-
-	var origin_label := Game.master.username
-	if origin:
-		origin_label = origin.label 
-	elif Game.player:
-		origin_label = Game.player.username
-		
-	var origin_color := Game.master.color
-	if origin:
-		origin_color = origin.color
-	elif Game.player:
-		origin_color = Game.player.color
-	
 	Game.ui.dicer.create_dice_roll.rpc(origin_label, origin_color, dice_string, randi_range(0, 999999))
 
 
-func _on_dicer_roll_result(origin_label: String, origin_color: Color, dice_string: String, result: Array):
+func _on_dicer_roll_result(_origin_label: String, _origin_color: Color, dice_string: String, result: Array):
 	var text := "/roll " + dice_string
 	
 	var result_int := 0
@@ -78,8 +74,8 @@ func _on_dicer_roll_result(origin_label: String, origin_color: Color, dice_strin
 		result_int += r
 	var result_str = "[b]%s[/b] [color=dark_gray]%s[/color]" % [result_int, result]
 	
-	new_message.rpc(origin_label, origin_color, text)
-	new_message.rpc(origin_label, origin_color, "Dice result:\n[center]%s[/center]" % result_str)
+	new_message.rpc(_origin_label, _origin_color, text)
+	new_message.rpc(_origin_label, _origin_color, "Dice result:\n[center]%s[/center]" % result_str)
 	
 
 func _on_history_message_pressed(text: String) -> void:
@@ -95,6 +91,8 @@ func _on_history_message_pressed(text: String) -> void:
 
 func _on_submit(new_text: String) -> void:
 	if not new_text:
+		#dice_panel.add_dice.emit(1, 20)
+		Utils.temp_tooltip("Write a message", 2, true)
 		return
 	
 	message_edit.clear()
@@ -103,37 +101,47 @@ func _on_submit(new_text: String) -> void:
 
 func _on_send_message_button() -> void:
 	_on_submit(message_edit.text)
+	
+
+func _get_origin() -> bool:
+	
+	# As master
+	origin_label = Game.master.username
+	origin_color = Game.master.color
+	
+	# As player
+	if player_as_origin_button.button_pressed:
+		if not Game.player:
+			Utils.temp_tooltip("Select a Player", 2, true)
+			return false
+			
+		origin_label = Game.player.username
+		origin_color = Game.player.color
+	
+	# As selection
+	elif selection_as_origin_button.button_pressed:
+		var origin = Game.ui.selected_map.selected_level.element_selected
+		if not origin:
+			Utils.temp_tooltip("Select an Element", 2, true)
+			return false
+			
+		origin_label = origin.label
+		origin_color = origin.color
+
+	return true
 
 
 func process_message(text: String):
+	if not _get_origin():
+		return
+		
 	history_panel.add_command(text)
-	
-	var map = Game.ui.selected_map
-	var origin: Element = null
-	if map and selection_as_origin_button.button_pressed:
-		origin = map.selected_level.element_selected
-
-	var origin_label := Game.master.username
-	if origin:
-		origin_label = origin.label 
-	elif Game.player:
-		origin_label = Game.player.username
-		
-	var origin_color := Game.master.color
-	if origin:
-		origin_color = origin.color
-	elif Game.player:
-		origin_color = Game.player.color
-		
 	new_message.rpc(origin_label, origin_color, text)
 
 	if text.begins_with('/roll '):
 		var dice_string = text.split('/roll ', false, 1)[0]
 		var output_text = "Dice result:\n[center]%s[/center]" % [roll_command(dice_string)]
 		new_message.rpc(origin_label, origin_color, output_text)
-			
-	else:
-		command_echo.emit(origin, text)
 
 
 func roll_command(dice_string: String) -> String:
@@ -164,3 +172,4 @@ func new_message(label: String, color: Color, text: String):
 
 func reset():
 	output_text_label.clear()
+	set_profile()

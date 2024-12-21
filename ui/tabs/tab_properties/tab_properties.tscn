@@ -1,40 +1,47 @@
-[gd_scene load_steps=4 format=3 uid="uid://cd6g3qduls3n1"]
+[gd_scene load_steps=5 format=3 uid="uid://cd6g3qduls3n1"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_7g121"]
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/tab_properties.gd" id="2_8a8ed"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_puu4c"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b4goo"]
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
-bg_color = Color(0, 0, 0, 0.901961)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+bg_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 corner_detail = 1
 
-[node name="Properties" type="Control"]
-layout_mode = 3
+[node name="Properties" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_7g121")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_puu4c")
 script = ExtResource("2_8a8ed")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_b4goo")
+horizontal_scroll_mode = 0
 
-[node name="PropertyContainers" type="VBoxContainer" parent="ScrollContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = -1
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="PropertyContainers" type="VBoxContainer" parent="ScrollContainer/MarginContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

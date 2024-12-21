@@ -2,6 +2,9 @@ class_name ColorField
 extends PropertyField
 
 
+const SCENE := preload("res://ui/tabs/tab_properties/field/color_field/color_field.tscn")
+
+
 var property_value := Color.WHITE :
 	set(value): color_picker_button.color = value
 	get: return color_picker_button.color

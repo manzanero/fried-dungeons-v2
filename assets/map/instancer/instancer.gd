@@ -21,25 +21,31 @@ func create_wall(level: Level, id: String, points_position_2d: Array[Vector2],
 	return wall
 
 
-func create_element(type: String, level: Level, id: String, 
-		position_2d: Vector2, properties := {}, rotation := 0.0) -> Element:
+func create_element(type: String, level: Level, id: String, position_2d: Vector2,
+		properties := {}, rotation_y := 0.0, flipped := false) -> Element:
 	var element: Element
 	match type:
-		"entity": element = ENTITY.instantiate().init(level, id, position_2d, properties, rotation)
-		"light": element = LIGHT.instantiate().init(level, id, position_2d, properties, rotation)
-		"shape": element = SHAPE.instantiate().init(level, id, position_2d, properties, rotation)
+		"entity": element = ENTITY.instantiate().init(level, id, position_2d,
+				properties, rotation_y, flipped)
+		"light": element = LIGHT.instantiate().init(level, id, position_2d,
+				properties, rotation_y, flipped)
+		"shape": element = SHAPE.instantiate().init(level, id, position_2d,
+				properties, rotation_y, flipped)
 	level.elements[id] = element
 	Game.ui.tab_elements.add_element(element)
 	return element
 
-func create_entity(level: Level, id: String, position_2d: Vector2, properties := {}, rotation := 0.0) -> Entity:
-	return create_element("entity", level, id, position_2d, properties, rotation)
+func create_entity(level: Level, id: String, position_2d: Vector2,
+		properties := {}, rotation_y := 0.0, flipped := false) -> Entity:
+	return create_element("entity", level, id, position_2d, properties, rotation_y, flipped)
 
-func create_light(level: Level, id: String, position_2d: Vector2, properties := {}, rotation := 0.0) -> Light:
-	return create_element("light", level, id, position_2d, properties, rotation)
+func create_light(level: Level, id: String, position_2d: Vector2,
+		properties := {}, rotation_y := 0.0, flipped := false) -> Light:
+	return create_element("light", level, id, position_2d, properties, rotation_y, flipped)
 
-func create_shape(level: Level, id: String, position_2d: Vector2, properties := {}, rotation := 0.0) -> Shape:
-	return create_element("shape", level, id, position_2d, properties, rotation)
+func create_shape(level: Level, id: String, position_2d: Vector2,
+		properties := {}, rotation_y := 0.0, flipped := false) -> Shape:
+	return create_element("shape", level, id, position_2d, properties, rotation_y, flipped)
 
 func create_player_signal(level: Level, position_2d: Vector2, color: Color) -> PlayerSignal:
 	return PLAYER_SIGNAL.instantiate().init(level, position_2d, color)

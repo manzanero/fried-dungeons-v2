@@ -20,6 +20,7 @@ script = ExtResource("1_a3754")
 
 [node name="H" type="HBoxContainer" parent="."]
 layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Label" type="Label" parent="H"]
 unique_name_in_owner = true

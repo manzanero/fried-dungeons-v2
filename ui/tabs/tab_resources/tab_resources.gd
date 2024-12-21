@@ -104,11 +104,8 @@ func add_resource(parent: TreeItem, resource: CampaignResource) -> TreeItem:
 	
 	resource_item.set_tooltip_text(0, resource.path)
 	resource_item.set_metadata(0, resource)
-
-	Game.campaign.resources[resource.path] = resource.timestamp
-	Game.resources[resource.path] = resource
+	
 	resource_items[resource.path] = resource_item
-	resource.loaded = true
 	return resource_item
 
 
@@ -163,17 +160,19 @@ func _on_items_moved(items: Array[TreeItem], _index: int):
 	
 
 func reset() -> void:
-	if not Game.campaign or not Game.campaign.is_master:
-		return
+	sound_container.visible = false
+	texture_container.visible = false
 	
-	var init_time := Time.get_ticks_msec() / 1000.0
-	
-	# root folder
 	tree.clear()
 	root = tree.create_item()
 	root.set_icon(0, DIRECTORY_ICON)
 	root.set_text(0, "Resources")
 	root.set_tooltip_text(0, "")
+	
+	if not Game.campaign:
+		return
+		
+	var init_time := Time.get_ticks_msec() / 1000.0
 	
 	Utils.make_dirs(Game.campaign.resources_path)
 	walk_dirs(root, Game.campaign.resources_path)
@@ -212,30 +211,43 @@ func walk_dirs(parent: TreeItem, path: String):
 		var timestamp := FileAccess.get_modified_time(file_path)
 		
 		# check if resource is already loaded to preserve connected signals
+		# at the beginning this is always empty
 		var resource: CampaignResource = Game.resources.get(resource_path)
 		if not resource:
 			var import_data := Game.campaign.get_resource_data(resource_path)
 			resource = CampaignResource.new(resource_type, resource_path, import_data)
-		elif resource.timestamp < timestamp:
-			resource.timestamp = timestamp
-			update_resource_file_for_players(resource)
 			
+			# missing data file for resource
+			if not import_data:
+				Game.campaign.set_resource_data(resource_path, resource.json())
+		
+		 # resource has been updated
+		if resource.timestamp < timestamp:
+			resource.timestamp = timestamp
+			resource.resource_changed.emit()
+			Game.campaign.set_resource_data(resource_path, resource.json())
+		
+			if multiplayer.is_server():
+				Game.server.resource_change_notification.rpc(resource.path)
+		
+		Game.campaign.resources[resource.path] = timestamp
+		Game.resources[resource.path] = resource
+			
+		resource.resource_loaded = true
 		add_resource(parent, resource)
-
-
-func update_resource_file_for_players(resource: CampaignResource):
-	var resource_bytes := FileAccess.get_file_as_bytes(resource.abspath)
-	Game.server.load_resource.rpc(resource_bytes, resource.path, resource.json())
 
 
 func _on_attributes_changed(resource: CampaignResource, attributes: Dictionary) -> void:
 	resource.attributes = attributes
-	Game.server.rpcs.change_resource.rpc(resource.resource_type, resource.path, resource.json())
-	
+	Game.campaign.set_resource_data(resource.path, resource.json())
+
 	# if file was changed while modifying attributes
 	var timestamp := FileAccess.get_modified_time(resource.abspath)
 	if resource.timestamp < timestamp:
 		resource.timestamp = timestamp
-		update_resource_file_for_players(resource)
-	
-	Game.campaign.set_resource_data(resource.path, resource.json())
+		
+		if multiplayer.is_server():
+			Game.server.resource_change_notification.rpc(resource.path)
+	else:
+		Game.server.rpcs.change_resource.rpc(resource.resource_type, resource.path, resource.json())
+		

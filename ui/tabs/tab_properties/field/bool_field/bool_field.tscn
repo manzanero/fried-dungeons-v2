@@ -1,13 +1,18 @@
-[gd_scene load_steps=3 format=3 uid="uid://d0ch44utbuhby"]
+[gd_scene load_steps=4 format=3 uid="uid://d0ch44utbuhby"]
 
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_bsggv"]
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.gd" id="2_tbtjr"]
+[ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_lf2io"]
 
 [node name="BoolField" instance=ExtResource("1_bsggv")]
 offset_bottom = 31.0
 script = ExtResource("2_tbtjr")
 
-[node name="CheckBox" type="CheckBox" parent="H" index="1"]
+[node name="FriedConvexPanel" parent="H" index="1" instance=ExtResource("3_lf2io")]
+layout_mode = 2
+size_flags_horizontal = 3
+
+[node name="CheckBox" type="CheckBox" parent="H/FriedConvexPanel" index="0"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2

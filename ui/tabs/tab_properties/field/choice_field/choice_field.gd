@@ -2,6 +2,9 @@ class_name ChoiceField
 extends PropertyField
 
 
+static var SCENE := preload("res://ui/tabs/tab_properties/field/choice_field/choice_field.tscn")
+
+
 var property_value : String :
 	set(value): 
 		for i in range(option_button.item_count):

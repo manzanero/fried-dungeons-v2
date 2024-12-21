@@ -1,6 +1,7 @@
 class_name Vector2Field
 extends PropertyField
 
+static var SCENE := preload("res://ui/tabs/tab_properties/field/vector_2_field/vector_2_field.tscn")
 
 var property_value: Vector2 :
 	set(value): x_number_edit.set_value_no_signal(value.x); y_number_edit.set_value_no_signal(value.y)

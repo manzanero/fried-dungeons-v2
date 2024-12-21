@@ -3,11 +3,14 @@
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_cjrsp"]
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/color_field/color_field.gd" id="2_3oo5e"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_plgpg"]
-content_margin_left = 8.0
-content_margin_right = 8.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qtfq2"]
+content_margin_top = 0.0
+content_margin_bottom = 0.0
 bg_color = Color(0.105882, 0.113725, 0.121569, 1)
-border_color = Color(0, 0, 0, 0)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.143122, 0.152725, 0.162329, 1)
+border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
 corner_radius_bottom_right = 4
@@ -30,13 +33,14 @@ content_margin_right = 9.0
 content_margin_bottom = 9.0
 
 [node name="ColorField" instance=ExtResource("1_cjrsp")]
+size_flags_vertical = 4
 script = ExtResource("2_3oo5e")
 
 [node name="Panel" type="Panel" parent="H" index="1"]
 custom_minimum_size = Vector2(64, 32)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_plgpg")
+theme_override_styles/panel = SubResource("StyleBoxFlat_qtfq2")
 
 [node name="ColorPickerButton" type="ColorPickerButton" parent="H/Panel" index="0"]
 unique_name_in_owner = true

@@ -61,14 +61,8 @@ var value := DEFAULT_VALUE :
 	set(_value): value = _value; if _emit_signal: value_changed.emit(value)
 
 
-var _dragged := false
-#var _last_valid_value := DEFAULT_VALUE
+#var _dragged := false
 var _emit_signal := true
-
-
-#func init_value(_value: float):
-	#line_edit.text = str(_value)
-	#slider.set_value_no_signal(_value)
 
 
 func set_value_no_signal(_value: float):
@@ -97,8 +91,10 @@ func set_value_no_signal(_value: float):
 
 func _ready() -> void:
 	line_edit.text_changed.connect(_set_text)
-	slider.drag_started.connect(_on_slider_drag_started)
-	slider.drag_ended.connect(_on_slider_drag_ended)
+	line_edit.focus_exited.connect(_on_line_edit_focus_exited)
+	#slider.drag_started.connect(_on_slider_drag_started)
+	#slider.drag_ended.connect(_on_slider_drag_ended)
+	slider.value_changed.connect(_on_slider_value_changed)
 	left_button.pressed.connect(_on_left_button_pressed)
 	right_button.pressed.connect(_on_right_button_pressed)
 
@@ -106,51 +102,105 @@ func _ready() -> void:
 #endregion
 
 
+var potencially_good_value = null
+
+
 func _set_text(_value: String) -> void:
 	text = _value
 	if not is_node_ready(): 
 		await ready
 		
-	if _validate_text(_value):
-		value = float(_value.to_int()) if rounded else _value.to_float()
+	if not _validate_text(_value):
+		return
 		
-		var caret_column := line_edit.caret_column
-		line_edit.text = _value
-		line_edit.caret_column = caret_column
-		
-		slider.set_value_no_signal(value)
-		
-		if _emit_signal: 
-			value_changed.emit(value)
+	value = float(_value.to_int()) if rounded else _value.to_float()
+	value = snappedf(value, step)
+	
+	var caret_column := line_edit.caret_column
+	line_edit.text = _value
+	line_edit.caret_column = caret_column
+	
+	slider.set_value_no_signal(value)
+	
+	if _emit_signal: 
+		value_changed.emit(value)
 
-func _validate_text(new_text: String):
-	if rounded and new_text.is_valid_int():
-		return true
-	elif new_text.is_valid_float():
-		return true
-	return false
+
+func _validate_text(_text: String):
+	if rounded and not _text.is_valid_int():
+		if _text.is_valid_float():
+			potencially_good_value = roundf(_text.to_float())
+		else:
+			potencially_good_value = value
+		return false
+	elif not _text.is_valid_float():
+		potencially_good_value = value
+		return false
+	
+	var _number := roundf(_text.to_float()) if rounded else _text.to_float()
+	_number = snappedf(_number, step)
+	
+	if not allow_lesser and _number < min_value:
+		potencially_good_value = clampf(_number, min_value, value)
+		return false
+	if not allow_greater and _number > max_value:
+		potencially_good_value = clampf(_number, value, max_value)
+		return false
+		
+	return true
+
+
+func _on_line_edit_focus_exited() -> void:
+	if potencially_good_value == null:
+		return
+
+	value = potencially_good_value
+	potencially_good_value = null
+	
+	_on_slider_value_changed(value)
+	slider.set_value_no_signal(value)
+	
+	if _emit_signal: 
+		value_changed.emit(value)
 
 
 func _on_left_button_pressed() -> void:
 	value -= step
+	if not allow_lesser and value < min_value:
+		value = clampf(value, min_value, value)
+	if not allow_lesser and value > max_value:
+		value = clampf(value, value, max_value)
+	
 	line_edit.text = str(value)
 	slider.set_value_no_signal(value)
 
 func _on_right_button_pressed() -> void:
 	value += step
+	if not allow_lesser and value < min_value:
+		value = clampf(value, min_value, value)
+	if not allow_lesser and value > max_value:
+		value = clampf(value, value, max_value)
+	
 	line_edit.text = str(value)
 	slider.set_value_no_signal(value)
 
 
-func _on_slider_drag_started() -> void:
-	_dragged = true
-
-func _on_slider_drag_ended(_value_changed: bool) -> void:
-	_dragged = false
-
-
-func _process(_delta: float) -> void:
-	if _dragged:
-		value = slider.value
-		line_edit.text = str(value)
+#func _on_slider_drag_started() -> void:
+	#_dragged = true
+#
+#func _on_slider_drag_ended(_value_changed: bool) -> void:
+	#_dragged = false
+#
+#
+#func _process(_delta: float) -> void:
+	#if _dragged:
+		#value = slider.value
+		#line_edit.text = str(value)
 	
+func _on_slider_value_changed(_value: float) -> void:
+	value = _value
+	if rounded:
+		line_edit.text = str(roundi(_value))
+	else:
+		line_edit.text = str(_value)
+		
