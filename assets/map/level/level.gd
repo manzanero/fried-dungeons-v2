@@ -86,8 +86,16 @@ func init(_map: Map, _index: int) -> Level:
 
 
 func _ready():
-	floor_2d.tile_map.tile_set.get_source(0).texture = map.atlas_texture 
-	
+	var floor_atlas_texture: TileSetAtlasSource = floor_2d.tile_map.tile_set.get_source(0)
+	#var floor_atlas_texture := TileSetAtlasSource.new()
+	floor_atlas_texture.texture = map.atlas_texture 
+	###var tile_set := TileSet.new()
+	##tile_set.add_source(floor_atlas_texture, 0)
+	##floor_2d.tile_map.tile_set = tile_set
+	#
+	#var tile_set := floor_2d.tile_map.tile_set.duplicate(true)
+	#floor_2d.tile_map.tile_set = tile_set
+	#
 	map.camera.changed.connect(_on_camera_changed)
 	map.camera.fps_enabled.connect(func (value):
 		Game.ui.selected_scene_tab.fade_transition.cover()
@@ -132,7 +140,9 @@ func _on_camera_changed():
 	if follower_entity:
 		follower_entity.target_position = map.camera.focus_hint_3d.global_position
 		follower_entity.is_moving_to_target = true
-		Game.server.rpcs.set_element_target.rpc(map.slug, index, follower_entity.id, follower_entity.target_position)
+		
+		Game.server.rpcs.set_element_target.rpc(map.slug, index, follower_entity.id, 
+				follower_entity.target_position, follower_entity.rotation)
 
 
 func get_light(point: Vector2) -> Color:

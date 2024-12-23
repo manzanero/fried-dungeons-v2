@@ -1,12 +1,13 @@
 class_name ImportSound
 extends Control
 
-signal attributes_changed(resource: CampaignResource, attributes: Dictionary)
+signal attributes_changed(resource: CampaignResource, import_as: String, attributes: Dictionary)
 
 const DEFAULT_VOLUME := 0.10
 const DEFAULT_PITCH := 1.0
 
 var resource: CampaignResource: set = _set_resource
+var import_as: String = CampaignResource.SOUND_IMPORTS[0]
 var attributes: Dictionary : set = _set_attributes, get = _get_attributes
 
 
@@ -61,7 +62,7 @@ func _ready() -> void:
 
 
 func _on_attributes_changed() -> void:
-	attributes_changed.emit(resource, attributes)
+	attributes_changed.emit(resource, import_as, attributes)
 
 
 func _on_reset_button_pressed() -> void:

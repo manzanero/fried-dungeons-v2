@@ -61,9 +61,15 @@ func _on_info_edited():
 
 
 func _on_atlas_texture_changed(_property_name: String, resource_path: String):
-	var resource := Game.manager.get_resource(CampaignResource.Type.TEXTURE, resource_path)
+	var texture_resource := Game.manager.get_resource(CampaignResource.Type.TEXTURE, resource_path)
 	var map := Game.ui.selected_map
-	map.atlas_texture_resource = resource
+	map.atlas_texture_resource = texture_resource
+	
+	if texture_resource:
+		Game.ui.tab_builder.set_atlas_texture_index(map.atlas_texture, texture_resource.attributes)
+	else:
+		var attributes := {"size": [16, 16], "textures": 64, "frames": 8}
+		Game.ui.tab_builder.set_atlas_texture_index(Map.DEFAULT_ATLAS_TEXTURE, attributes)
 	
 	Game.server.rpcs.change_atlas_texture.rpc(map.slug, resource_path)
 

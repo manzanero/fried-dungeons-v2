@@ -128,8 +128,8 @@ corner_radius_bottom_left = 6
 corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pknts"]
-content_margin_left = 8.0
-content_margin_right = 8.0
+content_margin_top = 0.0
+content_margin_bottom = 0.0
 bg_color = Color(0.365432, 0.0764499, 0.0802642, 1)
 border_width_top = 8
 border_width_bottom = 8
@@ -142,8 +142,8 @@ corner_radius_bottom_left = 4
 corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ovumu"]
-content_margin_left = 8.0
-content_margin_right = 8.0
+content_margin_top = 0.0
+content_margin_bottom = 0.0
 bg_color = Color(0.365432, 0.0764499, 0.0802642, 1)
 border_width_top = 8
 border_width_bottom = 8
@@ -250,13 +250,14 @@ theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
 [node name="VBoxContainer" type="BoxContainer" parent="VBoxContainer2/PanelContainer/V/C"]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
 [node name="OpenButton" type="Button" parent="VBoxContainer2/PanelContainer/V/C/VBoxContainer"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Opens in file explored"
+tooltip_text = "Open selected map"
 icon = ExtResource("6_pxvnk")
 icon_alignment = 1
 
@@ -272,8 +273,7 @@ icon_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Move to trash"
-focus_mode = 0
+tooltip_text = "Remove selected map"
 theme_override_styles/hover = SubResource("StyleBoxFlat_pknts")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ovumu")
 icon = ExtResource("4_6pw6m")

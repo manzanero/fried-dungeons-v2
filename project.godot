@@ -14,7 +14,6 @@ config/name="Fried Dungeons"
 run/main_scene="res://assets/game_manager/game_manager.tscn"
 config/use_custom_user_dir=true
 config/features=PackedStringArray("4.3", "Forward Plus")
-run/max_fps=75
 boot_splash/show_image=false
 boot_splash/use_filter=false
 config/icon="res://icon.svg"
@@ -171,4 +170,8 @@ wall_atlas={
 light_texture={
 "type": "sampler2D",
 "value": ""
+}
+is_darkvision_view={
+"type": "bool",
+"value": false
 }

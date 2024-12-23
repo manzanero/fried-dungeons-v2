@@ -41,9 +41,6 @@ layout_mode = 2
 [node name="Label" parent="V/FieldsContainer/M/PropertyFields/LoopField/H" index="0"]
 text = "Loop"
 
-[node name="CheckBox" parent="V/FieldsContainer/M/PropertyFields/LoopField/H" index="1"]
-button_pressed = true
-
 [node name="VolumeField" parent="V/FieldsContainer/M/PropertyFields" index="1" instance=ExtResource("4_f3qwf")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 31)

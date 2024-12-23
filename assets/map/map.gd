@@ -2,6 +2,8 @@ class_name Map
 extends Node3D
 
 
+#static var SCENE := preload("res://assets/map/map.tscn")
+
 const DEFAULT_ATLAS_TEXTURE := preload("res://user/defaults/atlas/default.png")
 
 
@@ -45,7 +47,7 @@ var levels := {}
 			environment.ambient_light_color = current_ambient_color * current_ambient_light
 
 
-var cells := {}
+#var cells := {}
 var selected_level: Level
 
 var atlas_texture: Texture2D = DEFAULT_ATLAS_TEXTURE :

@@ -2,41 +2,34 @@ class_name AtlasTextureButton
 extends Control
 
 
-signal pressed(index: int)
+signal index_pressed(index: int)
 
 
-const HEIGHT_ATLAS := 64
-const WIDTH_ATLAS := 8
-const W_UNIT := 1.0 / WIDTH_ATLAS
-const H_UNIT := 1.0 / HEIGHT_ATLAS
-const PIXEL := Vector2(W_UNIT, H_UNIT) / 16
+static var SCENE = preload("res://ui/tabs/tab_builder/atlas_texture_button/atlas_texture_button.tscn")
 
 
-@export var index := 0 :
-	set(value):
-		index = value
-		texture.region = Rect2(0, index * 16, 16, 16)
-
-@export var button_pressed := false :
-	set(value):
-		button_pressed = value
-		button.button_pressed = value
+var index := 0
+ #texture.region = Rect2(0, index * 16, 16, 16)
+var button_pressed := false :
+	set(value): button_pressed = value; button.button_pressed = value
 
 
 @onready var texture_rect: TextureRect = $TextureRect
-@onready var texture: AtlasTexture = texture_rect.texture
-@onready var atlas: Texture2D = texture.atlas
 @onready var button: Button = $Button
+
+#var atlas_texture: AtlasTexture
+#var atlas: Texture2D
 
 
 func init(_parent: Control, _index: int):
-	_parent.add_child(self)
-	name = Utils.random_string(8, true)
 	index = _index
+	_parent.add_child(self)
+	#texture_rect.texture.atlas = atlas_texture
 	return self
 	
 
 func _ready() -> void:
-	button.pressed.connect(func ():
-		pressed.emit(index)
-	)
+	#texture = texture_rect.texture
+	#atlas = texture.atlas
+	
+	button.pressed.connect(index_pressed.emit.bind(index))

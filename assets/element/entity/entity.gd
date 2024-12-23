@@ -264,13 +264,13 @@ func update_mesh():
 		return
 		
 	var size: Vector2 = Utils.a2_to_v2(texture_attributes.size) if "size" in texture_attributes else texture.get_size()
-	var frames: int = texture_attributes.get("frames", ImportTexture.DEFAULT_FRAMES)
+	var frames: int = texture_attributes.get("frames", ImportTexture.SLICED_SHAPE_DEFAULTS.frames)
 	var effective_frame := clampi(frame, 0, frames - 1)
-	var slices: int = texture_attributes.get("slices", ImportTexture.DEFAULT_SLICES)
-	var thickness: int = texture_attributes.get("thickness", ImportTexture.DEFAULT_THICKNESS)
-	var direction: String = texture_attributes.get("direction", ImportTexture.DEFAULT_DIRECTION)
+	var slices: int = texture_attributes.get("slices", ImportTexture.SLICED_SHAPE_DEFAULTS.slices)
+	var thickness: int = texture_attributes.get("thickness", ImportTexture.SLICED_SHAPE_DEFAULTS.thickness)
+	var direction: String = texture_attributes.get("direction", ImportTexture.SLICED_SHAPE_DEFAULTS.direction)
 
-	var texture_scale: float = texture_attributes.get("scale", ImportTexture.DEFAULT_SCALE) 
+	var texture_scale: float = texture_attributes.get("scale", ImportTexture.SLICED_SHAPE_DEFAULTS.scale) 
 	var texture_height := size.y * Game.U / texture_scale
 	var ratio := 1.0 / texture_height
 

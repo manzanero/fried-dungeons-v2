@@ -44,7 +44,7 @@ resource_local_to_scene = true
 atlas = SubResource("CompressedTexture2D_jparq")
 region = Rect2(0, 64, 16, 16)
 
-[node name="TabBuilder" type="Control" node_paths=PackedStringArray("materials")]
+[node name="TabBuilder" type="Control" node_paths=PackedStringArray("material_buttons_parent")]
 layout_mode = 3
 anchors_preset = 15
 anchor_right = 1.0
@@ -54,7 +54,7 @@ grow_vertical = 2
 theme = ExtResource("1_4djbp")
 script = ExtResource("2_ovrmx")
 mode_button_group = SubResource("ButtonGroup_upllj")
-materials = NodePath("HBoxContainer/BoxContainer/PanelContainer/MaterialsContainer")
+material_buttons_parent = NodePath("HBoxContainer/BoxContainer/PanelContainer/MaterialsContainer")
 
 [node name="HBoxContainer" type="BoxContainer" parent="."]
 layout_mode = 1

@@ -58,10 +58,12 @@ const DEFAULT_VALUE := 0.0
 @export var text := "" : set = _set_text
 
 var value := DEFAULT_VALUE : 
-	set(_value): value = _value; if _emit_signal: value_changed.emit(value)
+	set(_value): 
+		value = _value
+		if _emit_signal: 
+			value_changed.emit(value)
 
 
-#var _dragged := false
 var _emit_signal := true
 
 
@@ -92,8 +94,6 @@ func set_value_no_signal(_value: float):
 func _ready() -> void:
 	line_edit.text_changed.connect(_set_text)
 	line_edit.focus_exited.connect(_on_line_edit_focus_exited)
-	#slider.drag_started.connect(_on_slider_drag_started)
-	#slider.drag_ended.connect(_on_slider_drag_ended)
 	slider.value_changed.connect(_on_slider_value_changed)
 	left_button.pressed.connect(_on_left_button_pressed)
 	right_button.pressed.connect(_on_right_button_pressed)
@@ -102,28 +102,26 @@ func _ready() -> void:
 #endregion
 
 
-var potencially_good_value = null
-
-
-func _set_text(_value: String) -> void:
-	text = _value
+func _set_text(_text: String) -> void:
+	text = _text
 	if not is_node_ready(): 
 		await ready
 		
-	if not _validate_text(_value):
+	if not _validate_text(_text):
 		return
 		
-	value = float(_value.to_int()) if rounded else _value.to_float()
-	value = snappedf(value, step)
+	var _value = roundf(_text.to_float()) if rounded else _text.to_float()
+	if not allow_lesser and _value < min_value:
+		_value = min_value
+	if not allow_greater and value > max_value:
+		_value = max_value
 	
-	var caret_column := line_edit.caret_column
-	line_edit.text = _value
-	line_edit.caret_column = caret_column
+	slider.set_value_no_signal(_value)
 	
-	slider.set_value_no_signal(value)
-	
-	if _emit_signal: 
-		value_changed.emit(value)
+	value = _value
+
+
+var potencially_good_value = null
 
 
 func _validate_text(_text: String):
@@ -138,15 +136,15 @@ func _validate_text(_text: String):
 		return false
 	
 	var _number := roundf(_text.to_float()) if rounded else _text.to_float()
-	_number = snappedf(_number, step)
 	
 	if not allow_lesser and _number < min_value:
-		potencially_good_value = clampf(_number, min_value, value)
+		potencially_good_value = min_value
 		return false
 	if not allow_greater and _number > max_value:
-		potencially_good_value = clampf(_number, value, max_value)
+		potencially_good_value = max_value
 		return false
-		
+	
+	potencially_good_value = null
 	return true
 
 
@@ -160,47 +158,44 @@ func _on_line_edit_focus_exited() -> void:
 	_on_slider_value_changed(value)
 	slider.set_value_no_signal(value)
 	
-	if _emit_signal: 
-		value_changed.emit(value)
+	value_changed.emit(value)
 
 
 func _on_left_button_pressed() -> void:
-	value -= step
-	if not allow_lesser and value < min_value:
-		value = clampf(value, min_value, value)
-	if not allow_lesser and value > max_value:
-		value = clampf(value, value, max_value)
+	var _value := value
+	_value -= step
+	_value = snappedf(_value, step)
+	if not allow_lesser and _value < min_value:
+		_value = min_value
+	if not allow_greater and _value > max_value:
+		_value = max_value
+	value = _value
 	
 	line_edit.text = str(value)
 	slider.set_value_no_signal(value)
+
 
 func _on_right_button_pressed() -> void:
-	value += step
-	if not allow_lesser and value < min_value:
-		value = clampf(value, min_value, value)
-	if not allow_lesser and value > max_value:
-		value = clampf(value, value, max_value)
+	var _value := value
+	_value += step
+	_value = snappedf(_value, step)
+	if not allow_lesser and _value < min_value:
+		_value = min_value
+	if not allow_greater and _value > max_value:
+		_value = max_value
+	value = _value
 	
 	line_edit.text = str(value)
 	slider.set_value_no_signal(value)
 
 
-#func _on_slider_drag_started() -> void:
-	#_dragged = true
-#
-#func _on_slider_drag_ended(_value_changed: bool) -> void:
-	#_dragged = false
-#
-#
-#func _process(_delta: float) -> void:
-	#if _dragged:
-		#value = slider.value
-		#line_edit.text = str(value)
-	
 func _on_slider_value_changed(_value: float) -> void:
+	_value = snappedf(_value, step)
+	if not allow_lesser and _value < min_value:
+		_value = min_value
+	if not allow_greater and _value > max_value:
+		_value = max_value
 	value = _value
-	if rounded:
-		line_edit.text = str(roundi(_value))
-	else:
-		line_edit.text = str(_value)
 		
+	line_edit.text = str(roundi(value)) if rounded else str(value)
+	slider.set_value_no_signal(value)

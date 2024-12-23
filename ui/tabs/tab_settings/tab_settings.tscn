@@ -132,9 +132,6 @@ size_flags_horizontal = 3
 [node name="Label" parent="ScrollContainer/MarginContainer/PropertyContainers/AmbientContainer/M/PropertyFields/MasterViewField/H" index="0"]
 text = "Master View"
 
-[node name="CheckBox" parent="ScrollContainer/MarginContainer/PropertyContainers/AmbientContainer/M/PropertyFields/MasterViewField/H" index="1"]
-button_pressed = true
-
 [node name="OverrideAmbientLightField" parent="ScrollContainer/MarginContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="3" instance=ExtResource("7_uwijb")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -144,9 +141,6 @@ size_flags_horizontal = 3
 
 [node name="Label" parent="ScrollContainer/MarginContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientLightField/H" index="0"]
 text = "Override Light"
-
-[node name="CheckBox" parent="ScrollContainer/MarginContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientLightField/H" index="1"]
-button_pressed = true
 
 [node name="MasterAmbientLightField" parent="ScrollContainer/MarginContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="4" instance=ExtResource("5_boduf")]
 unique_name_in_owner = true

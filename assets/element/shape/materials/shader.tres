@@ -3,6 +3,10 @@
 [resource]
 code = "shader_type spatial;
 render_mode blend_mix, alpha_to_coverage, depth_draw_always, cull_back, unshaded;
+render_mode specular_disabled;
+render_mode fog_disabled;
+
+global uniform bool is_darkvision_view = false;
 
 uniform vec4 albedo : source_color;
 uniform vec4 light : source_color;
@@ -17,5 +21,11 @@ void fragment() {
 	if (world_normal.y > 0.5)
 		ALBEDO *= 1.25;
 	ALPHA = albedo_tex.a * light.a * (1. - transparency);
+	
+	if (is_darkvision_view) {
+		vec3 color = ALBEDO.rgb;
+		float brightness = pow((color.r * color.g * color.b), 0.33);
+		ALBEDO = vec3(brightness, brightness, brightness);
+	}
 }
 "

@@ -208,7 +208,7 @@ func _physics_process(delta: float) -> void:
 					var ticks_msec := Time.get_ticks_msec()
 					if next_update_ticks_msec < ticks_msec:
 						next_update_ticks_msec = ticks_msec + 100
-						Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position)
+						Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation)
 						
 					target_position = global_position
 		else:

@@ -237,7 +237,8 @@ func walk_dirs(parent: TreeItem, path: String):
 		add_resource(parent, resource)
 
 
-func _on_attributes_changed(resource: CampaignResource, attributes: Dictionary) -> void:
+func _on_attributes_changed(resource: CampaignResource, import_as: String, attributes: Dictionary) -> void:
+	resource.resource_import_as = import_as
 	resource.attributes = attributes
 	Game.campaign.set_resource_data(resource.path, resource.json())
 
