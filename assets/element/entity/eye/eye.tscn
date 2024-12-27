@@ -15,8 +15,8 @@ light_indirect_energy = 0.0
 light_volumetric_fog_energy = 0.0
 light_specular = 16.0
 shadow_enabled = true
-omni_range = 20.0
-omni_attenuation = 3.0
+omni_range = 30.0
+omni_attenuation = 4.0
 
 [node name="DarkvisionLight" type="OmniLight3D" parent="."]
 unique_name_in_owner = true

@@ -40,6 +40,10 @@ const NULL_POSITION_2D := Vector2.ONE * 999999
 const NULL_POSITION_3D := Vector3.ONE * 999999
 const NULL_TILE := Vector2i.ONE * 999999
 
+const TREE_TEXT_OFF_COLOR := Color(0.5, 0.5, 0.5)
+const TREE_BUTTON_OFF_COLOR := Color(0.25, 0.25, 0.25)
+const WHITE_PIXEL: Texture2D = preload("res://resources/icons/white_pixel.png")
+
 const MAX_LIGHTS := 60  # TODO: check if can be higher
 
 const ENTITY_LAYER := 17
@@ -58,5 +62,4 @@ var WALL_BITMASK := Utils.get_bitmask(Game.WALL_LAYER)
 var CEILLING_BITMASK := Utils.get_bitmask(Game.CEILLING_LAYER)
 var SELECTOR_BITMASK := Utils.get_bitmask(Game.SELECTOR_LAYER)
 
-#const level_scene := preload("res://assets/map/level/level.tscn")
 const wall_point_scene := preload("res://assets/map/level/wall/wall_point/wall_point.tscn")

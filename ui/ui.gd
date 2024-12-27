@@ -14,6 +14,7 @@ static var SCENE := preload("res://ui/ui.tscn")
 @onready var new_campaign_window: NewCampaignWindow = %NewCampaignWindow
 @onready var host_campaign_window: HostCampaignWindow = %HostCampaignWindow
 @onready var join_campaign_window: JoinCampaignWindow = %JoinCampaignWindow
+@onready var campaign_players_window: CampaignPlayersWindow = %CampaignPlayersWindow
 @onready var center_windows: CenterContainer = %CenterWindows
 @onready var delete_element_window: DeleteElementWindow = %DeleteElementWindow
 
@@ -77,10 +78,12 @@ func _ready() -> void:
 	new_campaign_window.visible = false
 	host_campaign_window.visible = false
 	join_campaign_window.visible = false
+	campaign_players_window.visible = false
 	delete_element_window.visible = false
 	new_campaign_window.close_window.connect(_on_close_window_pressed)
 	host_campaign_window.close_window.connect(_on_close_window_pressed)
 	join_campaign_window.close_window.connect(_on_close_window_pressed)
+	campaign_players_window.close_window.connect(_on_close_window_pressed)
 	delete_element_window.close_window.connect(_on_close_window_pressed)
 	mouse_blocker.gui_input.connect(remove_mouse_blocker)
 	
@@ -93,6 +96,7 @@ func _ready() -> void:
 	nav_bar.campaign_host_pressed.connect(_on_campaign_host_pressed)
 	nav_bar.campaign_join_pressed.connect(_on_campaign_join_pressed)
 	nav_bar.campaign_settings_pressed.connect(_on_campaign_settings_pressed)
+	nav_bar.campaign_players_pressed.connect(_on_campaign_players_pressed)
 	nav_bar.campaign_save_pressed.connect(_on_campaign_save_pressed)
 	nav_bar.campaign_reload_pressed.connect(_on_campaign_reload_pressed)
 	nav_bar.campaign_quit_pressed.connect(_on_campaign_quit_pressed)
@@ -143,6 +147,12 @@ func _on_campaign_join_pressed():
 
 func _on_campaign_settings_pressed():
 	pass
+
+
+func _on_campaign_players_pressed():
+	mouse_blocker.visible = true
+	campaign_players_window.visible = true
+	join_campaign_window.refresh()
 
 
 func _on_campaign_save_pressed():

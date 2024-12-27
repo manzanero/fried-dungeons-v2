@@ -101,6 +101,8 @@ func host_steam_multiplayer():
 	presence.username = steam_username
 	presence.slug = str(steam_id)
 	
+	is_steam_game = true
+	
 	Steam.createLobby(Steam.LOBBY_TYPE_PUBLIC, MAX_PEERS)
 	#Steam.createLobby(Steam.LOBBY_TYPE_FRIENDS_ONLY, MAX_PEERS)
 	
@@ -123,7 +125,6 @@ func _on_lobby_created(_connect: int, _lobby_id: int):
 	peer = SteamMultiplayerPeer.new()
 	peer.create_host(0, [])
 	multiplayer.multiplayer_peer = peer
-	is_steam_game = true
 
 
 func join_steam_multiplayer(_lobby_id: int):
@@ -131,6 +132,8 @@ func join_steam_multiplayer(_lobby_id: int):
 	
 	presence.username = steam_username
 	presence.slug = str(steam_id)
+	
+	is_steam_game = true
 	
 	Steam.joinLobby(_lobby_id)
 
@@ -184,8 +187,9 @@ func host_enet_multiplayer() -> Error:
 		Debug.print_error_message("create_server == %s" % error)
 		return error
 		
-	multiplayer.multiplayer_peer = peer
 	is_steam_game = false
+		
+	multiplayer.multiplayer_peer = peer
 	return OK
 
 
@@ -206,8 +210,9 @@ func join_enet_multiplayer(host: String, username: String, password: String) -> 
 	enet_username = username
 	enet_password = password
 	
-	multiplayer.multiplayer_peer = peer
 	is_steam_game = false
+	
+	multiplayer.multiplayer_peer = peer
 	Debug.print_info_message("Enet client created")
 	return OK
 
@@ -321,15 +326,14 @@ func load_campaign(campaign_slug: String, campaign_data: Dictionary, is_steam_ca
 	
 	if is_steam_campaign:
 		if Game.campaign.save_server_data({
-			"steam": is_steam_campaign,
+			"is_steam_game": is_steam_campaign,
 			"label": campaign_data.label,
-			"password": enet_password,
 		}):
 			Debug.print_error_message("Failed to create Server file")
 	
 	else:
 		if Game.campaign.save_server_data({
-			"steam": is_steam_campaign,
+			"is_steam_game": is_steam_campaign,
 			"label": campaign_data.label,
 			"host": enet_host,
 			"username": presence.username,
@@ -394,6 +398,7 @@ func load_map(map_slug: String, map_data: Dictionary):
 			scene_tab.remove()
 		
 		var tab_scene: TabScene = TabScene.SCENE.instantiate().init(map_slug, map_data)
+		Game.manager.map_loaded.emit(tab_scene.map.slug)
 		tab_scene.map.is_master_view = false
 		tab_scene.map.current_ambient_light = tab_scene.map.ambient_light
 		tab_scene.map.current_ambient_color = tab_scene.map.ambient_color
@@ -418,15 +423,17 @@ func load_player(_player_slug: String, player_data: Dictionary):
 	
 	for element in Game.ui.selected_map.selected_level.elements:
 		if element is Entity:
+			element.is_selectable = false
 			element.eye.visible = false
 	
-	for entity_id in Game.player.entities:
-		var entity: Entity = Game.ui.selected_map.selected_level.elements.get(entity_id)
+	for element_id in Game.player.elements:
+		var entity: Entity = Game.ui.selected_map.selected_level.elements.get(element_id)
 		if entity:
-			entity.eye.visible = true
-			entity.is_selectable = true
+			var element_control_data: Dictionary = Game.player.elements[element_id]
+			entity.is_selectable = element_control_data.get("movement", false)
+			entity.eye.visible = element_control_data.get("senses", false)
 			Game.ui.selected_map.camera.position_2d = entity.position_2d
-			Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [presence.username, entity_id])
+			Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [presence.username, element_id])
 
 
 # player
@@ -442,22 +449,37 @@ func resource_change_notification(resource_path: String, timestamp := -1):
 func request_resource(resource_path: String, timestamp := -1):
 	Debug.print_info_message("Requested resource %s" % resource_path)
 	var id := multiplayer.get_remote_sender_id()
-	var resource: CampaignResource = Game.resources[resource_path]
+	var resource: CampaignResource = Game.resources.get(resource_path)
+	
+	# if master has not the file
+	if not resource:
+		Debug.print_info_message("Requested resource %s not exist" % resource_path)
+		removed_resource.rpc_id(id, resource_path)
 	
 	# if player has the file and it is updated
-	if resource.timestamp <= timestamp:
+	elif resource.timestamp <= timestamp:
 		comfirm_resource.rpc_id(id, resource_path, resource.json())
+	
+	# if player has not the file
 	else:
 		send_resource(id, resource)
 	
 	
 # player
 @rpc("any_peer", "reliable")
+func removed_resource(resource_path: String):
+	Debug.print_info_message("Removed resource %s" % resource_path)
+	
+	var resource: CampaignResource = Game.resources[resource_path]
+	resource.resource_loaded = true
+	#Game.manager.set_resource(resource.resource_type, resource_path, {})
+
+# player
+@rpc("any_peer", "reliable")
 func comfirm_resource(resource_path: String, resource_data: Dictionary):
 	Debug.print_info_message("Comfirmed resource %s" % resource_path)
 	
 	var resource_abspath := Game.campaign.get_resource_abspath(resource_path)
-	Debug.print_info_message("Comfirmed resource abspath: %s" % resource_abspath)
 	if not FileAccess.file_exists(resource_abspath):
 		Debug.print_error_message("Resource %s not present" % resource_path)
 	

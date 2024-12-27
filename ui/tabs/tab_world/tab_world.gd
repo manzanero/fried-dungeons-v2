@@ -4,7 +4,7 @@ extends Control
 
 const TAB_SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
 const PLAY_ICON := preload("res://resources/icons/play_icon.png")
-
+const PLAY_SCENE_ICON := preload("res://resources/icons/play_scene_icon.png")
 
 var campaign_selected: Campaign : 
 	set(value):
@@ -35,7 +35,7 @@ var root: TreeItem
 
 func _set_opened(map_item: TreeItem, value: bool):
 	if value:
-		map_item.set_icon(0, preload("res://resources/icons/arrow_right.png"))
+		map_item.set_icon(0, PLAY_SCENE_ICON)
 	else:
 		map_item.set_icon(0, null)
 

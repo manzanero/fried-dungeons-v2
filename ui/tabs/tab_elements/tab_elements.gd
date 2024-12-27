@@ -90,25 +90,6 @@ func _on_item_activated():
 
 func _on_items_dropped(_items_data: Array[Dictionary], _parent_item: TreeItem, _item_index: int):
 	return
-	#if not items: 
-		#return
-	#
-	#var elements_moved: Array[Element] = []
-	#var ids: Array[String] = []
-	#for item: TreeItem in items:
-		#var element: Element = item.get_metadata(0)
-		#elements_moved.append(element)
-		#ids.append(element.id)
-		#
-	#Debug.print_info_message("Elements %s moved to index %s" % [ids, index])
-	#
-	## TODO multiselection
-	#
-	#var element_moved := elements_moved[0]
-	#Game.ui.selected_map.selected_level.elements_parent.move_child(element_moved, index)
-	#Game.ui.selected_map.selected_level.elements.clear()
-	#for element: Element in Game.ui.selected_map.selected_level.elements_parent.get_children():
-		#Game.ui.selected_map.selected_level.elements[element.id] = element
 	
 
 func reset():

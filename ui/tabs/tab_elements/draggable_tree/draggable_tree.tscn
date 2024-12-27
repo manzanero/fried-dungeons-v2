@@ -45,9 +45,9 @@ corner_radius_bottom_left = 4
 corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gct8e"]
-content_margin_left = 8.0
+content_margin_left = 4.0
 content_margin_top = 0.0
-content_margin_right = 8.0
+content_margin_right = 4.0
 content_margin_bottom = 0.0
 bg_color = Color(0.133333, 0.12549, 0.117647, 1)
 border_width_top = 6

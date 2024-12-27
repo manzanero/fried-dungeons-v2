@@ -1,4 +1,4 @@
-[gd_scene load_steps=29 format=3 uid="uid://bo0uwbj6jw1oj"]
+[gd_scene load_steps=43 format=3 uid="uid://bo0uwbj6jw1oj"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
@@ -17,11 +17,15 @@
 [ext_resource type="PackedScene" uid="uid://qg2jutjaad46" path="res://ui/tabs/tab_settings/tab_settings.tscn" id="7_cdf46"]
 [ext_resource type="PackedScene" uid="uid://bxt6nwjxeo4i8" path="res://ui/tabs/tab_jukebox/tab_jukebox.tscn" id="7_s1ltk"]
 [ext_resource type="PackedScene" uid="uid://c3oq3t62qadp0" path="res://ui/tabs/tab_resources/tab_resources.tscn" id="9_l1602"]
+[ext_resource type="Texture2D" uid="uid://djhtp0rlxmu50" path="res://resources/icons/play_icon.png" id="11_46b2c"]
+[ext_resource type="Texture2D" uid="uid://xmqlvuy6fnik" path="res://resources/icons/pause_icon.png" id="12_blpem"]
+[ext_resource type="Texture2D" uid="uid://dwfkjnyl85tqn" path="res://resources/icons/stop_icon.png" id="13_4613w"]
 [ext_resource type="StyleBox" uid="uid://kfbbn8gligsk" path="res://ui/flow_controller/flow_border.tres" id="19_xvfg2"]
 [ext_resource type="PackedScene" uid="uid://c32tijiy5co8o" path="res://ui/fried_window/new_campaign_window/new_campaign_window.tscn" id="20_ecsro"]
 [ext_resource type="PackedScene" uid="uid://cxb7ssvks0wlj" path="res://ui/fried_window/host_campaign_window/host_campaign_window.tscn" id="21_677rs"]
 [ext_resource type="PackedScene" uid="uid://bu5aahaphq4oa" path="res://ui/fried_window/join_campaign_window/join_campaign_window.tscn" id="22_0du2c"]
 [ext_resource type="PackedScene" uid="uid://b6q5i32b5tq6y" path="res://ui/fried_window/delete_element_window/delete_element_window.tscn" id="22_ljr54"]
+[ext_resource type="PackedScene" uid="uid://uo3ugi4hm5ry" path="res://ui/fried_window/campaign_players_window/campaign_players_window.tscn" id="25_1r2m4"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yr7b3"]
 
@@ -61,6 +65,137 @@ border_width_right = 16
 border_width_bottom = 16
 border_color = Color(0.443, 0.408, 0.292, 1)
 border_blend = true
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_402ae"]
+content_margin_left = 8.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+corner_detail = 1
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8eqv5"]
+content_margin_left = 3.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+border_color = Color(0.165656, 0.165656, 0.165656, 1)
+border_blend = true
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pnu0g"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.184416, 0.32211, 0.305106, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.277821, 0.459445, 0.438482, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_m7te8"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.145922, 0.262909, 0.248497, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.210106, 0.362414, 0.342017, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ekk3w"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_eptgt"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_kc821"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.492207, 0.453996, 0.329807, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.615316, 0.572901, 0.431425, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ogkxp"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.398979, 0.366055, 0.25905, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.51876, 0.476478, 0.34968, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7sov3"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.511329, 0.245046, 0.236259, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.641389, 0.323196, 0.311678, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gyjjw"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.380495, 0.173065, 0.166535, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.506082, 0.242074, 0.233384, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
 corner_detail = 1
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_e1kdt"]
@@ -289,6 +424,80 @@ render_target_update_mode = 4
 [node name="Dicer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
 unique_name_in_owner = true
 
+[node name="PlayersContainerBorrar" type="HFlowContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings"]
+visible = false
+layout_mode = 1
+anchors_preset = 10
+anchor_right = 1.0
+offset_top = 4.0
+offset_bottom = 40.0
+grow_horizontal = 2
+alignment = 1
+
+[node name="PlayerFlow" type="PanelContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_402ae")
+
+[node name="H" type="HBoxContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H"]
+custom_minimum_size = Vector2(84, 0)
+layout_mode = 2
+text = "Playeraaaaaaaaaaaaa"
+clip_text = true
+
+[node name="FlowController" type="PanelContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H"]
+layout_mode = 2
+size_flags_horizontal = 6
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_8eqv5")
+
+[node name="H" type="HBoxContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController"]
+layout_mode = 2
+theme_override_constants/separation = 2
+
+[node name="PlayButton" type="Button" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController/H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_pnu0g")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pnu0g")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_m7te8")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ekk3w")
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_eptgt")
+icon = ExtResource("11_46b2c")
+
+[node name="PauseButton" type="Button" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController/H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_kc821")
+theme_override_styles/hover = SubResource("StyleBoxFlat_kc821")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ogkxp")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ekk3w")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_eptgt")
+icon = ExtResource("12_blpem")
+
+[node name="StopButton" type="Button" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController/H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_7sov3")
+theme_override_styles/hover = SubResource("StyleBoxFlat_7sov3")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_gyjjw")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ekk3w")
+toggle_mode = true
+button_group = SubResource("ButtonGroup_eptgt")
+icon = ExtResource("13_4613w")
+alignment = 2
+
 [node name="RestoreDownButton" type="Button" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs"]
 unique_name_in_owner = true
 visible = false
@@ -477,6 +686,16 @@ offset_left = 100.0
 offset_top = 100.0
 offset_right = 698.0
 offset_bottom = 632.0
+is_invisible_on_close = true
+
+[node name="CampaignPlayersWindow" parent="CornerWindows" instance=ExtResource("25_1r2m4")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 100.0
+offset_top = 100.0
+offset_right = 503.0
+offset_bottom = 590.0
 is_invisible_on_close = true
 
 [node name="CenterWindows" type="CenterContainer" parent="."]

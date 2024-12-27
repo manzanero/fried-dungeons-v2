@@ -1,6 +1,7 @@
 class_name TabScene
 extends Control
 
+signal loaded
 
 static var SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
 
@@ -32,6 +33,8 @@ func init(map_slug: String, map_data: Dictionary):
 	name = map_data.label
 	
 	Game.ui.tab_settings.reset()
+	
+	loaded.emit()
 	return self
 
 

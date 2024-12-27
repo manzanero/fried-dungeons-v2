@@ -281,11 +281,12 @@ func dump_json(path: String, data: Dictionary, indent := 0, allow_empty := false
 	var file := FileAccess.open(path, FileAccess.WRITE)
 	var open_error := FileAccess.get_open_error()
 	if open_error:
-		printerr("Error: \"%s\" when writing: %" % [error_string(open_error), path])
+		printerr("Error: \"%s\" when writing: %s" % [error_string(open_error), path])
 		return open_error
 		
 	var json_string := dumps_json(data, indent)
 	file.store_line(json_string)
+	file.close()
 	return OK
 	
 	
@@ -417,6 +418,17 @@ func random_string(lenght := 8, reset_seed := false) -> String:
 			"a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", 
 			"n", "o", "p", "q", "r", "s", "t", "u", "v", "w", "x", "y", "z", 
 			"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
+	for i in range(0, lenght):
+		string += CHARS.pick_random()
+	return string
+
+
+func random_number_string(lenght := 6, reset_seed := false) -> String:
+	if reset_seed:
+		randomize()
+	
+	var string := ""
+	const CHARS : Array[String] = ["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"]
 	for i in range(0, lenght):
 		string += CHARS.pick_random()
 	return string

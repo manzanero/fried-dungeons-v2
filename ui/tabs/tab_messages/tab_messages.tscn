@@ -1,10 +1,14 @@
-[gd_scene load_steps=13 format=3 uid="uid://dhbx748ct8awa"]
+[gd_scene load_steps=16 format=3 uid="uid://dhbx748ct8awa"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_messages/tab_messages.gd" id="1_kklqb"]
 [ext_resource type="PackedScene" uid="uid://6pq2k4jg8hbv" path="res://ui/tabs/tab_messages/panel_dice/tab_messages_panel_dice.tscn" id="2_e88ub"]
+[ext_resource type="Texture2D" uid="uid://l2o4uxi0xljd" path="res://resources/icons/dice_icon.png" id="2_nx2ej"]
+[ext_resource type="Texture2D" uid="uid://2fls5i1w10wb" path="res://resources/icons/previous_line.png" id="3_87epd"]
 [ext_resource type="PackedScene" uid="uid://dw4t2g37sotcj" path="res://ui/tabs/tab_messages/panel_history/tab_messages_panel_history.tscn" id="3_e3rt8"]
 [ext_resource type="Texture2D" uid="uid://cljhvimdq50ft" path="res://resources/icons/terminal_icon.png" id="4_7g2oo"]
 [ext_resource type="Texture2D" uid="uid://djhtp0rlxmu50" path="res://resources/icons/play_icon.png" id="4_wsjw0"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q84c7"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_6y5qp"]
 allow_unpress = true
@@ -59,23 +63,18 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
-[node name="TabMessages" type="Control"]
-layout_mode = 3
+[node name="TabMessages" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_q84c7")
 script = ExtResource("1_kklqb")
 
 [node name="VBoxContainer" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
@@ -86,16 +85,21 @@ alignment = 1
 
 [node name="DiceButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
 toggle_mode = true
 button_pressed = true
 button_group = SubResource("ButtonGroup_6y5qp")
-text = "Dice"
+icon = ExtResource("2_nx2ej")
+icon_alignment = 1
 
 [node name="ActionButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
 toggle_mode = true
 button_pressed = true
@@ -105,10 +109,12 @@ text = "Actions"
 [node name="HistoryButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 focus_mode = 0
 toggle_mode = true
 button_group = SubResource("ButtonGroup_6y5qp")
-text = "History"
+icon = ExtResource("3_87epd")
+icon_alignment = 1
 
 [node name="VSplitContainer" type="VSplitContainer" parent="VBoxContainer"]
 layout_mode = 2

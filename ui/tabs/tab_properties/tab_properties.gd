@@ -52,6 +52,12 @@ func _set_element_selected(element: Element):
 				Debug.print_error_message("Unkown type \"%s\" of property \"%s\"" % [typeof(property.value), property_name]) 
 		field.value_changed.connect(_on_field_value_changed)
 		
+		# custom params
+		if element is Entity or element is Shape:
+			if property_name == "body_frame":
+				var texture_attributes: Dictionary = element.texture_attributes
+				field.set_param("max_value", texture_attributes.get("frames", 1) - 1)
+		
 
 func _make_containers_tree(properties: Dictionary):
 	containers_tree[""] = root_container

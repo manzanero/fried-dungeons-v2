@@ -3,7 +3,7 @@ extends Control
 
 signal attributes_changed(resource: CampaignResource, import_as: String, attributes: Dictionary)
 
-const DEFAULT_VOLUME := 0.10
+const DEFAULT_VOLUME := 0.25
 const DEFAULT_PITCH := 1.0
 
 var resource: CampaignResource: set = _set_resource

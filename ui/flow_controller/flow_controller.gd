@@ -5,7 +5,7 @@ const SCENE := preload("res://ui/flow_controller/flow_controller.tscn")
 
 const PAUSE_COLOR := Color(0.443, 0.408, 0.292)
 const STOP_COLOR := Color(0.511, 0.245, 0.236)
-enum STATE {PLAYING, PAUSED, STOPPED}
+enum State {NONE, PLAYING, PAUSED, STOPPED}
 
 signal played
 signal paused
@@ -16,7 +16,7 @@ signal changed
 var flow_border := preload("res://ui/flow_controller/flow_border.tres")
 
 
-var state: STATE
+var state: State
 var is_paused: bool
 var is_stopped: bool
 
@@ -52,57 +52,69 @@ func _ready() -> void:
 
 
 func _on_play_button_pressed() -> void:
-	change_flow_state(STATE.PLAYING)
-	Game.server.rpcs.change_flow_state.rpc(STATE.PLAYING)
+	change_flow_state(State.PLAYING)
+	Game.server.rpcs.change_flow_state.rpc(State.PLAYING)
 
 func _on_paused_button_pressed() -> void:
-	change_flow_state(STATE.PAUSED)
-	Game.server.rpcs.change_flow_state.rpc(STATE.PAUSED)
+	change_flow_state(State.PAUSED)
+	Game.server.rpcs.change_flow_state.rpc(State.PAUSED)
 
 func _on_stop_button_pressed() -> void:
-	change_flow_state(STATE.STOPPED)
-	Game.server.rpcs.change_flow_state.rpc(STATE.STOPPED)
+	change_flow_state(State.STOPPED)
+	Game.server.rpcs.change_flow_state.rpc(State.STOPPED)
 	
 
-func change_flow_state(_state: STATE):
+func change_flow_state(_state: State):
 	state = _state
 	play_button.set_pressed_no_signal(false)
 	pause_button.set_pressed_no_signal(false)
 	stop_button.set_pressed_no_signal(false)
 	match state:
-		STATE.PLAYING: 
+		State.PLAYING: 
 			play()
 			play_button.set_pressed_no_signal(true)
-		STATE.PAUSED: 
+		State.PAUSED: 
 			pause()
 			pause_button.set_pressed_no_signal(true)
-		STATE.STOPPED: 
+		State.STOPPED: 
 			stop()
 			stop_button.set_pressed_no_signal(true)
 
 
 func play() -> void:
+	state = State.PLAYING
 	is_paused = false
 	is_stopped = false
 	played.emit()
 	changed.emit()
+	play_button.set_pressed_no_signal(true)
+	pause_button.set_pressed_no_signal(false)
+	stop_button.set_pressed_no_signal(false)
 	Game.ui.flow_border.visible = false
 	Game.ui.master_cover.uncover(0)
 	
 func pause() -> void:
+	state = State.PAUSED
 	is_paused = true
 	is_stopped = false
 	paused.emit()
 	changed.emit()
+	play_button.set_pressed_no_signal(false)
+	pause_button.set_pressed_no_signal(true)
+	stop_button.set_pressed_no_signal(false)
 	flow_border.border_color = PAUSE_COLOR
 	Game.ui.flow_border.visible = true
 	Game.ui.master_cover.uncover(0)
 
 func stop() -> void:
+	state = State.STOPPED
 	is_paused = true
 	is_stopped = true
 	stopped.emit()
 	changed.emit()
+	play_button.set_pressed_no_signal(false)
+	pause_button.set_pressed_no_signal(false)
+	stop_button.set_pressed_no_signal(true)
 	flow_border.border_color = STOP_COLOR
 	Game.ui.flow_border.visible = true
 	if not Game.campaign.is_master:

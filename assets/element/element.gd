@@ -147,22 +147,29 @@ func _set_preview(value: bool) -> void:
 ## override
 func _set_selectable(value: bool) -> void:
 	is_selectable = value
+	
+	if not is_selectable and is_selected:
+		is_selected = false
 
 
 ## override
 func _set_selected(value: bool) -> void:
+	var current_element_selected := level.element_selected
+	if is_instance_valid(current_element_selected) and current_element_selected != self:
+		level.element_selected = null
+		current_element_selected.is_selected = false
+
 	is_selected = value
+	
 	if value:
-		if is_instance_valid(level.element_selected):
-			level.element_selected.is_selected = false
-			
 		level.element_selected = self
 		Game.ui.tab_properties.element_selected = self
 		
-	elif Game.ui.tab_properties.element_selected == self:
-		Game.ui.tab_properties.element_selected = null
-		
+	else:
 		is_dragged = false
+		
+		if Game.ui.tab_properties.element_selected == self:
+			Game.ui.tab_properties.element_selected = null
 
 
 func _get_target_hovered() -> Vector3:
@@ -305,6 +312,10 @@ class Property:
 		match hint:
 			Hints.COLOR:
 				value = Utils.html_color_to_color(_value)
+			#Hints.INTEGER:
+				#value = _value * 100.0 if params.get("is_percentage") else _value
+			#Hints.FLOAT:
+				#value = _value * 100.0 if params.get("is_percentage") else _value
 			_:
 				value = _value
 				
@@ -312,6 +323,10 @@ class Property:
 		match hint:
 			Hints.COLOR:
 				return Utils.color_to_html_color(value)
+			#Hints.INTEGER:
+				#return value / 100.0 if params.get("is_percentage") else value
+			#Hints.FLOAT:
+				#return value / 100.0 if params.get("is_percentage") else value
 			_:
 				return value
 

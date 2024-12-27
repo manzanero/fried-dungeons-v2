@@ -27,7 +27,7 @@ var show_label: bool :
 var texture_resource_path := "" : set = _set_texture_resource_path
 var frame := 0 :
 	set(value): frame = value; dirty_mesh = true
-var shape_scale := 100.0 :
+var shape_scale := 1.0 :
 	set(value): shape_scale = value; dirty_mesh = true
 var is_invisible: bool :
 	set(value): is_invisible = value; slices_parent.visible = not value
@@ -112,6 +112,7 @@ func _ready() -> void:
 			"container": "graphics",
 			"hint": Property.Hints.FLOAT,
 			"params":  {
+				"is_percentage": true,
 				"suffix": "%",
 				"has_slider": true,
 				"has_arrows": true,
@@ -120,7 +121,7 @@ func _ready() -> void:
 				"step": 5,
 				"allow_greater": true,
 			},
-			"default": 100.0,
+			"default": 1.0,
 		},
 		INVISIBLE: {
 			"container": "physics",
@@ -161,9 +162,7 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		# shape properties
 		TEXTURE: texture_resource_path = new_value
 		FRAME: frame = new_value
-		SCALE: 
-			new_value /= 100
-			shape_scale = clamp(new_value, 0.125, 64)
+		SCALE: shape_scale = clamp(new_value, 0.125, 64)
 		INVISIBLE: is_invisible = new_value
 		OPAQUE: is_opaque = new_value
 		SOLID: is_solid = new_value
@@ -183,6 +182,15 @@ func _set_texture_resource_path(_texture_resource_path: String) -> void:
 		if texture_resource: 
 			texture_resource.resource_changed.disconnect(_on_texture_resource_changed)
 		texture_resource = Game.manager.get_resource(CampaignResource.Type.TEXTURE, _texture_resource_path)
+		
+		# resource missing
+		if not texture_resource:
+			texture_resource_path = ""
+			texture_resource = null
+			texture_attributes = {}
+			dirty_mesh = true
+			return
+			
 		texture_resource.resource_changed.connect(_on_texture_resource_changed)
 		texture_attributes = texture_resource.attributes
 		dirty_mesh = true
@@ -227,14 +235,18 @@ func update_light():
 func update_mesh():
 	Utils.queue_free_children(slices_parent)
 	
-	if not texture_resource or not FileAccess.file_exists(texture_resource.abspath):
-		collider.disabled = true
-		return
-		
-	var texture := Utils.png_to_texture(texture_resource.abspath)
-	material.set_shader_parameter("texture_albedo", texture)
+	#if not texture_resource or not FileAccess.file_exists(texture_resource.abspath):
+		#collider.disabled = true
+		#return
+	
+	var texture: Texture2D
+	if texture_resource and FileAccess.file_exists(texture_resource.abspath):
+		texture = Utils.png_to_texture(texture_resource.abspath)
 	if not texture:
-		return
+		texture = preload("res://resources/icons/stop_icon.png")  #preload("res://resources/icons/godot_icon.png")
+		texture_attributes.get_or_add("scale", 0.5)
+		
+	material.set_shader_parameter("texture_albedo", texture)
 		
 	var size: Vector2 = Utils.a2_to_v2(texture_attributes.size) if "size" in texture_attributes else texture.get_size()
 	var frames: int = texture_attributes.get("frames", ImportTexture.SLICED_SHAPE_DEFAULTS.frames)
@@ -286,8 +298,9 @@ func update_mesh():
 			slices_parent.position.y = size.y * ratio * Game.U * 0.5
 			slices_parent.rotation.x = 0
 			slices_parent.rotation.y = -PI / 2
+			
 	for i in range(slices):
-		var slice = SHAPE_SLICE.instantiate()
+		var slice: ShapeSlice = SHAPE_SLICE.instantiate()
 		slices_parent.add_child(slice)
 		slice.depth = thickness
 		slice.double_sided = true

@@ -167,7 +167,7 @@ func reset() -> void:
 	root = tree.create_item()
 	root.set_icon(0, DIRECTORY_ICON)
 	root.set_text(0, "Resources")
-	root.set_tooltip_text(0, "")
+	root.set_tooltip_text(0, " ")
 	
 	if not Game.campaign:
 		return

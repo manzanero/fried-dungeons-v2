@@ -85,14 +85,16 @@ func reset():
 	var map: Map = Game.ui.selected_map
 	if map:
 		
-		# default arlas texture
+		# default artas texture
 		var texture_attributes: Dictionary = {"size": [16, 16], "textures": 64, "frames": 8}
-		
-		var atlas_texture_resource: CampaignResource = map.atlas_texture_resource
-		if atlas_texture_resource:
-			texture_attributes = atlas_texture_resource.attributes
+		if map.atlas_texture_resource:
+			texture_attributes = map.atlas_texture_resource.attributes
 		set_atlas_texture_index(map.atlas_texture, texture_attributes)
 		
+		# update walls
+		RenderingServer.global_shader_parameter_set("wall_atlas", map.atlas_texture)
+		
+		# updatde ground
 		var level := map.selected_level
 		if level:
 			level.floor_2d.tile_map.tile_set.get_source(0).texture = map.atlas_texture

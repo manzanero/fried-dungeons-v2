@@ -131,15 +131,15 @@ func _on_steam_item_activated():
 
 func _on_enet_item_activated():
 	var server_data: Dictionary = enet_tree.get_selected().get_metadata(1)
-	var player_username: String = server_data.get("player", {}).get("username", "Anonymous")
-	var player_password: String = server_data.get("player", {}).get("password", "")
+	var player_username: String = server_data.get("username", "Anonymous")
+	var player_password: String = server_data.get("password", "")
 	enet_campaign_joined.emit(server_data.host, player_username, player_password)
 	_on_close_button_pressed()
 
 func _on_enet_item_selected():
 	var server_data: Dictionary = enet_tree.get_selected().get_metadata(1)
-	var player_username: String = server_data.get("player", {}).get("username", "Anonymous")
-	var player_password: String = server_data.get("player", {}).get("password", "")
+	var player_username: String = server_data.get("username", "Anonymous")
+	var player_password: String = server_data.get("password", "")
 	host_line_edit.text = server_data.host
 	username_line_edit.text = player_username
 	password_line_edit.text = player_password

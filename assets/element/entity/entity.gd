@@ -31,8 +31,6 @@ var transparency := 0. :
 var texture_resource_path := "" : set = _set_texture_resource_path
 var frame := 0 :
 	set(value): frame = value; dirty_mesh = true
-#var element_scale := 1.0 :
-	#set(value): element_scale = value; dirty_mesh = true
 var show_label: bool :
 	set(value): show_label = value; label_label.visible = value
 var show_base: bool :
@@ -110,7 +108,6 @@ func _ready() -> void:
 				"min_value": 0,
 				"max_value": 64,
 				"step": 1,
-				"allow_greater": true,
 			},
 			"default": 0,
 		},
@@ -118,6 +115,7 @@ func _ready() -> void:
 			"container": "graphics",
 			"hint": Property.Hints.FLOAT,
 			"params": {
+				"is_percentage": true,
 				"suffix": "%",
 				"has_slider": true,
 				"has_arrows": true,
@@ -126,7 +124,7 @@ func _ready() -> void:
 				"step": 5,
 				"allow_greater": true,
 			},
-			"default": 100.0,
+			"default": 1.0,
 		},
 		SHOW_BODY: {
 			"container": "graphics",
@@ -138,6 +136,7 @@ func _ready() -> void:
 			"container": "graphics",
 			"hint": Property.Hints.FLOAT,
 			"params": {
+				"is_percentage": true,
 				"suffix": "%",
 				"has_slider": true,
 				"has_arrows": true,
@@ -146,7 +145,7 @@ func _ready() -> void:
 				"step": 5,
 				"allow_greater": true,
 			},
-			"default": 50.0,
+			"default": 0.5,
 		},
 		SHOW_BASE: {
 			"container": "graphics",
@@ -175,21 +174,16 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		BODY_TEXTURE: texture_resource_path = new_value
 		BODY_FRAME: frame = new_value
 		BODY_SIZE: 
-			new_value /= 100
 			body.scale = (Vector3.ONE * new_value).clampf(0.1, 64)
 			body.scale.x *= -1 if flipped else 1
 		SHOW_BODY: body.visible = new_value
 		BASE_SIZE:
-			new_value /= 100
 			base_mesh_instance.scale = Vector3(new_value * 2, 1, new_value * 2).clampf(0.1, 64)
 			selector_collider.scale = (Vector3.ONE * new_value * 2).clampf(0.1, 64)
 			var selector_mesh: TorusMesh = selector_mesh_instance.mesh
 			selector_mesh.inner_radius = new_value / 2
 			selector_mesh.outer_radius = new_value / 2 + Game.U
 		SHOW_BASE: base.visible = new_value
-		#SCALE: 
-			#new_value /= 100
-			#element_scale = clamp(new_value, 0.125, 64)
 	
 	
 func _set_texture_resource_path(_texture_resource_path: String) -> void:
@@ -206,6 +200,15 @@ func _set_texture_resource_path(_texture_resource_path: String) -> void:
 		if texture_resource: 
 			texture_resource.resource_changed.disconnect(_on_texture_resource_changed)
 		texture_resource = Game.manager.get_resource(CampaignResource.Type.TEXTURE, _texture_resource_path)
+		
+		# resource missing
+		if not texture_resource:
+			texture_resource_path = ""
+			texture_resource = null
+			texture_attributes = {}
+			dirty_mesh = true
+			return
+			
 		texture_resource.resource_changed.connect(_on_texture_resource_changed)
 		texture_attributes = texture_resource.attributes
 		dirty_mesh = true
@@ -255,13 +258,14 @@ func update_light():
 func update_mesh():
 	Utils.queue_free_children(slices_parent)
 	
-	if not texture_resource or not FileAccess.file_exists(texture_resource.abspath):
-		return
-		
-	var texture := Utils.png_to_texture(texture_resource.abspath)
-	material.set_shader_parameter("texture_albedo", texture)
+	var texture: Texture2D
+	if texture_resource and FileAccess.file_exists(texture_resource.abspath):
+		texture = Utils.png_to_texture(texture_resource.abspath)
 	if not texture:
-		return
+		texture = preload("res://resources/icons/entities_white_icon.png")  # preload("res://resources/icons/godot_icon.png")
+		texture_attributes.get_or_add("scale", 0.5)
+		
+	material.set_shader_parameter("texture_albedo", texture)
 		
 	var size: Vector2 = Utils.a2_to_v2(texture_attributes.size) if "size" in texture_attributes else texture.get_size()
 	var frames: int = texture_attributes.get("frames", ImportTexture.SLICED_SHAPE_DEFAULTS.frames)

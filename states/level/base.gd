@@ -86,6 +86,8 @@ func process_element_selection():
 func process_element_movement():
 	if not level.element_selected:
 		return
+	if not level.element_selected.is_selected:
+		return
 		
 	if Input.is_action_just_released("left_click"):
 		level.element_selected.is_dragged = false
@@ -141,15 +143,10 @@ func process_ceilling_hitted():
 func select(thing):
 	if thing is Element:
 		thing.is_selected = true
-		level.element_selected = thing
-		for element: Element in level.elements_parent.get_children():
-			if element != thing:
-				element.is_selected = false
-		
 	else:
+		if is_instance_valid(level.element_selected):
+			level.element_selected.is_selected = false
 		level.element_selected = null
-		for element in level.elements_parent.get_children():
-			element.is_selected = false
 			
 	if thing is Wall:
 		thing.is_selected = true

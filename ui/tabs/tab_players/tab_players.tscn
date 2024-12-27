@@ -1,160 +1,129 @@
-[gd_scene load_steps=5 format=3 uid="uid://bgemyy0f7bxdq"]
+[gd_scene load_steps=11 format=3 uid="uid://bgemyy0f7bxdq"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_players/tab_players.gd" id="1_mll3s"]
+[ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_7ft0g"]
+[ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="2_ofqpk"]
+[ext_resource type="Texture2D" uid="uid://cximt675xkvkn" path="res://resources/icons/directory_icon.png" id="3_2i5n2"]
+[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="4_7vp1n"]
+[ext_resource type="Texture2D" uid="uid://o0w65dsng3rt" path="res://resources/icons/entities_white_icon.png" id="6_mbyxp"]
+[ext_resource type="Texture2D" uid="uid://bb6y71i7wsjf7" path="res://resources/icons/visibility_visible_icon.png" id="6_qpt40"]
+[ext_resource type="Texture2D" uid="uid://u6c5wrx476el" path="res://resources/icons/center_view_icon.png" id="8_01us4"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_n0rb3"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
-bg_color = Color(0, 0, 0, 0.901961)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m802i"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8uw5w"]
+bg_color = Color(0.0142752, 0.0142752, 0.0142752, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
 corner_detail = 1
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_c8qg0"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.180392, 0.188235, 0.2, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 1
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_h7w1f"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.180392, 0.188235, 0.2, 1)
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 1
-
-[node name="TabPlayers" type="Control"]
-layout_mode = 3
+[node name="TabPlayers" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_m802i")
 script = ExtResource("1_mll3s")
 
 [node name="V" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 
 [node name="H" type="HBoxContainer" parent="V"]
 layout_mode = 2
 
 [node name="NewButton" type="Button" parent="V/H"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "New +"
+icon = ExtResource("2_ofqpk")
+icon_alignment = 1
+
+[node name="FoldersButton" type="Button" parent="V/H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Open Maps folder in file explorer"
+icon = ExtResource("3_2i5n2")
+icon_alignment = 1
 
 [node name="ScanButton" type="Button" parent="V/H"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
-text = "Scan"
+icon = ExtResource("4_7vp1n")
+icon_alignment = 1
 
-[node name="ScrollContainer" type="ScrollContainer" parent="V"]
+[node name="C" type="PanelContainer" parent="V"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_n0rb3")
+theme_override_styles/panel = SubResource("StyleBoxFlat_8uw5w")
 
-[node name="C" type="VBoxContainer" parent="V/ScrollContainer"]
+[node name="V" type="VBoxContainer" parent="V/C"]
 layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 8
+theme_override_constants/separation = 0
 
-[node name="NameLineEdit" type="LineEdit" parent="V/ScrollContainer/C"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 32)
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "name..."
-clear_button_enabled = true
-
-[node name="PlayerButtons" type="VBoxContainer" parent="V/ScrollContainer/C"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-theme_override_constants/separation = 4
-
-[node name="HBoxContainer" type="HBoxContainer" parent="V"]
-layout_mode = 2
-
-[node name="AddEntity" type="Button" parent="V/HBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-text = "Add Entity Control to Player"
-
-[node name="RemoveEntity" type="Button" parent="V/HBoxContainer"]
-unique_name_in_owner = true
+[node name="C2" type="MarginContainer" parent="V/C/V"]
 visible = false
 layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 0
+
+[node name="NameLineEdit" type="LineEdit" parent="V/C/V/C2"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
 size_flags_horizontal = 3
-text = "Remove Entity"
+placeholder_text = "username..."
+clear_button_enabled = true
 
-[node name="GridContainer" type="GridContainer" parent="V"]
-layout_mode = 2
-columns = 2
-
-[node name="UsernameLineEdit" type="LineEdit" parent="V/GridContainer"]
+[node name="Tree" parent="V/C/V" instance=ExtResource("2_7ft0g")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-theme_override_styles/normal = SubResource("StyleBoxFlat_c8qg0")
-placeholder_text = "Username..."
+hide_root = false
+scroll_horizontal_enabled = false
+scroll_vertical_enabled = false
+allow_drop_on_item = true
+drop_types_allowed = ["element"]
 
-[node name="UsernameButton" type="Button" parent="V/GridContainer"]
-unique_name_in_owner = true
+[node name="C" type="MarginContainer" parent="V/C/V"]
 layout_mode = 2
-text = "Set Username"
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
 
-[node name="PasswordLineEdit" type="LineEdit" parent="V/GridContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-theme_override_styles/normal = SubResource("StyleBoxFlat_h7w1f")
-placeholder_text = "Password..."
-virtual_keyboard_type = 6
-secret = true
-
-[node name="PasswordButton" type="Button" parent="V/GridContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Set Password"
-
-[node name="H2" type="BoxContainer" parent="V"]
+[node name="H" type="BoxContainer" parent="V/C/V/C"]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
-[node name="FolderButton" type="Button" parent="V/H2"]
+[node name="AddEntityButton" type="Button" parent="V/C/V/C/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Opens in file explored"
-text = "Folder"
+tooltip_text = "Add the control of selected element to the selected player"
+icon = ExtResource("6_mbyxp")
+icon_alignment = 1
 
-[node name="RemoveButton" type="Button" parent="V/H2"]
+[node name="OpenVisionButton" type="Button" parent="V/C/V/C/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Move to trash"
-text = "Remove"
+tooltip_text = "Use vision of the selected player"
+icon = ExtResource("6_qpt40")
+icon_alignment = 1
+
+[node name="CenterViewButton" type="Button" parent="V/C/V/C/H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Use vision of the selected player"
+icon = ExtResource("8_01us4")
+icon_alignment = 1

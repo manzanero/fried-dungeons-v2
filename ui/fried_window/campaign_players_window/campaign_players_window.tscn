@@ -1,0 +1,279 @@
+[gd_scene load_steps=9 format=3 uid="uid://uo3ugi4hm5ry"]
+
+[ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_e85sc"]
+[ext_resource type="Script" path="res://ui/fried_window/campaign_players_window/campaign_players_window.gd" id="2_awqrg"]
+[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="3_kx0pq"]
+[ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="3_pttfv"]
+[ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="4_hiloy"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_o2pj6"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+border_color = Color(0.0705882, 0.0705882, 0.0705882, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2p2k"]
+
+[node name="CampaignPlayersWindow" instance=ExtResource("1_e85sc")]
+offset_right = 0.0
+offset_bottom = 0.0
+script = ExtResource("2_awqrg")
+
+[node name="TitleLabel" parent="M/VBoxContainer/TitleBar/H" index="0"]
+text = "Campaign Players"
+
+[node name="ServerContainer" type="MarginContainer" parent="M/VBoxContainer/TitleBar/H" index="1"]
+layout_mode = 2
+theme_override_constants/margin_left = 2
+theme_override_constants/margin_right = 2
+
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/TitleBar/H/ServerContainer" index="0"]
+layout_mode = 2
+
+[node name="SteamButton" type="Button" parent="M/VBoxContainer/TitleBar/H/ServerContainer/H" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_o2pj6")
+text = "Steam Network"
+
+[node name="EnetButton" type="Button" parent="M/VBoxContainer/TitleBar/H/ServerContainer/H" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+toggle_mode = true
+button_group = SubResource("ButtonGroup_o2pj6")
+text = "Direct Connection"
+
+[node name="CloseButton" parent="M/VBoxContainer/TitleBar/H" index="2"]
+focus_mode = 0
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body" index="0"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="SteamContainer" type="VBoxContainer" parent="M/VBoxContainer/Body/V" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="M2" type="MarginContainer" parent="M/VBoxContainer/Body/V/SteamContainer" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+
+[node name="Label" type="Label" parent="M/VBoxContainer/Body/V/SteamContainer/M2" index="0"]
+layout_mode = 2
+text = "Invite Steam player:"
+
+[node name="C2" type="PanelContainer" parent="M/VBoxContainer/Body/V/SteamContainer" index="1"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body/V/SteamContainer/C2" index="0"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/SteamContainer/C2/V" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/SteamContainer/C2/V/M" index="0"]
+layout_mode = 2
+
+[node name="SteamPlayerUsernameEdit" type="LineEdit" parent="M/VBoxContainer/Body/V/SteamContainer/C2/V/M/H" index="0"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Username..."
+
+[node name="SteamPlayerAddButton" type="Button" parent="M/VBoxContainer/Body/V/SteamContainer/C2/V/M/H" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+icon = ExtResource("3_pttfv")
+
+[node name="HSeparator" type="HSeparator" parent="M/VBoxContainer/Body/V/SteamContainer" index="2"]
+layout_mode = 2
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/SteamContainer" index="3"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+
+[node name="Label" type="Label" parent="M/VBoxContainer/Body/V/SteamContainer/M" index="0"]
+layout_mode = 2
+text = "Steam players:"
+
+[node name="C" type="PanelContainer" parent="M/VBoxContainer/Body/V/SteamContainer" index="4"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body/V/SteamContainer/C" index="0"]
+layout_mode = 2
+theme_override_constants/separation = -4
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/SteamContainer/C/V" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/SteamContainer/C/V/M" index="0"]
+layout_mode = 2
+
+[node name="SteamFilterLineEdit" type="LineEdit" parent="M/VBoxContainer/Body/V/SteamContainer/C/V/M/H" index="0"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "filter..."
+
+[node name="SteamRefreshButton" type="Button" parent="M/VBoxContainer/Body/V/SteamContainer/C/V/M/H" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+icon = ExtResource("3_kx0pq")
+
+[node name="C" type="ScrollContainer" parent="M/VBoxContainer/Body/V/SteamContainer/C/V" index="1"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_y2p2k")
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/SteamContainer/C/V/C" index="0"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="SteamTree" parent="M/VBoxContainer/Body/V/SteamContainer/C/V/C/M" index="0" instance=ExtResource("4_hiloy")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/draw_guides = 1
+hide_folding = true
+select_mode = 1
+
+[node name="EnetContainer" type="VBoxContainer" parent="M/VBoxContainer/Body/V" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="M2" type="MarginContainer" parent="M/VBoxContainer/Body/V/EnetContainer" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+
+[node name="Label" type="Label" parent="M/VBoxContainer/Body/V/EnetContainer/M2" index="0"]
+layout_mode = 2
+text = "Invite Enet player:"
+
+[node name="C2" type="PanelContainer" parent="M/VBoxContainer/Body/V/EnetContainer" index="1"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body/V/EnetContainer/C2" index="0"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/EnetContainer/C2/V" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/EnetContainer/C2/V/M" index="0"]
+layout_mode = 2
+
+[node name="EnetPlayerUsernameEdit" type="LineEdit" parent="M/VBoxContainer/Body/V/EnetContainer/C2/V/M/H" index="0"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Username..."
+
+[node name="EnetPlayerAddButton" type="Button" parent="M/VBoxContainer/Body/V/EnetContainer/C2/V/M/H" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+icon = ExtResource("3_pttfv")
+
+[node name="HSeparator" type="HSeparator" parent="M/VBoxContainer/Body/V/EnetContainer" index="2"]
+layout_mode = 2
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/EnetContainer" index="3"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+
+[node name="Label" type="Label" parent="M/VBoxContainer/Body/V/EnetContainer/M" index="0"]
+layout_mode = 2
+text = "Enet players:"
+
+[node name="C" type="PanelContainer" parent="M/VBoxContainer/Body/V/EnetContainer" index="4"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body/V/EnetContainer/C" index="0"]
+layout_mode = 2
+theme_override_constants/separation = -4
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/EnetContainer/C/V" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/EnetContainer/C/V/M" index="0"]
+layout_mode = 2
+
+[node name="EnetFilterLineEdit" type="LineEdit" parent="M/VBoxContainer/Body/V/EnetContainer/C/V/M/H" index="0"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "filter..."
+
+[node name="EnetRefreshButton" type="Button" parent="M/VBoxContainer/Body/V/EnetContainer/C/V/M/H" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+focus_mode = 0
+icon = ExtResource("3_kx0pq")
+
+[node name="C" type="ScrollContainer" parent="M/VBoxContainer/Body/V/EnetContainer/C/V" index="1"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_y2p2k")
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/EnetContainer/C/V/C" index="0"]
+custom_minimum_size = Vector2(0, 100)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="EnetTree" parent="M/VBoxContainer/Body/V/EnetContainer/C/V/C/M" index="0" instance=ExtResource("4_hiloy")]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/draw_guides = 1
+columns = 2
+hide_folding = true
+select_mode = 1

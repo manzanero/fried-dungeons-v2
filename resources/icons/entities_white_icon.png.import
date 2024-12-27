@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bb6y71i7wsjf7"
-path="res://.godot/imported/visibility_icon.png-cfd96995fd0751f0a3dfbf243f54029d.ctex"
+uid="uid://o0w65dsng3rt"
+path="res://.godot/imported/entities_white_icon.png-250e9bfe5a51807651ebf0cef3198e5e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://resources/icons/visibility_icon.png"
-dest_files=["res://.godot/imported/visibility_icon.png-cfd96995fd0751f0a3dfbf243f54029d.ctex"]
+source_file="res://resources/icons/entities_white_icon.png"
+dest_files=["res://.godot/imported/entities_white_icon.png-250e9bfe5a51807651ebf0cef3198e5e.ctex"]
 
 [params]
 

@@ -14,6 +14,7 @@ signal campaign_host_pressed
 signal campaign_join_pressed
 
 signal campaign_settings_pressed
+signal campaign_players_pressed
 
 signal campaign_save_pressed
 signal campaign_reload_pressed
@@ -25,6 +26,7 @@ const CAMPAIGN_MENU_ITEM_HOST := "Load..."
 const CAMPAIGN_MENU_ITEM_JOIN := "Join..."
 
 const CAMPAIGN_MENU_ITEM_SETTINGS := "Settings..."
+const CAMPAIGN_MENU_ITEM_PLAYERS := "Players..."
 
 const CAMPAIGN_MENU_ITEM_SAVE := "Save"
 const CAMPAIGN_MENU_ITEM_RELOAD := "Reload"
@@ -37,6 +39,7 @@ var campaign_menu_items := [
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_JOIN, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_J},
 	{"type": MenuItemType.SEPARATOR},
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_SETTINGS},
+	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_PLAYERS},
 	{"type": MenuItemType.SEPARATOR},
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_SAVE, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_S},
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_RELOAD, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_R},
@@ -83,9 +86,13 @@ func set_profile() -> void:
 		var is_master := Game.campaign.is_master
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_SETTINGS, not is_master)
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_SAVE, not is_master)
+		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_PLAYERS, not is_master)
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_RELOAD, false)
 		#master_volume_controller.visible = true
 	else:
+		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_SETTINGS, true)
+		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_SAVE, true)
+		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_PLAYERS, true)
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_RELOAD, true)
 		#master_volume_controller.visible = false
 	
@@ -99,6 +106,7 @@ func _on_campaing_menu_id_pressed(id: int):
 		CAMPAIGN_MENU_ITEM_HOST: campaign_host_pressed.emit()
 		CAMPAIGN_MENU_ITEM_JOIN: campaign_join_pressed.emit()
 		CAMPAIGN_MENU_ITEM_SETTINGS: campaign_settings_pressed.emit()
+		CAMPAIGN_MENU_ITEM_PLAYERS: campaign_players_pressed.emit()
 		CAMPAIGN_MENU_ITEM_SAVE: campaign_save_pressed.emit()
 		CAMPAIGN_MENU_ITEM_RELOAD: campaign_reload_pressed.emit()
 		CAMPAIGN_MENU_ITEM_QUIT: campaign_quit_pressed.emit()

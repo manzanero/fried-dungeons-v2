@@ -59,6 +59,10 @@ func _on_empty_texture_button_pressed():
 func _on_texture_button_pressed():
 	Game.ui.tab_resources.visible = true
 	var resource_item := Game.ui.tab_resources.resource_items.get(property_value) as TreeItem
+	if not resource_item:
+		Utils.temp_tooltip("File \"%s\" no longer exist" % property_value, 2, true)
+		return
+		
 	resource_item.uncollapse_tree()
 	resource_item.select(0)
 	var tree := resource_item.get_tree()

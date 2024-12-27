@@ -2,6 +2,10 @@ class_name GameManager
 extends Node
 
 
+signal campaign_loaded
+signal map_loaded(slug: String)
+
+
 @onready var server: Node = $ServerManager
 @onready var preloader: ResourcePreloader = $ResourcePreloader
 
@@ -15,6 +19,12 @@ func _ready() -> void:
 	
 	# workarround to lose focus of the window on the first click of the window
 	DisplayServer.window_set_flag(DisplayServer.WINDOW_FLAG_RESIZE_DISABLED, false)
+	
+	get_window().min_size = Vector2i(
+		ProjectSettings.get_setting("display/window/size/viewport_width"), 
+		ProjectSettings.get_setting("display/window/size/viewport_height")
+	)
+
 	
 	# disables window x button
 	get_tree().set_auto_accept_quit(false)
@@ -38,8 +48,10 @@ func _ready() -> void:
 	
 	ui.save_campaign_button_pressed.connect(_on_save_campaign)
 	ui.reload_campaign_button_pressed.connect(_on_reload_campaign)
-	
+	#add_theme_stylebox_override
 	ui.scene_tabs.get_tab_bar().tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ALWAYS
+	ui.scene_tabs.get_tab_bar().add_theme_stylebox_override("button_highlight", StyleBoxEmpty.new())
+	ui.scene_tabs.get_tab_bar().add_theme_stylebox_override("button_pressed", StyleBoxEmpty.new())
 	ui.scene_tabs.get_tab_bar().tab_close_pressed.connect(_on_tab_close_pressed)
 	ui.scene_tabs.tab_changed.connect(func (_tab: int):
 		ui.tab_world.reset()
@@ -95,7 +107,6 @@ func _on_host_campaign(campaign_slug: String, campaign_data: Dictionary, steam: 
 	Game.campaign = campaign
 	
 	Game.ui.tab_world.campaign_selected = campaign
-	Game.ui.tab_players.campaign_selected = campaign  # TODO remove
 	
 	reset()
 	
@@ -106,23 +117,27 @@ func _on_host_campaign(campaign_slug: String, campaign_data: Dictionary, steam: 
 
 
 func load_campaign(campaign_data: Dictionary):
-	var selected_map: String = campaign_data.get("selected_map", "")
-	if selected_map not in Game.campaign.maps:
-		selected_map = Game.campaign.maps[0]
+	var selected_map_slug: String = campaign_data.get("selected_map", "")
+	if selected_map_slug not in Game.campaign.maps:
+		selected_map_slug = Game.campaign.maps[0]
 	
 	# open map where players are
-	var players_map: String = campaign_data.get("players_map", "")
-	if players_map not in Game.campaign.maps:
-		players_map = selected_map
-		
-	TabScene.SCENE.instantiate().init(players_map, Game.campaign.get_map_data(players_map))
+	var players_map_slug: String = campaign_data.get("players_map", "")
+	if players_map_slug not in Game.campaign.maps:
+		players_map_slug = selected_map_slug
+	
+	var players_map_data := Game.campaign.get_map_data(players_map_slug)
+	var players_map_tab: TabScene = TabScene.SCENE.instantiate().init(players_map_slug, players_map_data)
+	map_loaded.emit(players_map_tab.map.slug)
 	
 	# open map where mastes is (if different)
-	if players_map != selected_map:
-		TabScene.SCENE.instantiate().init(selected_map, Game.campaign.get_map_data(selected_map))
+	if players_map_slug != selected_map_slug:
+		var selected_map_data := Game.campaign.get_map_data(selected_map_slug)
+		var selected_map_tab: TabScene = TabScene.SCENE.instantiate().init(selected_map_slug, selected_map_data)
+		map_loaded.emit(selected_map_tab.map.slug)
 		Game.ui.scene_tabs.current_tab = 1
 		
-	Game.ui.tab_world.players_map = players_map
+	Game.ui.tab_world.players_map = players_map_slug
 	Game.ui.tab_world.refresh_tree()
 	
 	# init jukebox
@@ -142,6 +157,8 @@ func load_campaign(campaign_data: Dictionary):
 	
 	# state
 	Game.flow.change_flow_state(campaign_data.get("state", 0))
+	
+	campaign_loaded.emit()
 
 
 func _on_reload_campaign():
@@ -248,13 +265,12 @@ func reset():
 		tab_scene.queue_free()
 	
 	Game.ui.tab_elements.reset()
+	Game.ui.tab_players.reset()
 	Game.ui.tab_jukebox.reset()
 	Game.ui.tab_builder.reset()
 	Game.ui.tab_resources.reset()
 	Game.ui.tab_properties.reset()
 	Game.ui.tab_messages.reset()
-	
-	Game.flow.change_flow_state(FlowController.STATE.PLAYING)
 	
 	set_profile()
 	
@@ -290,7 +306,7 @@ func get_resource(resource_type: String, resource_path: String) -> CampaignResou
 
 func update_resource(resource_type: String, resource_path: String) -> CampaignResource:
 	if Game.campaign.is_master: 
-		return  # TODO return a default resource
+		return
 	
 	# get or create
 	var resource: CampaignResource = Game.resources.get(resource_path)

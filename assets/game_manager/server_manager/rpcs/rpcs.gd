@@ -3,7 +3,7 @@ extends Node
 
 
 @rpc("any_peer", "reliable")
-func change_flow_state(state: FlowController.STATE):
+func change_flow_state(state: FlowController.State):
 	Game.flow.change_flow_state(state)
 
 
@@ -38,20 +38,31 @@ func change_ambient(map_slug: String,
 
 
 @rpc("any_peer", "reliable")
-func set_player_entity_control(player_slug: String, id: String, control: bool, entity_data := {}):
+func set_player_element_control(player_slug: String, element_id: String, control_data := {}):
 	if Game.player.slug != player_slug: return
 	var level := Game.ui.selected_map.selected_level
-	var entity := _get_element_by_id(level, id); if not entity: return
-	entity.eye.visible = control
-	entity.is_selectable = control
-	if control:
-		Game.player.entities[id] = entity_data
-	else:
-		Game.player.entities.erase(id)
-		if Game.ui.selected_map.selected_level.element_selected == entity:
-			entity.is_selected = false
+	var element := _get_element_by_id(level, element_id); if not element: return
+	
+	control_data.get_or_add("senses", false)
+	element.eye.visible = control_data.senses
+	control_data.get_or_add("movement", false)
+	element.is_selectable = control_data.movement
+		
+	Game.player.set_element_control(element_id, control_data)
 
-	Debug.print_info_message("Player \"%s\" got control of \"%s\"" % [player_slug, id])
+
+@rpc("any_peer", "reliable")
+func clear_player_element_control(player_slug: String, element_id: String):
+	if Game.player.slug != player_slug: return
+	var level := Game.ui.selected_map.selected_level
+	var element := _get_element_by_id(level, element_id); if not element: return
+	
+	element.eye.visible = false
+	element.is_selectable = false
+	
+	Game.player.elements.erase(element_id)
+#
+	Debug.print_info_message("Player \"%s\" clear control data of \"%s\"" % [player_slug, element_id])
 
 
 @rpc("any_peer", "reliable")

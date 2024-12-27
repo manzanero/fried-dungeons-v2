@@ -86,6 +86,7 @@ func json() -> Dictionary :
 		"label": label,
 		"master": Game.master.json(),
 		"state": Game.flow.state,
+		"players": Game.ui.tab_players.get_data(),
 		"selected_map": Game.ui.selected_map.slug,
 		"players_map": Game.ui.tab_world.players_map,
 		"opened_maps": Game.maps.keys(),
