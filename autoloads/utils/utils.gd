@@ -136,10 +136,33 @@ func queue_free_children(node: Node):
 		child.queue_free()
 
 
-func reset_button_group(button_group: ButtonGroup):
+func clean_array(array: Array) -> Array: 
+	var _clean_array := []
+	for item in array:
+		if is_instance_valid(item):
+			_clean_array.append(item)
+	return _clean_array
+
+
+func create_button_group(buttons: Array, allow_unpress: bool = false) -> ButtonGroup:
+	var button_group := ButtonGroup.new()
+	button_group.allow_unpress = allow_unpress
+	for button in buttons:
+		button.button_group = button_group
+		
+	Utils.reset_button_group(button_group)
+	
+	if buttons and not allow_unpress:
+		buttons[0].button_pressed = true
+	return button_group
+	
+
+func reset_button_group(button_group: ButtonGroup, emit_pressed_signal := false) -> void:
 	var pressed_button := button_group.get_pressed_button()
 	if pressed_button:
 		pressed_button.button_pressed = false
+		if emit_pressed_signal:
+			pressed_button.pressed.emit()
 
 
 func safe_queue_free(node: Variant):
@@ -151,37 +174,75 @@ func safe_queue_free(node: Variant):
 
 #region node tools
 
-func get_hit(from : Node3D, to_point : Vector3, raycast : PhysicsRayQueryParameters3D, 
-		collision_mask : int, hit_back_faces: bool = true) -> Dictionary:
-	var space_state := from.get_world_3d().direct_space_state
+func ray(bitmask := 0, hit_back_faces := true, exclude: Array[RID] = [],
+		from := Vector3.ZERO, to := Vector3.ONE) -> PhysicsRayQueryParameters3D:
+	var raycast := PhysicsRayQueryParameters3D.create(from, to)
+	raycast.collision_mask = bitmask
+	raycast.hit_back_faces = hit_back_faces
+	raycast.exclude = exclude
+	return raycast
+
+
+func get_hit(from: Node3D, to_point: Vector3, raycast: PhysicsRayQueryParameters3D) -> Dictionary:
 	raycast.from = from.global_position
 	raycast.to = to_point
-	raycast.collision_mask = collision_mask
-	raycast.hit_back_faces = hit_back_faces
+	var space_state := from.get_world_3d().direct_space_state
 	return space_state.intersect_ray(raycast)
 
 
-func get_mouse_hit(camera: Camera3D, from_center: bool, raycast: PhysicsRayQueryParameters3D, 
-		collision_mask: int, hit_back_faces: bool = true) -> Dictionary:
-	var ray_length := 1000.0
-	var space_state := camera.get_world_3d().direct_space_state
+func get_mouse_hit(camera: Camera3D, from_center: bool, raycast: PhysicsRayQueryParameters3D,
+		offset := Vector2.ZERO, distance := 1000.0) -> Dictionary:
 	
 	if from_center:
 		raycast.from = camera.global_position
-		raycast.to = -camera.global_basis.z * ray_length
+		raycast.to = -camera.global_basis.z * distance
 			
 	else:
 		var viewport := camera.get_viewport()
-		var mouse_pos := viewport.get_mouse_position()
-		if not viewport.get_visible_rect().has_point(mouse_pos):
+		var mouse_pos := viewport.get_mouse_position() + offset
+		var viewport_visible_rect := viewport.get_visible_rect()
+		if not viewport_visible_rect.has_point(mouse_pos):
 			return {}
 			
 		raycast.from = camera.project_ray_origin(mouse_pos)
-		raycast.to = raycast.from + camera.project_ray_normal(mouse_pos) * ray_length
+		raycast.to = raycast.from + camera.project_ray_normal(mouse_pos) * distance
 		
-	raycast.collision_mask = collision_mask
-	raycast.hit_back_faces = hit_back_faces
+	var space_state := camera.get_world_3d().direct_space_state
 	return space_state.intersect_ray(raycast)
+
+
+func get_curve_3d_points_position(curve: Curve3D) -> PackedVector3Array:
+	var points_position := PackedVector3Array()
+	for i in range(curve.point_count):
+		points_position.append(curve.get_point_position(i))
+	return points_position
+	
+
+func colapse_points_at_same_position(curve: Curve3D) -> bool:
+	for i in range(1, curve.point_count):
+		var delta_offset := curve.get_point_position(i - 1).distance_to(curve.get_point_position(i))
+		if is_zero_approx(delta_offset):
+			curve.remove_point(i)
+			colapse_points_at_same_position(curve)
+			return true
+	return false
+	
+
+func get_boundary_points(curve: Curve3D, point: Vector3) -> Array[int]:
+	var a := 0
+	var b := 1
+	var offset := 0.0
+	
+	for i in range(curve.point_count - 1):
+		a = i
+		b = i + 1
+		var delta_offset := curve.get_point_position(a).distance_to(curve.get_point_position(b))
+		offset += delta_offset
+		var closest_offset := curve.get_closest_offset(point)
+		if offset > closest_offset:
+			break
+	
+	return [a, b]
 
 
 func temp_tooltip(text: String, timeout: float = 2.0, mirrowed := false) -> Control:

@@ -45,15 +45,21 @@ func _on_rect_changed(new_rect: Rect2):
 	light_camera.size = rect_size.x
 	light_camera.position = position + Vector3.UP
 	
-	light_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
-	floor_viewport.render_target_update_mode = SubViewport.UPDATE_ALWAYS
+	light_viewport.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
+	floor_viewport.render_target_update_mode = SubViewport.UPDATE_WHEN_VISIBLE
 	
 	# TODO light_sample_2d needs to be updated?
 
 	Debug.print_debug_message("New rect: %s" % [rect])
 
 
-func tile_map_set_cell(tile_hovered : Vector2i, xy : Vector2i, erase := false):
-	tile_map.set_cell(0, tile_hovered, 0, xy, -1 if erase else 0)
+func tile_map_set_cell(tile_hovered: Vector2i, atlas_coords : Vector2i):
+	tile_map.set_cell(0, tile_hovered, 0, atlas_coords, 0)
 	if not rect.has_point(tile_hovered):
+		rect = tile_map.get_used_rect()
+
+
+func tile_map_remove_cell(tile_hovered: Vector2i):
+	tile_map.set_cell(0, tile_hovered, -1)
+	if rect.has_point(tile_hovered):
 		rect = tile_map.get_used_rect()

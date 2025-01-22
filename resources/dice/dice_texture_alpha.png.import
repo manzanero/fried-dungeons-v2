@@ -4,15 +4,16 @@ importer="texture"
 type="CompressedTexture2D"
 uid="uid://wcvxwgvn8xoh"
 path.s3tc="res://.godot/imported/dice_texture_alpha.png-b7fb82de4a4df54a91ee247812945971.s3tc.ctex"
+path.etc2="res://.godot/imported/dice_texture_alpha.png-b7fb82de4a4df54a91ee247812945971.etc2.ctex"
 metadata={
-"imported_formats": ["s3tc_bptc"],
+"imported_formats": ["s3tc_bptc", "etc2_astc"],
 "vram_texture": true
 }
 
 [deps]
 
 source_file="res://resources/dice/dice_texture_alpha.png"
-dest_files=["res://.godot/imported/dice_texture_alpha.png-b7fb82de4a4df54a91ee247812945971.s3tc.ctex"]
+dest_files=["res://.godot/imported/dice_texture_alpha.png-b7fb82de4a4df54a91ee247812945971.s3tc.ctex", "res://.godot/imported/dice_texture_alpha.png-b7fb82de4a4df54a91ee247812945971.etc2.ctex"]
 
 [params]
 

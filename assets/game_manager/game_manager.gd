@@ -5,6 +5,9 @@ extends Node
 signal campaign_loaded
 signal map_loaded(slug: String)
 
+const UI_SCENE := preload("res://ui/ui.tscn")
+const TAB_SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
+
 
 @onready var server: Node = $ServerManager
 @onready var preloader: ResourcePreloader = $ResourcePreloader
@@ -24,7 +27,6 @@ func _ready() -> void:
 		ProjectSettings.get_setting("display/window/size/viewport_width"), 
 		ProjectSettings.get_setting("display/window/size/viewport_height")
 	)
-
 	
 	# disables window x button
 	get_tree().set_auto_accept_quit(false)
@@ -39,7 +41,7 @@ func _ready() -> void:
 	Game.server = server
 	server.server_disconnected.connect(_on_server_disconected)
 	
-	var ui: UI = UI.SCENE.instantiate().init()
+	var ui: UI = UI_SCENE.instantiate().init()
 	
 	ui.new_campaign_window.new_campaign_created.connect(_on_new_campaign)
 	ui.host_campaign_window.saved_campaign_hosted.connect(_on_host_campaign)
@@ -48,23 +50,44 @@ func _ready() -> void:
 	
 	ui.save_campaign_button_pressed.connect(_on_save_campaign)
 	ui.reload_campaign_button_pressed.connect(_on_reload_campaign)
-	#add_theme_stylebox_override
+	
 	ui.scene_tabs.get_tab_bar().tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ALWAYS
 	ui.scene_tabs.get_tab_bar().add_theme_stylebox_override("button_highlight", StyleBoxEmpty.new())
 	ui.scene_tabs.get_tab_bar().add_theme_stylebox_override("button_pressed", StyleBoxEmpty.new())
 	ui.scene_tabs.get_tab_bar().tab_close_pressed.connect(_on_tab_close_pressed)
-	ui.scene_tabs.tab_changed.connect(func (_tab: int):
-		ui.tab_world.reset()
-		ui.tab_builder.reset()
-		ui.tab_elements.reset()
-		ui.tab_properties.reset()
-		ui.tab_settings.reset()
-	)
+	ui.scene_tabs.tab_changed.connect(_on_tab_changed)
+	ui.scene_tabs.child_order_changed.connect(refresh_tabs)
 	
 	reset()
 	
 	autosave()
 	
+	
+func _on_tab_changed(tab: int):
+	Game.ui.tab_world.reset()
+	Game.ui.tab_builder.reset()
+	Game.ui.tab_elements.reset()
+	Game.ui.tab_properties.reset()
+	Game.ui.tab_settings.reset()
+	
+	Game.modes.reset()
+	Game.ui.build_border.visible = false
+	
+	for i in Game.ui.scene_tabs.get_tab_count():
+		var tab_scene: TabScene = Game.ui.scene_tabs.get_tab_control(i)
+		if i == tab or Game.ui.tab_world.players_map == tab_scene.map.slug:
+			tab_scene.process_mode = PROCESS_MODE_ALWAYS
+		else:
+			tab_scene.process_mode = PROCESS_MODE_DISABLED
+
+
+func refresh_tabs():
+	Game.maps.clear()
+	for i in Game.ui.scene_tabs.get_tab_count():
+		var tab_scene: TabScene = Game.ui.scene_tabs.get_tab_control(i)
+		var map := tab_scene.map
+		Game.maps[map.slug] = map
+
 
 func _on_new_campaign(new_campaign_data: Dictionary, steam: bool) -> void:
 	var campaign_label: String = new_campaign_data.title
@@ -79,7 +102,8 @@ func _on_new_campaign(new_campaign_data: Dictionary, steam: bool) -> void:
 		"master": {
 			"username": new_campaign_data.master_name,
 			"color": Utils.color_to_html_color(new_campaign_data.master_color),
-		}
+		},
+		"state": 1,
 	}
 	Utils.dump_json(campaign_path.path_join("campaign.json"), campaign_data, 2)
 	
@@ -127,17 +151,18 @@ func load_campaign(campaign_data: Dictionary):
 		players_map_slug = selected_map_slug
 	
 	var players_map_data := Game.campaign.get_map_data(players_map_slug)
-	var players_map_tab: TabScene = TabScene.SCENE.instantiate().init(players_map_slug, players_map_data)
+	var players_map_tab: TabScene = TAB_SCENE.instantiate().init(players_map_slug, players_map_data, true)
 	map_loaded.emit(players_map_tab.map.slug)
 	
-	# open map where mastes is (if different)
+	Game.ui.tab_world.players_map = players_map_slug
+	
+	# open map where master is (if different)
 	if players_map_slug != selected_map_slug:
 		var selected_map_data := Game.campaign.get_map_data(selected_map_slug)
-		var selected_map_tab: TabScene = TabScene.SCENE.instantiate().init(selected_map_slug, selected_map_data)
+		var selected_map_tab: TabScene = TAB_SCENE.instantiate().init(selected_map_slug, selected_map_data)
 		map_loaded.emit(selected_map_tab.map.slug)
 		Game.ui.scene_tabs.current_tab = 1
 		
-	Game.ui.tab_world.players_map = players_map_slug
 	Game.ui.tab_world.refresh_tree()
 	
 	# init jukebox
@@ -156,7 +181,7 @@ func load_campaign(campaign_data: Dictionary):
 	Game.ui.tab_jukebox.muted = jukebox_data.get("muted", false)
 	
 	# state
-	Game.flow.change_flow_state(campaign_data.get("state", 0))
+	Game.flow.change_flow_state(campaign_data.get("state", 1))
 	
 	campaign_loaded.emit()
 
@@ -223,6 +248,8 @@ func _on_join_enet_server(host: String, username: String, password: String):
 
 func _on_server_disconected():
 	Game.campaign = null
+	Game.ui.tab_jukebox.reset()
+	Game.ui.flow_border.visible = false
 	reset()
 
 
@@ -287,6 +314,7 @@ func set_profile():
 		Game.ui.right_up.visible = is_master
 		Game.ui.scene_tabs.tabs_visible = is_master
 		Game.ui.ide.visible = true
+		Game.modes.visible = is_master
 	else:
 		Game.ui.ide.visible = false
 
@@ -351,7 +379,7 @@ func safe_quit():
 func _input(event):
 	if event is InputEventKey:
 		if event.is_pressed():
-			if multiplayer.multiplayer_peer and multiplayer.is_server():
+			#if multiplayer.multiplayer_peer and multiplayer.is_server():
 				if event.keycode == KEY_F4:
 					if DisplayServer.window_get_vsync_mode() == DisplayServer.VSYNC_ENABLED:
 						DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_DISABLED)

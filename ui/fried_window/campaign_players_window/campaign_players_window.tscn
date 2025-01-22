@@ -1,10 +1,11 @@
-[gd_scene load_steps=9 format=3 uid="uid://uo3ugi4hm5ry"]
+[gd_scene load_steps=10 format=3 uid="uid://uo3ugi4hm5ry"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_e85sc"]
 [ext_resource type="Script" path="res://ui/fried_window/campaign_players_window/campaign_players_window.gd" id="2_awqrg"]
 [ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="3_kx0pq"]
 [ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="3_pttfv"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="4_hiloy"]
+[ext_resource type="Texture2D" uid="uid://bs1udfpmwy6a" path="res://resources/icons/filter_icon.png" id="4_neitg"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_o2pj6"]
 
@@ -143,6 +144,7 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "filter..."
+right_icon = ExtResource("4_neitg")
 
 [node name="SteamRefreshButton" type="Button" parent="M/VBoxContainer/Body/V/SteamContainer/C/V/M/H" index="1"]
 unique_name_in_owner = true
@@ -251,6 +253,7 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "filter..."
+right_icon = ExtResource("4_neitg")
 
 [node name="EnetRefreshButton" type="Button" parent="M/VBoxContainer/Body/V/EnetContainer/C/V/M/H" index="1"]
 unique_name_in_owner = true
@@ -275,5 +278,6 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/draw_guides = 1
 columns = 2
+allow_reselect = true
 hide_folding = true
 select_mode = 1

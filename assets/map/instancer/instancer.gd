@@ -13,9 +13,9 @@ const PLAYER_SIGNAL = preload("res://assets/player_signal/player_signal.tscn")
 
 
 func create_wall(level: Level, id: String, points_position_2d: Array[Vector2], 
-		index := 0, wall_seed := 0, wall_layer := 1, two_sided := false ) -> Wall:
+		index := 0, wall_seed := 0, wall_layer := 1, two_sided := false , is_closed := false ) -> Wall:
 	var wall: Wall = WALL.instantiate().init(
-		level, id, index, wall_seed, wall_layer, two_sided)
+		level, id, index, wall_seed, wall_layer, two_sided, is_closed)
 	wall.points_position_2d = points_position_2d
 	level.walls[id] = wall
 	return wall

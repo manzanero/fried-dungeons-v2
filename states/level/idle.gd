@@ -13,15 +13,16 @@ func _exit_state(next_state: String) -> void:
 
 
 func _physics_process_state(_delta: float) -> String:
-	if level != Game.ui.selected_map.selected_level:
-		return ""
+	if not map.is_selected or not level.is_selected:
+		return Level.State.GO_BACKGROUND
 		
 	if Input.is_action_pressed("left_click"):
 		process_ground_hitted()
 		process_ceilling_hitted()
 		
-		if Input.is_key_pressed(KEY_SHIFT):
+		if Input.is_action_pressed("right_click"):
 			selector.column.visible = true
+			selector.grid.visible = true
 			process_change_grid()
 	
 	process_element_selection()

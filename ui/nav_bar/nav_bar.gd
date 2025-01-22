@@ -22,7 +22,7 @@ signal campaign_reload_pressed
 signal campaign_quit_pressed
 
 const CAMPAIGN_MENU_ITEM_NEW := "New..."
-const CAMPAIGN_MENU_ITEM_HOST := "Load..."
+const CAMPAIGN_MENU_ITEM_HOST := "Host..."
 const CAMPAIGN_MENU_ITEM_JOIN := "Join..."
 
 const CAMPAIGN_MENU_ITEM_SETTINGS := "Settings..."
@@ -38,13 +38,36 @@ var campaign_menu_items := [
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_HOST, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_H},
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_JOIN, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_J},
 	{"type": MenuItemType.SEPARATOR},
-	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_SETTINGS},
-	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_PLAYERS},
+	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_SETTINGS, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_T},
+	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_PLAYERS, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_P},
 	{"type": MenuItemType.SEPARATOR},
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_SAVE, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_S},
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_RELOAD, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_R},
 	{"type": MenuItemType.SEPARATOR},
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_QUIT, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_Q},
+]
+
+signal preferences_sounds_pressed
+signal preferences_styles_pressed
+
+const PREFERENCES_MENU_ITEM_SOUNDS := "Sounds..."
+const PREFERENCES_MENU_ITEM_STYLES := "Styles..."
+
+var preferences_menu_items := [
+	{"type": MenuItemType.BUTTON, "label": PREFERENCES_MENU_ITEM_SOUNDS, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_U},
+	{"type": MenuItemType.BUTTON, "label": PREFERENCES_MENU_ITEM_STYLES, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_Y},
+]
+
+signal help_manual_pressed
+signal help_about_pressed
+
+const HELP_MENU_ITEM_MANUAL := "Manual..."
+const HELP_MENU_ITEM_ABOUT := "About..."
+
+var help_menu_items := [
+	{"type": MenuItemType.BUTTON, "label": HELP_MENU_ITEM_MANUAL, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_M},
+	{"type": MenuItemType.SEPARATOR},
+	{"type": MenuItemType.BUTTON, "label": HELP_MENU_ITEM_ABOUT, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_O},
 ]
 
 
@@ -57,11 +80,11 @@ var campaign_menu_items := [
 
 
 var _campaign_menu_ids := {}
+var _preferences_menu_ids := {}
+var _help_menu_ids := {}
 
 
-func _ready() -> void:
-	Game.flow = flow_controller
-	
+func _ready() -> void:	
 	var index := 0
 	for item in campaign_menu_items:
 		match item.type:
@@ -72,7 +95,29 @@ func _ready() -> void:
 				campaign_menu.add_item(item.label, index, item.get("shortcut", 0))
 		index += 1
 	
+	index = 0
+	for item in preferences_menu_items:
+		match item.type:
+			MenuItemType.SEPARATOR:
+				preferences_menu.add_separator(item.get("label", ""), index)
+			MenuItemType.BUTTON:
+				_preferences_menu_ids[item.label] = index
+				preferences_menu.add_item(item.label, index, item.get("shortcut", 0))
+		index += 1
+	
+	index = 0
+	for item in help_menu_items:
+		match item.type:
+			MenuItemType.SEPARATOR:
+				help_menu.add_separator(item.get("label", ""), index)
+			MenuItemType.BUTTON:
+				_help_menu_ids[item.label] = index
+				help_menu.add_item(item.label, index, item.get("shortcut", 0))
+		index += 1
+	
 	campaign_menu.id_pressed.connect(_on_campaing_menu_id_pressed)
+	preferences_menu.id_pressed.connect(_on_preferences_menu_id_pressed)
+	help_menu.id_pressed.connect(_on_help_menu_id_pressed)
 	
 	campaign_menu.get_window().transparent = true
 	preferences_menu.get_window().transparent = true
@@ -88,13 +133,15 @@ func set_profile() -> void:
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_SAVE, not is_master)
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_PLAYERS, not is_master)
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_RELOAD, false)
-		#master_volume_controller.visible = true
+		
+		set_help_menu_item_disabled(HELP_MENU_ITEM_MANUAL, false)
 	else:
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_SETTINGS, true)
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_SAVE, true)
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_PLAYERS, true)
 		set_campaing_menu_item_disabled(CAMPAIGN_MENU_ITEM_RELOAD, true)
-		#master_volume_controller.visible = false
+		
+		set_help_menu_item_disabled(HELP_MENU_ITEM_MANUAL, true)
 	
 	flow_controller.set_profile()
 
@@ -111,12 +158,20 @@ func _on_campaing_menu_id_pressed(id: int):
 		CAMPAIGN_MENU_ITEM_RELOAD: campaign_reload_pressed.emit()
 		CAMPAIGN_MENU_ITEM_QUIT: campaign_quit_pressed.emit()
 
+func _on_preferences_menu_id_pressed(id: int):
+	var item_label := preferences_menu.get_item_text(id)
+	match item_label:
+		PREFERENCES_MENU_ITEM_SOUNDS: preferences_sounds_pressed.emit()
+		PREFERENCES_MENU_ITEM_STYLES: preferences_styles_pressed.emit()
 
-func _get_item_id(item_label: String) -> int:
-	return _campaign_menu_ids[item_label]
+func _on_help_menu_id_pressed(id: int):
+	var item_label := help_menu.get_item_text(id)
+	match item_label:
+		HELP_MENU_ITEM_MANUAL: help_manual_pressed.emit()
+		HELP_MENU_ITEM_ABOUT: help_about_pressed.emit()
+		
 
-
-func _get_item_index(item_label: String) -> int:
+func _get_campaing_menu_item_index(item_label: String) -> int:
 	var index := 0
 	for items in campaign_menu_items:
 		if items.get("label") == item_label:
@@ -124,7 +179,31 @@ func _get_item_index(item_label: String) -> int:
 		index += 1
 	return -1
 
+func _get_preferences_menu_item_index(item_label: String) -> int:
+	var index := 0
+	for items in preferences_menu_items:
+		if items.get("label") == item_label:
+			return index
+		index += 1
+	return -1
+
+func _get_help_menu_item_index(item_label: String) -> int:
+	var index := 0
+	for items in help_menu_items:
+		if items.get("label") == item_label:
+			return index
+		index += 1
+	return -1
+
 
 func set_campaing_menu_item_disabled(item_label: String, value: bool):
-	var item_index := _get_item_index(item_label)
+	var item_index := _get_campaing_menu_item_index(item_label)
 	campaign_menu.set_item_disabled(item_index, value)
+
+func set_preferences_menu_item_disabled(item_label: String, value: bool):
+	var item_index := _get_preferences_menu_item_index(item_label)
+	preferences_menu.set_item_disabled(item_index, value)
+
+func set_help_menu_item_disabled(item_label: String, value: bool):
+	var item_index := _get_help_menu_item_index(item_label)
+	help_menu.set_item_disabled(item_index, value)

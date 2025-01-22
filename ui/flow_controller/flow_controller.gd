@@ -3,8 +3,8 @@ extends PanelContainer
 
 const SCENE := preload("res://ui/flow_controller/flow_controller.tscn")
 
-const PAUSE_COLOR := Color(0.443, 0.408, 0.292)
-const STOP_COLOR := Color(0.511, 0.245, 0.236)
+const PAUSE_COLOR := Color(0.436, 0.4, 0.285)
+const STOP_COLOR := Color(0.416, 0.214, 0.209)
 enum State {NONE, PLAYING, PAUSED, STOPPED}
 
 signal played
@@ -25,23 +25,41 @@ var is_stopped: bool
 @onready var pause_button: Button = %PauseButton
 @onready var stop_button: Button = %StopButton
 
+@onready var reset_button: Button = %ResetButton
+@onready var scene_button: Button = %SceneButton
+
 
 func set_profile() -> void:
 	if Game.campaign:
 		visible = true
 		if Game.campaign.is_master:
+			reset_button.mouse_filter = Control.MOUSE_FILTER_STOP
 			play_button.mouse_filter = Control.MOUSE_FILTER_STOP
 			pause_button.mouse_filter = Control.MOUSE_FILTER_STOP
 			stop_button.mouse_filter = Control.MOUSE_FILTER_STOP
+			scene_button.mouse_filter = Control.MOUSE_FILTER_STOP
+			
+			reset_button.visible = true
+			scene_button.visible = true
 		else:
+			reset_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			play_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			pause_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
 			stop_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			scene_button.mouse_filter = Control.MOUSE_FILTER_IGNORE
+			
+			reset_button.visible = false
+			scene_button.visible = false
 	else:
 		visible = false
 
 
 func _ready() -> void:
+	Game.flow = self
+	
+	reset_button.pressed.connect(_on_reset_button_pressed)
+	scene_button.pressed.connect(_on_scene_button_pressed)
+	
 	play_button.set_pressed_no_signal(not is_paused)
 	play_button.pressed.connect(_on_play_button_pressed)
 	pause_button.set_pressed_no_signal(is_paused)
@@ -51,17 +69,25 @@ func _ready() -> void:
 	flow_border.border_color = Color.TRANSPARENT
 
 
+func _on_reset_button_pressed() -> void:
+	Game.ui.tab_players.reset_all_players()
+
+
+func _on_scene_button_pressed() -> void:
+	Game.ui.tab_world.send_players_to_map(Game.ui.selected_map.slug)
+
+
 func _on_play_button_pressed() -> void:
 	change_flow_state(State.PLAYING)
-	Game.server.rpcs.change_flow_state.rpc(State.PLAYING)
+	Game.server.rpcs.change_flow_state.rpc(State.PLAYING, Game.ui.tab_players.get_data())
 
 func _on_paused_button_pressed() -> void:
 	change_flow_state(State.PAUSED)
-	Game.server.rpcs.change_flow_state.rpc(State.PAUSED)
+	Game.server.rpcs.change_flow_state.rpc(State.PAUSED, Game.ui.tab_players.get_data())
 
 func _on_stop_button_pressed() -> void:
 	change_flow_state(State.STOPPED)
-	Game.server.rpcs.change_flow_state.rpc(State.STOPPED)
+	Game.server.rpcs.change_flow_state.rpc(State.STOPPED, Game.ui.tab_players.get_data())
 	
 
 func change_flow_state(_state: State):
@@ -102,7 +128,8 @@ func pause() -> void:
 	play_button.set_pressed_no_signal(false)
 	pause_button.set_pressed_no_signal(true)
 	stop_button.set_pressed_no_signal(false)
-	flow_border.border_color = PAUSE_COLOR
+	#flow_border.border_color = PAUSE_COLOR
+	flow_border.bg_color = PAUSE_COLOR
 	Game.ui.flow_border.visible = true
 	Game.ui.master_cover.uncover(0)
 
@@ -115,7 +142,8 @@ func stop() -> void:
 	play_button.set_pressed_no_signal(false)
 	pause_button.set_pressed_no_signal(false)
 	stop_button.set_pressed_no_signal(true)
-	flow_border.border_color = STOP_COLOR
+	flow_border.bg_color = STOP_COLOR
+	#flow_border.border_color = STOP_COLOR
 	Game.ui.flow_border.visible = true
 	if not Game.campaign.is_master:
 		Game.ui.master_cover.cover(0)

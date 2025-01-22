@@ -3,8 +3,8 @@ extends Control
 
 signal loaded
 
-static var SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
-
+const PLAY_SCENE_ICON := preload("res://resources/icons/play_scene_icon.png")
+const SCENE_ICON := preload("res://resources/icons/scene_icon.png")
 
 @onready var sub_viewport: SubViewport = $SubViewportContainer/SubViewport
 @onready var world_3d: World3D = sub_viewport.world_3d
@@ -18,12 +18,17 @@ static var SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
 var is_mouse_over := false
 
 
-func init(map_slug: String, map_data: Dictionary):
+func init(map_slug: String, map_data: Dictionary, send_players := false):
+	var new_tab_index := Game.ui.scene_tabs.get_tab_count()
 	Game.ui.scene_tabs.add_child(self)
-	Game.maps[map_slug] = map
+	map.slug = map_slug
+	if send_players:
+		Game.ui.scene_tabs.get_tab_bar().set_tab_icon(new_tab_index, PLAY_SCENE_ICON)
+	else:
+		Game.ui.scene_tabs.get_tab_bar().set_tab_icon(new_tab_index, SCENE_ICON)
+	Game.manager.refresh_tabs()
 	
 	map.loader.load_map(map_data)
-	map.slug = map_slug
 	for level: Level in map.levels_parent.get_children():
 		level.light_viewport.find_world_3d()
 	
@@ -85,11 +90,5 @@ func _on_camera_fps_enabled(value: bool):
 			map.is_master_view = false
 	
 	# exit build mode
-	var builder_button_pressed = Game.ui.tab_builder.wall_button.button_group.get_pressed_button()
-	if builder_button_pressed:
-		var state_machine := Game.ui.selected_map.selected_level.state_machine
-		state_machine.change_state("Idle")
-		builder_button_pressed.button_pressed = false
-	
-	get_tree().set_group("ligths", "visible", not value)
-	get_tree().set_group("base", "visible", not value)
+	Utils.reset_button_group(Game.modes.modes_button_group, true)
+	Game.ui.selected_map.selected_level.change_state(Level.State.GO_IDLE)

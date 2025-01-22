@@ -17,7 +17,7 @@ func load_donjon_json_file(json_file_path):
 		
 	map.label = map_data["settings"]["name"]
 	map.slug = Utils.slugify(map.label)
-	var level := Game.level_scene.instantiate().init(map) as Level
+	var level := Level.SCENE.instantiate().init(map) as Level
 	map.selected_level = level
 	var viewport_3d := level.viewport_3d
 	var floor_2d := viewport_3d.floor_2d
@@ -256,9 +256,8 @@ func load_map(map_data: Dictionary):
 	map.label = map_data.label
 	
 	if map_data.has("settings"):
-		var atlas_texture_resource_path: String = map_data.settings.get("atlas_texture", "")
-		map.atlas_texture_resource = Game.manager.get_resource(
-				CampaignResource.Type.TEXTURE, atlas_texture_resource_path)
+		var atlas_texture_path: String = map_data.settings.get("atlas_texture", "")
+		map.atlas_texture_resource = Game.manager.get_resource(CampaignResource.Type.TEXTURE, atlas_texture_path)
 		
 		map.ambient_light = map_data.settings.ambient_light
 		map.ambient_color = Utils.html_color_to_color(map_data.settings.ambient_color)
@@ -329,7 +328,8 @@ func load_map(map_data: Dictionary):
 				var id: String = wall_data.get("id", Utils.random_string(8, true))
 				var points_position_2d := Utils.aa2_to_pv2(wall_data.p)
 				map.instancer.create_wall(
-					level, id, points_position_2d, wall_data.i, wall_data.s, wall_data.l, wall_data["2"])
+						level, id, points_position_2d, wall_data.i, wall_data.s,
+						wall_data.get("l", 1), wall_data.get("2", false), wall_data.get("c", false))
 					
 			# elements
 			for element_data in level_data.get("elements", []):

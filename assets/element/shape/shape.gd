@@ -142,7 +142,7 @@ func _ready() -> void:
 			"default": true,
 		},
 	}
-	snapping = Game.PIXEL
+	snapping = Game.U
 	selector_mesh_instance.visible = false
 	collider.disabled = true
 

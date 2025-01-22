@@ -43,7 +43,7 @@ func get_player_slug(player_item: TreeItem) -> String:
 
 func get_player_item(player_slug: String) -> TreeItem:
 	for player_item in player_items:
-		if player_slug == player_item.get_tooltip(0):
+		if player_slug == player_item.get_tooltip_text(0):
 			return player_item
 	return null
 
@@ -77,7 +77,7 @@ func _ready() -> void:
 func reset():
 	tree.clear()
 	tree.create_item()
-	root.set_text(0, "All")
+	root.set_text(0, "All players")
 	root.set_tooltip_text(0, " ")
 	root.set_metadata(0, {})
 	
@@ -182,12 +182,12 @@ func _on_item_button_clicked(item: TreeItem, _column: int, id: int, _mouse_butto
 	var is_all_item := item == root
 	if is_all_item:
 		match id:
-			0: 
-				_set_flow(root, Game.flow.state)
-				for player_item in player_items: _set_flow(player_item, FlowController.State.NONE)
+			0: reset_all_players()
 			1: _set_flow(item, FlowController.State.PLAYING); Game.flow.play()
 			2: _set_flow(item, FlowController.State.PAUSED); Game.flow.pause()
 			3: _set_flow(item, FlowController.State.STOPPED); Game.flow.stop()
+			
+		Game.server.rpcs.change_flow_state.rpc(Game.flow.state, get_data())
 		return
 	
 	# player item
@@ -201,6 +201,8 @@ func _on_item_button_clicked(item: TreeItem, _column: int, id: int, _mouse_butto
 			1: _set_flow(item, FlowController.State.PLAYING)
 			2: _set_flow(item, FlowController.State.PAUSED)
 			3: _set_flow(item, FlowController.State.STOPPED)
+		
+		Game.server.rpcs.change_flow_state.rpc(Game.flow.state, get_data())
 		return
 		
 	# element item
@@ -208,16 +210,22 @@ func _on_item_button_clicked(item: TreeItem, _column: int, id: int, _mouse_butto
 		0: _toggle_permission(item, Player.Permission.MOVEMENT)
 		1: _toggle_permission(item, Player.Permission.SENSES)
 		2: _clear_permisions(item)
+		
+
+func reset_all_players():
+	_set_flow(root, Game.flow.state)
+	for player_item in player_items:
+		_set_flow(player_item, FlowController.State.NONE)
 
 
-func _reset_flow(item):
+func _reset_item_flow(item):
 	item.set_button_color(0, 1, Game.TREE_BUTTON_OFF_COLOR)
 	item.set_button_color(0, 2, Game.TREE_BUTTON_OFF_COLOR)
 	item.set_button_color(0, 3, Game.TREE_BUTTON_OFF_COLOR)
 
 
 func _set_flow(item: TreeItem, state: FlowController.State):
-	_reset_flow(item)
+	_reset_item_flow(item)
 	
 	var player_item_data: Dictionary = item.get_metadata(0)
 	if player_item_data:

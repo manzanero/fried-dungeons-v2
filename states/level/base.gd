@@ -1,12 +1,9 @@
 class_name LevelBaseState
 extends StateNode
 
-
 var level: Level
 var map: Map
 var selector: Selector
-
-var level_ray := PhysicsRayQueryParameters3D.new()
 
 
 func _enter_state(previous_state: String) -> void:
@@ -14,12 +11,11 @@ func _enter_state(previous_state: String) -> void:
 	map = level.map
 	selector = level.selector
 	select(null)
-	Debug.print_message(Debug.DEBUG, "Level %s of map \"%s\" leaved state: %s" % [level.index, map.slug, previous_state])
+	Debug.print_debug_message("Level %s of map \"%s\" leaved state: %s" % [level.index, map.slug, previous_state])
 
 
 func _exit_state(next_state: String) -> void:
-	Game.ui.state_label_value.text = next_state
-	Debug.print_message(Debug.INFO, "Level %s of map \"%s\" entering state: %s" % [level.index, map.slug, next_state])
+	Debug.print_info_message("Level %s of map \"%s\" entering state: %s" % [level.index, map.slug, next_state])
 
 
 func process_change_grid() -> void:
@@ -29,13 +25,13 @@ func process_change_grid() -> void:
 	selector.move_grid_to(level.position_hovered)
 
 
-func process_change_column() -> void:
+func process_change_column(snapping := Game.SNAPPING_QUARTER) -> void:
 	if not Game.ui.is_mouse_over_scene_tab:
 		return
 		
 	var point_position := level.position_hovered
-	if not Input.is_key_pressed(KEY_CTRL):
-		point_position = point_position.snapped(Game.PIXEL_SNAPPING_QUARTER)
+	if not Input.is_key_pressed(KEY_ALT):
+		point_position = point_position.snappedf(snapping)
 		
 	selector.column.position = Utils.v2_to_v3(point_position)
 
@@ -47,7 +43,7 @@ func process_wall_selection():
 	if not Input.is_action_just_pressed("left_click"):
 		return
 
-	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.WALL_BITMASK)
+	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.wall_ray)
 	if hit_info:
 		var wall_hitted := hit_info["collider"].get_parent() as Wall
 		select(wall_hitted)
@@ -66,7 +62,7 @@ func process_element_selection():
 	if not Input.is_action_just_pressed("left_click"):
 		return
 	
-	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.SELECTOR_BITMASK)
+	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.selector_ray)
 	if hit_info:
 		var collider = hit_info["collider"]
 		while not collider is Element:
@@ -124,20 +120,20 @@ func process_entity_follow():
 func process_ground_hitted():
 	level.is_ground_hovered = false
 
-	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.GROUND_BITMASK)
+	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.ground_ray)
 	if hit_info:
 		var hit_position: Vector3 = hit_info["position"]
 		level.exact_position_hovered = Utils.v3_to_v2(hit_position)
-		level.position_hovered = level.exact_position_hovered.snapped(Game.PIXEL)
+		level.position_hovered = level.exact_position_hovered.snappedf(Game.U)
 		level.tile_hovered = Utils.v2_to_v2i(level.position_hovered)
 		level.is_ground_hovered = true
 
 
 func process_ceilling_hitted():
-	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, level_ray, Game.CEILLING_BITMASK)
+	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.ceilling_ray)
 	if hit_info:
 		var hit_position = hit_info["position"]
-		level.ceilling_hovered = Utils.v3_to_v2(hit_position.snapped(Game.VOXEL))
+		level.ceilling_hovered = Utils.v3_to_v2(hit_position.snappedf(Game.U))
 		
 
 func select(thing):

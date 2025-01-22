@@ -6,8 +6,9 @@ const STOP_ICON := preload("res://resources/icons/stop_icon.png")
 const PLAY_ICON := preload("res://resources/icons/play_icon.png")
 const LOOP_ICON := preload("res://resources/icons/reload_icon.png")
 
+
 var root: TreeItem
-var now_playing: Array[TreeItem] = []
+var now_playing := {}  # {CampaignResource: TreeItem}
 var muted: bool :
 	set(value): mute_button.button_pressed = value; mute_button.pressed.emit()
 	get: return mute_button.button_pressed
@@ -30,7 +31,7 @@ var music_items := {}
 @onready var resouce_button: Button = %ResouceButton
 @onready var import_button: Button = %ImportButton
 @onready var clear_button: Button = %ClearButton
-
+	
 
 func _ready() -> void:
 	reset()
@@ -50,8 +51,7 @@ func _ready() -> void:
 	import_button.pressed.connect(_on_import_button_pressed)
 	clear_button.pressed.connect(_on_clear_button_pressed)
 	
-	#tree.drop_origins_allowed = ["campaign_resouce_item_list"]
-	#tree.drop_types_allowed = ["campaign_resouce_item"]
+	tree.drop_types_allowed = ["campaign_resouce_items"]
 	tree.items_dropped.connect(_on_items_dropped)
 	
 
@@ -59,17 +59,12 @@ func _on_audio_finished():
 	if not Game.campaign or not Game.campaign.is_master:
 		return
 	
-	var sound_playing = now_playing[0]
-	if not is_instance_valid(sound_playing):  # sometimes item is freed
-		return
-		
-	var sound_item: TreeItem = sound_playing
-	var sound := item_resource(sound_item)
-	if sound.attributes.get("loop"):
-		audio.play()
+	var sound: CampaignResource = now_playing.keys()[0]
+	if sound.attributes.get("loop", true):
+		_set_playing(now_playing[sound], true)
 		Game.server.rpcs.play_theme_song.rpc(sound.path, muted)
 	else:
-		_set_playing(sound_item, false)
+		_set_playing(now_playing[sound], false)
 
 
 func add_sound(sound: CampaignResource, from_position := 0.0) -> TreeItem:
@@ -85,7 +80,6 @@ func add_sound(sound: CampaignResource, from_position := 0.0) -> TreeItem:
 		index += 1
 	var music_item := root.create_child(index)
 	
-	#music_item.set_editable(0, true)
 	music_item.set_text(0, music_path)
 	music_item.set_tooltip_text(0, sound.path)
 	music_item.set_metadata(0, sound)
@@ -105,10 +99,8 @@ func add_sound(sound: CampaignResource, from_position := 0.0) -> TreeItem:
 	
 
 func _on_sound_changed(sound: CampaignResource):
-	for music_item in now_playing:
-		if item_resource(music_item) == sound:
-			set_audio_attributes(sound)
-			break
+	if sound in now_playing:
+		set_audio_attributes(sound)
 
 
 func set_audio_attributes(sound: CampaignResource):
@@ -126,7 +118,7 @@ func get_data():
 		var music_data := {
 			"resource": sound.path,
 		}
-		if music_item in now_playing:
+		if sound in now_playing:
 			music_data["position"] = snappedf(audio.sound_position, 0.001)
 			
 		music[music_path] = music_data
@@ -157,29 +149,34 @@ func _set_playing(sound_item: TreeItem, is_playing: bool, from_position := 0.0) 
 		
 	if is_playing:
 		sound_item.set_button_color(0, 0, Color.GREEN)
+		now_playing.clear()
+		now_playing[sound] = sound_item
+		audio.file_path = sound.abspath
 		set_audio_attributes(sound)
-		if sound_item not in now_playing:
-			now_playing.append(sound_item)
-			audio.file_path = sound.abspath
-			audio.play(from_position)
-	else:
+		audio.play(from_position)
+	elif sound in now_playing:
 		sound_item.set_button_color(0, 0, Color.DARK_GRAY)
-		if sound_item in now_playing:
-			now_playing.erase(sound_item)
-			audio.stop()
+		now_playing.clear()
+		audio.stop()
 
 
 func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:
+	var sound := item_resource(item)
+
 	item.select(column)
-	if item in now_playing: 
-		_set_playing(item, false)
-		Game.server.rpcs.play_theme_song.rpc("")
-		return
 		
-	for child_item in root.get_children(): 
-		_set_playing(child_item, false)
-	_set_playing(item, true)
-	Game.server.rpcs.play_theme_song.rpc(item_resource(item).path, muted)
+	if sound in now_playing:
+		for sound_playing in now_playing: 
+			_set_playing(now_playing[sound_playing], false)
+			
+		Game.server.rpcs.play_theme_song.rpc("")
+		
+	else:
+		for sound_playing in now_playing: 
+			_set_playing(now_playing[sound_playing], false)
+			
+		_set_playing(item, true)
+		Game.server.rpcs.play_theme_song.rpc(sound.path, muted)
 	
 
 func _on_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int):
@@ -194,15 +191,16 @@ func _on_mute_button_pressed() -> void:
 	if muted:
 		Game.server.rpcs.change_theme.rpc(0, audio.pitch_scale)
 	else:
-		Game.server.rpcs.change_theme.rpc(db_to_linear(audio.volume_db), audio.pitch_scale)
+		if Game.server.is_peer_connected:
+			Game.server.rpcs.change_theme.rpc(db_to_linear(audio.volume_db), audio.pitch_scale)
 
 
 func _on_stop_button_pressed() -> void:
-	for sound_item in now_playing:
-		#if is_instance_valid(sound_item):
-			_set_playing(sound_item, false)
+	for sound_playing in now_playing: 
+		_set_playing(now_playing[sound_playing], false)
+		
 	Game.server.rpcs.play_theme_song.rpc("")
-	Debug.print_info_message("Song \"%s\" stopped")
+	Debug.print_info_message("Sounds stopped")
 	
 
 func _on_resouce_button_pressed():
@@ -237,15 +235,13 @@ func _on_clear_button_pressed():
 	if not item_selected: 
 		return
 	
-	for sound_item in now_playing:
-		_set_playing(sound_item, false)
+	for sound in now_playing:
+		_set_playing(item_selected, false)
 		Game.server.rpcs.play_theme_song.rpc("")
-		Debug.print_info_message("Song \"%s\" stopped")
-	
-	
-	
+		Debug.print_info_message("Songs stopped")
+
 	item_selected.free()
-	Debug.print_info_message("Song \"%s\" removed")
+	Debug.print_info_message("Songs removed")
 
 
 func _on_items_dropped(drop_data: Dictionary, _parent_item: TreeItem, _item_index: int):
@@ -265,6 +261,7 @@ func _on_items_dropped(drop_data: Dictionary, _parent_item: TreeItem, _item_inde
 	
 
 func reset():
+	audio.stop()
 	music_items.clear()
 	tree.clear()
 	root = tree.create_item()

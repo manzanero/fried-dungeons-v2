@@ -5,6 +5,7 @@ extends Control
 const TAB_SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
 const PLAY_ICON := preload("res://resources/icons/play_icon.png")
 const PLAY_SCENE_ICON := preload("res://resources/icons/play_scene_icon.png")
+const SCENE_ICON = preload("res://resources/icons/scene_icon.png")
 
 var campaign_selected: Campaign : 
 	set(value):
@@ -35,7 +36,7 @@ var root: TreeItem
 
 func _set_opened(map_item: TreeItem, value: bool):
 	if value:
-		map_item.set_icon(0, PLAY_SCENE_ICON)
+		map_item.set_icon(0, SCENE_ICON)
 	else:
 		map_item.set_icon(0, null)
 
@@ -94,6 +95,8 @@ func refresh_tree():
 		map_item.set_text(0, map_data.label)
 		map_item.set_tooltip_text(0, map_slug)
 		map_item.set_metadata(0, map_data)
+		map_item.add_button(0, PLAY_ICON, 0)
+		map_item.set_button_tooltip_text(0, 0, "Send players to map")
 		
 		if map_slug in Game.maps:
 			_set_opened(map_item, true)
@@ -101,16 +104,16 @@ func refresh_tree():
 		if cached_slug == map_slug:
 			map_item.select(0)
 		
-		map_item.add_button(0, PLAY_ICON, 0)
 		if players_map == map_slug:
 			map_item.set_button_color(0, 0, Color.GREEN)
 		else:
 			map_item.set_button_color(0, 0, Color.DARK_GRAY)
+			
+		if Game.ui.selected_map and Game.ui.selected_map.slug == map_slug:
+			map_item.set_icon_modulate(0, Color.GREEN)
+		else:
+			map_item.set_icon_modulate(0, Color.WHITE)
 
-
-#func _on_item_selected():
-	#var map_item := tree.get_selected()
-	
 
 func open_selected_map():
 	var map_item := tree.get_selected()
@@ -130,7 +133,8 @@ func open_selected_map():
 	var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, cached_maps[map_slug])
 	Game.ui.scene_tabs.current_tab = new_tab_index
 	
-	tab_scene.map.camera.target_position.position = Utils.v2i_to_v3(tab_scene.map.selected_level.rect.get_center()) + Vector3.UP * 0.5
+	var camera_init_position := Utils.v2i_to_v3(tab_scene.map.selected_level.rect.get_center()) + Vector3.UP * 0.5
+	tab_scene.map.camera.target_position.position = camera_init_position
 
 
 func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:
@@ -143,11 +147,29 @@ func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_ind
 	
 	open_selected_map()
 	
-	players_map = map_slug
-	Game.server.request_map_notification.rpc(map_slug)
+	send_players_to_map(map_slug)
 	
 	refresh_tree()
+
+
+func send_players_to_map(map_slug):
+	players_map = map_slug
 	
+	Game.server.request_map_notification.rpc(players_map)
+	
+	for map_item in root.get_children():
+		var map_item_slug := map_item.get_tooltip_text(0)
+		var tab_index = Game.maps.keys().find(map_item_slug)
+		
+		if map_item_slug == players_map:
+			Game.ui.scene_tabs.set_tab_icon(tab_index, PLAY_SCENE_ICON)
+			map_item.set_button_color(0, 0, Color.GREEN)
+		else:
+			if tab_index != -1:
+				Game.ui.scene_tabs.set_tab_icon(tab_index, SCENE_ICON)
+				Game.ui.scene_tabs.get_tab_control(tab_index).process_mode = Node.PROCESS_MODE_DISABLED
+			map_item.set_button_color(0, 0, Color.DARK_GRAY)
+
 
 func _on_folders_button_pressed() -> void:
 	var path := campaign_selected.maps_path

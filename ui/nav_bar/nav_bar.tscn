@@ -1,8 +1,14 @@
-[gd_scene load_steps=4 format=3 uid="uid://dgyjhnnjkhl20"]
+[gd_scene load_steps=5 format=3 uid="uid://dgyjhnnjkhl20"]
 
 [ext_resource type="PackedScene" uid="uid://83d8jfjfqtrl" path="res://ui/flow_controller/flow_controller.tscn" id="1_cargd"]
 [ext_resource type="Script" path="res://ui/nav_bar/nav_bar.gd" id="1_qtvx2"]
 [ext_resource type="PackedScene" uid="uid://mbh4bgg0t31y" path="res://ui/master_volume_controller/master_volume_controller.tscn" id="2_xc25p"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t0uer"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
 
 [node name="NavBar" type="MarginContainer"]
 offset_right = 1280.0
@@ -20,7 +26,8 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
-flat = true
+theme_override_styles/normal = SubResource("StyleBoxEmpty_t0uer")
+prefer_global_menu = false
 
 [node name="Campaing" type="PopupMenu" parent="C/MenuBar"]
 unique_name_in_owner = true
@@ -30,21 +37,10 @@ size = Vector2i(181, 100)
 [node name="Preferences" type="PopupMenu" parent="C/MenuBar"]
 unique_name_in_owner = true
 auto_translate_mode = 1
-item_count = 2
-item_0/text = "Sound..."
-item_1/text = "Style..."
-item_1/id = 1
 
 [node name="Help" type="PopupMenu" parent="C/MenuBar"]
 unique_name_in_owner = true
 auto_translate_mode = 1
-item_count = 3
-item_0/text = "Wiki..."
-item_0/id = 1
-item_1/id = 1
-item_1/separator = true
-item_2/text = "About..."
-item_2/id = 2
 
 [node name="FlowController" parent="." instance=ExtResource("1_cargd")]
 unique_name_in_owner = true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://cfyusau8c7lt0"]
+[gd_scene load_steps=11 format=3 uid="uid://cfyusau8c7lt0"]
 
 [ext_resource type="Script" path="res://assets/map/map.gd" id="1_jrnr7"]
 [ext_resource type="Script" path="res://assets/map/loader/loader.gd" id="2_l8wwe"]
@@ -9,13 +9,32 @@
 [ext_resource type="Theme" uid="uid://ve0n5o7lvu14" path="res://resources/themes/pixel_ui_theme/PixelTheme_nature.tres" id="5_mdj24"]
 [ext_resource type="Theme" uid="uid://dopunvp7uxup1" path="res://resources/themes/pixel_ui_theme/PixelTheme_blood.tres" id="6_6ihmm"]
 
+[sub_resource type="Animation" id="Animation_g0h8x"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath("WorldEnvironment:environment:sky:sky_material:ground_bottom_color")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [Color(0, 0, 0, 1)]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_wchhy"]
+_data = {
+"RESET": SubResource("Animation_g0h8x")
+}
+
 [node name="Map" type="Node3D" node_paths=PackedStringArray("loader", "instancer", "levels_parent", "camera")]
 script = ExtResource("1_jrnr7")
 loader = NodePath("Loader")
 instancer = NodePath("Instancer")
 levels_parent = NodePath("Levels")
 camera = NodePath("Camera")
-is_master_view = true
 
 [node name="Loader" type="Node" parent="."]
 script = ExtResource("2_l8wwe")
@@ -33,6 +52,7 @@ max_rot_x = 0.0
 environment = ExtResource("4_okbi2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
+visible = false
 
 [node name="3D" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -229,3 +249,8 @@ light_bake_mode = 0
 light_cull_mask = 4293919751
 omni_range = 1000.0
 omni_attenuation = 0.0
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="."]
+libraries = {
+"": SubResource("AnimationLibrary_wchhy")
+}

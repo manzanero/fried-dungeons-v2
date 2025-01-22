@@ -42,7 +42,7 @@ func _on_send_message(text: String):
 	var text_filtered := filter_line_edit.text
 	if not text_filtered or text_filtered in text:
 		output_text.append_text(text + "\n")
-
+	
 
 func _on_clear_button_pressed():
 	output_text.clear()

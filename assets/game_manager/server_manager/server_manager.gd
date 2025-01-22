@@ -23,9 +23,10 @@ var peer: MultiplayerPeer :
 			peer.close()
 			multiplayer.multiplayer_peer = null
 		peer = value
+		
 
 var is_peer_connected: bool :
-	get: return peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED
+	get: return peer.get_connection_status() == MultiplayerPeer.CONNECTION_CONNECTED if peer else false
 
 var presence := Presence.new(-1, "Unnamed", "unnamed")
 var presences: Array[Presence] = []
@@ -50,8 +51,9 @@ var enet_password: String
 
 ## steam
 var is_steam_ready := false
-var lobby_id := -1
+var lobby_id := 0
 var owner_steam_id := -1
+var owner_steam_username := ""
 var is_online: bool
 var is_owned: bool
 var steam_id: int
@@ -82,6 +84,7 @@ func _ready():
 		Steam.lobby_created.connect(_on_lobby_created)
 		Steam.lobby_joined.connect(_on_lobby_joined)
 		Steam.lobby_match_list.connect(_on_lobby_match_list)
+		Steam.lobby_kicked.connect(Debug.print_info_message.bind("Lobby kicked %s" % lobby_id))
 
 
 func _process(_delta):
@@ -89,15 +92,32 @@ func _process(_delta):
 	
 
 func host_multiplayer(steam: bool) -> Error:
+	if lobby_id:
+		delete_lobby(lobby_id)
+		lobby_id = 0
+		
 	if steam:
 		return host_steam_multiplayer()
 	else:
 		return host_enet_multiplayer()
+	
+
+func delete_lobby(_lobby_id):
+	Debug.print_info_message("Leaving Lobby %s" % _lobby_id)
+	if steam_id == Steam.getLobbyOwner(_lobby_id):
+		leave_lobby(_lobby_id)
+	Steam.leaveLobby(_lobby_id)
+
+
+# player
+@rpc("any_peer", "reliable")
+func leave_lobby(_lobby_id):
+	Steam.leaveLobby(_lobby_id)
 
 
 func host_steam_multiplayer():
 	Debug.print_info_message("Creating Lobby")
-	
+
 	presence.username = steam_username
 	presence.slug = str(steam_id)
 	
@@ -120,18 +140,23 @@ func _on_lobby_created(_connect: int, _lobby_id: int):
 	Steam.setLobbyJoinable(_lobby_id, true)
 	Steam.setLobbyData(_lobby_id, "label", Game.campaign.label)
 	Steam.setLobbyData(_lobby_id, "slug", Game.campaign.slug)
+	Steam.setLobbyData(_lobby_id, "host", steam_username)
 	Steam.setLobbyData(_lobby_id, "time", Time.get_time_string_from_system())
 	
 	peer = SteamMultiplayerPeer.new()
-	peer.create_host(0, [])
+	peer.create_host(0)
 	multiplayer.multiplayer_peer = peer
 
 
 func join_steam_multiplayer(_lobby_id: int):
+	if lobby_id:
+		delete_lobby(lobby_id)
+		
 	Debug.print_info_message("Joining lobby id: %s" % _lobby_id)
 	
 	presence.username = steam_username
-	presence.slug = str(steam_id)
+	presence.slug = Utils.slugify(steam_username)
+	#presence.slug = str(steam_id)
 	
 	is_steam_game = true
 	
@@ -153,7 +178,8 @@ func _on_lobby_joined(_lobby_id: int, _permissions: int, _locked: bool, response
 			11: "A user you have blocked is in the lobby",
 		}[response])
 		return
-		
+	
+	lobby_id = _lobby_id
 	owner_steam_id = Steam.getLobbyOwner(_lobby_id)
 	if owner_steam_id == Steam.getSteamID():
 		Debug.print_info_message("You already own the lobby")
@@ -161,7 +187,12 @@ func _on_lobby_joined(_lobby_id: int, _permissions: int, _locked: bool, response
 	
 	Debug.print_info_message("Joined lobby id: %s" % _lobby_id)
 	peer = SteamMultiplayerPeer.new()
-	peer.create_client(owner_steam_id, 0, [])
+	peer.create_client(owner_steam_id, 0)
+	
+	while not is_peer_connected:
+		Debug.print_info_message("peer not connected. Retrying in 3 seconds")
+		await get_tree().create_timer(3).timeout
+		
 	multiplayer.multiplayer_peer = peer
 	is_steam_game = true
 
@@ -181,6 +212,11 @@ func _on_lobby_match_list(lobbies: Array):
 
 
 func host_enet_multiplayer() -> Error:
+	if lobby_id:
+		delete_lobby(lobby_id)
+		lobby_id = 0
+	
+	Debug.print_info_message("Creating server at port %s" % PORT)
 	peer = ENetMultiplayerPeer.new()
 	var error: Error = peer.create_server(PORT)
 	if error:
@@ -194,6 +230,10 @@ func host_enet_multiplayer() -> Error:
 
 
 func join_enet_multiplayer(host: String, username: String, password: String) -> Error:
+	if lobby_id:
+		delete_lobby(lobby_id)
+		lobby_id = 0
+		
 	peer = ENetMultiplayerPeer.new()
 	enet_host = host
 	if host.split(":").size() == 2:
@@ -234,30 +274,44 @@ func _register_steam_player(username: String, _steam_id: int):
 	Debug.print_info_message("Player registration: %s" % username)
 	
 	var new_player_id := multiplayer.get_remote_sender_id()
-	var slug := str(_steam_id)
-	
+	var slug := Utils.slugify(username)
+	#var slug := str(_steam_id)
+	var error_reason := "Player %s not in campaign" % username
+		
 	if slug not in Game.campaign.players:
-		var player_data := {
-			"username": username
-		}
-		Game.campaign.set_player_data(slug, player_data)
+		Debug.print_info_message("Player not welcome (slug): %s" % username)
+		steam_disconnect.rpc_id(new_player_id, error_reason)
+		return
+		
+	if Game.campaign.get_player_data(slug).username != username:
+		Debug.print_info_message("Player not welcome (username): %s" % username)
+		steam_disconnect.rpc_id(new_player_id, error_reason)
+		return
 	
 	var new_presence := Presence.new(new_player_id, username, slug)
 	presences.append(new_presence)
 	
-	load_campaign.rpc_id(new_player_id, Game.campaign.slug, Game.campaign.json(), false)
-	Debug.print_info_message("Player registered: %s" % new_player_id)
+	load_campaign.rpc_id(new_player_id, Game.campaign.slug, Game.campaign.json(), true)
+	Debug.print_info_message("Steam Player registered: %s" % new_player_id)
 
 
+# player
+@rpc("any_peer", "reliable")
+func steam_disconnect(reason: String):  # disconnect_peer(id) does not work for steam
+	Debug.print_error_message(reason)  
+	peer = null
+	
+	
 # master
 @rpc("any_peer", "reliable")
 func _register_enet_player(username: String, password: String):
 	Debug.print_info_message("Player registration: %s" % username)
 	
 	var new_player_id := multiplayer.get_remote_sender_id()
-	var slug := str(username)
+	var slug := Utils.slugify(username)
 	
 	if not _is_player_registered(username, password):
+		Debug.print_info_message("Player registration: %s" % username)
 		peer.disconnect_peer(new_player_id)
 		return
 	
@@ -328,6 +382,7 @@ func load_campaign(campaign_slug: String, campaign_data: Dictionary, is_steam_ca
 		if Game.campaign.save_server_data({
 			"is_steam_game": is_steam_campaign,
 			"label": campaign_data.label,
+			"host": owner_steam_username,
 		}):
 			Debug.print_error_message("Failed to create Server file")
 	
@@ -397,7 +452,7 @@ func load_map(map_slug: String, map_data: Dictionary):
 		for scene_tab in Game.ui.scene_tabs.get_children():
 			scene_tab.remove()
 		
-		var tab_scene: TabScene = TabScene.SCENE.instantiate().init(map_slug, map_data)
+		var tab_scene: TabScene = Game.manager.TAB_SCENE.instantiate().init(map_slug, map_data)
 		Game.manager.map_loaded.emit(tab_scene.map.slug)
 		tab_scene.map.is_master_view = false
 		tab_scene.map.current_ambient_light = tab_scene.map.ambient_light
@@ -412,14 +467,20 @@ func request_player(_player_slug: String):
 	Debug.print_info_message("Requested player %s" % _player_slug)
 	var player_id := multiplayer.get_remote_sender_id() 
 	var player_data := Game.campaign.get_player_data(_player_slug)
-	load_player.rpc_id(player_id, _player_slug, player_data)
+	var player_state: FlowController.State = \
+			Game.ui.tab_players.get_player_item_data(_player_slug).get("state", 0)
+	if not player_state:
+		player_state = Game.flow.state
+	load_player.rpc_id(player_id, _player_slug, player_data, player_state)
 
 
 # player
 @rpc("any_peer", "reliable")
-func load_player(_player_slug: String, player_data: Dictionary):
+func load_player(_player_slug: String, player_data: Dictionary, player_state: FlowController.State):
 	Debug.print_info_message("Loading player %s" % _player_slug)
 	Game.player = Player.new(_player_slug, player_data)
+	
+	Game.flow.change_flow_state(player_state)
 	
 	for element in Game.ui.selected_map.selected_level.elements:
 		if element is Entity:

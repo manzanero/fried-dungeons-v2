@@ -6,14 +6,23 @@ static var SCENE := preload("res://assets/map/level/level.tscn")
 signal element_selection(element: Element)
 
 
-@export var map: Map
+class State:
+	const KEEP := ""
+	const GO_BACKGROUND := "Background"
+	const GO_IDLE := "Idle"
+	const GO_GROUND_EDITING := "GroundEditing"
+	const GO_WALL_BUILDING := "WallBuilding"
+	const GO_WALL_EDITING := "WallEditing"
+	const GO_ELEMENT_INSTANCING := "ElementInstancing"
+	
+
+var map: Map
 
 @export var walls_parent: Node3D
 @export var elements_parent: Node3D
-
 @export var selector: Selector
 
-@export var refresh_light_frecuency := 0.1
+var refresh_light_frecuency := 0.1
 
 var index := 0
 var cells := {}
@@ -21,11 +30,14 @@ var elements := {}
 var walls := {}
 
 var rect: Rect2i : 
-	set(value):
-		rect = value
-		viewport_3d.rect = value
-	get:
-		return viewport_3d.rect
+	set(value): viewport_3d.rect = value
+	get: return viewport_3d.rect
+
+
+var is_selected: bool :
+	set(value): map.selected_level = self if value else null
+	get: return map.selected_level == self and map.is_selected
+
 
 var is_ground_hovered: bool
 var exact_position_hovered: Vector2
@@ -53,6 +65,7 @@ var follower_entity: Entity :
 			
 var active_lights: Array[Light] = []
 
+
 var light_sample_2d: Image
 
 func get_entity_by_id(element_id) -> Entity:
@@ -67,6 +80,7 @@ func get_entity_by_id(element_id) -> Entity:
 @onready var viewport_3d: Viewport3D = %Viewport3D
 @onready var floor_viewport := viewport_3d.floor_viewport
 @onready var floor_2d := viewport_3d.floor_2d
+@onready var ground_collider: StaticBody3D = %GroundCollider
 
 @onready var refresh_light_timer: Timer = %RefreshLightTimer
 @onready var light_viewport: SubViewport = viewport_3d.light_viewport
@@ -82,20 +96,15 @@ func init(_map: Map, _index: int) -> Level:
 	map.levels[index] = self
 	map.selected_level = self
 	map.levels_parent.add_child(self)
+	
+	is_selected = true
 	return self
 
 
 func _ready():
 	var floor_atlas_texture: TileSetAtlasSource = floor_2d.tile_map.tile_set.get_source(0)
-	#var floor_atlas_texture := TileSetAtlasSource.new()
-	floor_atlas_texture.texture = map.atlas_texture 
-	###var tile_set := TileSet.new()
-	##tile_set.add_source(floor_atlas_texture, 0)
-	##floor_2d.tile_map.tile_set = tile_set
-	#
-	#var tile_set := floor_2d.tile_map.tile_set.duplicate(true)
-	#floor_2d.tile_map.tile_set = tile_set
-	#
+	floor_atlas_texture.texture = map.atlas_texture
+	
 	map.camera.changed.connect(_on_camera_changed)
 	map.camera.fps_enabled.connect(func (value):
 		Game.ui.selected_scene_tab.fade_transition.cover()
@@ -111,12 +120,17 @@ func _ready():
 	)
 	ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 	
-	state_machine.change_state("Idle")
+	# modes
+	Game.modes.mode_changed.connect(update_mode)
+	visibility_changed.connect(update_mode)
+	change_state(State.GO_IDLE)
 	
 	#region light
 	light_texture = light_viewport.get_texture()
-	refresh_light_timer.wait_time = refresh_light_frecuency
-	refresh_light_timer.timeout.connect(_on_refreshed_light)
+	
+	### if timer
+	#refresh_light_timer.wait_time = refresh_light_frecuency
+	#refresh_light_timer.timeout.connect(_on_refreshed_light)
 	
 	## if pixel shading
 	#RenderingServer.global_shader_parameter_set("light_texture", light_texture)
@@ -129,6 +143,8 @@ func _ready():
 
 
 func _on_refreshed_light():
+	if not is_selected:
+		return
 	
 	# if not real time
 	light_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
@@ -158,44 +174,147 @@ func get_light(point: Vector2) -> Color:
 
 
 func is_watched(point: Vector2) -> bool:
-	return get_light(point).a
+	return get_light(point).a > 0.001
+	
 
+func update_mode():
+	if not is_selected:
+		return
+	
+	change_mode(Game.modes.mode)
+	
+	
+func change_mode(mode: ModeController.Mode):
+	Debug.print_info_message("selected mode: %s" % ModeController.Mode.keys()[mode])
 
-func _process(_delta: float) -> void:
-	if Game.campaign and Game.campaign.is_master and Game.ui.is_mouse_over_scene_tab:
+	match mode:
+		ModeController.Mode.NONE:
+			change_state(State.GO_IDLE)
 		
-		# Delete without ask
-		if Input.is_action_just_pressed("force_delete"):
-			if is_instance_valid(selected_wall):
-				selected_wall.remove()
-				
-				Game.server.rpcs.remove_wall.rpc(map.slug, index, selected_wall.id)
-				
-			if is_instance_valid(element_selected):
+		ModeController.Mode.GROUND_PAINT_TILE:
+			change_state(State.GO_GROUND_EDITING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.GROUND_PAINT_RECT:
+			change_state(State.GO_GROUND_EDITING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.GROUND_PAINT_BUCKET:
+			change_state(State.GO_GROUND_EDITING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.GROUND_ERASE_RECT:
+			change_state(State.GO_GROUND_EDITING)
+			Game.ui.tab_builder.visible = true
+		
+		ModeController.Mode.WALL_BOUND:
+			state_machine.get_state_node(State.GO_WALL_BUILDING).mode = LevelWallBuildingState.ONE_SIDED
+			change_state(State.GO_WALL_BUILDING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.WALL_FENCE:
+			state_machine.get_state_node(State.GO_WALL_BUILDING).mode = LevelWallBuildingState.TWO_SIDED
+			change_state(State.GO_WALL_BUILDING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.WALL_BARRIER:
+			state_machine.get_state_node(State.GO_WALL_BUILDING).mode = LevelWallBuildingState.BARRIER
+			change_state(State.GO_WALL_BUILDING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.WALL_BOX:
+			state_machine.get_state_node(State.GO_WALL_BUILDING).mode = LevelWallBuildingState.OBSTACLE
+			change_state(State.GO_WALL_BUILDING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.WALL_PASSAGE:
+			state_machine.get_state_node(State.GO_WALL_BUILDING).mode = LevelWallBuildingState.PASSAGE
+			change_state(State.GO_WALL_BUILDING)
+			Game.ui.tab_builder.visible = true
+		
+		ModeController.Mode.EDIT_SELECT_WALL:
+			change_state(State.GO_WALL_EDITING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.EDIT_FLIP_WALL:
+			state_machine.get_state_node(State.GO_WALL_BUILDING).mode = LevelWallBuildingState.FLIP_WALL
+			change_state(State.GO_WALL_BUILDING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.EDIT_CHANGE_WALL:
+			state_machine.get_state_node(State.GO_WALL_BUILDING).mode = LevelWallBuildingState.CHANGE_WALL
+			change_state(State.GO_WALL_BUILDING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.EDIT_PAINT_WALL:
+			state_machine.get_state_node(State.GO_WALL_BUILDING).mode = LevelWallBuildingState.PAINT_WALL
+			change_state(State.GO_WALL_BUILDING)
+			Game.ui.tab_builder.visible = true
+		ModeController.Mode.EDIT_CUT_WALL:
+			state_machine.get_state_node(State.GO_WALL_BUILDING).mode = LevelWallBuildingState.CUT_WALL
+			change_state(State.GO_WALL_BUILDING)
+			Game.ui.tab_builder.visible = true
+		
+		ModeController.Mode.LIGHT_OMNILIGHT:
+			state_machine.get_state_node(State.GO_ELEMENT_INSTANCING).mode = LevelElementInstancingState.OMNILIGHT
+			change_state(State.GO_ELEMENT_INSTANCING)
+			Game.ui.tab_resources.visible = true
+		
+		ModeController.Mode.ENTITY_3D_SHAPE:
+			state_machine.get_state_node(State.GO_ELEMENT_INSTANCING).mode = LevelElementInstancingState.ENTITY_3D
+			change_state(State.GO_ELEMENT_INSTANCING)
+			Game.ui.tab_resources.visible = true
+		ModeController.Mode.ENTITY_BILLBOARD:
+			state_machine.get_state_node(State.GO_ELEMENT_INSTANCING).mode = LevelElementInstancingState.ENTITY_BILLBOARD
+			change_state(State.GO_ELEMENT_INSTANCING)
+			Game.ui.tab_resources.visible = true
+		
+		ModeController.Mode.PROP_3D_SHAPE:
+			state_machine.get_state_node(State.GO_ELEMENT_INSTANCING).mode = LevelElementInstancingState.PROP_3D
+			change_state(State.GO_ELEMENT_INSTANCING)
+			Game.ui.tab_resources.visible = true
+		ModeController.Mode.PROP_DECAL:
+			state_machine.get_state_node(State.GO_ELEMENT_INSTANCING).mode = LevelElementInstancingState.PROP_DECAL
+			change_state(State.GO_ELEMENT_INSTANCING)
+			Game.ui.tab_resources.visible = true
+
+
+func change_state(state: String):
+	Game.ui.state_label_value.text = state
+	state_machine.change_state(state)
+	
+	
+func _process(_delta: float) -> void:
+	if not is_selected:
+		return
+	
+	if Engine.get_process_frames() % 6 == 0:
+		_on_refreshed_light()
+		
+	#_process_copy()
+	_process_delete()
+
+
+func _process_delete() -> void:
+	#if Game.campaign and Game.campaign.is_master and Game.ui.is_mouse_over_scene_tab:
+		
+	# Delete without ask
+	if Input.is_action_just_pressed("force_delete"):
+		if is_instance_valid(element_selected):
+			element_selected.remove()
+			
+			Game.server.rpcs.remove_element.rpc(map.slug, index, element_selected.id)
+			
+	elif Input.is_action_just_pressed("delete"):
+		if is_instance_valid(element_selected):
+			Game.ui.mouse_blocker.visible = true
+			Game.ui.delete_element_window.visible = true
+			Game.ui.delete_element_window.element_selected = element_selected
+			
+			var response = await Game.ui.delete_element_window.response
+			if response:
 				element_selected.remove()
-				
 				Game.server.rpcs.remove_element.rpc(map.slug, index, element_selected.id)
-				
-		elif Input.is_action_just_pressed("delete"):
-			if is_instance_valid(selected_wall):
-				selected_wall.remove()
-				
-				Game.server.rpcs.remove_wall.rpc(map.slug, index, selected_wall.id)
-				
-			if is_instance_valid(element_selected):
-				Game.ui.mouse_blocker.visible = true
-				Game.ui.delete_element_window.visible = true
-				Game.ui.delete_element_window.element_selected = element_selected
-				
-				var response = await Game.ui.delete_element_window.response
-				if response:
-					element_selected.remove()
-					Game.server.rpcs.remove_element.rpc(map.slug, index, element_selected.id)
 
 
-func build_point(tile: Vector2i, tile_data: Dictionary):
+func set_cell_data(tile: Vector2i, tile_data: Dictionary):
 	cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
 	viewport_3d.tile_map_set_cell(tile, Vector2i(tile_data.f, tile_data.i))
+
+
+func remove_cell(tile: Vector2i):
+	cells.erase(tile)
+	viewport_3d.tile_map_remove_cell(tile)
 
 
 #region input

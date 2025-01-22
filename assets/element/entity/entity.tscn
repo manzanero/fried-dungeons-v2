@@ -22,7 +22,7 @@ shader_parameter/transparency = null
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_6qsiy"]
 resource_local_to_scene = true
 margin = 0.001
-height = 1.0
+height = 0.5
 radius = 0.249
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_kc822"]

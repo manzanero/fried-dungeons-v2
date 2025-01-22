@@ -1,24 +1,23 @@
 class_name Wall
 extends Node3D
 
+const WALL_POINT := preload("res://assets/map/level/wall/wall_point/wall_point.tscn")
 
-signal curve_changed()
 
-
-@export var material_index := 0 :
+var material_index := 0 :
 	set(value):
 		material_index = value
-		curve_changed.emit()
-@export var material_seed := 0 :
+		refresh_mesh()
+var material_seed := 0 :
 	set(value):
 		material_seed = value
-		curve_changed.emit()
-@export var material_layer := 1 :
+		refresh_mesh()
+var material_layer := 1 :
 	set(value):
 		collision.set_collision_layer_value(material_layer, false)
 		material_layer = value
 		collision.set_collision_layer_value(material_layer, true)
-@export var two_sided := false :
+var two_sided := false :
 	set(value):
 		two_sided = value
 		if value:
@@ -26,13 +25,32 @@ signal curve_changed()
 			mesh_instance_3d.material_overlay = BACK_SOLID
 			mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		else:
-			#mesh_instance_3d.material_overlay = null
 			const BACK: Material = preload("res://assets/map/level/wall/materials/back.tres")
 			mesh_instance_3d.material_overlay = BACK
 			mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+var is_closed := false
 
 var map: Map
 var level: Level
+var selected_points: Array[WallPoint] = [] : 
+	get:
+		selected_points.clear()
+		for point in points:
+			if point.is_selected:
+				selected_points.append(point)
+		return selected_points
+var hovered_points: Array[WallPoint] = [] : 
+	get:
+		hovered_points.clear()
+		for point in points:
+			if point.is_hovered:
+				hovered_points.append(point)
+		return hovered_points
+		
+
+var dirty_points: bool
+var dirty_mesh: bool
+var dirty_highlight: bool
 
 var id: String :
 	set(value): 
@@ -44,29 +62,52 @@ var points: Array[WallPoint] = [] :
 		points.clear()
 		for point in value:
 			add_point(Utils.v3_to_v2(point.position_3d))
-		
-var points_position_2d := PackedVector2Array() :
+			
+var first_point: WallPoint :
+	get: return points[0]
+			
+var last_point: WallPoint :
+	get: return points[-1]
+
+
+func compatible_with(wall: Wall) -> bool:
+	if material_index != wall.material_index:
+		return false
+	if material_layer != wall.material_layer:
+		return false
+	if two_sided != wall.two_sided:
+		return false
+	if wall.is_closed:
+		return false
+	return true
+
+
+func size() -> int:
+	return points.size()
+	
+func clear() -> void:
+	Utils.queue_free_children(points_parent)
+	curve.clear_points()
+	points.clear()
+
+
+var points_position_2d: PackedVector2Array :
 	set(value):
-		for wall_point: WallPoint in points:
-			wall_point.remove()
-		curve.clear_points()
-		points.clear()
+		clear()
 		for point in value:
 			add_point(point)
 	get:
-		points_position_2d.clear()
-		for point in points:
-			points_position_2d.append(Utils.v3_to_v2(point.position_3d))
-		return points_position_2d
-
-var selected_point : WallPoint
-var edited_point : WallPoint
-var is_selected : bool : set = _set_selected
+		return points.map(func (wall_point: WallPoint): 
+			return wall_point.position_2d
+		)
 		
-var is_editing : bool
 
 
-@onready var wall_generator = $WallGenerator as WallGenerator
+var is_selected : bool : set = _set_selected
+
+
+@onready var points_parent: Node3D = %Points
+@onready var generator := $WallGenerator as WallGenerator
 @onready var path_3d := $Path3D as Path3D
 @onready var curve := path_3d.curve as Curve3D
 @onready var line_renderer_3d := %LineRenderer3D as LineRenderer
@@ -79,7 +120,8 @@ func init(_level: Level, _id: String,
 		_material_index := material_index,
 		_material_seed := material_seed,
 		_material_layer := material_layer,
-		_two_sided := two_sided):
+		_two_sided := two_sided,
+		_is_closed := is_closed):
 	level = _level
 	map = _level.map
 	id = _id
@@ -88,83 +130,117 @@ func init(_level: Level, _id: String,
 	material_seed = _material_seed
 	material_layer = _material_layer
 	two_sided = _two_sided
+	is_closed = _is_closed
 	
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
 	return self
 
 
+func refresh():
+	refresh_points()
+	refresh_mesh()
+	refresh_highlight()
+
+func refresh_points():
+	dirty_points = true
+
+func refresh_highlight():
+	dirty_highlight = true
+
+func refresh_mesh():
+	dirty_mesh = true
+
+
 func _physics_process(_delta: float) -> void:
-	_process_wall_edit()
+	if dirty_points:
+		dirty_points = false
+		dirty_mesh = true
+		update_points()
+		
+	if dirty_mesh:
+		dirty_mesh = false
+		dirty_highlight = true
+		generator.update_wall()
+		
+	if dirty_highlight:
+		dirty_highlight = false
+		update_highlight()
+
+
+func update_points():
+	var point_positions := Utils.get_curve_3d_points_position(curve)
+	clear()
+	for point_position in point_positions:
+		add_point(Utils.v3_to_v2(point_position))
+
+
+func update_highlight():
+	line_renderer_3d.disabled = true
 	
+	for point in points:
+		point.selector.reset()
 	
-func _process_wall_edit():
-	if is_editing:
+	for point in selected_points:
+		line_renderer_3d.disabled = false
 		
-		# change end of the wall
-		var point_position_2d := level.position_hovered
-		if not Input.is_key_pressed(KEY_ALT):
-			point_position_2d = point_position_2d.snapped(Game.PIXEL_SNAPPING_QUARTER)
-		set_point(edited_point, point_position_2d)
+		var selector: = point.selector
+		selector.point.visible = true
 		
-		Debug.print_info_message("Wall \"%s\" setted point %s" % [id, edited_point.index])
+		var next_point_index := point.index + 1
+		if next_point_index < curve.point_count:
+			var next_point := points[next_point_index]
+			if next_point in selected_points:
+				selector.rail.visible = true
+				selector.pointer.scale.z = point.position.distance_to(next_point.position)
+				if selector.pointer.scale.z:
+					selector.pointer.look_at(next_point.position)
+	
+	for point in hovered_points:
+		line_renderer_3d.disabled = false
 		
-		Game.server.rpcs.set_wall_point.rpc(map.slug, level.index, id, edited_point.index, point_position_2d)
+		var selector: = point.selector
+		#selector.point.visible = true
+		selector.column.visible = true
+		
+		var next_point_index := point.index + 1
+		if next_point_index < curve.point_count:
+			var next_point := points[next_point_index]
+			if next_point in hovered_points:
+				selector.rail.visible = true
+				selector.pointer.scale.z = point.position.distance_to(next_point.position)
+				if selector.pointer.scale.z:
+					selector.pointer.look_at(next_point.position)
 
 
 func _set_selected(value: bool):
 	is_selected = value
-	
-	if value:
-		line_renderer_3d.disabled = false
-		Utils.safe_connect(level.map.camera.changed, _on_viewport_changed)
-		Utils.safe_connect(get_viewport().size_changed, _on_viewport_changed)
-		for point in points:
-			point.changed.emit()
-			
-	else:
-		is_editing = false
-		level.map.point_options.visible = false
-		selected_point = null
-		line_renderer_3d.disabled = true
-		Utils.safe_disconnect(level.map.camera.changed, _on_viewport_changed)
-		Utils.safe_disconnect(get_viewport().size_changed, _on_viewport_changed)
-		for point in points:
-			point.visible = false
-
-
-func _on_viewport_changed():
-	for point in points:
-		point.changed.emit()
-	
-	if selected_point:
-		level.map.point_options.visible = not level.map.camera.eyes.is_position_behind(selected_point.position_3d)
-		level.map.point_options.position = selected_point.position
+	line_renderer_3d.disabled = not value
 
 
 func add_point(new_position: Vector2, index := -1) -> WallPoint:
 	var new_position_3d := Utils.v2_to_v3(new_position)
 	index = curve.point_count if index == -1 else index
 	curve.add_point(new_position_3d, Vector3.ZERO, Vector3.ZERO, index)
-	var wall_point: WallPoint = Game.wall_point_scene.instantiate().init(self, index, new_position_3d)
-	curve_changed.emit()
+	var wall_point: WallPoint = WALL_POINT.instantiate().init(self, index, new_position_3d)
+	wall_point.removed.connect(remove_point.bind(wall_point))
+	refresh_mesh()
 	
 	return wall_point
-
-
-func set_point(wall_point : WallPoint, point_position : Vector2):
-	var point_position_3d := Utils.v2_to_v3(point_position)
-	
-	curve.set_point_position(wall_point.index, point_position_3d)
-	wall_point.position_3d = point_position_3d
-	curve_changed.emit()
 	
 
-func remove_point(removed_wall_point : WallPoint):
-	removed_wall_point.queue_free()
-	curve.remove_point(removed_wall_point.index)
-	points.erase(removed_wall_point)
-	curve_changed.emit()
+func remove_point(wall_point: WallPoint):
+	if is_closed and (wall_point.is_first or wall_point.is_last):
+		points[0].queue_free()
+		curve.remove_point(0)
+		points.erase(points[0])
+		points[-1].position_3d = points[0].position_3d
+	else:
+		wall_point.queue_free()
+		curve.remove_point(wall_point.index)
+		points.erase(wall_point)
+
+	refresh()
 
 	Debug.print_info_message("Wall \"%s\" changed" % id)
 	
@@ -172,25 +248,6 @@ func remove_point(removed_wall_point : WallPoint):
 		Game.server.rpcs.set_wall_points.rpc(map.slug, level.index, id, points_position_2d)
 	else:
 		Game.server.rpcs.remove_wall.rpc(map.slug, level.index, id)
-				
-	
-
-func select_point(selected_wall_point : WallPoint):
-	selected_point = selected_wall_point
-	if selected_point:
-		level.map.point_options.visible = not level.map.camera.eyes.is_position_behind(selected_point.position_3d)
-		level.map.point_options.position = selected_point.position
-	else:
-		level.map.point_options.visible = false
-
-
-func edit_point(edited_wall_point : WallPoint):
-	if edited_wall_point:
-		is_editing = true
-		edited_point = edited_wall_point
-	else:
-		is_editing = false
-		edited_point = null
 	
 
 func break_point(broken_wall_point : WallPoint):
@@ -231,6 +288,69 @@ func reverse():
 	
 	
 func cut(a: Vector2, b: Vector2):
+	if is_closed:
+		cut_closed(a, b)
+	else:
+		cut_open(a, b)
+	
+	
+func cut_closed(a: Vector2, b: Vector2):
+	var point_snap := Game.PIXEL_SNAPPING_QUARTER
+	if Input.is_key_pressed(KEY_ALT):
+		point_snap = Game.PIXEL
+	
+	if curve.get_closest_offset(Utils.v2_to_v3(a)) > curve.get_closest_offset(Utils.v2_to_v3(b)):
+		var temp = a
+		a = b
+		b = temp
+	
+	var point_1: Vector3
+	var point_2: Vector3
+	
+	var wall := map.instancer.create_wall(level, Utils.random_string(8, true),
+			[], material_index, material_seed, material_layer, two_sided)
+	
+	# first section
+	wall.add_point(b.snapped(point_snap))
+
+	var start_index := Utils.get_boundary_points(curve, Utils.v2_to_v3(b))[1]
+	point_1 = Utils.v2_to_v3(b.snapped(point_snap))
+	point_2 = curve.get_point_position(start_index)
+	
+	if point_1.distance_to(point_2) > 0.031:
+		wall.add_point(Utils.v3_to_v2(point_2))
+		
+	for i in range(start_index + 1, curve.point_count):
+		wall.add_point(Utils.v3_to_v2(curve.get_point_position(i)))
+	
+	# second section
+	var end_index := Utils.get_boundary_points(curve, Utils.v2_to_v3(a))[0]
+	point_2 = curve.get_point_position(0)  # case first point of 2nd section is 0
+	
+	for i in range(1, end_index + 1):
+		point_1 = curve.get_point_position(i - 1)
+		point_2 = curve.get_point_position(i)
+		
+		wall.add_point(Utils.v3_to_v2(point_2))
+		
+	point_1 = point_2
+	point_2 = Utils.v2_to_v3(a.snapped(point_snap))
+	
+	if point_1.distance_to(point_2) > 0.031:
+		wall.add_point(Utils.v3_to_v2(point_2))
+	
+	remove()
+	
+	Game.server.rpcs.divide_wall.rpc(map.slug, level.index, id, [wall.id], [wall.points_position_2d])
+		
+	Debug.print_info_message("Wall \"%s\" cutted" % id)
+	
+	
+func cut_open(a: Vector2, b: Vector2):
+	var point_snap := Game.PIXEL_SNAPPING_QUARTER
+	if Input.is_key_pressed(KEY_ALT):
+		point_snap = Game.PIXEL
+	
 	var segment_1_offset := curve.get_closest_offset(Utils.v2_to_v3(a))
 	var segment_2_offset := curve.get_closest_offset(Utils.v2_to_v3(b))
 	
@@ -261,8 +381,8 @@ func cut(a: Vector2, b: Vector2):
 		if offset < segment_1_offset:
 			wall_1.add_point(Utils.v3_to_v2(point_2))
 			continue
-		elif point_1.distance_to(Utils.v2_to_v3(a.snapped(Game.PIXEL))) > 0.031:
-			wall_1.add_point(a.snapped(Game.PIXEL))
+		elif point_1.distance_to(Utils.v2_to_v3(a.snapped(point_snap))) > 0.031:
+			wall_1.add_point(a.snapped(point_snap))
 		break
 	
 	Debug.print_info_message("Wall \"%s\" created" % wall_1.id)
@@ -271,10 +391,10 @@ func cut(a: Vector2, b: Vector2):
 		
 	var wall_2 := map.instancer.create_wall(level, Utils.random_string(8, true),
 			[], material_index, material_seed, material_layer, two_sided)
-	wall_2.add_point(b.snapped(Game.PIXEL))
+	wall_2.add_point(b.snapped(point_snap))
 	
 	# first point of 2nd wall may be in the same index
-	point_1 = Utils.v2_to_v3(b.snapped(Game.PIXEL))
+	point_1 = Utils.v2_to_v3(b.snapped(point_snap))
 	point_2 = curve.get_point_position(index)
 	delta = point_1.distance_to(point_2)
 	
@@ -290,7 +410,7 @@ func cut(a: Vector2, b: Vector2):
 		if offset > segment_2_offset and delta > 0.031:
 			wall_2.add_point(Utils.v3_to_v2(point_2))
 	
-	if curve.get_point_position(curve.point_count - 1).distance_to(Utils.v2_to_v3(b.snapped(Game.PIXEL))) < 0.031:
+	if curve.get_point_position(curve.point_count - 1).distance_to(Utils.v2_to_v3(b.snapped(point_snap))) < 0.031:
 		wall_2.remove()
 	
 	Debug.print_info_message("Wall \"%s\" created" % wall_2.id)
@@ -298,7 +418,7 @@ func cut(a: Vector2, b: Vector2):
 	var wall_2_created := wall_2.check()
 	
 	if wall_2_created and curve.get_point_position(curve.point_count - 1).distance_to(
-			Utils.v2_to_v3(b.snapped(Game.PIXEL))) < 0.031:
+			Utils.v2_to_v3(b.snapped(point_snap))) < 0.031:
 		wall_2.remove()
 		wall_2_created = false
 			
@@ -316,18 +436,29 @@ func cut(a: Vector2, b: Vector2):
 	Game.server.rpcs.divide_wall.rpc(map.slug, level.index, id, new_wall_ids, new_wall_points)
 
 
-func get_point_by_index(index : int) -> WallPoint:
-	return points[index] if index < len(points) else null
+func merge(wall: Wall):
+	for point in wall.points:
+		add_point(point.position_2d)
+	
+	wall.remove()
+	
+	Game.server.rpcs.set_wall_points.rpc(map.slug, level.index, id, points_position_2d)
+	Game.server.rpcs.remove_wall.rpc(map.slug, level.index, wall.id)
 
 
 func check() -> bool:
-	if curve.point_count < 2 or not is_instance_valid(self):
+	if not is_instance_valid(self) or curve.point_count < 2 or (is_closed and curve.point_count < 3):
 		remove()
 		return false
 	return true
 
+
 func remove():
-	level.map.point_options.visible = false
+	collider.disabled = true
+	
+	# cut operation replaces the wall but the refresh needs one frame to rebuild the new ones
+	await get_tree().process_frame
+	await get_tree().process_frame
 	
 	queue_free()
 	for point in points:
@@ -343,15 +474,21 @@ func remove():
 func json():
 	var p := []
 	for point in points:
-		p.append(Utils.v3_to_a2(point.position_3d))
-	
-	return {
+		p.append(Utils.v3_to_a2(point.position))
+		
+	var wall := {
 		"id": id,
 		"i": material_index,
 		"s": material_seed,
-		"l": material_layer,
-		"2": two_sided,
 		"p": p,
 	}
+	if material_layer != 1:
+		wall["l"] = material_layer
+	if two_sided:
+		wall["2"] = two_sided
+	if is_closed:
+		wall["c"] = is_closed
+	
+	return wall
 	
 	

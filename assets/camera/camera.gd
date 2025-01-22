@@ -196,12 +196,11 @@ func _process(delta: float) -> void:
 	if _has_changed:
 		_has_changed = false
 		floor_projection = Vector3(eyes.global_position.x, 0, eyes.global_position.z)
-		const color = Color(0.75, 0.75, 0.75, 0.5)
+		const color = Color(0.25, 0.25, 0.25, 0.5)
 		focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
-		#focus_hint_3d.global_position = Vector3(focus.global_position.x, 0, focus.global_position.z)
 		changed.emit()
 	else:
-		const color = Color(0.75, 0.75, 0.75, 0)
+		const color = Color(0.25, 0.25, 0.25, 0)
 		focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
 
 
@@ -225,13 +224,6 @@ func _input(event):
 				mouse_position.x -= size.x
 				viewport.warp_mouse(mouse_position)
 			
-			#if mouse_position.y < 0:
-				#mouse_position.y += size.y
-				#viewport.warp_mouse(mouse_position)
-			#elif mouse_position.y > size.y:
-				#mouse_position.y -= size.y
-				#viewport.warp_mouse(mouse_position)
-			
 			if event.relative.length() < 256:
 				offset_mouse_move += event.relative
 			
@@ -254,6 +246,11 @@ func _unhandled_input(event):
 			return
 	
 		if event.is_pressed() and is_windows_focused:
+			if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
+				is_rotate = false
+				is_move = false
+				return
+			
 			if event.button_index == MOUSE_BUTTON_MIDDLE:
 				is_rotate = true
 				is_move = false
@@ -273,24 +270,6 @@ func _notification(what : int):
 		NOTIFICATION_WM_MOUSE_EXIT:
 			is_mouse_visible = false
 			mouse_exited.emit()
-			
-			#var view = get_viewport()
-			#var size = Game.ui.size
-			#var width = view.size.x
-			#var height = view.size.y
-			#var current_mouse_position := view.get_mouse_position()
-			#var position_x = current_mouse_position.x
-			#var position_y = current_mouse_position.y
-			#
-			#if position_x < 0:
-				#position_x += width
-			#elif position_x > width:
-				#position_x -= width
-				#
-			#print(view.size)
-			#print(current_mouse_position)
-			#Input.warp_mouse(Vector2(position_x, position_y))
-			#set_deferred("is_operated", true)
 		NOTIFICATION_WM_MOUSE_ENTER:
 			is_mouse_visible = true
 			mouse_entered.emit()

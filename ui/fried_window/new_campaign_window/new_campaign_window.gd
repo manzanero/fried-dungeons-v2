@@ -42,10 +42,10 @@ func _ready() -> void:
 	path_field.property_value = "/"
 	path_field.line_edit.editable = false
 	
-	icon_field = StringField.SCENE.instantiate()
-	fields.add_child(icon_field)
-	icon_field.label.text = "Icon"
-	icon_field.line_edit.placeholder_text = "None"
+	#icon_field = StringField.SCENE.instantiate()
+	#fields.add_child(icon_field)
+	#icon_field.label.text = "Icon"
+	#icon_field.line_edit.placeholder_text = "None"
 	
 	master_name_field = StringField.SCENE.instantiate()
 	fields.add_child(master_name_field)
@@ -79,7 +79,7 @@ func _on_created_button_pressed() -> void:
 
 	var new_campaign_data := {
 		"title": campaign_label,
-		"icon": icon_field.property_value,
+		#"icon": icon_field.property_value,
 		"master_name": master_name_field.property_value,
 		"master_color": master_color_field.property_value,
 	}
@@ -96,7 +96,7 @@ func _on_title_field_change(new_text: String) -> void:
 func reset():
 	title_field.property_value = ""
 	path_field.property_value = "/"
-	icon_field.property_value = ""
+	#icon_field.property_value = ""
 	master_name_field.property_value = ""
 	master_color_field.property_value = Color.WHITE
 	

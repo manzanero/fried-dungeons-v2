@@ -18,16 +18,15 @@ shading_mode = 0
 specular_mode = 2
 disable_ambient_light = true
 disable_fog = true
-albedo_color = Color(0.498039, 0.498039, 0.498039, 0.498039)
+albedo_color = Color(0.25, 0.25, 0.25, 0.498)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_daiv6"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_ncuqn"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_cbu2a"]
 resource_local_to_scene = true
 
 [node name="Wall" type="Node3D"]
 script = ExtResource("1_8fylx")
-material_index = 5
 
 [node name="WallGenerator" type="Node" parent="."]
 script = ExtResource("2_jgfiy")
@@ -41,7 +40,7 @@ material_override = SubResource("StandardMaterial3D_1ar7b")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_daiv6")
+mesh = SubResource("ImmediateMesh_ncuqn")
 script = ExtResource("5_70oql")
 start_thickness = 0.031
 end_thickness = 0.031
@@ -58,6 +57,15 @@ mesh = SubResource("ArrayMesh_cbu2a")
 unique_name_in_owner = true
 collision_layer = 33554432
 collision_mask = 0
+axis_lock_linear_x = true
+axis_lock_linear_y = true
+axis_lock_linear_z = true
+axis_lock_angular_x = true
+axis_lock_angular_y = true
+axis_lock_angular_z = true
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="StaticBody3D"]
+unique_name_in_owner = true
+
+[node name="Points" type="Node3D" parent="."]
 unique_name_in_owner = true

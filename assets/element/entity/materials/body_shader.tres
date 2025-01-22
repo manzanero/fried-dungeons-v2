@@ -22,7 +22,7 @@ void fragment() {
 	else
 		ALBEDO = albedo.rgb * albedo_tex.rgb * light.rgb * 0.8;
 	ALPHA = albedo_tex.a * light.a * (1. - transparency);
-	
+
 	if (is_darkvision_view) {
 		vec3 color = ALBEDO.rgb;
 		float brightness = pow((color.r * color.g * color.b), 0.33);

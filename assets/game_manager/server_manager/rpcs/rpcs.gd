@@ -2,9 +2,23 @@ class_name Rpcs
 extends Node
 
 
+#@rpc("any_peer", "reliable")
+#func change_flow_state(state: FlowController.State):
+	#Game.flow.change_flow_state(state)
+
+
 @rpc("any_peer", "reliable")
-func change_flow_state(state: FlowController.State):
+func change_flow_state(global_state: FlowController.State, campaign_players: Dictionary):
+	var state := global_state
+	var campaign_player_data: Dictionary = campaign_players.get(Game.player.slug)
+	
+	# if player state does not exist or is not 0
+	if campaign_player_data and campaign_player_data.get("state"):
+		state = campaign_player_data.state
+	
 	Game.flow.change_flow_state(state)
+	
+	Debug.print_info_message("Game flow state changed to %s" % state)
 
 
 @rpc("any_peer", "reliable")
@@ -121,10 +135,17 @@ func change_theme(new_volumen_level: float, new_pitch: float) -> void:
 #region building
 
 @rpc("any_peer", "reliable")
-func build_point(map_slug: String, level_index: int, tile: Vector2i, tile_data: Dictionary) -> void:
+func set_cell(map_slug: String, level_index: int, tile: Vector2i, tile_data: Dictionary) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	level.build_point(tile, tile_data)
+	level.set_cell_data(tile, tile_data)
+
+
+@rpc("any_peer", "reliable")
+func remove_cell(map_slug: String, level_index: int, tile: Vector2i) -> void:
+	var map: Map = _get_map_by_slug(map_slug); if not map: return
+	var level: Level = _get_level_by_index(map, level_index); if not level: return
+	level.remove_cell(tile)
 
 
 @rpc("any_peer", "reliable")
@@ -186,7 +207,8 @@ func set_wall_points(map_slug: String, level_index: int, id: String,
 
 @rpc("any_peer", "reliable")
 func set_wall_properties(map_slug: String, level_index: int, id: String,
-		material_index: int, material_seed: int, material_layer: int, two_sided := false ) -> void:
+		material_index: int, material_seed: int, material_layer: int,
+		two_sided := false, is_closed := false) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var wall := _get_wall_by_id(level, id); if not wall: return
@@ -194,6 +216,7 @@ func set_wall_properties(map_slug: String, level_index: int, id: String,
 	wall.material_seed = material_seed
 	wall.material_layer = material_layer
 	wall.two_sided = two_sided
+	wall.is_closed = is_closed
 	Debug.print_info_message("Wall \"%s\" changed" % wall.id)
 
 

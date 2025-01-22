@@ -85,6 +85,7 @@ func _ready() -> void:
 	enet_refresh_button.pressed.connect(enet_refresh)
 	enet_tree.item_activated.connect(_on_enet_item_activated)
 	enet_tree.button_clicked.connect(_on_enet_item_button_clicked)
+	enet_tree.item_mouse_selected.connect(_on_enet_item_mouse_selected)
 	
 
 func _on_player_add_button_pressed():
@@ -107,8 +108,6 @@ func _on_player_add_button_pressed():
 		"password": _generate_pass(),
 		"is_steam_player": steam_button.button_pressed,
 		"color": Utils.color_to_html_color(Color.WHITE),
-		"icon": "",
-		"entities": [],
 	}
 	
 	Game.campaign.set_player_data(new_player_slug, new_player_data)
@@ -123,6 +122,7 @@ func _generate_pass() -> String:
 func refresh():
 	steam_refresh()
 	enet_refresh()
+	Game.ui.tab_players.refresh()
 
 
 func _on_steam_filter_changed():
@@ -165,6 +165,12 @@ func _on_enet_item_button_clicked(enet_item: TreeItem, _column: int, id: int, _m
 		2: _on_remove_pressed(enet_item)
 
 
+func _on_enet_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int):
+	if mouse_button_index == MOUSE_BUTTON_RIGHT:
+		DisplayServer.clipboard_set(enet_tree.get_selected().get_metadata(0).password)
+		Utils.temp_tooltip("Copied!")
+	
+
 func _on_show_password_pressed(item: TreeItem):
 	var player_data: Dictionary = item.get_metadata(0)
 	var password_visible: bool = item.get_metadata(1)
@@ -197,6 +203,7 @@ func _on_remove_pressed(item: TreeItem):
 	steam_items.erase(item)
 	enet_items.erase(item)
 	item.free()
+	refresh()
 	
 	removed_player.emit(player_slug)
 	
@@ -225,6 +232,8 @@ func steam_refresh():
 		item.set_button_color(0, 0, Color.RED)
 		
 		steam_items.append(item)
+	
+	_on_steam_filter_changed()
 
 
 func enet_refresh():
@@ -255,3 +264,5 @@ func enet_refresh():
 		item.set_button_color(1, 2, Color.RED)
 		
 		enet_items.append(item)
+	
+	_on_enet_filter_changed()

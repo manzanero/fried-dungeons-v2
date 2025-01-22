@@ -1,55 +1,11 @@
 [gd_scene load_steps=3 format=3 uid="uid://b0plnb6bswbdy"]
 
 [ext_resource type="Script" path="res://assets/map/level/wall/wall_point/wall_point.gd" id="1_awbn3"]
-[ext_resource type="Theme" uid="uid://wdhwb87x2roh" path="res://resources/themes/pixel_ui_theme/PixelTheme_sky.tres" id="1_ejwbb"]
+[ext_resource type="PackedScene" uid="uid://c1qx8a8ifjil7" path="res://assets/map/level/wall/wall_point_selector/wall_point_selector.tscn" id="3_koilt"]
 
-[node name="WallPoint" type="Control"]
+[node name="WallPoint" type="Node3D"]
 process_priority = 1
 process_physics_priority = 1
-layout_mode = 3
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-mouse_filter = 2
-theme = ExtResource("1_ejwbb")
 script = ExtResource("1_awbn3")
 
-[node name="Button" type="Button" parent="."]
-unique_name_in_owner = true
-process_priority = 1
-process_physics_priority = 1
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-mouse_default_cursor_shape = 13
-
-[node name="Label" type="Label" parent="Button"]
-unique_name_in_owner = true
-process_priority = 1
-process_physics_priority = 1
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -5.0
-offset_top = -15.0
-offset_right = 7.0
-offset_bottom = 11.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "1"
-horizontal_alignment = 1
-vertical_alignment = 1
+[node name="WallPointSelector" parent="." instance=ExtResource("3_koilt")]

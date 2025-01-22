@@ -1,0 +1,62 @@
+[gd_scene load_steps=6 format=3 uid="uid://c1qx8a8ifjil7"]
+
+[ext_resource type="Script" path="res://assets/map/level/wall/wall_point_selector/wall_point_selector.gd" id="1_el7tg"]
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_qtmiq"]
+render_priority = 9
+transparency = 4
+no_depth_test = true
+shading_mode = 0
+specular_mode = 2
+disable_ambient_light = true
+disable_fog = true
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.5, 0.5, 0.5, 0.75)
+
+[sub_resource type="SphereMesh" id="SphereMesh_jvnri"]
+radius = 0.063
+height = 0.125
+radial_segments = 8
+rings = 4
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_jf5pf"]
+top_radius = 0.031
+bottom_radius = 0.031
+height = 1.0
+radial_segments = 8
+rings = 0
+cap_bottom = false
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_6qnja"]
+top_radius = 0.031
+bottom_radius = 0.031
+height = 1.0
+radial_segments = 8
+rings = 0
+
+[node name="WallPointSelector" type="Node3D"]
+process_priority = 1
+process_physics_priority = 1
+script = ExtResource("1_el7tg")
+
+[node name="Point" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+material_override = SubResource("StandardMaterial3D_qtmiq")
+mesh = SubResource("SphereMesh_jvnri")
+
+[node name="Column" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
+material_override = SubResource("StandardMaterial3D_qtmiq")
+cast_shadow = 0
+mesh = SubResource("CylinderMesh_jf5pf")
+
+[node name="Pointer" type="Marker3D" parent="."]
+unique_name_in_owner = true
+
+[node name="Rail" type="MeshInstance3D" parent="Pointer"]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, -0.5)
+material_override = SubResource("StandardMaterial3D_qtmiq")
+mesh = SubResource("CylinderMesh_6qnja")
+skeleton = NodePath("../..")

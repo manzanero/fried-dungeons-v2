@@ -28,8 +28,9 @@ void fragment() {
 	ALBEDO = 0.25 + 0.25 * albedo_tex.rgb;
 	NORMAL = -NORMAL;
 
-	if (int(FRAGCOORD.y) % 2 == 0) if (int(FRAGCOORD.x) % 2 == 0) discard;
-	if ((int(FRAGCOORD.x) + 1) % 2 == 0) if ((int(FRAGCOORD.y) + 1) % 2 == 0) discard;
+	//if (int(FRAGCOORD.y) % 2 == 0) if (int(FRAGCOORD.x) % 2 == 0) discard;
+	//if ((int(FRAGCOORD.x) + 1) % 2 == 0) if ((int(FRAGCOORD.y) + 1) % 2 == 0) discard;
+	if (int(FRAGCOORD.y + FRAGCOORD.x) % 2 == 0) discard;
 
 	alpha = albedo_tex.a;
 

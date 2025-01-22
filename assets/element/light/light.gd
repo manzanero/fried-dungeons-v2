@@ -140,8 +140,10 @@ func _process(_delta: float) -> void:
 
 
 func update_light():
-	hidden = not is_watched
-
+	if active:
+		hidden = not is_watched
+	elif Game.player:
+		hidden = true
 
 func _set_selectable(value: bool) -> void:
 	super._set_selectable(value)

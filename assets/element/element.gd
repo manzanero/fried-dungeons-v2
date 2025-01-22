@@ -9,11 +9,11 @@ var map: Map
 var level: Level
 
 
-@export var snapping := Game.PIXEL_SNAPPING_QUARTER 
-@export var is_ceiling_element: bool
-@export var init_properties := {}
+var snapping := Game.SNAPPING_QUARTER 
+var is_ceiling_element: bool
+var reference: CampaignElement
 
-
+var init_properties := {}
 var properties := {}
 var id: String :
 	set(value): 
@@ -179,7 +179,7 @@ func _get_target_hovered() -> Vector3:
 	var drag_position := level.ceilling_hovered if is_ceiling_element else level.position_hovered
 	drag_position -= level.drag_offset
 	if not Input.is_key_pressed(KEY_ALT): 
-		drag_position = drag_position.snapped(snapping)
+		drag_position = drag_position.snappedf(snapping)
 		
 	return Utils.v2_to_v3(drag_position)
 
@@ -198,7 +198,7 @@ func _physics_process(delta: float) -> void:
 		return
 	
 	if is_dragged:
-		set_multiplayer_authority(Game.server.presence.id)
+		#set_multiplayer_authority(multiplayer.get_unique_id())  # TODO
 		_flip_process()
 		_dragged_process()
 	
@@ -210,24 +210,40 @@ func _physics_process(delta: float) -> void:
 			const input_velocity: float = 1000
 			var velocity_to_target := clampf(delta * distance_to_target * input_velocity, 0, 10)
 			velocity = direction_to_target * velocity_to_target
-			if velocity and move_and_slide():
-				if is_multiplayer_authority():
-					var ticks_msec := Time.get_ticks_msec()
-					if next_update_ticks_msec < ticks_msec:
-						next_update_ticks_msec = ticks_msec + 100
-						Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation)
-						
-					target_position = global_position
+			if move_and_slide() and velocity.length() < 0.001:
+				var ticks_msec := Time.get_ticks_msec()
+				if next_update_ticks_msec < ticks_msec:
+					next_update_ticks_msec = ticks_msec + 100
+					Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation)
+
+				is_moving_to_target = false
+				target_position = global_position
+					
+			#if move_and_slide():
+				#if is_multiplayer_authority():
+					#var ticks_msec := Time.get_ticks_msec()
+					#if next_update_ticks_msec < ticks_msec:
+						#next_update_ticks_msec = ticks_msec + 100
+						#Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation)
+			#
+					#if velocity < 0.001 * Vector3.ONE:
+						#is_moving_to_target = false
+						#target_position = global_position
 		else:
 			is_moving_to_target = false
-			if is_multiplayer_authority():
-				Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
+			target_position = global_position
+			#if is_multiplayer_authority():
+				#Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
 			
 			
 func _preview_process() -> void:
 	if not Game.ui.is_mouse_over_scene_tab:
 		global_position = Game.ui.selected_map.camera.focus_hint_3d.global_position
 		return
+		
+	if Input.is_action_just_pressed("flip"):
+		flipped = not flipped
+		Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y, flipped)
 		
 	var target_hovered := _get_target_hovered()
 	if is_rotated:
@@ -239,12 +255,14 @@ func _preview_process() -> void:
 
 func _flip_process() -> void:
 	if Input.is_action_just_pressed("flip"):
+	#if Input.is_action_just_pressed("middle_click"):
 		flipped = not flipped
 		Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y, flipped)
 
 
 func _dragged_process() -> void:
 	is_rotated = Input.is_action_pressed("rotate")
+	#is_rotated = Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	
 	var target_hovered := _get_target_hovered()
 	var ticks_msec := Time.get_ticks_msec()

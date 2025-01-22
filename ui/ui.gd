@@ -4,8 +4,6 @@ extends Control
 signal save_campaign_button_pressed
 signal reload_campaign_button_pressed
 
-static var SCENE := preload("res://ui/ui.tscn")
-
 @onready var nav_bar: NavBar = %NavBar
 @onready var flow_border: Panel = %FlowBorder
 @onready var ide: MarginContainer = %IDE
@@ -37,6 +35,7 @@ static var SCENE := preload("res://ui/ui.tscn")
 @onready var tab_messages: TabMessages = %Messages
 
 # center section
+@onready var manual_container: PanelContainer = %ManualContainer
 @onready var middle_up: Control = %MiddleUp
 @onready var middle_down: Control = %MiddleDown
 @onready var scene_tabs: TabContainer = %TabScenes
@@ -45,6 +44,7 @@ static var SCENE := preload("res://ui/ui.tscn")
 @onready var master_cover: FadeTransition = %MasterCover
 @onready var build_border: Panel = %BuildBorder
 @onready var dicer: Dicer = %Dicer
+@onready var mode_controller: ModeController = %ModeController
 @onready var state_label_value: Label = %StateLabelValue
 @onready var player_label_value: Label = %PlayerLabelValue
 @onready var tab_builder: TabBuilder = %Builder
@@ -66,11 +66,13 @@ var is_mouse_over_scene_tab: bool :
 func init() -> UI:
 	Game.ui = self
 	Game.manager.add_child(self)
+	Game.modes = mode_controller
 	return self
 
 
 func _ready() -> void:
 	build_border.visible = false
+	manual_container.visible = false
 	mouse_blocker.visible = false
 	
 	center_windows.visible = true
@@ -100,6 +102,8 @@ func _ready() -> void:
 	nav_bar.campaign_save_pressed.connect(_on_campaign_save_pressed)
 	nav_bar.campaign_reload_pressed.connect(_on_campaign_reload_pressed)
 	nav_bar.campaign_quit_pressed.connect(_on_campaign_quit_pressed)
+	
+	nav_bar.help_manual_pressed.connect(_on_help_manual_pressed)
 	
 
 func remove_mouse_blocker(event: InputEvent):
@@ -170,6 +174,10 @@ func _on_campaign_reload_pressed():
 
 func _on_campaign_quit_pressed():
 	quit()
+
+
+func _on_help_manual_pressed():
+	manual_container.visible = true
 
 
 func quit():

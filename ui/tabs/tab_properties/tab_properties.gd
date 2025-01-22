@@ -54,10 +54,10 @@ func _set_element_selected(element: Element):
 		
 		# custom params
 		if element is Entity or element is Shape:
-			if property_name == "body_frame":
+			if property_name in ["body_frame", "frame"]:
 				var texture_attributes: Dictionary = element.texture_attributes
 				field.set_param("max_value", texture_attributes.get("frames", 1) - 1)
-		
+
 
 func _make_containers_tree(properties: Dictionary):
 	containers_tree[""] = root_container
@@ -75,6 +75,14 @@ func _on_field_value_changed(property_name: String, new_value: Variant):
 	var map: Map = level.map
 	var id := element_selected.id
 	Game.server.rpcs.change_element_property.rpc(map.slug, level.index, id, property_name, new_value)
+		
+	# custom params
+	if element_selected is Entity:
+		if property_name == "body_texture":
+			_set_element_selected(element_selected)
+	if element_selected is Shape:
+		if property_name == "texture":
+			_set_element_selected(element_selected)
 
 
 func reset():

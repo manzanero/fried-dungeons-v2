@@ -25,7 +25,7 @@ func _get_drag_data(_at_position: Vector2):
 		
 	var drag_data := {
 		"type": drag_type,
-		"items": []
+		"items": [],
 	}
 	
 	var next: TreeItem = get_next_selected(null)

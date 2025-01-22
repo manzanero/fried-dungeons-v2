@@ -1,4 +1,4 @@
-[gd_scene load_steps=43 format=3 uid="uid://bo0uwbj6jw1oj"]
+[gd_scene load_steps=44 format=3 uid="uid://bo0uwbj6jw1oj"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
@@ -17,9 +17,11 @@
 [ext_resource type="PackedScene" uid="uid://qg2jutjaad46" path="res://ui/tabs/tab_settings/tab_settings.tscn" id="7_cdf46"]
 [ext_resource type="PackedScene" uid="uid://bxt6nwjxeo4i8" path="res://ui/tabs/tab_jukebox/tab_jukebox.tscn" id="7_s1ltk"]
 [ext_resource type="PackedScene" uid="uid://c3oq3t62qadp0" path="res://ui/tabs/tab_resources/tab_resources.tscn" id="9_l1602"]
+[ext_resource type="PackedScene" uid="uid://bkcl57vwjmf07" path="res://ui/manual/manual.tscn" id="9_uc1vt"]
 [ext_resource type="Texture2D" uid="uid://djhtp0rlxmu50" path="res://resources/icons/play_icon.png" id="11_46b2c"]
 [ext_resource type="Texture2D" uid="uid://xmqlvuy6fnik" path="res://resources/icons/pause_icon.png" id="12_blpem"]
 [ext_resource type="Texture2D" uid="uid://dwfkjnyl85tqn" path="res://resources/icons/stop_icon.png" id="13_4613w"]
+[ext_resource type="PackedScene" uid="uid://da81cp8j448wv" path="res://ui/mode_controller/mode_controller.tscn" id="14_yiu68"]
 [ext_resource type="StyleBox" uid="uid://kfbbn8gligsk" path="res://ui/flow_controller/flow_border.tres" id="19_xvfg2"]
 [ext_resource type="PackedScene" uid="uid://c32tijiy5co8o" path="res://ui/fried_window/new_campaign_window/new_campaign_window.tscn" id="20_ecsro"]
 [ext_resource type="PackedScene" uid="uid://cxb7ssvks0wlj" path="res://ui/fried_window/host_campaign_window/host_campaign_window.tscn" id="21_677rs"]
@@ -59,11 +61,11 @@ anti_aliasing = false
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_knwtu"]
 draw_center = false
-border_width_left = 16
-border_width_top = 16
-border_width_right = 16
-border_width_bottom = 16
-border_color = Color(0.443, 0.408, 0.292, 1)
+border_width_left = 24
+border_width_top = 24
+border_width_right = 24
+border_width_bottom = 24
+border_color = Color(0.456639, 0.592415, 0.695978, 1)
 border_blend = true
 corner_detail = 1
 
@@ -198,9 +200,6 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_e1kdt"]
-allow_unpress = true
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ujvvg"]
 bg_color = Color(0, 0, 0, 0.25)
 
@@ -317,18 +316,29 @@ size_flags_stretch_ratio = 8.0
 theme_override_constants/separation = 0
 split_offset = 2820
 
-[node name="MiddleUp" type="PanelContainer" parent="V/IDE/H/H/Middle"]
+[node name="V" type="HSplitContainer" parent="V/IDE/H/H/Middle"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ManualContainer" parent="V/IDE/H/H/Middle/V" instance=ExtResource("9_uc1vt")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="MiddleUp" type="PanelContainer" parent="V/IDE/H/H/Middle/V"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(420, 280)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_lmfym")
+
+[node name="MiddleUpTabs" type="Control" parent="V/IDE/H/H/Middle/V/MiddleUp"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_lmfym")
 
-[node name="MiddleUpTabs" type="Control" parent="V/IDE/H/H/Middle/MiddleUp"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(640, 320)
-layout_mode = 2
-
-[node name="TabScenes" type="TabContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs"]
+[node name="TabScenes" type="TabContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 128)
 layout_mode = 1
@@ -343,7 +353,7 @@ drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
 tab_focus_mode = 1
 
-[node name="SceneCoverings" type="Control" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs"]
+[node name="SceneCoverings" type="Control" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs"]
 unique_name_in_owner = true
 layout_mode = 1
 anchors_preset = 15
@@ -357,21 +367,21 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="FadeTransition" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings" instance=ExtResource("6_mw1aj")]
+[node name="FadeTransition" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings" instance=ExtResource("6_mw1aj")]
 unique_name_in_owner = true
 visible = true
 layout_mode = 1
 default_cover_duration = 0.0
 default_uncover_duration = 0.4
 
-[node name="MasterCover" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings" instance=ExtResource("6_mw1aj")]
+[node name="MasterCover" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings" instance=ExtResource("6_mw1aj")]
 unique_name_in_owner = true
 visible = true
 layout_mode = 1
 default_cover_duration = 0.0
 default_uncover_duration = 0.4
 
-[node name="BuildBorder" type="Panel" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings"]
+[node name="BuildBorder" type="Panel" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings"]
 unique_name_in_owner = true
 clip_contents = true
 layout_mode = 1
@@ -383,15 +393,16 @@ grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_knwtu")
 
-[node name="Label" type="Label" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/BuildBorder"]
+[node name="Label" type="Label" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/BuildBorder"]
+visible = false
 layout_mode = 1
-anchors_preset = -1
+anchors_preset = 5
 anchor_left = 0.5
-anchor_top = 1.0
 anchor_right = 0.5
-anchor_bottom = 1.0
+offset_left = -67.0
+offset_right = 67.0
+offset_bottom = 12.0
 grow_horizontal = 2
-grow_vertical = 0
 theme_override_colors/font_color = Color(0.443137, 0.407843, 0.290196, 1)
 theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
 theme_override_constants/outline_size = 4
@@ -400,7 +411,7 @@ text = "Build mode (press \"escape\" to exit)"
 horizontal_alignment = 1
 vertical_alignment = 2
 
-[node name="AspectRatioContainer" type="AspectRatioContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings"]
+[node name="AspectRatioContainer" type="AspectRatioContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings"]
 layout_mode = 1
 anchors_preset = 15
 anchor_right = 1.0
@@ -409,22 +420,22 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
-[node name="SubViewportContainer" type="SubViewportContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer"]
+[node name="SubViewportContainer" type="SubViewportContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer"]
 layout_mode = 2
 mouse_filter = 2
 stretch = true
 
-[node name="SubViewport" type="SubViewport" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer/SubViewportContainer"]
+[node name="SubViewport" type="SubViewport" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer/SubViewportContainer"]
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(2, 2)
+size = Vector2i(354, 354)
 render_target_update_mode = 4
 
-[node name="Dicer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
+[node name="Dicer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
 unique_name_in_owner = true
 
-[node name="PlayersContainerBorrar" type="HFlowContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings"]
+[node name="PlayersContainerBorrar" type="HFlowContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings"]
 visible = false
 layout_mode = 1
 anchors_preset = 10
@@ -434,30 +445,30 @@ offset_bottom = 40.0
 grow_horizontal = 2
 alignment = 1
 
-[node name="PlayerFlow" type="PanelContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar"]
+[node name="PlayerFlow" type="PanelContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_402ae")
 
-[node name="H" type="HBoxContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow"]
+[node name="H" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow"]
 layout_mode = 2
 
-[node name="Label" type="Label" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H"]
+[node name="Label" type="Label" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H"]
 custom_minimum_size = Vector2(84, 0)
 layout_mode = 2
 text = "Playeraaaaaaaaaaaaa"
 clip_text = true
 
-[node name="FlowController" type="PanelContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H"]
+[node name="FlowController" type="PanelContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H"]
 layout_mode = 2
 size_flags_horizontal = 6
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_8eqv5")
 
-[node name="H" type="HBoxContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController"]
+[node name="H" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="PlayButton" type="Button" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController/H"]
+[node name="PlayButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -471,7 +482,7 @@ button_pressed = true
 button_group = SubResource("ButtonGroup_eptgt")
 icon = ExtResource("11_46b2c")
 
-[node name="PauseButton" type="Button" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController/H"]
+[node name="PauseButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -484,7 +495,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_eptgt")
 icon = ExtResource("12_blpem")
 
-[node name="StopButton" type="Button" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController/H"]
+[node name="StopButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/PlayersContainerBorrar/PlayerFlow/H/FlowController/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -498,7 +509,14 @@ button_group = SubResource("ButtonGroup_eptgt")
 icon = ExtResource("13_4613w")
 alignment = 2
 
-[node name="RestoreDownButton" type="Button" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs"]
+[node name="ModeController" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings" instance=ExtResource("14_yiu68")]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = -1
+offset_right = 0.0
+offset_bottom = 0.0
+
+[node name="RestoreDownButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 1
@@ -515,48 +533,51 @@ grow_horizontal = 0
 grow_vertical = 0
 icon = ExtResource("6_o08ft")
 
-[node name="InfoContainer" type="MarginContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs"]
+[node name="InfoContainer" type="MarginContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs"]
 visible = false
 layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -38.0
+offset_right = 38.0
+offset_bottom = 49.0
 grow_horizontal = 2
-grow_vertical = 2
 theme_override_constants/margin_left = 8
 theme_override_constants/margin_top = 32
 
-[node name="H" type="HBoxContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/InfoContainer"]
+[node name="H" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/InfoContainer"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="StateLabel" type="Label" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/InfoContainer/H"]
+[node name="StateLabel" type="Label" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/InfoContainer/H"]
 layout_mode = 2
 text = "State:"
 
-[node name="StateLabelValue" type="Label" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/InfoContainer/H"]
+[node name="StateLabelValue" type="Label" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/InfoContainer/H"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "None"
 
-[node name="H2" type="HBoxContainer" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/InfoContainer"]
+[node name="H2" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/InfoContainer"]
+visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
 
-[node name="PlayerLabel" type="Label" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/InfoContainer/H2"]
+[node name="PlayerLabel" type="Label" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/InfoContainer/H2"]
 layout_mode = 2
 text = "Player:"
 
-[node name="PlayerLabelValue" type="Label" parent="V/IDE/H/H/Middle/MiddleUp/MiddleUpTabs/InfoContainer/H2"]
+[node name="PlayerLabelValue" type="Label" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/InfoContainer/H2"]
 unique_name_in_owner = true
 layout_mode = 2
 text = "None"
 
 [node name="MiddleDown" type="PanelContainer" parent="V/IDE/H/H/Middle"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 320)
+custom_minimum_size = Vector2(0, 280)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_trsl8")
@@ -572,7 +593,6 @@ tabs_rearrange_group = 0
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-mode_button_group = SubResource("ButtonGroup_e1kdt")
 metadata/_tab_index = 0
 
 [node name="Resources" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("9_l1602")]

@@ -23,7 +23,7 @@ void fragment() {
 	ALBEDO = 0.25 * albedo_tex.rgb;
 	alpha = albedo_tex.a;
 	ALPHA = min(0.1, alpha);
-	
+
 	if (is_darkvision_view) {
 		vec3 color = ALBEDO.rgb;
 		float brightness = pow((color.r * color.g * color.b), 0.33);
@@ -33,23 +33,23 @@ void fragment() {
 
 
 void light() {
-	
+
 	// if fragment is seen
 	if (is_master_view || SPECULAR_LIGHT.z == 0.0001) {
 		ALPHA = alpha;
 		DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
-		
+
 	} else {
-		
+
 		// if is in view for any viewer
 		if (ATTENUATION * SPECULAR_AMOUNT > 0.01)
 			SPECULAR_LIGHT.y = 0.0001;                   // fragment is seen
 		else
 			DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
-			
+
 		// if is in light for any lighter
 		 if (has_ambient_light || DIFFUSE_LIGHT.x > 0.0001 || DIFFUSE_LIGHT.y > 0.0001 || DIFFUSE_LIGHT.z > 0.0001)
-			SPECULAR_LIGHT.x = 0.0001;  
+			SPECULAR_LIGHT.x = 0.0001;
 
 		// if is in view and light
 		if (SPECULAR_LIGHT.x == 0.0001 && SPECULAR_LIGHT.y == 0.0001) {

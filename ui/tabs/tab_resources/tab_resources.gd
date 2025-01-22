@@ -7,11 +7,15 @@ const SOUND_ICON = preload("res://resources/icons/sound_icon.png")
 const FILE_ICON = preload("res://resources/icons/file_icon.png")
 
 var root: TreeItem
-var item_selected: TreeItem
+var item_selected: TreeItem :
+	get: return tree.get_selected()
+
 var resource_selected: CampaignResource :
 	get: 
-		if not item_selected: return
-		if item_selected == root: return
+		if not item_selected: 
+			return
+		if item_selected == root: 
+			return
 		return item_selected.get_metadata(0)
 
 var resource_items := {}
@@ -36,9 +40,6 @@ func _ready() -> void:
 	scan_button.pressed.connect(reset)
 	folder_button.pressed.connect(_on_folder_button_pressed)
 	
-	entity_button.pressed.connect(_on_instance_button_pressed.bind(entity_button, LevelBuildingState.NEW_ENTITY))
-	light_button.pressed.connect(_on_instance_button_pressed.bind(light_button, LevelBuildingState.NEW_LIGHT))
-	shape_button.pressed.connect(_on_instance_button_pressed.bind(shape_button, LevelBuildingState.NEW_SHAPE))
 	visibility_changed.connect(_on_visibility_changed)
 	
 	tree.item_mouse_selected.connect(_on_item_mouse_selected)
@@ -62,27 +63,8 @@ func _on_folder_button_pressed() -> void:
 		_: Utils.open_in_file_manager(resource.abspath.get_base_dir())
 
 
-func _on_instance_button_pressed(button: Button, mode: int) -> void:
-	var state_machine := Game.ui.selected_map.selected_level.state_machine
-	if button.button_pressed:
-		state_machine.get_state_node("Building").mode = mode
-		state_machine.change_state("Building")
-	else:
-		state_machine.change_state("Idle")
-
-
 func _on_visibility_changed():
-	item_selected = null
 	tree.deselect_all()
-	
-	if not Game.ui.selected_map:
-		return
-	
-	var state_machine := Game.ui.selected_map.selected_level.state_machine
-	if not visible:
-		if state_machine.state == "Building":
-			state_machine.change_state("Idle")
-			Utils.reset_button_group(entity_button.button_group)
 		
 		
 func add_resource(parent: TreeItem, resource: CampaignResource) -> TreeItem:
