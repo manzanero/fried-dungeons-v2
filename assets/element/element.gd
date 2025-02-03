@@ -11,15 +11,20 @@ var level: Level
 
 var snapping := Game.SNAPPING_QUARTER 
 var is_ceiling_element: bool
-var reference: CampaignElement
+var blueprint: CampaignBlueprint
+#var blueprint_excluded_properties: Array[String] = []
 
 var init_properties := {}
-var properties := {}
+var properties := {} :
+	set(value):
+		properties = value
+		update_properties()
 var id: String :
-	set(value): 
+	set(value):
 		id = value
 		name = id
 
+var type := "element"
 var label := "Unknown"
 var color := Color.BLUE
 var description := ""
@@ -38,7 +43,7 @@ var is_moving_to_target: bool
 var position_2d: Vector2 :
 	get: return Utils.v3_to_v2(global_position)
 var rotation_y: float :
-	get: return rotation.y
+	get: return snappedf(rotation.y, 0.001)
 var flipped := false : set = _set_flipped
 
 var properties_values: Dictionary :
@@ -65,13 +70,18 @@ func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {},
 	is_selectable = Game.campaign.is_master
 	_init_property_list(_properties)
 	property_changed.connect(_on_property_changed)
+	update()
 	return self
 
+# override 
+func update():
+	pass
 
-func _init_property_list(_properties):
+
+func _init_property_list(_properties_data):
 	for property_name in init_properties:
 		var property_data: Dictionary = init_properties[property_name]
-		var value = _properties.get(property_name, property_data.default)
+		var value = _properties_data.get(property_name, property_data.default)
 		
 		init_property(property_data.container, property_name, property_data.hint, property_data.params, value)
 		change_property(property_name, value)
@@ -91,28 +101,54 @@ func init_property(container: String, property_name: String,
 	properties[property_name] = Property.new(container, hint, params, default)
 
 
-func set_property_value(property_name: String, new_value: Variant) -> void:
-	if new_value is Property:
-		if not properties.has(property_name):
-			init_property(properties.container, property_name, 
-					new_value.hint, new_value.params, new_value.value)
-			return
+func get_property(property_name: String, default: Variant = null) -> Property:
+	return properties.get(property_name, default)
 
-		new_value = new_value.value
 
-	var old_value = properties.get(property_name).value if properties.has(property_name) else null
+func set_property_value(property_name: String, new_value: Variant) -> Property:
+	var property := get_property(property_name)
+	var old_value: Variant = property.value
 	if old_value == new_value:
 		return
 
-	properties[property_name].value = new_value
+	property.value = new_value
 	property_changed.emit(property_name, old_value, new_value)
 	
 	if property_name == "label":
 		Game.ui.tab_elements.changed_element(self)
+		
+	return property
 
 
-func get_property(property_name: String, default: Variant = null) -> Property:
-	return properties.get(property_name, default)
+func set_raw_property_value(property_name: String, new_value: Variant) -> Property:
+	var property := get_property(property_name)
+	var old_value: Variant = property.value
+	var parsed_new_value: Variant = property.set_raw(new_value)
+	if old_value == parsed_new_value:
+		return
+
+	property.value = parsed_new_value
+	property_changed.emit(property_name, old_value, parsed_new_value)
+	return property
+
+
+func set_property_values(property_values: Dictionary) -> Dictionary:
+	for property_name in property_values:
+		set_property_value(property_name, property_values[property_name])
+	return properties
+
+
+func get_raw_property_values() -> Dictionary:
+	var raw_properties := {}
+	for property_name in properties:
+		raw_properties[property_name] = properties[property_name].get_raw()
+	return raw_properties
+
+
+func set_raw_property_values(raw_property_values: Dictionary) -> Dictionary:
+	for property_name in raw_property_values:
+		set_raw_property_value(property_name, raw_property_values[property_name])
+	return properties
 		
 		
 func update_properties():
@@ -176,31 +212,54 @@ func _get_target_hovered() -> Vector3:
 	if is_rotated: 
 		return Utils.v2_to_v3(level.exact_position_hovered)
 		
-	var drag_position := level.ceilling_hovered if is_ceiling_element else level.position_hovered
+	var drag_position := level.exact_ceilling_hovered if is_ceiling_element else level.exact_position_hovered
 	drag_position -= level.drag_offset
-	if not Input.is_key_pressed(KEY_ALT): 
+	if Input.is_key_pressed(KEY_ALT): 
+		drag_position = drag_position.snappedf(Game.U)
+	else:
 		drag_position = drag_position.snappedf(snapping)
 		
 	return Utils.v2_to_v3(drag_position)
 
 
-func look_target(target_hovered: Vector3):
+func look_target(delta: float, target_hovered: Vector3):
 	if target_hovered.distance_to(position) < 0.125:
 		return
+	
+	var direction := -position.direction_to(target_hovered)
+	var snapped_direction = direction
+	if not Input.is_key_pressed(KEY_ALT):
+		snapped_direction = snap_direction_to_angle(direction, PI / 4)
+	
+	var current_quat := Quaternion(global_transform.basis)
+	var target_quat := Quaternion(Basis.looking_at(snapped_direction, Vector3.UP))
+	
+	if basis.z.angle_to(-snapped_direction) < PI / 32:
+		current_quat = target_quat
 		
-	look_at(target_hovered, Vector3.UP, true)
-	rotation.y = snapped(rotation.y, 0.001 if Input.is_key_pressed(KEY_ALT) else PI / 8)
+	var new_quat := target_quat
+	if not Input.is_key_pressed(KEY_CTRL):
+		new_quat = current_quat.slerp(target_quat, 16 * delta)
+		
+	global_transform.basis = Basis(new_quat)
+	
+	
+func snap_direction_to_angle(direction: Vector3, step: float) -> Vector3:
+	var angle = atan2(direction.x, direction.z)  # Get current yaw angle
+	var snapped_angle = snapped(angle, step)  # Snap to nearest step
+	return Vector3(sin(snapped_angle), 0, cos(snapped_angle))  # Convert back to a direction
+
 
 
 func _physics_process(delta: float) -> void:
 	if is_preview:
-		_preview_process()
+		_preview_process(delta)
 		return
 	
-	if is_dragged:
+	if is_dragged and not Game.flow.is_paused:
 		#set_multiplayer_authority(multiplayer.get_unique_id())  # TODO
 		_flip_process()
-		_dragged_process()
+		_dragged_process(delta)
 	
 	if is_moving_to_target:
 		var vector_to_target := target_position - global_position
@@ -236,7 +295,7 @@ func _physics_process(delta: float) -> void:
 				#Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
 			
 			
-func _preview_process() -> void:
+func _preview_process(delta: float) -> void:
 	if not Game.ui.is_mouse_over_scene_tab:
 		global_position = Game.ui.selected_map.camera.focus_hint_3d.global_position
 		return
@@ -247,7 +306,7 @@ func _preview_process() -> void:
 		
 	var target_hovered := _get_target_hovered()
 	if is_rotated:
-		look_target(target_hovered)
+		look_target(delta, target_hovered)
 	else:
 		global_position = target_hovered
 		target_position = target_hovered
@@ -260,9 +319,13 @@ func _flip_process() -> void:
 		Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y, flipped)
 
 
-func _dragged_process() -> void:
+func _dragged_process(delta: float) -> void:
 	is_rotated = Input.is_action_pressed("rotate")
 	#is_rotated = Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
+	
+	#if not level.mouse_move:
+		#return
+	#level.mouse_move = false
 	
 	var target_hovered := _get_target_hovered()
 	var ticks_msec := Time.get_ticks_msec()
@@ -270,7 +333,7 @@ func _dragged_process() -> void:
 	# forced change
 	if multiplayer.is_server() and Input.is_key_pressed(KEY_CTRL):
 		if is_rotated:
-			look_target(target_hovered)
+			look_target(delta, target_hovered)
 		else:
 			global_position = target_hovered
 
@@ -282,7 +345,7 @@ func _dragged_process() -> void:
 	
 	# target change
 	if is_rotated:
-		look_target(target_hovered)
+		look_target(delta, target_hovered)
 	else:
 		var vector_to_target := target_hovered - global_position
 		if vector_to_target.length() < 0.001:
@@ -311,8 +374,22 @@ func remove():
 	level.elements.erase(id)
 	
 	queue_free()
-	
-	
+
+
+func _on_blueprint_changed() -> void:
+	set_property_values(blueprint.properties)
+	if is_selected:
+		Game.ui.tab_properties.refresh()
+	Debug.print_info_message("Element %s changed Blueprint: " + blueprint.path)
+	Game.server.rpcs.change_element_properties.rpc(map.slug, level.index, id, get_raw_property_values())
+
+
+func _on_blueprint_removed() -> void:
+	set_property_value("blueprint", null)
+	if is_selected:
+		Game.ui.tab_properties.refresh()
+	Debug.print_info_message("Element %s removed Blueprint")
+
 
 class Property:
 	var container: String
@@ -325,36 +402,40 @@ class Property:
 		hint = _hint
 		params = _params
 		value = _value
-
+	
 	func set_raw(_value):
-		match hint:
-			Hints.COLOR:
-				value = Utils.html_color_to_color(_value)
-			#Hints.INTEGER:
-				#value = _value * 100.0 if params.get("is_percentage") else _value
-			#Hints.FLOAT:
-				#value = _value * 100.0 if params.get("is_percentage") else _value
-			_:
-				value = _value
-				
+		value = Element.set_raw_property(hint, _value)
+		return value
+	
 	func get_raw():
-		match hint:
-			Hints.COLOR:
-				return Utils.color_to_html_color(value)
-			#Hints.INTEGER:
-				#return value / 100.0 if params.get("is_percentage") else value
-			#Hints.FLOAT:
-				#return value / 100.0 if params.get("is_percentage") else value
-			_:
-				return value
+		return Element.get_raw_property(hint, value)
 
-	class Hints:
-		const BOOL = "bool_hint"
-		const COLOR = "color_hint"
-		const FLOAT = "float_hint"
-		const INTEGER = "integer_hint"
-		const STRING = "string_hint"
-		const TEXT_AREA = "text_area_hint"
-		const VECTOR_2 = "vector_2_hint"
-		const TEXTURE = "texture_hint"
-		const CHOICE = "choice_hint"
+
+static func set_raw_property(hint: StringName, value: Variant) -> Variant:
+	match hint:
+		Hint.COLOR:
+			return Utils.html_color_to_color(value)
+		Hint.BLUEPRINT:
+			return Game.blueprints.get(value)
+	return value
+
+static func get_raw_property(hint: StringName, value: Variant) -> Variant:
+	match hint:
+		Hint.COLOR:
+			return Utils.color_to_html_color(value)
+		Hint.BLUEPRINT:
+			return value.path if value else ""
+	return value
+
+
+class Hint:
+	const BOOL = "bool_hint"
+	const COLOR = "color_hint"
+	const FLOAT = "float_hint"
+	const INTEGER = "integer_hint"
+	const STRING = "string_hint"
+	const TEXT_AREA = "text_area_hint"
+	const VECTOR_2 = "vector_2_hint"
+	const TEXTURE = "texture_hint"
+	const CHOICE = "choice_hint"
+	const BLUEPRINT = "blueprint_hint"

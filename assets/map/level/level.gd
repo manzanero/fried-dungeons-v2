@@ -42,10 +42,12 @@ var is_selected: bool :
 var is_ground_hovered: bool
 var exact_position_hovered: Vector2
 var position_hovered: Vector2
+var exact_ceilling_hovered: Vector2
 var ceilling_hovered: Vector2
 var tile_hovered: Vector2i
 var selected_wall: Wall
 var drag_offset: Vector2
+var mouse_move: bool
 var element_selected: Element :
 	set(value):
 		element_selected = value
@@ -123,6 +125,10 @@ func _ready():
 	# modes
 	Game.modes.mode_changed.connect(update_mode)
 	visibility_changed.connect(update_mode)
+	Game.flow.changed.connect(func ():
+		if element_selected:
+			element_selected.is_dragged = false
+	)
 	change_state(State.GO_IDLE)
 	
 	#region light
@@ -280,31 +286,6 @@ func _process(_delta: float) -> void:
 	
 	if Engine.get_process_frames() % 6 == 0:
 		_on_refreshed_light()
-		
-	#_process_copy()
-	_process_delete()
-
-
-func _process_delete() -> void:
-	#if Game.campaign and Game.campaign.is_master and Game.ui.is_mouse_over_scene_tab:
-		
-	# Delete without ask
-	if Input.is_action_just_pressed("force_delete"):
-		if is_instance_valid(element_selected):
-			element_selected.remove()
-			
-			Game.server.rpcs.remove_element.rpc(map.slug, index, element_selected.id)
-			
-	elif Input.is_action_just_pressed("delete"):
-		if is_instance_valid(element_selected):
-			Game.ui.mouse_blocker.visible = true
-			Game.ui.delete_element_window.visible = true
-			Game.ui.delete_element_window.element_selected = element_selected
-			
-			var response = await Game.ui.delete_element_window.response
-			if response:
-				element_selected.remove()
-				Game.server.rpcs.remove_element.rpc(map.slug, index, element_selected.id)
 
 
 func set_cell_data(tile: Vector2i, tile_data: Dictionary):
@@ -315,6 +296,27 @@ func set_cell_data(tile: Vector2i, tile_data: Dictionary):
 func remove_cell(tile: Vector2i):
 	cells.erase(tile)
 	viewport_3d.tile_map_remove_cell(tile)
+		
+
+func select(thing):
+	if thing is Element:
+		thing.is_selected = true
+	else:
+		if is_instance_valid(element_selected):
+			element_selected.is_selected = false
+		element_selected = null
+			
+	if thing is Wall:
+		thing.is_selected = true
+		selected_wall = thing
+		for wall in walls_parent.get_children():
+			if wall != thing:
+				wall.is_selected = false
+		
+	else:
+		selected_wall = null
+		for wall in walls_parent.get_children():
+			wall.is_selected = false
 
 
 #region input
@@ -323,7 +325,10 @@ func _input(event):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
 			Debug.print_debug_message("Tile clicked: %s" % tile_hovered)
-
+		mouse_move = false
+			
+	elif event is InputEventMouseMotion:
+		mouse_move = event.relative != Vector2.ZERO
 
 #endregion
 

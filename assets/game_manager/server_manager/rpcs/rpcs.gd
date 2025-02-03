@@ -2,11 +2,6 @@ class_name Rpcs
 extends Node
 
 
-#@rpc("any_peer", "reliable")
-#func change_flow_state(state: FlowController.State):
-	#Game.flow.change_flow_state(state)
-
-
 @rpc("any_peer", "reliable")
 func change_flow_state(global_state: FlowController.State, campaign_players: Dictionary):
 	var state := global_state
@@ -245,11 +240,11 @@ func create_light(map_slug: String, level_index: int, id: String, position_2d: V
 
 
 @rpc("any_peer", "reliable")
-func create_shape(map_slug: String, level_index: int, id: String, position_2d: Vector2,
+func create_prop(map_slug: String, level_index: int, id: String, position_2d: Vector2,
 		properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	var shape := map.instancer.create_shape(level, id, position_2d, 
+	var shape := map.instancer.create_prop(level, id, position_2d, 
 			properties_values, rotation_y, flipped)
 	Debug.print_info_message("Shape \"%s\" created" % shape.id)
 
@@ -290,6 +285,20 @@ func change_element_property(map_slug: String, level_index: int, id: String,
 	var element := _get_element_by_id(level, id); if not element: return
 	element.set_property_value(property_name, new_value)
 	Debug.print_info_message("Element \"%s\" changed property \"%s\" to value \"%s\"" % [element.id, property_name, new_value])
+
+
+@rpc("any_peer", "reliable")
+func change_element_properties(map_slug: String, level_index: int, id: String, 
+		property_values: Dictionary) -> void:
+	var map: Map = _get_map_by_slug(map_slug); if not map: return
+	var level: Level = _get_level_by_index(map, level_index); if not level: return
+	var element := _get_element_by_id(level, id); if not element: return
+	match element.type:
+		"light": property_values = Light.parse_raw_property_values(property_values)
+		"entity": property_values = Entity.parse_raw_property_values(property_values)
+		"prop": property_values = Shape.parse_raw_property_values(property_values)
+	element.set_property_values(property_values)
+	Debug.print_info_message("Element \"%s\" changed properties" % [element.id])
 
 
 @rpc("any_peer", "reliable")

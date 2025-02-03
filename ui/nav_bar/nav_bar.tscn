@@ -4,53 +4,76 @@
 [ext_resource type="Script" path="res://ui/nav_bar/nav_bar.gd" id="1_qtvx2"]
 [ext_resource type="PackedScene" uid="uid://mbh4bgg0t31y" path="res://ui/master_volume_controller/master_volume_controller.tscn" id="2_xc25p"]
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t0uer"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4isnj"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.0431373, 0.0470588, 0.0470588, 1)
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+border_blend = true
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
 
 [node name="NavBar" type="MarginContainer"]
 offset_right = 1280.0
 offset_bottom = 28.0
-theme_override_constants/margin_left = 8
+theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 script = ExtResource("1_qtvx2")
 
-[node name="C" type="HBoxContainer" parent="."]
+[node name="C3" type="PanelContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_4isnj")
+
+[node name="C" type="HBoxContainer" parent="C3"]
 layout_mode = 2
 
-[node name="MenuBar" type="MenuBar" parent="C"]
+[node name="MenuBar" type="MenuBar" parent="C3/C"]
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 4
-theme_override_styles/normal = SubResource("StyleBoxEmpty_t0uer")
+theme_override_constants/h_separation = 0
 prefer_global_menu = false
 
-[node name="Campaing" type="PopupMenu" parent="C/MenuBar"]
+[node name="Campaing" type="PopupMenu" parent="C3/C/MenuBar"]
 unique_name_in_owner = true
 auto_translate_mode = 1
 size = Vector2i(181, 100)
 
-[node name="Preferences" type="PopupMenu" parent="C/MenuBar"]
+[node name="Preferences" type="PopupMenu" parent="C3/C/MenuBar"]
 unique_name_in_owner = true
 auto_translate_mode = 1
 
-[node name="Help" type="PopupMenu" parent="C/MenuBar"]
+[node name="Help" type="PopupMenu" parent="C3/C/MenuBar"]
 unique_name_in_owner = true
 auto_translate_mode = 1
 
 [node name="FlowController" parent="." instance=ExtResource("1_cargd")]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 1
 
-[node name="C2" type="MarginContainer" parent="."]
+[node name="C" type="PanelContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 8
-theme_override_constants/margin_right = 16
+theme_override_styles/panel = SubResource("StyleBoxFlat_4isnj")
 
-[node name="MasterVolumeController" parent="C2" instance=ExtResource("2_xc25p")]
+[node name="C2" type="MarginContainer" parent="C"]
+layout_mode = 2
+size_flags_horizontal = 8
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_right = 8
+
+[node name="MasterVolumeController" parent="C/C2" instance=ExtResource("2_xc25p")]
 unique_name_in_owner = true
 layout_mode = 2

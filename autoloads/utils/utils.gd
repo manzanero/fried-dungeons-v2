@@ -245,6 +245,32 @@ func get_boundary_points(curve: Curve3D, point: Vector3) -> Array[int]:
 	return [a, b]
 
 
+func get_tree_path(item: TreeItem) -> String:
+	if not item:
+		return ""
+	var path := ""
+	var root := item.get_tree().get_root()
+	while item != root:
+		path = "%s/%s" % [item.get_text(0), path]
+		item = item.get_parent()
+	return path.rstrip("/")
+	
+
+func temp_info_tooltip(text: String, timeout: float = 2.0, mirrowed := false) -> Control:
+	var panel := temp_tooltip(text, timeout, mirrowed)
+	panel.add_theme_stylebox_override("panel", preload("res://resources/themes/main/tooltip_info_panel.tres"))
+	return panel
+
+func temp_warning_tooltip(text: String, timeout: float = 2.0, mirrowed := false) -> Control:
+	var panel := temp_tooltip(text, timeout, mirrowed)
+	panel.add_theme_stylebox_override("panel", preload("res://resources/themes/main/tooltip_warning_panel.tres"))
+	return panel
+
+func temp_error_tooltip(text: String, timeout: float = 2.0, mirrowed := false) -> Control:
+	var panel := temp_tooltip(text, timeout, mirrowed)
+	panel.add_theme_stylebox_override("panel", preload("res://resources/themes/main/tooltip_error_panel.tres"))
+	return panel
+	
 func temp_tooltip(text: String, timeout: float = 2.0, mirrowed := false) -> Control:
 	var label := Label.new()
 	var panel := PanelContainer.new()
@@ -252,18 +278,13 @@ func temp_tooltip(text: String, timeout: float = 2.0, mirrowed := false) -> Cont
 	panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	label.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	get_tree().root.add_child(panel)
-	get_tree().create_timer(timeout).timeout.connect(panel.queue_free)
+	if timeout:
+		get_tree().create_timer(timeout).timeout.connect(panel.queue_free)
 	label.text = text
 	panel.position = get_viewport().get_mouse_position()
-	var style: StyleBoxFlat = panel.get_theme_stylebox("panel")
-	style.bg_color = Color.BLACK
-	style.bg_color.a = 0.85
-	style.content_margin_top = 4
-	style.content_margin_bottom = 4
-	style.content_margin_left = 8
-	style.content_margin_right = 8
+	panel.position.y -= panel.size.y * 3
 	if mirrowed:
-		panel.position.x -= panel.size.x
+		panel.position.x -= panel.size.x + panel.size.y
 	return panel
 
 
@@ -409,6 +430,19 @@ func create_unique_folder(path: String, sep_char := "-") -> int:
 			unique_path = "%s%s%s" % [path, sep_char, siblins]
 
 	make_dirs(unique_path)
+	return siblins
+
+
+func file_siblings_count(path: String) -> int:
+	var siblins := 0
+	var extension := path.get_extension()
+	var basename := path.get_basename()
+	var unique_path := basename
+
+	while FileAccess.file_exists("%s.%s" % [unique_path, extension]):
+		siblins += 1
+		unique_path = "%s %s" % [basename, siblins + 1]
+
 	return siblins
 	
 

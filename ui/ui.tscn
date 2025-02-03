@@ -1,4 +1,4 @@
-[gd_scene load_steps=44 format=3 uid="uid://bo0uwbj6jw1oj"]
+[gd_scene load_steps=47 format=3 uid="uid://bo0uwbj6jw1oj"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" uid="uid://dhbx748ct8awa" path="res://ui/tabs/tab_messages/tab_messages.tscn" id="6_r4wjl"]
 [ext_resource type="PackedScene" uid="uid://qg2jutjaad46" path="res://ui/tabs/tab_settings/tab_settings.tscn" id="7_cdf46"]
 [ext_resource type="PackedScene" uid="uid://bxt6nwjxeo4i8" path="res://ui/tabs/tab_jukebox/tab_jukebox.tscn" id="7_s1ltk"]
+[ext_resource type="PackedScene" uid="uid://cf4l6g0krsom" path="res://ui/tabs/tab_blueprints/tab_blueprints.tscn" id="8_4jyo6"]
 [ext_resource type="PackedScene" uid="uid://c3oq3t62qadp0" path="res://ui/tabs/tab_resources/tab_resources.tscn" id="9_l1602"]
 [ext_resource type="PackedScene" uid="uid://bkcl57vwjmf07" path="res://ui/manual/manual.tscn" id="9_uc1vt"]
 [ext_resource type="Texture2D" uid="uid://djhtp0rlxmu50" path="res://resources/icons/play_icon.png" id="11_46b2c"]
@@ -28,6 +29,7 @@
 [ext_resource type="PackedScene" uid="uid://bu5aahaphq4oa" path="res://ui/fried_window/join_campaign_window/join_campaign_window.tscn" id="22_0du2c"]
 [ext_resource type="PackedScene" uid="uid://b6q5i32b5tq6y" path="res://ui/fried_window/delete_element_window/delete_element_window.tscn" id="22_ljr54"]
 [ext_resource type="PackedScene" uid="uid://uo3ugi4hm5ry" path="res://ui/fried_window/campaign_players_window/campaign_players_window.tscn" id="25_1r2m4"]
+[ext_resource type="PackedScene" uid="uid://df6f4gleuroml" path="res://ui/fried_window/how_to_start_window/how_to_start_window.tscn" id="28_2wh67"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yr7b3"]
 
@@ -59,13 +61,23 @@ shadow_size = 4
 shadow_offset = Vector2(0, 2)
 anti_aliasing = false
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_civsh"]
+draw_center = false
+border_width_left = 16
+border_width_top = 16
+border_width_right = 16
+border_width_bottom = 16
+border_color = Color(0, 0, 0, 1)
+border_blend = true
+corner_detail = 1
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_knwtu"]
 draw_center = false
 border_width_left = 24
 border_width_top = 24
 border_width_right = 24
 border_width_bottom = 24
-border_color = Color(0.456639, 0.592415, 0.695978, 1)
+border_color = Color(1, 1, 1, 1)
 border_blend = true
 corner_detail = 1
 
@@ -277,12 +289,6 @@ unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="Jukebox" parent="V/IDE/H/H/Left/LeftUp/LeftUpTabs" instance=ExtResource("7_s1ltk")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-metadata/_tab_index = 1
-
 [node name="LeftDown" type="PanelContainer" parent="V/IDE/H/H/Left"]
 unique_name_in_owner = true
 layout_mode = 2
@@ -296,12 +302,12 @@ layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 
-[node name="World" parent="V/IDE/H/H/Left/LeftDown/LeftDownTabs" instance=ExtResource("3_e6fcj")]
+[node name="Blueprints" parent="V/IDE/H/H/Left/LeftDown/LeftDownTabs" instance=ExtResource("8_4jyo6")]
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="Players" parent="V/IDE/H/H/Left/LeftDown/LeftDownTabs" instance=ExtResource("5_w7n2g")]
+[node name="World" parent="V/IDE/H/H/Left/LeftDown/LeftDownTabs" instance=ExtResource("3_e6fcj")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -367,6 +373,18 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 
+[node name="Border" type="Panel" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings"]
+unique_name_in_owner = true
+clip_contents = true
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_civsh")
+
 [node name="FadeTransition" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings" instance=ExtResource("6_mw1aj")]
 unique_name_in_owner = true
 visible = true
@@ -429,7 +447,7 @@ stretch = true
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(354, 354)
+size = Vector2i(353, 353)
 render_target_update_mode = 4
 
 [node name="Dicer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
@@ -589,22 +607,28 @@ current_tab = 1
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
 
-[node name="Builder" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("6_jy8ng")]
+[node name="Players" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("5_w7n2g")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="Resources" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("9_l1602")]
+[node name="Materials" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("6_jy8ng")]
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 1
+
+[node name="Resources" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("9_l1602")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
 
 [node name="Debugger" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("4_g7vlm")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-metadata/_tab_index = 2
+metadata/_tab_index = 3
 
 [node name="MinimizeDownButton" type="Button" parent="V/IDE/H/H/Middle/MiddleDown"]
 unique_name_in_owner = true
@@ -645,6 +669,12 @@ unique_name_in_owner = true
 visible = false
 layout_mode = 2
 metadata/_tab_index = 1
+
+[node name="Jukebox" parent="V/IDE/H/Right/RightUp/RightUpTabs" instance=ExtResource("7_s1ltk")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 2
 
 [node name="RightDown" type="PanelContainer" parent="V/IDE/H/Right"]
 unique_name_in_owner = true
@@ -717,6 +747,19 @@ offset_top = 100.0
 offset_right = 503.0
 offset_bottom = 590.0
 is_invisible_on_close = true
+
+[node name="HowToStartWindow" parent="CornerWindows" instance=ExtResource("28_2wh67")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -682.0
+offset_top = 91.0
+offset_right = -85.0
+offset_bottom = 629.0
+grow_horizontal = 0
 
 [node name="CenterWindows" type="CenterContainer" parent="."]
 unique_name_in_owner = true

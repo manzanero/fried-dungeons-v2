@@ -1,0 +1,68 @@
+[gd_scene load_steps=6 format=3 uid="uid://b3d83roncqixw"]
+
+[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="1_mg881"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ue4d1"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.133844, 0.277652, 0.513721, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.233286, 0.370984, 0.648786, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a8iq6"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.133844, 0.277652, 0.513721, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.233286, 0.370984, 0.648786, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iubon"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.106556, 0.231172, 0.435709, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.194939, 0.318897, 0.569851, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gfux3"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[node name="FriedButtonBlue" type="Button"]
+custom_minimum_size = Vector2(0, 25)
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_ue4d1")
+theme_override_styles/hover = SubResource("StyleBoxFlat_a8iq6")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_iubon")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_gfux3")
+icon = ExtResource("1_mg881")
+icon_alignment = 1

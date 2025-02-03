@@ -118,7 +118,7 @@ func refresh_tree():
 func open_selected_map():
 	var map_item := tree.get_selected()
 	if not map_item:
-		Utils.temp_tooltip("Select a map to be opened")
+		Utils.temp_error_tooltip("Select a map to be opened")
 		return
 		
 	var map_slug: String = selected_map_slug
@@ -142,7 +142,7 @@ func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_ind
 	var map_slug: String = selected_map_slug
 	
 	if map_slug == players_map:
-		Utils.temp_tooltip("Players already are in this map")
+		Utils.temp_error_tooltip("Players already are in this map")
 		return
 	
 	open_selected_map()
@@ -189,15 +189,15 @@ func _close_selected_map():
 func _on_close_selected_map_pressed():
 	var map_item := tree.get_selected()
 	if not map_item:
-		Utils.temp_tooltip("Select a map to be closed")
+		Utils.temp_error_tooltip("Select a map to be closed")
 		return
 	
 	if selected_map_slug not in Game.maps:
-		Utils.temp_tooltip("Selected map is not open")
+		Utils.temp_error_tooltip("Selected map is not open")
 		return
 	
 	if selected_map_slug == players_map:
-		Utils.temp_tooltip("Player's map cannot be closed. Send them to another map")
+		Utils.temp_error_tooltip("Player's map cannot be closed. Send them to another map")
 		return
 		
 	_close_selected_map()
@@ -208,11 +208,11 @@ func _on_close_selected_map_pressed():
 func _on_remove_button_pressed():
 	var map_item := tree.get_selected()
 	if not map_item:
-		Utils.temp_tooltip("Select a map to be removed")
+		Utils.temp_error_tooltip("Select a map to be removed")
 		return
 	
 	if selected_map_slug == players_map:
-		Utils.temp_tooltip("Player's map cannot be removed. Send them to another map")
+		Utils.temp_error_tooltip("Player's map cannot be removed. Send them to another map")
 		return
 		
 	_close_selected_map()

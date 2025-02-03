@@ -10,7 +10,7 @@ func _enter_state(previous_state: String) -> void:
 	level = get_target()
 	map = level.map
 	selector = level.selector
-	select(null)
+	level.select(null)
 	Debug.print_debug_message("Level %s of map \"%s\" leaved state: %s" % [level.index, map.slug, previous_state])
 
 
@@ -19,14 +19,14 @@ func _exit_state(next_state: String) -> void:
 
 
 func process_change_grid() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	selector.move_grid_to(level.position_hovered)
 
 
 func process_change_column(snapping := Game.SNAPPING_QUARTER) -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	var point_position := level.position_hovered
@@ -37,7 +37,7 @@ func process_change_column(snapping := Game.SNAPPING_QUARTER) -> void:
 
 
 func process_wall_selection():
-	if not Game.ui.is_mouse_over_scene_tab or Game.handled_input:
+	if not Game.ui.scene_tab_has_focus or Game.handled_input:
 		return
 	
 	if not Input.is_action_just_pressed("left_click"):
@@ -46,7 +46,7 @@ func process_wall_selection():
 	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.wall_ray)
 	if hit_info:
 		var wall_hitted := hit_info["collider"].get_parent() as Wall
-		select(wall_hitted)
+		level.select(wall_hitted)
 
 		Game.handled_input = true
 				
@@ -56,7 +56,7 @@ func process_wall_selection():
 
 
 func process_element_selection():
-	if not Game.ui.is_mouse_over_scene_tab or Game.handled_input:
+	if not Game.ui.scene_tab_has_focus or Game.handled_input:
 		return
 	
 	if not Input.is_action_just_pressed("left_click"):
@@ -69,7 +69,7 @@ func process_element_selection():
 			collider = collider.get_parent()
 		
 		var element_hitted: Element = collider
-		select(element_hitted)
+		level.select(element_hitted)
 		Game.handled_input = true
 		
 		Debug.print_debug_message("Element hitted \"%s\"" % element_hitted.id)
@@ -89,7 +89,7 @@ func process_element_movement():
 		level.element_selected.is_dragged = false
 		level.drag_offset = Vector2.ZERO
 	
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 	
 	if not Game.campaign.is_master and Game.flow.is_paused:
@@ -98,9 +98,9 @@ func process_element_movement():
 	if Input.is_action_just_pressed("left_click"):
 		level.element_selected.is_dragged = true
 		if level.element_selected.is_ceiling_element:
-			level.drag_offset = level.ceilling_hovered - level.element_selected.position_2d
+			level.drag_offset = level.exact_ceilling_hovered - level.element_selected.position_2d
 		else:
-			level.drag_offset = level.position_hovered - level.element_selected.position_2d
+			level.drag_offset = level.exact_position_hovered - level.element_selected.position_2d
 		
 
 func process_entity_follow():
@@ -133,25 +133,5 @@ func process_ceilling_hitted():
 	var hit_info = Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.ceilling_ray)
 	if hit_info:
 		var hit_position = hit_info["position"]
-		level.ceilling_hovered = Utils.v3_to_v2(hit_position.snappedf(Game.U))
-		
-
-func select(thing):
-	if thing is Element:
-		thing.is_selected = true
-	else:
-		if is_instance_valid(level.element_selected):
-			level.element_selected.is_selected = false
-		level.element_selected = null
-			
-	if thing is Wall:
-		thing.is_selected = true
-		level.selected_wall = thing
-		for wall in level.walls_parent.get_children():
-			if wall != thing:
-				wall.is_selected = false
-		
-	else:
-		level.selected_wall = null
-		for wall in level.walls_parent.get_children():
-			wall.is_selected = false
+		level.exact_ceilling_hovered = Utils.v3_to_v2(hit_position)
+		level.ceilling_hovered = level.exact_ceilling_hovered.snappedf(Game.U)

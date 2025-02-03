@@ -47,16 +47,16 @@ func _physics_process_state(_delta: float) -> String:
 	if Input.is_action_just_released("left_click"):
 		_end_drag()
 		
-	if not Game.ui.is_mouse_over_scene_tab or Game.handled_input:
+	if not Game.ui.scene_tab_has_focus or Game.handled_input:
 		return Level.State.KEEP
 	
 	if double_click:
 		double_click = false
 		_process_new_point()
-	elif Input.is_action_just_pressed("delete", true):
-		_process_remove_points()
 	elif Input.is_action_just_pressed("force_delete"):
 		_process_remove_walls()
+	elif Input.is_action_just_pressed("delete"):
+		_process_remove_points()
 	else:
 		_process_select_points()
 	
@@ -257,9 +257,9 @@ func _process_drag_points():
 		
 		var new_position: Vector3 = point_offsets[point] + drag_position
 		if Input.is_key_pressed(KEY_ALT):
-			point.position_3d = new_position.snapped(Game.VOXEL)
+			point.position_3d = new_position.snappedf(Game.U)
 		else:
-			point.position_3d = new_position.snapped(Game.VOXEL_SNAPPING_QUARTER)
+			point.position_3d = new_position.snappedf(Game.SNAPPING_QUARTER)
 	
 	var ticks_msec := Time.get_ticks_msec()
 	if next_update_ticks_msec < ticks_msec:
@@ -282,9 +282,12 @@ func _process_remove_points():
 
 func _process_remove_walls():
 	for wall in get_walls_selected():
-		wall.remove()
-	
-		Game.server.rpcs.remove_wall.rpc(wall.map.slug, wall.level.index, wall.id)
+		var indexes_selected: PackedInt32Array = []
+		for point in wall.points:
+			if point.is_selected:
+				indexes_selected.append(point.index)
+		
+		wall.break_points(indexes_selected)
 
 
 func _process_new_point():

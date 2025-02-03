@@ -58,13 +58,16 @@ var preferences_menu_items := [
 	{"type": MenuItemType.BUTTON, "label": PREFERENCES_MENU_ITEM_STYLES, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_Y},
 ]
 
+signal help_how_to_start_pressed
 signal help_manual_pressed
 signal help_about_pressed
 
+const HELP_MENU_ITEM_HOW_TO_START := "How to Start..."
 const HELP_MENU_ITEM_MANUAL := "Manual..."
 const HELP_MENU_ITEM_ABOUT := "About..."
 
 var help_menu_items := [
+	{"type": MenuItemType.BUTTON, "label": HELP_MENU_ITEM_HOW_TO_START, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_COMMA},
 	{"type": MenuItemType.BUTTON, "label": HELP_MENU_ITEM_MANUAL, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_M},
 	{"type": MenuItemType.SEPARATOR},
 	{"type": MenuItemType.BUTTON, "label": HELP_MENU_ITEM_ABOUT, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_O},
@@ -84,7 +87,7 @@ var _preferences_menu_ids := {}
 var _help_menu_ids := {}
 
 
-func _ready() -> void:	
+func _ready() -> void:
 	var index := 0
 	for item in campaign_menu_items:
 		match item.type:
@@ -167,6 +170,7 @@ func _on_preferences_menu_id_pressed(id: int):
 func _on_help_menu_id_pressed(id: int):
 	var item_label := help_menu.get_item_text(id)
 	match item_label:
+		HELP_MENU_ITEM_HOW_TO_START: help_how_to_start_pressed.emit()
 		HELP_MENU_ITEM_MANUAL: help_manual_pressed.emit()
 		HELP_MENU_ITEM_ABOUT: help_about_pressed.emit()
 		

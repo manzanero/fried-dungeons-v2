@@ -1,9 +1,35 @@
-[gd_scene load_steps=5 format=3 uid="uid://cd6g3qduls3n1"]
+[gd_scene load_steps=12 format=3 uid="uid://cd6g3qduls3n1"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_7g121"]
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/tab_properties.gd" id="2_8a8ed"]
+[ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="4_jhcwt"]
+[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="5_to5xb"]
+[ext_resource type="Texture2D" uid="uid://cmjv1nfv6da8u" path="res://resources/icons/unlink_icon.png" id="6_j5ist"]
+[ext_resource type="Texture2D" uid="uid://buu6lmpdptkqd" path="res://resources/icons/save_icon.png" id="7_elbxh"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_puu4c"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_doy4y"]
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.143122, 0.152725, 0.162329, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_j1rkm"]
+bg_color = Color(0.0431373, 0.0470588, 0.0470588, 1)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_b4goo"]
 content_margin_left = 4.0
@@ -17,31 +43,112 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 corner_detail = 1
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_agxx4"]
+
 [node name="Properties" type="PanelContainer"]
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
+anchors_preset = -1
+anchor_right = 0.37
+anchor_bottom = 0.651
+offset_right = -0.600006
+offset_bottom = 0.279968
 grow_horizontal = 2
 grow_vertical = 2
 theme = ExtResource("1_7g121")
 theme_override_styles/panel = SubResource("StyleBoxEmpty_puu4c")
 script = ExtResource("2_8a8ed")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
+[node name="V" type="VBoxContainer" parent="."]
 layout_mode = 2
+
+[node name="BlueprintField" type="PanelContainer" parent="V"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_doy4y")
+
+[node name="H" type="HBoxContainer" parent="V/BlueprintField"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ImportButton" type="Button" parent="V/BlueprintField/H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+icon = ExtResource("4_jhcwt")
+icon_alignment = 1
+
+[node name="C" type="PanelContainer" parent="V/BlueprintField/H"]
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_j1rkm")
+
+[node name="H" type="HBoxContainer" parent="V/BlueprintField/H/C"]
+visible = false
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="RevertButton" type="Button" parent="V/BlueprintField/H/C/H"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+focus_mode = 0
+icon = ExtResource("5_to5xb")
+icon_alignment = 1
+
+[node name="PathLineEdit" type="LineEdit" parent="V/BlueprintField/H/C/H"]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_icons/clear = ExtResource("6_j5ist")
+placeholder_text = "Detached"
+alignment = 1
+editable = false
+flat = true
+select_all_on_focus = true
+
+[node name="UnlinkButton" type="Button" parent="V/BlueprintField/H/C/H"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+tooltip_text = "Send message"
+focus_mode = 0
+icon = ExtResource("6_j5ist")
+
+[node name="SaveButton" type="Button" parent="V/BlueprintField/H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+toggle_mode = true
+icon = ExtResource("7_elbxh")
+icon_alignment = 1
+
+[node name="C" type="PanelContainer" parent="V"]
+layout_mode = 2
+size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_b4goo")
+
+[node name="V" type="VBoxContainer" parent="V/C"]
+layout_mode = 2
+theme_override_constants/separation = 4
+
+[node name="S" type="ScrollContainer" parent="V/C/V"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxEmpty_agxx4")
 horizontal_scroll_mode = 0
 
-[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer"]
+[node name="M" type="MarginContainer" parent="V/C/V/S"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = -1
-theme_override_constants/margin_right = 4
-theme_override_constants/margin_bottom = 4
+theme_override_constants/margin_right = 3
 
-[node name="PropertyContainers" type="VBoxContainer" parent="ScrollContainer/MarginContainer"]
+[node name="PropertyContainers" type="VBoxContainer" parent="V/C/V/S/M"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3

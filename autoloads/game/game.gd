@@ -4,6 +4,8 @@ extends Node
 var master: Player
 var player: Player
 var campaign: Campaign
+var player_is_master: bool :
+	get: return campaign and campaign.is_master
 
 var manager: GameManager
 var server: ServerManager
@@ -13,6 +15,7 @@ var preloader: ResourcePreloader
 #var audio: Audio
 var ui: UI
 
+var blueprints := {}
 var resources := {}
 var maps := {}
 
@@ -25,6 +28,8 @@ var world_seed := randi_range(0, 999999)
 var handled_input : bool
 var radian_friendly_tick := 0
 var wave_global := 0.0
+var control_with_focus: Control
+var control_uses_keyboard: bool
 
 
 # Constants
@@ -57,18 +62,18 @@ const WHITE_PIXEL: Texture2D = preload("res://resources/icons/white_pixel.png")
 #region physics
 const MAX_LIGHTS := 60  # TODO: check if can be higher
 
-const ENTITY_LAYER := 17
-const LIGHT_LAYER := 18
-const OBJECT_LAYER := 19
+const ENTITY_LAYER := 18
+const LIGHT_LAYER := 19
+const PROP_LAYER := 20
 const GROUND_LAYER := 25
 const WALL_LAYER := 26
 const CEILLING_LAYER := 27
 const SELECTOR_LAYER := 28
 
-var ENTITY_BITMASK := Utils.get_bitmask(Game.ENTITY_LAYER)
 var LIGHT_BITMASK := Utils.get_bitmask(Game.LIGHT_LAYER)
-var OBJECT_BITMASK := Utils.get_bitmask(Game.OBJECT_LAYER)
-var ELEMENT_BITMASK := ENTITY_BITMASK + LIGHT_BITMASK + OBJECT_BITMASK
+var ENTITY_BITMASK := Utils.get_bitmask(Game.ENTITY_LAYER)
+var PROP_BITMASK := Utils.get_bitmask(Game.PROP_LAYER)
+var ELEMENT_BITMASK := LIGHT_BITMASK + ENTITY_BITMASK + PROP_BITMASK
 var GROUND_BITMASK := Utils.get_bitmask(Game.GROUND_LAYER)
 var WALL_BITMASK := Utils.get_bitmask(Game.WALL_LAYER)
 var CEILLING_BITMASK := Utils.get_bitmask(Game.CEILLING_LAYER)
@@ -77,6 +82,9 @@ var SELECTOR_BITMASK := Utils.get_bitmask(Game.SELECTOR_LAYER)
 var ground_ray := Utils.ray(GROUND_BITMASK)
 var ceilling_ray := Utils.ray(CEILLING_BITMASK)
 var wall_ray := Utils.ray(WALL_BITMASK)
+var entity_ray := Utils.ray(ENTITY_BITMASK)
+var light_ray := Utils.ray(LIGHT_BITMASK)
+var prop_ray := Utils.ray(PROP_BITMASK)
 var element_ray := Utils.ray(ELEMENT_BITMASK)
 var selector_ray := Utils.ray(SELECTOR_BITMASK)
 

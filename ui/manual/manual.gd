@@ -96,6 +96,7 @@ It is also possible to execute commands. Commands are written by starting the me
 func _on_edit_modes_button_pressed():
 	rich_text_label.text = """\
 [u]Ground Editing[/u]
+Pressing the C key copies hovered ground material.
 [ul]
  [color=cyan]Paint[/color]: Hold the left mouse button to paint the ground with the selected material.
  [color=cyan]Paint Rect[/color]: Click and drag to create a rectangle and paint it with the selected material.
@@ -104,6 +105,7 @@ func _on_edit_modes_button_pressed():
 [/ul]
 
 [u]Wall Building[/u]
+Pressing the C key copies hovered wall material.
 [ul]
  [color=CRIMSON]Bound[/color]: A wall with only one visible side. Click to start creating the wall, \
  and successive clicks add points to it. Clicking the last point or using right-click ends the construction. \
@@ -120,6 +122,7 @@ func _on_edit_modes_button_pressed():
 [/ul]
 
 [u]Wall Editing[/u]
+Pressing the C key copies hovered wall material.
 [ul]
  [color=CRIMSON]Select[/color]: Click and drag to move wall points. Dropping a contiguous point onto another merges them. \
  Dragging the endpoint of one wall and dropping it at the start of another wall of \

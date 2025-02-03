@@ -130,6 +130,7 @@ theme_override_constants/margin_bottom = 4
 
 [node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/SteamContainer/C/V/M" index="0"]
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="SteamFilterLineEdit" type="LineEdit" parent="M/VBoxContainer/Body/V/SteamContainer/C/V/M/H" index="0"]
 unique_name_in_owner = true

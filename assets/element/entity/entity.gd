@@ -42,6 +42,7 @@ var texture_attributes := {}
 
 var dirty_light := false
 var dirty_mesh := false
+var selector_disabled := false : set = _set_selector_disabled
 
 @onready var collider: CollisionShape3D = %CollisionShape3D
 @onready var base: Node3D = $Base
@@ -56,105 +57,135 @@ var dirty_mesh := false
 
 ## properties
 const LABEL := "label"
-const SHOW_LABEL := "show_label"
-const COLOR := "color"
 const DESCRIPTION := "description"
+const BLUEPRINT := "blueprint"
+const SHOW_LABEL := "show_label"
+const SHOW_BODY = "show_body"
 const BODY_TEXTURE := "body_texture"
 const BODY_FRAME := "body_frame"
 const BODY_SIZE := "body_size"
-const SHOW_BODY = "show_body"
-const BASE_SIZE := "base_size"
 const SHOW_BASE = "show_base"
-const SCALE := "scale"
+const BASE_SIZE := "base_size"
+const COLOR := "color"
 
+
+
+const entity_init_properties = {
+	LABEL: {
+		"container": "",
+		"hint": Hint.STRING,
+		"params": {},
+		"default": "Entity Unknown",
+	},
+	DESCRIPTION: {
+		"container": "",
+		"hint": Hint.STRING,
+		"params": {},
+		"default": "",
+	},
+	COLOR: {
+		"container": "",
+		"hint": Hint.COLOR,
+		"params": {},
+		"default": Color.WHITE,
+	},
+	BLUEPRINT: {
+		"container": "",
+		"hint": Hint.BLUEPRINT,
+		"params": {},
+		"default": null,
+	},
+	SHOW_LABEL: {
+		"container": "graphics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": false,
+	},
+	SHOW_BODY: {
+		"container": "graphics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": true,
+	},
+	BODY_TEXTURE: {
+		"container": "graphics",
+		"hint": Hint.TEXTURE,
+		"params": {},
+		"default": "",
+	},
+	BODY_FRAME: {
+		"container": "graphics",
+		"hint": Hint.INTEGER,
+		"params": {
+			"has_arrows": true,
+			"min_value": 0,
+			"max_value": 64,
+			"step": 1,
+		},
+		"default": 0,
+	},
+	BODY_SIZE: {
+		"container": "graphics",
+		"hint": Hint.FLOAT,
+		"params": {
+			"is_percentage": true,
+			"suffix": "%",
+			"has_slider": true,
+			"has_arrows": true,
+			"min_value": 0,
+			"max_value": 200,
+			"step": 5,
+			"allow_greater": true,
+		},
+		"default": 1.0,
+	},
+	SHOW_BASE: {
+		"container": "graphics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": true,
+	},
+	BASE_SIZE: {
+		"container": "graphics",
+		"hint": Hint.FLOAT,
+		"params": {
+			"is_percentage": true,
+			"suffix": "%",
+			"has_slider": true,
+			"has_arrows": true,
+			"min_value": 0,
+			"max_value": 200,
+			"step": 5,
+			"allow_greater": true,
+		},
+		"default": 0.5,
+	},
+}
 
 func _ready() -> void:
-	init_properties = {
-		LABEL: {
-			"container": "info",
-			"hint": Property.Hints.STRING,
-			"params": {},
-			"default": "Entity Unknown",
-		},
-		SHOW_LABEL: {
-			"container": "info",
-			"hint": Property.Hints.BOOL,
-			"params": {},
-			"default": false,
-		},
-		COLOR: {
-			"container": "info",
-			"hint": Property.Hints.COLOR,
-			"params": {},
-			"default": Color.WHITE,
-		},
-		DESCRIPTION: {
-			"container": "info",
-			"hint": Property.Hints.STRING,
-			"params": {},
-			"default": "",
-		},
-		BODY_TEXTURE: {
-			"container": "graphics",
-			"hint": Property.Hints.TEXTURE,
-			"params": {},
-			"default": "",
-		},
-		BODY_FRAME: {
-			"container": "graphics",
-			"hint": Property.Hints.INTEGER,
-			"params": {
-				"has_arrows": true,
-				"min_value": 0,
-				"max_value": 64,
-				"step": 1,
-			},
-			"default": 0,
-		},
-		BODY_SIZE: {
-			"container": "graphics",
-			"hint": Property.Hints.FLOAT,
-			"params": {
-				"is_percentage": true,
-				"suffix": "%",
-				"has_slider": true,
-				"has_arrows": true,
-				"min_value": 0,
-				"max_value": 200,
-				"step": 5,
-				"allow_greater": true,
-			},
-			"default": 1.0,
-		},
-		SHOW_BODY: {
-			"container": "graphics",
-			"hint": Property.Hints.BOOL,
-			"params": {},
-			"default": true,
-		},
-		BASE_SIZE: {
-			"container": "graphics",
-			"hint": Property.Hints.FLOAT,
-			"params": {
-				"is_percentage": true,
-				"suffix": "%",
-				"has_slider": true,
-				"has_arrows": true,
-				"min_value": 0,
-				"max_value": 200,
-				"step": 5,
-				"allow_greater": true,
-			},
-			"default": 0.5,
-		},
-		SHOW_BASE: {
-			"container": "graphics",
-			"hint": Property.Hints.BOOL,
-			"params": {},
-			"default": true,
-		},
-	}
+	type = "entity"
+	#blueprint_excluded_properties = [LABEL, DESCRIPTION, COLOR]
+	init_properties = entity_init_properties
 	selector_mesh_instance.visible = false
+	cached_light = level.get_light(position_2d)
+
+
+static func parse_property_values(property_values: Dictionary) -> Dictionary:
+	var raw_property_values := {}
+	for property_name in property_values:
+		var property_value: Variant = property_values[property_name]
+		var init_property_data: Dictionary = entity_init_properties[property_name]
+		raw_property_values[property_name] = get_raw_property(init_property_data.hint, property_value)
+	return raw_property_values
+
+
+static func parse_raw_property_values(raw_property_values: Dictionary) -> Dictionary:
+	var property_values := {}
+	for property_name in raw_property_values:
+		var raw_property_value: Variant = raw_property_values[property_name]
+		var init_property_data: Dictionary = entity_init_properties[property_name]
+		property_values[property_name] = set_raw_property(init_property_data.hint, raw_property_value)
+	return property_values
 
 
 func change_property(property_name: String, new_value: Variant) -> void:
@@ -162,28 +193,39 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		
 		# element properties
 		LABEL: label = new_value; label_label.text = new_value
-		SHOW_LABEL: show_label = new_value
+		BLUEPRINT: _set_blueprint(new_value)
+		DESCRIPTION: description = new_value
 		COLOR:
 			color = new_value
 			label_label.label_settings.font_color = new_value
 			label_label.label_settings.outline_color = Utils.get_outline_color(new_value)
 			base_color = Color(color.r * luminance, color.g * luminance, color.b * luminance, color.a)
-		DESCRIPTION: description = new_value
 
 		# entity properties
+		SHOW_LABEL: show_label = new_value
+		SHOW_BODY: body.visible = new_value
 		BODY_TEXTURE: texture_resource_path = new_value
 		BODY_FRAME: frame = new_value
 		BODY_SIZE: 
 			body.scale = (Vector3.ONE * new_value).clampf(0.1, 64)
 			body.scale.x *= -1 if flipped else 1
-		SHOW_BODY: body.visible = new_value
+		SHOW_BASE: base.visible = new_value
 		BASE_SIZE:
 			base_mesh_instance.scale = Vector3(new_value * 2, 1, new_value * 2).clampf(0.1, 64)
 			selector_collider.scale = (Vector3.ONE * new_value * 2).clampf(0.1, 64)
 			var selector_mesh: TorusMesh = selector_mesh_instance.mesh
 			selector_mesh.inner_radius = new_value / 2
 			selector_mesh.outer_radius = new_value / 2 + Game.U
-		SHOW_BASE: base.visible = new_value
+	
+	
+func _set_blueprint(_blueprint: CampaignBlueprint) -> void:
+	if blueprint:
+		blueprint.blueprint_changed.disconnect(_on_blueprint_changed)
+		blueprint.blueprint_removed.disconnect(_on_blueprint_removed)
+	blueprint = _blueprint
+	if blueprint:
+		blueprint.blueprint_changed.connect(_on_blueprint_changed)
+		blueprint.blueprint_removed.connect(_on_blueprint_removed)
 	
 	
 func _set_texture_resource_path(_texture_resource_path: String) -> void:
@@ -226,14 +268,12 @@ func _process(_delta: float) -> void:
 	if ligth != cached_light:
 		dirty_light = true
 	cached_light = ligth
+	
+	if dirty_mesh:
+		update_mesh()
 
 	if dirty_light:
 		update_light()
-		dirty_light = false
-
-	if dirty_mesh:
-		update_mesh()
-		dirty_mesh = false
 
 	if is_watched:
 		if show_label:
@@ -241,11 +281,17 @@ func _process(_delta: float) -> void:
 				info.visible = false
 			else:
 				info.visible = not level.map.camera.eyes.is_position_behind(position)
-				const unproject_correction := Vector3.UP * 0.001  # x axis points cannot be unproject
+				const unproject_correction := Vector3.UP * 0.001  # bug: x axis points cannot be unproject
 				info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
+
+func update():
+	update_mesh()
+	update_light()
 
 
 func update_light():
+	dirty_light = false
+	
 	if is_watched:
 		body_color = Color(luminance, luminance, luminance)
 		base_color = Color(color.r * luminance, color.g * luminance, color.b * luminance, color.a)
@@ -256,6 +302,9 @@ func update_light():
 
 
 func update_mesh():
+	dirty_mesh = false
+	dirty_light = true
+	
 	Utils.queue_free_children(slices_parent)
 	
 	var texture: Texture2D
@@ -318,6 +367,12 @@ func update_mesh():
 	Debug.print_info_message("Mesh of Shape \"%s\" updated" % id)
 
 
+func _set_selector_disabled(value: bool) -> void:
+	selector_collider.get_child(0).disabled = value
+	for slice in slices_parent.get_children():
+		slice.collider.get_child(0).disabled = value
+
+
 func _set_selectable(value: bool) -> void:
 	super._set_selectable(value)
 		
@@ -351,15 +406,11 @@ func _set_preview(value: bool) -> void:
 ###############
 
 func json():
-	var values := {}
-	for property in properties:
-		values[property] = properties[property].get_raw()
-	
 	return {
-		"type": "entity",
+		"type": type,
 		"id": id,
-		"position": Utils.v3_to_a2(global_position),
+		"position": Utils.v2_to_a2(position_2d),
 		"rotation": snappedf(rotation_y, 0.001),
 		"flipped": flipped,
-		"properties": values,
+		"properties": get_raw_property_values(),
 	}

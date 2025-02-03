@@ -1,0 +1,53 @@
+[gd_scene load_steps=5 format=3 uid="uid://cq6rcy2ktpx36"]
+
+[ext_resource type="Texture2D" uid="uid://dwfkjnyl85tqn" path="res://resources/icons/stop_icon.png" id="1_sefbc"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eflqp"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.511329, 0.245046, 0.236259, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.641389, 0.323196, 0.311678, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ph0ia"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.380495, 0.173065, 0.166535, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.506082, 0.242074, 0.233384, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m5jhp"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[node name="FriedButtonRed" type="Button"]
+custom_minimum_size = Vector2(0, 25)
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_eflqp")
+theme_override_styles/hover = SubResource("StyleBoxFlat_eflqp")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_ph0ia")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_m5jhp")
+icon = ExtResource("1_sefbc")
+alignment = 2
+icon_alignment = 1

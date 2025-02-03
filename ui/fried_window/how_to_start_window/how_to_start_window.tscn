@@ -1,0 +1,213 @@
+[gd_scene load_steps=6 format=3 uid="uid://df6f4gleuroml"]
+
+[ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_teghs"]
+[ext_resource type="Script" path="res://ui/fried_window/how_to_start_window/how_to_start_window.gd" id="2_6n064"]
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_gl4sp"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+border_color = Color(0.0705882, 0.0705882, 0.0705882, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_26am4"]
+
+[node name="HowToStartWindow" instance=ExtResource("1_teghs")]
+offset_right = 849.0
+offset_bottom = 707.0
+script = ExtResource("2_6n064")
+is_invisible_on_close = true
+
+[node name="TitleLabel" parent="M/VBoxContainer/TitleBar/H" index="0"]
+text = "How To Start"
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body" index="0"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="M2" type="MarginContainer" parent="M/VBoxContainer/Body/V" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/M2" index="0"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="M/VBoxContainer/Body/V/M2/H" index="0"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 1
+text = "It’s Dangerous to Go Alone! take this:"
+vertical_alignment = 2
+
+[node name="C2" type="MarginContainer" parent="M/VBoxContainer/Body/V" index="1"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 2
+theme_override_constants/margin_right = 0
+
+[node name="H" type="GridContainer" parent="M/VBoxContainer/Body/V/C2" index="0"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/h_separation = 0
+theme_override_constants/v_separation = 0
+columns = 2
+
+[node name="StartButton" type="Button" parent="M/VBoxContainer/Body/V/C2/H" index="0"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+toggle_mode = true
+button_pressed = true
+button_group = SubResource("ButtonGroup_gl4sp")
+text = "Start"
+icon_alignment = 1
+
+[node name="SetUpButton" type="Button" parent="M/VBoxContainer/Body/V/C2/H" index="1"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+toggle_mode = true
+button_group = SubResource("ButtonGroup_gl4sp")
+text = "Set Up"
+icon_alignment = 1
+
+[node name="C" type="PanelContainer" parent="M/VBoxContainer/Body/V" index="2"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body/V/C" index="0"]
+layout_mode = 2
+theme_override_constants/separation = -4
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/C/V" index="0"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="StartRichTextLabel" type="RichTextLabel" parent="M/VBoxContainer/Body/V/C/V/M" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_26am4")
+bbcode_enabled = true
+text = "[u][color=PURPLE]Create a Campaign as Master[/color][/u]
+[ol]
+ Go to Campaign > New.
+ On the title bar, select the [color=YELLOW]network type[/color] to be used: Steam or Direct.
+ Fill the [color=YELLOW]Campaign name[/color] for your campaign.
+ Fill the Master custom data.
+[/ol]
+
+[u][color=GREEN]Join a Campaign as Player[/color][/u]
+[ol]
+ Go to Campaign > Join.
+ On the title bar, select the [color=YELLOW]network type[/color] to be used: Steam or Direct.
+ Either double-click on one of the saved connections (if available) or manually fill in the connection data.
+[ol type=a]
+ [b]Steam[/b]: Enter the [color=YELLOW]Steam username[/color] of the Master who is hosting the Campaign.
+ [b]Direct Connection[/b]: Enter the following details to connect to the session:
+[ul]
+ [color=YELLOW]Host URL[/color]: The URL of the Master hosting the Campaign.
+ [color=YELLOW]Username[/color]: Your username, provided by the Master.
+ [color=YELLOW]Password[/color]: The PIN code, provided by the Master.
+[/ul]
+[/ol]
+[/ol]
+
+[u][color=PURPLE]Host a Campaign as Master[/color][/u]
+[ol]
+ Go to Campaign > Host.
+ On the title bar, select the [color=YELLOW]network type[/color] to be used: Steam or Direct.
+ Double-click on one of the saved Campaigns.
+[/ol]
+
+[u][color=PURPLE]Add a Player to Join[/color][/u]
+[ol]
+ Create or Host a Campaign
+ Go to Campaign > Players
+ On the title bar, select the [color=YELLOW]network type[/color] to be used: Steam or Direct.
+[ol type=a]
+ [b]Steam[/b]: 
+[ol]
+ Enter the player [color=YELLOW]Steam username[/color].
+ click \"+\" button.
+[/ol]
+ [b]Direct Connection[/b]: 
+[ol]
+ Enter the player [color=YELLOW]username[/color] and share it with your friend.
+ Click \"+\" button.
+ Right-click in the PIN code generated to copy and share it with your friend.
+[/ol]
+[/ol]
+ Go to \"Players Tab\"
+ Select a Player and the [color=LIGHT_CORAL]Entity[/color] you want to link, then press [img]res://resources/icons/entities_white_icon.png[/img] button
+ Click on [img]res://resources/icons/movement_icon.png[/img] Activate Movement and on [img]res://resources/icons/visibility_visible_icon.png[/img] Activate Vision next to the [color=LIGHT_CORAL]Entity[/color]'s name
+[/ol]
+
+[u][b]NOTES[/b][/u]:
+[ul]
+The type of tab (Steam or Direct) active during campaign creation or hosting determines which players can join.
+Click on folder button to check local data of the saved Campaigns and Connections.
+[/ul]"
+selection_enabled = true
+
+[node name="SetUpRichTextLabel" type="RichTextLabel" parent="M/VBoxContainer/Body/V/C/V/M" index="1"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_26am4")
+bbcode_enabled = true
+text = "[u][color=GREEN]Create a Campaign[/color][/u]
+[ol]
+ Go to Campaign > New.
+ On the title bar, select the [color=YELLOW]network type[/color] to be used: Steam or Direct.
+ Fill the [color=YELLOW]Campaign name[/color] for your campaign.
+ Fill the Master custom data.
+[/ol]
+
+[u][color=GREEN]Join a Campaign[/color][/u]
+[ol]
+ Go to Campaign > Join.
+ On the title bar, select the [color=YELLOW]network type[/color] to be used: Steam or Direct.
+ Either double-click on one of the saved connections (if available) or manually fill in the connection data.
+[ol type=a]
+ [b]Steam[/b]: Enter the [color=YELLOW]Steam username[/color] of the Master who is hosting the Campaign.
+ [b]Direct Connection[/b]: Enter the following details to connect to the session:
+[ul]
+ [color=YELLOW]Host URL[/color]: The URL of the Master hosting the Campaign.
+ [color=YELLOW]Username[/color]: Your username, provided by the Master.
+ [color=YELLOW]Password[/color]: The PIN code, provided by the Master.
+[/ul]
+[/ol]
+[/ol]
+
+[u][color=GREEN]Host a Campaign[/color][/u]
+[ol]
+ Go to Campaign > Host.
+ On the title bar, select the [color=YELLOW]network type[/color] to be used: Steam or Direct.
+ Double-click on one of the saved Campaigns.
+[/ol]
+
+[u][b]NOTES[/b][/u]:
+Click on folder button to check local data of the saved Campaign and Connection"
+selection_enabled = true

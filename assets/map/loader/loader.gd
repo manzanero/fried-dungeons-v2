@@ -333,13 +333,14 @@ func load_map(map_data: Dictionary):
 					
 			# elements
 			for element_data in level_data.get("elements", []):
-				if "color" in element_data.properties and element_data.properties["color"] is String:
-					element_data.properties["color"] = Utils.html_color_to_color(element_data.properties["color"])
-				
 				var rotation_y: float = element_data.get("rotation", 0.0)
 				var flipped: float = element_data.get("flipped", false)
+				var properties: Dictionary
+				match element_data.type:
+					"light": properties = Light.parse_raw_property_values(element_data.properties)
+					"entity": properties = Entity.parse_raw_property_values(element_data.properties)
+					"prop": properties = Shape.parse_raw_property_values(element_data.properties)
 				map.instancer.create_element(element_data.type, level, element_data.id, 
-						Utils.a2_to_v2(element_data.position), 
-						element_data.properties, rotation_y, flipped)
+						Utils.a2_to_v2(element_data.position), properties, rotation_y, flipped)
 	
 	map.selected_level = map.levels_parent.get_children()[0]

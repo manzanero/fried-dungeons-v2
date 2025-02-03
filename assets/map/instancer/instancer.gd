@@ -25,15 +25,27 @@ func create_element(type: String, level: Level, id: String, position_2d: Vector2
 		properties := {}, rotation_y := 0.0, flipped := false) -> Element:
 	var element: Element
 	match type:
-		"entity": element = ENTITY.instantiate().init(level, id, position_2d,
-				properties, rotation_y, flipped)
-		"light": element = LIGHT.instantiate().init(level, id, position_2d,
-				properties, rotation_y, flipped)
-		"shape": element = SHAPE.instantiate().init(level, id, position_2d,
-				properties, rotation_y, flipped)
+		"entity": 
+			element = ENTITY.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
+		"light": 
+			element = LIGHT.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
+		"shape", "prop": 
+			element = SHAPE.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
+			
 	level.elements[id] = element
 	Game.ui.tab_elements.add_element(element)
+	
+	Debug.print_info_message(element.get_class() + " \"%s\" created" % element.id)
+	
 	return element
+
+#func parse_raw_properties(_type: String, properties: Dictionary) -> Dictionary:
+	#if properties.has("color"):
+		#properties["color"] = Utils.html_color_to_color(properties["color"])
+	#if properties.has("blueprint"):
+		#properties["blueprint"] = Game.blueprints.get(properties["blueprint"])
+	#return properties
+		
 
 func create_entity(level: Level, id: String, position_2d: Vector2,
 		properties := {}, rotation_y := 0.0, flipped := false) -> Entity:
@@ -43,9 +55,9 @@ func create_light(level: Level, id: String, position_2d: Vector2,
 		properties := {}, rotation_y := 0.0, flipped := false) -> Light:
 	return create_element("light", level, id, position_2d, properties, rotation_y, flipped)
 
-func create_shape(level: Level, id: String, position_2d: Vector2,
+func create_prop(level: Level, id: String, position_2d: Vector2,
 		properties := {}, rotation_y := 0.0, flipped := false) -> Shape:
-	return create_element("shape", level, id, position_2d, properties, rotation_y, flipped)
+	return create_element("prop", level, id, position_2d, properties, rotation_y, flipped)
 
 func create_player_signal(level: Level, position_2d: Vector2, color: Color) -> PlayerSignal:
 	return PLAYER_SIGNAL.instantiate().init(level, position_2d, color)

@@ -99,7 +99,7 @@ func _on_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int):
 	var resource = item_selected.get_metadata(0)
 	if mouse_button_index == MOUSE_BUTTON_RIGHT:
 		DisplayServer.clipboard_set(resource.path)
-		Utils.temp_tooltip("Copied!", 1)
+		Utils.temp_info_tooltip("Copied!", 1)
 
 
 func _on_item_collapsed(item: TreeItem):
@@ -145,6 +145,7 @@ func reset() -> void:
 	sound_container.visible = false
 	texture_container.visible = false
 	
+	resource_items.clear()
 	tree.clear()
 	root = tree.create_item()
 	root.set_icon(0, DIRECTORY_ICON)
@@ -223,14 +224,3 @@ func _on_attributes_changed(resource: CampaignResource, import_as: String, attri
 	resource.resource_import_as = import_as
 	resource.attributes = attributes
 	Game.campaign.set_resource_data(resource.path, resource.json())
-
-	# if file was changed while modifying attributes
-	var timestamp := FileAccess.get_modified_time(resource.abspath)
-	if resource.timestamp < timestamp:
-		resource.timestamp = timestamp
-		
-		if multiplayer.is_server():
-			Game.server.resource_change_notification.rpc(resource.path)
-	else:
-		Game.server.rpcs.change_resource.rpc(resource.resource_type, resource.path, resource.json())
-		

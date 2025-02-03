@@ -33,12 +33,15 @@ icon = ExtResource("3_4mw8o")
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Edit Texture resource"
+toggle_mode = true
 
 [node name="ImportButton" type="Button" parent="H/FriedConvexPanel/HBoxContainer" index="2"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Import selected Texture"
+focus_mode = 0
 icon = ExtResource("3_y7udq")
 icon_alignment = 1
 
@@ -47,5 +50,6 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Clear Texture"
+focus_mode = 0
 icon = ExtResource("4_kfe3x")
 icon_alignment = 1

@@ -161,31 +161,25 @@ threaded = true
 selection_enabled = true
 deselect_on_focus_loss_enabled = false
 
-[node name="C" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C"]
-layout_mode = 2
-theme_override_constants/separation = 0
-alignment = 1
-vertical = true
-
-[node name="C" type="PanelContainer" parent="VBoxContainer/VSplitContainer/C/C/C"]
+[node name="C2" type="PanelContainer" parent="VBoxContainer/VSplitContainer/C/C"]
 layout_mode = 2
 theme_override_styles/panel = SubResource("StyleBoxFlat_ert40")
 
-[node name="V" type="VBoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/C"]
+[node name="V" type="VBoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C2"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="H" type="HBoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/C/V"]
+[node name="H" type="HBoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C2/V"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="TemplateButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/H"]
+[node name="TemplateButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C2/V/H"]
 unique_name_in_owner = true
 layout_mode = 2
 focus_mode = 0
 icon = ExtResource("4_7g2oo")
 
-[node name="MessageLineEdit" type="LineEdit" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/H"]
+[node name="MessageLineEdit" type="LineEdit" parent="VBoxContainer/VSplitContainer/C/C/C2/V/H"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
@@ -193,18 +187,18 @@ size_flags_horizontal = 3
 size_flags_vertical = 8
 placeholder_text = "/echo"
 
-[node name="SendMessageButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/H"]
+[node name="SendMessageButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C2/V/H"]
 unique_name_in_owner = true
 layout_mode = 2
 tooltip_text = "Send message"
 focus_mode = 0
 icon = ExtResource("4_wsjw0")
 
-[node name="C2" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/C/V"]
+[node name="C2" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C2/V"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="AsMasterButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/C2"]
+[node name="AsMasterButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C2/V/C2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -213,7 +207,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_udd2s")
 text = "Master"
 
-[node name="AsPlayerButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/C2"]
+[node name="AsPlayerButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C2/V/C2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -223,7 +217,7 @@ button_pressed = true
 button_group = SubResource("ButtonGroup_udd2s")
 text = "Player"
 
-[node name="AsSelectionButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C/C/V/C2"]
+[node name="AsSelectionButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C2/V/C2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -232,26 +226,12 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_udd2s")
 text = "Selection"
 
-[node name="C" type="PanelContainer" parent="VBoxContainer/VSplitContainer/C/C/C/C/V"]
+[node name="C" type="PanelContainer" parent="VBoxContainer/VSplitContainer/C/C/C2/V"]
 visible = false
 clip_contents = true
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 4
 theme_override_styles/panel = SubResource("StyleBoxFlat_1y7qd")
-
-[node name="H2" type="BoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C"]
-layout_mode = 2
-size_flags_vertical = 3
-alignment = 1
-
-[node name="H" type="HBoxContainer" parent="VBoxContainer/VSplitContainer/C/C/C/H2"]
-layout_mode = 2
-size_flags_horizontal = 3
-
-[node name="AsLabel" type="Label" parent="VBoxContainer/VSplitContainer/C/C/C/H2/H"]
-visible = false
-layout_mode = 2
-text = " As: "
 
 [editable path="VBoxContainer/VSplitContainer/HelperContainer/History"]

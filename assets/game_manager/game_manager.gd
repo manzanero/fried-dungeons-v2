@@ -62,6 +62,8 @@ func _ready() -> void:
 	
 	autosave()
 	
+	get_viewport().gui_focus_changed.connect(_on_focus_changed)
+	
 	
 func _on_tab_changed(tab: int):
 	Game.ui.tab_world.reset()
@@ -73,6 +75,10 @@ func _on_tab_changed(tab: int):
 	Game.modes.reset()
 	Game.ui.build_border.visible = false
 	
+	if Game.ui.selected_map and Game.ui.selected_map.selected_level:
+		Game.ui.selected_map.selected_level.change_state(Level.State.GO_IDLE)
+	
+	# disable process in hidden and non players tab
 	for i in Game.ui.scene_tabs.get_tab_count():
 		var tab_scene: TabScene = Game.ui.scene_tabs.get_tab_control(i)
 		if i == tab or Game.ui.tab_world.players_map == tab_scene.map.slug:
@@ -258,7 +264,7 @@ func _on_tab_close_pressed(tab_index: int):
 	var map := tab_scene.map
 	
 	if map.slug == Game.ui.tab_world.players_map:
-		Utils.temp_tooltip("Player's map cannot be close. Send them to another map")
+		Utils.temp_error_tooltip("Players's map cannot be close. Send them to another map")
 		return
 	
 	save_map(map)
@@ -275,16 +281,15 @@ func _on_tab_close_pressed(tab_index: int):
 func _process(_delta: float) -> void:
 	Game.radian_friendly_tick = floor(Time.get_ticks_msec() / (2 * PI) / 32)
 	Game.wave_global = sin(Game.radian_friendly_tick)
+	Game.control_with_focus = get_viewport().gui_get_focus_owner()
+	Game.control_uses_keyboard = Game.control_with_focus is LineEdit
 	
 	# restart the frame input handled
 	Game.handled_input = false
 
 
-#func _physics_process(delta: float) -> void:
-	#Game.handled_input = false
-
-
 func reset():
+	Game.blueprints.clear()
 	Game.resources.clear()
 	Game.maps.clear()
 	
@@ -296,6 +301,7 @@ func reset():
 	Game.ui.tab_jukebox.reset()
 	Game.ui.tab_builder.reset()
 	Game.ui.tab_resources.reset()
+	Game.ui.tab_blueprints.reset()
 	Game.ui.tab_properties.reset()
 	Game.ui.tab_messages.reset()
 	
@@ -370,6 +376,10 @@ func remove_resource(resource_path: String) -> void:
 func safe_quit():
 	save_campaign()
 	get_tree().quit()
+	
+
+func _on_focus_changed(control: Control) -> void:
+	Debug.print_debug_message(str(control.name) if control else "None")
 
 
 #########
@@ -386,11 +396,11 @@ func _input(event):
 					else:
 						DisplayServer.window_set_vsync_mode(DisplayServer.VSYNC_ENABLED)
 						
-				if event.keycode == KEY_F5:
-					if Game.server.peer:
-						Game.server.peer.close()
-						Game.server.peer = null
-					get_tree().reload_current_scene()
+				#if event.keycode == KEY_F5:
+					#if Game.server.peer:
+						#Game.server.peer.close()
+						#Game.server.peer = null
+					#get_tree().reload_current_scene()
 
 
 func _notification(what):

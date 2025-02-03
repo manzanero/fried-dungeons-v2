@@ -34,6 +34,7 @@ theme_override_constants/margin_right = 2
 
 [node name="H" type="HBoxContainer" parent="M/VBoxContainer/TitleBar/H/ServerContainer" index="0"]
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="SteamButton" type="Button" parent="M/VBoxContainer/TitleBar/H/ServerContainer/H" index="0"]
 unique_name_in_owner = true

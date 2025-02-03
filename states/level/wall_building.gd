@@ -103,7 +103,7 @@ func _physics_process_state(_delta: float) -> String:
 
 
 func process_hover_wall():
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	if is_instance_valid(_wall_hovered):
@@ -125,7 +125,7 @@ func process_hover_wall():
 
 		
 func process_change_wall() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	if not is_instance_valid(_wall_hovered):
@@ -140,7 +140,7 @@ func process_change_wall() -> void:
 
 		
 func process_flip_wall() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	if not is_instance_valid(_wall_hovered):
@@ -155,7 +155,7 @@ func process_flip_wall() -> void:
 
 
 func process_paint_wall() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	if not is_instance_valid(_wall_hovered):
@@ -170,7 +170,7 @@ func process_paint_wall() -> void:
 
 
 func process_build_one_sided() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	if _wall_being_builded:
@@ -181,7 +181,7 @@ func process_build_one_sided() -> void:
 		
 
 func process_build_two_sided() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	if _wall_being_builded:
@@ -306,7 +306,7 @@ func process_cut_wall() -> void:
 
 
 func process_cut_next_point() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	var origin := Utils.v2_to_v3(_click_origin_position)
@@ -329,7 +329,7 @@ func process_cut() -> void:
 
 
 func process_cut_start() -> void:
-	if not Game.ui.is_mouse_over_scene_tab:
+	if not Game.ui.scene_tab_has_focus:
 		return
 		
 	if Input.is_action_just_pressed("left_click"):
@@ -343,12 +343,12 @@ func process_build_room(wall_outside := false) -> void:
 		selector.wall.visible = false
 		_is_rect_being_builded = false
 		
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		_click_origin_position = Utils.v3_to_v2(selector.column.position)
 		selector.wall.visible = true
 		_is_rect_being_builded = true
 		
-	if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		var destiny := Utils.v3_to_v2(selector.column.position)
 		selector.move_area_to(_click_origin_position, destiny)
 		_create_temp_room(Utils.v2_to_v3(_click_origin_position), selector.column.position)
@@ -358,7 +358,7 @@ func process_build_room(wall_outside := false) -> void:
 		selector.wall.visible = false
 		_is_rect_being_builded = false
 		
-		#if not Game.ui.is_mouse_over_scene_tab:
+		#if not Game.ui.scene_tab_has_focus:
 			#return
 		
 		var origin := _click_origin_position
@@ -437,12 +437,12 @@ func process_build_barrier(thickness := 0.25, wall_outside := true) -> void:
 		selector.wall.visible = false
 		_is_rect_being_builded = false
 		
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		_click_origin_position = Utils.v3_to_v2(selector.column.position)
 		selector.wall.visible = true
 		_is_rect_being_builded = true
 		
-	if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		var destiny := Utils.v3_to_v2(selector.column.position)
 		selector.move_area_to(_click_origin_position, destiny)
 		_create_temp_barrier(Utils.v2_to_v3(_click_origin_position), selector.column.position, thickness)
@@ -519,12 +519,12 @@ func process_build_passage(thickness := 0.5, wall_outside := false) -> void:
 		selector.wall.visible = false
 		_is_rect_being_builded = false
 		
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		_click_origin_position = Utils.v3_to_v2(selector.column.position)
 		selector.wall.visible = true
 		_is_rect_being_builded = true
 		
-	if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		var destiny := Utils.v3_to_v2(selector.column.position)
 		selector.move_area_to(_click_origin_position, destiny)
 		_create_temp_passage(Utils.v2_to_v3(_click_origin_position), selector.column.position, thickness)

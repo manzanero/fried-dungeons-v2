@@ -1,4 +1,4 @@
-[gd_scene load_steps=35 format=3 uid="uid://da81cp8j448wv"]
+[gd_scene load_steps=37 format=3 uid="uid://da81cp8j448wv"]
 
 [ext_resource type="Script" path="res://ui/mode_controller/mode_controller.gd" id="1_abku6"]
 [ext_resource type="Texture2D" uid="uid://b4j3w7qpbmtuj" path="res://resources/icons/clear_icon.png" id="1_ho4gg"]
@@ -28,22 +28,42 @@
 [ext_resource type="Texture2D" uid="uid://1b7cvgs3dip3" path="res://resources/icons/copy_icon.png" id="21_2msfg"]
 [ext_resource type="Texture2D" uid="uid://i6h6m0ag23n1" path="res://resources/icons/selection_icon.png" id="21_y5fyx"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xji05"]
-content_margin_left = 3.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0eybk"]
+content_margin_left = 2.0
 content_margin_top = 2.0
 content_margin_right = 2.0
 content_margin_bottom = 2.0
-bg_color = Color(0, 0, 0, 0.882353)
-border_color = Color(0.165656, 0.165656, 0.165656, 1)
+bg_color = Color(0.0431373, 0.0470588, 0.0470588, 1)
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
 border_blend = true
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 corner_detail = 1
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_6c6o5"]
 allow_unpress = true
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xc5mm"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.0431373, 0.0470588, 0.0470588, 1)
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+border_blend = true
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_nyg8b"]
 
@@ -54,12 +74,21 @@ allow_unpress = true
 [sub_resource type="ButtonGroup" id="ButtonGroup_alxa2"]
 allow_unpress = true
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_sqvpp"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_o7hgs"]
 content_margin_left = 4.0
 content_margin_top = 4.0
 content_margin_right = 4.0
 content_margin_bottom = 4.0
 bg_color = Color(0, 0, 0, 0.752)
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+shadow_size = 4
+shadow_offset = Vector2(0, 2)
 
 [node name="ModeController" type="MarginContainer"]
 offset_right = 205.0
@@ -67,8 +96,8 @@ offset_bottom = 232.0
 size_flags_horizontal = 0
 size_flags_vertical = 0
 mouse_filter = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = 4
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_top = 8
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 script = ExtResource("1_abku6")
@@ -91,7 +120,7 @@ layout_mode = 2
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_xji05")
+theme_override_styles/panel = SubResource("StyleBoxFlat_0eybk")
 
 [node name="Modes" type="HBoxContainer" parent="V/C2/HBoxContainer/C"]
 unique_name_in_owner = true
@@ -181,7 +210,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_xji05")
+theme_override_styles/panel = SubResource("StyleBoxFlat_xc5mm")
 
 [node name="V" type="VBoxContainer" parent="V/C/ModesOptions"]
 layout_mode = 2
@@ -445,6 +474,7 @@ layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_sqvpp")
 
 [node name="ModeLabel" type="Label" parent="V/C3/ModeHint"]
 unique_name_in_owner = true

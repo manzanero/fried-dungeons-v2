@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://bxt6nwjxeo4i8"]
+[gd_scene load_steps=11 format=3 uid="uid://bxt6nwjxeo4i8"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_jukebox/tab_jukebox.gd" id="1_enohi"]
 [ext_resource type="Script" path="res://assets/game_manager/audio/audio.gd" id="2_eujgv"]
@@ -9,6 +9,8 @@
 [ext_resource type="Texture2D" uid="uid://ckd03gcqkho3n" path="res://resources/icons/sound_icon.png" id="4_bkosv"]
 [ext_resource type="Texture2D" uid="uid://ph36o52jrb1h" path="res://resources/icons/cross_icon.png" id="4_h0nbq"]
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t4urb"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7lfy0"]
 bg_color = Color(0, 0, 0, 1)
 corner_radius_top_left = 6
@@ -17,13 +19,13 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 corner_detail = 1
 
-[node name="TabJukebox" type="Control"]
-layout_mode = 3
+[node name="TabJukebox" type="PanelContainer"]
 anchors_preset = 15
 anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+theme_override_styles/panel = SubResource("StyleBoxEmpty_t4urb")
 script = ExtResource("1_enohi")
 
 [node name="Audio" type="AudioStreamPlayer" parent="."]
@@ -32,12 +34,7 @@ bus = &"Jukebox"
 script = ExtResource("2_eujgv")
 
 [node name="C" type="VBoxContainer" parent="."]
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
+layout_mode = 2
 
 [node name="C2" type="HBoxContainer" parent="C"]
 layout_mode = 2

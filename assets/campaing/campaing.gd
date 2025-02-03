@@ -21,7 +21,10 @@ var players_path: String :
 
 var players: PackedStringArray : 
 	get: return DirAccess.get_directories_at(players_path)
-
+		
+var blueprints_path: String :
+	get: return path.path_join("blueprints")
+	
 var resources_path: String :
 	get: return path.path_join("resources")
 
@@ -32,7 +35,15 @@ func _init(_is_master: bool, _slug: String, _data: Dictionary):
 	is_master = _is_master
 	slug = _slug
 	label = _data.label
-	path = (campaigns_path if is_master else servers_path).path_join(slug)
+	if is_master:
+		path = campaigns_path.path_join(slug)
+		Utils.make_dirs(maps_path)
+		Utils.make_dirs(players_path)
+		Utils.make_dirs(blueprints_path)
+		Utils.make_dirs(resources_path)
+	else:
+		path = servers_path.path_join(slug)
+		Utils.make_dirs(resources_path)
 
 
 func load_campaign_data() -> Dictionary:
@@ -64,6 +75,26 @@ func get_player_data(player_slug: String) -> Dictionary:
 
 func set_player_data(player_slug: String, player_data: Dictionary) -> Error:
 	return Utils.dump_json(get_player_path(player_slug).path_join("player.json"), player_data, 2)
+
+
+func get_blueprint_dir_abspath(blueprint_file_path: String) -> String:
+	return blueprints_path.path_join(blueprint_file_path)
+
+func blueprint_dir_exists(resource_file_path: String) -> bool:
+	return DirAccess.dir_exists_absolute(get_blueprint_file_abspath(resource_file_path))
+
+func get_blueprint_file_abspath(blueprint_file_path: String) -> String:
+	return blueprints_path.path_join(blueprint_file_path) + ".json"
+
+func blueprint_file_exists(resource_file_path: String) -> bool:
+	return FileAccess.file_exists(get_blueprint_file_abspath(resource_file_path))
+
+func get_blueprint_data(blueprint_file_path: String) -> Dictionary:
+	return Utils.load_json(get_blueprint_file_abspath(blueprint_file_path), true)
+
+func set_blueprint_data(blueprint_file_path: String, blueprint_data: Dictionary) -> Error:
+	return Utils.dump_json(get_blueprint_file_abspath(blueprint_file_path), blueprint_data, 2)
+
 
 func get_resource_abspath(resource_file_path: String) -> String:
 	return resources_path.path_join(resource_file_path)

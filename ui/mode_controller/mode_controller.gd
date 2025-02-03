@@ -72,6 +72,15 @@ var tween: Tween
 @onready var mode_hint: Control = %ModeHint
 @onready var mode_label: Label = %ModeLabel
 
+@onready var nodes = [
+	[ground_options_button, ground_options, ground_button_group, GROUND_MODES],
+	[wall_options_button, wall_options, wall_button_group, WALL_MODES],
+	[edit_options_button, edit_options, edit_button_group, EDIT_MODES],
+	[light_options_button, light_options, light_button_group, LIGHT_MODES],
+	[entity_options_button, entity_options, entity_button_group, ENTITY_MODES],
+	[prop_options_button, prop_options, prop_button_group, PROP_MODES],
+	[area_options_button, area_options, area_button_group, AREA_MODES],
+]
 
 func reset():
 	_reset_mode()
@@ -113,46 +122,44 @@ func _set_options(mode_index: int, mode_options: Control):
 		mode_option_button.tooltip_text = "(%s) %s" % [mode_option_keys[i], mode_to_str(MODES[mode_index][i])]
 
 
-func change_options(modes_index: int):
-	_on_options_button_pressed(modes_index, true)
-
-
-func _on_options_button_pressed(modes_index: int, with_key := false):
+func change_mode(new_mode: Mode):
 	_reset_mode()
 	
-	var nodes = [
-		[ground_options_button, ground_options, ground_button_group, GROUND_MODES],
-		[wall_options_button, wall_options, wall_button_group, WALL_MODES],
-		[edit_options_button, edit_options, edit_button_group, EDIT_MODES],
-		[light_options_button, light_options, light_button_group, LIGHT_MODES],
-		[entity_options_button, entity_options, entity_button_group, ENTITY_MODES],
-		[prop_options_button, prop_options, prop_button_group, PROP_MODES],
-		[area_options_button, area_options, area_button_group, AREA_MODES],
-	][modes_index]
+	mode = new_mode
+	if mode == Mode.NONE:
+		Utils.reset_button_group(modes_button_group)
+		modes_options.visible = false
+		show_mode()
+		mode_changed.emit()
+		return
 	
-	var _options_button: Button = nodes[0]
-	var _mode_options: BoxContainer = nodes[1]
-	var _mode_button_group: ButtonGroup = nodes[2]
-	var _modes: Array[Mode] = nodes[3]
+	modes_options.visible = true
+	for i in range(nodes.size()):
+		var _modes: Array[Mode] = nodes[i][3]
+		if new_mode not in _modes:
+			continue
+		
+		nodes[i][0].button_pressed = true
+		nodes[i][1].visible = true
+		nodes[i][2].get_buttons()[_modes.find(new_mode)].button_pressed = true
+		break
+	
+	show_mode()
+	mode_changed.emit()
+
+
+func _on_options_button_pressed(modes_index: int, mode_button_index: int = 0, with_key := false):
+	var _options_button: Button = nodes[modes_index][0]
+	var _modes: Array[Mode] = nodes[modes_index][3]
 	
 	# simulate click
 	if with_key:
 		_options_button.button_pressed = not _options_button.button_pressed
-		
+	
 	if _options_button.button_pressed:
-		modes_options.visible = true
-		_mode_options.visible = true
-		mode = _modes[0]
-		_mode_button_group.get_buttons()[0].button_pressed = true
-		#mode = _modes[_mode_button_group.get_pressed_button().get_index()]
+		change_mode(_modes[mode_button_index])
 	else:
-		modes_options.visible = false
-		_mode_options.visible = false
-		mode = Mode.NONE
-		
-	show_mode()
-		
-	mode_changed.emit()
+		change_mode(Mode.NONE)
 	
 
 func _on_mode_button_pressed(mode_button_index: int):
@@ -200,6 +207,9 @@ func show_mode():
 		tween.kill()
 		
 	if mode == Mode.NONE:
+		mode_label.text = ""
+		mode_hint.modulate = Color.TRANSPARENT
+		tween.kill()
 		return
 		
 	mode_label.text = mode_str
@@ -227,19 +237,20 @@ func _unhandled_input(event: InputEvent) -> void:
 		if Input.is_key_pressed(KEY_CTRL) or Input.is_key_pressed(KEY_SHIFT):
 			return
 			
+		# last good input
 		var input: Key = event.keycode
 		if _last_input == input:
 			return
 		_last_input = input
 		
 		match event.keycode:
-			KEY_Q: _on_options_button_pressed(0, true)
-			KEY_W: _on_options_button_pressed(1, true)
-			KEY_E: _on_options_button_pressed(2, true)
-			KEY_R: _on_options_button_pressed(3, true)
-			KEY_T: _on_options_button_pressed(4, true)
-			KEY_Y: _on_options_button_pressed(5, true)
-			#KEY_U: _on_options_button_pressed(6, true)  # Area
+			KEY_Q: _on_options_button_pressed(0, 0, true)
+			KEY_W: _on_options_button_pressed(1, 0, true)
+			KEY_E: _on_options_button_pressed(2, 0, true)
+			KEY_R: _on_options_button_pressed(3, 0, true)
+			KEY_T: _on_options_button_pressed(4, 0, true)
+			KEY_Y: _on_options_button_pressed(5, 0, true)
+			#KEY_U: _on_options_button_pressed(6, 0, true)  # Area
 			
 			KEY_A: _on_mode_button_pressed(0)
 			KEY_S: _on_mode_button_pressed(1)

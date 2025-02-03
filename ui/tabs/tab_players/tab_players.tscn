@@ -1,13 +1,13 @@
 [gd_scene load_steps=11 format=3 uid="uid://bgemyy0f7bxdq"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_players/tab_players.gd" id="1_mll3s"]
-[ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_7ft0g"]
-[ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="2_ofqpk"]
-[ext_resource type="Texture2D" uid="uid://cximt675xkvkn" path="res://resources/icons/directory_icon.png" id="3_2i5n2"]
-[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="4_7vp1n"]
-[ext_resource type="Texture2D" uid="uid://o0w65dsng3rt" path="res://resources/icons/entities_white_icon.png" id="6_mbyxp"]
-[ext_resource type="Texture2D" uid="uid://bb6y71i7wsjf7" path="res://resources/icons/visibility_visible_icon.png" id="6_qpt40"]
-[ext_resource type="Texture2D" uid="uid://u6c5wrx476el" path="res://resources/icons/center_view_icon.png" id="8_01us4"]
+[ext_resource type="Script" path="res://ui/tabs/tab_players/tab_players.gd" id="1_nosqj"]
+[ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="2_0s4s4"]
+[ext_resource type="Texture2D" uid="uid://cximt675xkvkn" path="res://resources/icons/directory_icon.png" id="3_m3vcg"]
+[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="4_s6erj"]
+[ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="5_fggvs"]
+[ext_resource type="Texture2D" uid="uid://o0w65dsng3rt" path="res://resources/icons/entities_white_icon.png" id="6_0xi4i"]
+[ext_resource type="Texture2D" uid="uid://bb6y71i7wsjf7" path="res://resources/icons/visibility_visible_icon.png" id="7_s7tjj"]
+[ext_resource type="Texture2D" uid="uid://u6c5wrx476el" path="res://resources/icons/center_view_icon.png" id="8_spqtu"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m802i"]
 
@@ -27,7 +27,7 @@ grow_horizontal = 2
 grow_vertical = 2
 mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_m802i")
-script = ExtResource("1_mll3s")
+script = ExtResource("1_nosqj")
 
 [node name="V" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -40,7 +40,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
-icon = ExtResource("2_ofqpk")
+icon = ExtResource("2_0s4s4")
 icon_alignment = 1
 
 [node name="FoldersButton" type="Button" parent="V/H"]
@@ -48,7 +48,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Open Maps folder in file explorer"
-icon = ExtResource("3_2i5n2")
+icon = ExtResource("3_m3vcg")
 icon_alignment = 1
 
 [node name="ScanButton" type="Button" parent="V/H"]
@@ -56,7 +56,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
-icon = ExtResource("4_7vp1n")
+icon = ExtResource("4_s6erj")
 icon_alignment = 1
 
 [node name="C" type="PanelContainer" parent="V"]
@@ -84,7 +84,7 @@ size_flags_horizontal = 3
 placeholder_text = "username..."
 clear_button_enabled = true
 
-[node name="Tree" parent="V/C/V" instance=ExtResource("2_7ft0g")]
+[node name="Tree" parent="V/C/V" instance=ExtResource("5_fggvs")]
 unique_name_in_owner = true
 layout_mode = 2
 hide_root = false
@@ -109,7 +109,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Add the control of selected element to the selected player"
-icon = ExtResource("6_mbyxp")
+icon = ExtResource("6_0xi4i")
 icon_alignment = 1
 
 [node name="OpenVisionButton" type="Button" parent="V/C/V/C/H"]
@@ -117,7 +117,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Use vision of the selected player"
-icon = ExtResource("6_qpt40")
+icon = ExtResource("7_s7tjj")
 icon_alignment = 1
 
 [node name="CenterViewButton" type="Button" parent="V/C/V/C/H"]
@@ -125,5 +125,5 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Use vision of the selected player"
-icon = ExtResource("8_01us4")
+icon = ExtResource("8_spqtu")
 icon_alignment = 1

@@ -112,7 +112,7 @@ func _on_steam_connect_button_pressed():
 		steam_campaign_joined.emit(lobby_id)
 		_on_close_button_pressed()
 	else:
-		Utils.temp_tooltip("Host is not connected")
+		Utils.temp_error_tooltip("Host is not connected")
 
 
 func _on_enet_connect_button_pressed():
@@ -157,7 +157,7 @@ func _on_steam_item_activated():
 		steam_campaign_joined.emit(lobby_id)
 		_on_close_button_pressed()
 	else:
-		Utils.temp_tooltip("Host is not connected")
+		Utils.temp_error_tooltip("Host is not connected")
 		
 func _on_steam_item_selected():
 	var server_data: Dictionary = steam_tree.get_selected().get_metadata(1)
@@ -276,6 +276,9 @@ func enet_refresh():
 	enet_tree.clear()
 	enet_items.clear()
 	enet_root = enet_tree.create_item()
+	host_line_edit.clear()
+	username_line_edit.clear()
+	password_line_edit.clear()
 	
 	var filter := enet_filter_line_edit.text.to_lower()
 	

@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cfyusau8c7lt0"]
+[gd_scene load_steps=10 format=3 uid="uid://cfyusau8c7lt0"]
 
 [ext_resource type="Script" path="res://assets/map/map.gd" id="1_jrnr7"]
 [ext_resource type="Script" path="res://assets/map/loader/loader.gd" id="2_l8wwe"]
@@ -6,8 +6,7 @@
 [ext_resource type="Script" path="res://assets/map/instancer/instancer.gd" id="3_grhhp"]
 [ext_resource type="Theme" uid="uid://bbmp4uwlx25jx" path="res://resources/themes/pixel_ui_theme/PixelTheme_paper.tres" id="4_1lesj"]
 [ext_resource type="Environment" uid="uid://drd07quupnr1b" path="res://assets/map/map_environment.tres" id="4_okbi2"]
-[ext_resource type="Theme" uid="uid://ve0n5o7lvu14" path="res://resources/themes/pixel_ui_theme/PixelTheme_nature.tres" id="5_mdj24"]
-[ext_resource type="Theme" uid="uid://dopunvp7uxup1" path="res://resources/themes/pixel_ui_theme/PixelTheme_blood.tres" id="6_6ihmm"]
+[ext_resource type="FontFile" uid="uid://sph0kotu777o" path="res://resources/themes/pixel_ui_theme/m5x7.ttf" id="7_fupde"]
 
 [sub_resource type="Animation" id="Animation_g0h8x"]
 length = 0.001
@@ -52,7 +51,6 @@ max_rot_x = 0.0
 environment = ExtResource("4_okbi2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]
-visible = false
 
 [node name="3D" type="Control" parent="CanvasLayer"]
 layout_mode = 3
@@ -66,177 +64,28 @@ layout_mode = 3
 anchors_preset = 0
 theme = ExtResource("4_1lesj")
 
-[node name="PointOptions" type="Control" parent="CanvasLayer/3D"]
-unique_name_in_owner = true
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = 460.0
-offset_top = 250.0
-offset_right = 460.0
-offset_bottom = 250.0
-grow_horizontal = 2
-grow_vertical = 2
-
-[node name="AddAfter" type="Button" parent="CanvasLayer/3D/PointOptions"]
-unique_name_in_owner = true
-process_priority = 1
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = 10.0
-offset_top = -8.0
-offset_right = 26.0
-offset_bottom = 8.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-mouse_default_cursor_shape = 10
-theme = ExtResource("5_mdj24")
-keep_pressed_outside = true
-
-[node name="Label" type="Label" parent="CanvasLayer/3D/PointOptions/AddAfter"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -5.0
-offset_top = -15.0
-offset_right = 7.0
-offset_bottom = 11.0
-grow_horizontal = 2
-grow_vertical = 2
-text = ">"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="AddBefore" type="Button" parent="CanvasLayer/3D/PointOptions"]
-unique_name_in_owner = true
-process_priority = 1
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -26.0
-offset_top = -8.0
-offset_right = -10.0
-offset_bottom = 8.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-mouse_default_cursor_shape = 10
-theme = ExtResource("5_mdj24")
-keep_pressed_outside = true
-
-[node name="Label" type="Label" parent="CanvasLayer/3D/PointOptions/AddBefore"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -5.0
-offset_top = -15.0
-offset_right = 7.0
-offset_bottom = 11.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "<"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="DeleteButton" type="Button" parent="CanvasLayer/3D/PointOptions"]
-unique_name_in_owner = true
-process_priority = 1
-process_physics_priority = 1
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -8.0
-offset_top = -26.0
-offset_right = 8.0
-offset_bottom = -10.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-mouse_default_cursor_shape = 8
-theme = ExtResource("6_6ihmm")
-keep_pressed_outside = true
-
-[node name="Label" type="Label" parent="CanvasLayer/3D/PointOptions/DeleteButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -5.0
-offset_top = -15.0
-offset_right = 7.0
-offset_bottom = 11.0
-grow_horizontal = 2
-grow_vertical = 2
-text = "><"
-horizontal_alignment = 1
-vertical_alignment = 1
-
-[node name="BreakButton" type="Button" parent="CanvasLayer/3D/PointOptions"]
-unique_name_in_owner = true
-process_priority = 1
-process_physics_priority = 1
-custom_minimum_size = Vector2(16, 16)
-layout_mode = 1
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-offset_left = -8.0
-offset_top = 10.0
-offset_right = 8.0
-offset_bottom = 26.0
-grow_horizontal = 2
-grow_vertical = 2
-size_flags_horizontal = 4
-size_flags_vertical = 8
-mouse_default_cursor_shape = 1
-theme = ExtResource("6_6ihmm")
-keep_pressed_outside = true
-
-[node name="Label" type="Label" parent="CanvasLayer/3D/PointOptions/BreakButton"]
-layout_mode = 1
-anchors_preset = 8
-anchor_left = 0.5
-anchor_top = 0.5
-anchor_right = 0.5
-anchor_bottom = 0.5
-offset_left = -5.0
-offset_top = -15.0
-offset_right = 7.0
-offset_bottom = 11.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_default_cursor_shape = 1
-text = "<>"
-horizontal_alignment = 1
-vertical_alignment = 1
-
 [node name="Labels" type="Control" parent="CanvasLayer/3D"]
 layout_mode = 3
 anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
+
+[node name="DistanceLabel" type="Label" parent="CanvasLayer/3D"]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -76.0
+offset_bottom = 26.0
+grow_horizontal = 0
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 0.5)
+theme_override_constants/outline_size = 12
+theme_override_fonts/font = ExtResource("7_fupde")
+theme_override_font_sizes/font_size = 32
+text = "12341.5"
+horizontal_alignment = 2
 
 [node name="LightShaderForcer" type="OmniLight3D" parent="."]
 layers = 1025

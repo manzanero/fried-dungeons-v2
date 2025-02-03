@@ -69,7 +69,10 @@ func _on_atlas_texture_resource_changed():
 	if not atlas_texture_resource.resource_loaded:
 		await atlas_texture_resource.loaded
 	atlas_texture = Utils.png_to_atlas(atlas_texture_resource.abspath)
-	
+	Game.ui.tab_builder.reset()
+
+
+@onready var distance_label: Label = %DistanceLabel
 
 @onready var world_environment: WorldEnvironment = $WorldEnvironment
 @onready var environment := world_environment.environment as Environment

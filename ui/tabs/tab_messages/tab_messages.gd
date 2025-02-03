@@ -92,7 +92,7 @@ func _on_history_message_pressed(text: String) -> void:
 func _on_submit(new_text: String) -> void:
 	if not new_text:
 		#dice_panel.add_dice.emit(1, 20)
-		Utils.temp_tooltip("Write a message", 2, true)
+		Utils.temp_error_tooltip("Write a message", 2, true)
 		return
 	
 	message_edit.clear()
@@ -112,7 +112,7 @@ func _get_origin() -> bool:
 	# As player
 	if player_as_origin_button.button_pressed:
 		if not Game.player:
-			Utils.temp_tooltip("Select a Player", 2, true)
+			Utils.temp_error_tooltip("Select a Player", 2, true)
 			return false
 			
 		origin_label = Game.player.username
@@ -122,7 +122,7 @@ func _get_origin() -> bool:
 	elif selection_as_origin_button.button_pressed:
 		var origin = Game.ui.selected_map.selected_level.element_selected
 		if not origin:
-			Utils.temp_tooltip("Select an Element", 2, true)
+			Utils.temp_error_tooltip("Select an Element", 2, true)
 			return false
 			
 		origin_label = origin.label

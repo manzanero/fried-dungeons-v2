@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://83d8jfjfqtrl"]
+[gd_scene load_steps=24 format=3 uid="uid://83d8jfjfqtrl"]
 
 [ext_resource type="Script" path="res://ui/flow_controller/flow_controller.gd" id="1_154cc"]
 [ext_resource type="Texture2D" uid="uid://djhtp0rlxmu50" path="res://resources/icons/play_icon.png" id="1_onlkp"]
@@ -7,19 +7,76 @@
 [ext_resource type="Texture2D" uid="uid://dwfkjnyl85tqn" path="res://resources/icons/stop_icon.png" id="3_rlb6u"]
 [ext_resource type="Texture2D" uid="uid://bvvr7ldnyv7yg" path="res://resources/icons/play_scene_icon.png" id="6_w4cq1"]
 
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5nrfc"]
-content_margin_left = 3.0
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dmvp8"]
+content_margin_left = 2.0
 content_margin_top = 2.0
 content_margin_right = 2.0
 content_margin_bottom = 2.0
-bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
-border_color = Color(0.165656, 0.165656, 0.165656, 1)
+bg_color = Color(0.0431373, 0.0470588, 0.0470588, 1)
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
 border_blend = true
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 corner_detail = 1
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ue4d1"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.133844, 0.277652, 0.513721, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.233286, 0.370984, 0.648786, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_a8iq6"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.133844, 0.277652, 0.513721, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.233286, 0.370984, 0.648786, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_iubon"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.106556, 0.231172, 0.435709, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.194939, 0.318897, 0.569851, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_gfux3"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hhjtx"]
 content_margin_left = 8.0
@@ -59,7 +116,7 @@ content_margin_top = 4.0
 content_margin_right = 8.0
 content_margin_bottom = 4.0
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_6c6o5"]
+[sub_resource type="ButtonGroup" id="ButtonGroup_4fhq1"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xjufn"]
 content_margin_left = 8.0
@@ -93,6 +150,14 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ch3og"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_cdxoj"]
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_eflqp"]
 content_margin_left = 8.0
 content_margin_top = 4.0
@@ -125,12 +190,20 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m5jhp"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_xqts2"]
+
 [node name="FlowController" type="PanelContainer"]
 offset_right = 108.0
 offset_bottom = 28.0
 size_flags_horizontal = 6
 size_flags_vertical = 4
-theme_override_styles/panel = SubResource("StyleBoxFlat_5nrfc")
+theme_override_styles/panel = SubResource("StyleBoxFlat_dmvp8")
 script = ExtResource("1_154cc")
 
 [node name="H" type="HBoxContainer" parent="."]
@@ -142,6 +215,10 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_ue4d1")
+theme_override_styles/hover = SubResource("StyleBoxFlat_a8iq6")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_iubon")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_gfux3")
 icon = ExtResource("2_rjp4c")
 
 [node name="PlayButton" type="Button" parent="H"]
@@ -155,7 +232,7 @@ theme_override_styles/pressed = SubResource("StyleBoxFlat_741sc")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_yvpte")
 toggle_mode = true
 button_pressed = true
-button_group = SubResource("ButtonGroup_6c6o5")
+button_group = SubResource("ButtonGroup_4fhq1")
 icon = ExtResource("1_onlkp")
 
 [node name="PauseButton" type="Button" parent="H"]
@@ -166,9 +243,9 @@ focus_mode = 0
 theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_xjufn")
 theme_override_styles/hover = SubResource("StyleBoxFlat_xjufn")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_i14od")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_yvpte")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_ch3og")
 toggle_mode = true
-button_group = SubResource("ButtonGroup_6c6o5")
+button_group = SubResource("ButtonGroup_cdxoj")
 icon = ExtResource("2_1v6ca")
 
 [node name="StopButton" type="Button" parent="H"]
@@ -179,9 +256,9 @@ focus_mode = 0
 theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_eflqp")
 theme_override_styles/hover = SubResource("StyleBoxFlat_eflqp")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_ph0ia")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_yvpte")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_m5jhp")
 toggle_mode = true
-button_group = SubResource("ButtonGroup_6c6o5")
+button_group = SubResource("ButtonGroup_xqts2")
 icon = ExtResource("3_rlb6u")
 alignment = 2
 

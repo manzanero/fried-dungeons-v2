@@ -90,6 +90,10 @@ var position_2d := Vector2.ZERO :
 		var target_position_2d := target_position.position
 		return Vector2(target_position_2d.x, target_position_2d.y)
 
+var position_3d := Vector3.ZERO : 
+	set(value): position_2d = Utils.v3_to_v2(value)
+	get: return Utils.v2_to_v3(position_2d)
+
 
 func lerp_position_2d(target_position_2d: Vector2) -> void: 
 	target_position.position = Vector3(target_position_2d.x, eyes_hight, target_position_2d.y)
@@ -246,6 +250,8 @@ func _unhandled_input(event):
 			return
 	
 		if event.is_pressed() and is_windows_focused:
+			
+			#prevent move camera while dragging
 			if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				is_rotate = false
 				is_move = false

@@ -281,17 +281,17 @@ func _clear_permisions(item: TreeItem):
 func _on_add_entity_button_pressed():
 	var element_selected := Game.ui.selected_map.selected_level.element_selected; 
 	if not is_instance_valid(element_selected) or element_selected is not Entity:
-		Utils.temp_tooltip("Select an Entity to asign")
+		Utils.temp_error_tooltip("Select an Entity to asign")
 		return
 	
 	if not player_selected_item:
-		Utils.temp_tooltip("Select the player to be asignted")
+		Utils.temp_error_tooltip("Select the player to be asignted")
 		return
 		
 	var player_selected_data := Game.campaign.get_player_data(player_selected_slug)
 	var player_elements: Dictionary = player_selected_data.get_or_add("elements", {})
 	if element_selected.id in player_elements:
-		Utils.temp_tooltip("Element already asigned to the player")
+		Utils.temp_error_tooltip("Element already asigned to the player")
 		return
 	
 	var entity_control_data := {

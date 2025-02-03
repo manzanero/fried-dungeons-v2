@@ -4,7 +4,7 @@
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/color_field/color_field.gd" id="2_3oo5e"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qtfq2"]
-content_margin_top = 0.0
+content_margin_top = 1.0
 content_margin_bottom = 0.0
 bg_color = Color(0.105882, 0.113725, 0.121569, 1)
 border_width_top = 8
@@ -25,19 +25,24 @@ border_width_left = 2
 border_width_top = 2
 border_width_right = 2
 border_width_bottom = 2
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dakbt"]
-content_margin_left = 9.0
-content_margin_top = 9.0
-content_margin_right = 9.0
-content_margin_bottom = 9.0
+content_margin_left = 7.0
+content_margin_top = 7.0
+content_margin_right = 7.0
+content_margin_bottom = 7.0
 
 [node name="ColorField" instance=ExtResource("1_cjrsp")]
 size_flags_vertical = 4
 script = ExtResource("2_3oo5e")
 
 [node name="Panel" type="Panel" parent="H" index="1"]
-custom_minimum_size = Vector2(64, 32)
+custom_minimum_size = Vector2(64, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_qtfq2")
@@ -51,6 +56,7 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_horizontal = 2
+focus_mode = 0
 theme_override_styles/focus = SubResource("StyleBoxFlat_co4bn")
 theme_override_styles/normal = SubResource("StyleBoxFlat_dakbt")
 flat = true

@@ -16,6 +16,7 @@ const SCENE_ICON := preload("res://resources/icons/scene_icon.png")
 @onready var cursor_control: Control = $CursorControl
 
 var is_mouse_over := false
+var scene_has_focus := false
 
 
 func init(map_slug: String, map_data: Dictionary, send_players := false):
@@ -51,26 +52,9 @@ func remove():
 func _ready() -> void:
 	cursor_control.visible = true
 	
-	mouse_entered.connect(func(): 
-		is_mouse_over = true
-		
-		# prevent have cursor previous shape
-		cursor_control.visible = false
-		
-		# prevent move focus when controlling cam with arrows
-		focus_mode = FOCUS_ALL
-		grab_focus()
-		focus_mode = FOCUS_NONE
-	)
-	mouse_exited.connect(func():
-		is_mouse_over = false
-		
-		cursor_control.visible = true
-	)
-	
-	cursor_control.gui_input.connect(func (_event: InputEvent):
-		cursor_control.visible = false
-	)
+	mouse_entered.connect(_on_mouse_entered)
+	mouse_exited.connect(_on_mouse_exited)
+	cursor_control.gui_input.connect(_on_gui_input)
 
 
 func _on_camera_fps_enabled(value: bool):
@@ -92,3 +76,57 @@ func _on_camera_fps_enabled(value: bool):
 	# exit build mode
 	Utils.reset_button_group(Game.modes.modes_button_group, true)
 	Game.ui.selected_map.selected_level.change_state(Level.State.GO_IDLE)
+
+
+func _on_mouse_entered(): 
+	is_mouse_over = true
+	cursor_control.visible = false  # prevent have cursor previous shape
+	
+	## prevent trigger keys while writting
+	if Game.control_uses_keyboard:
+		return
+		 
+	focus_mode = FOCUS_ALL
+	grab_focus()
+	#focus_mode = FOCUS_NONE
+	scene_has_focus = true
+	map.camera.is_operated = true
+
+
+func _on_mouse_exited():
+	is_mouse_over = false
+	cursor_control.visible = true  # prevent have cursor previous shape
+		
+		
+func _on_gui_input(_event: InputEvent):
+	is_mouse_over = true
+	cursor_control.visible = false
+	map.camera.is_operated = true
+	
+	
+func _can_drop_data(_at_position: Vector2, drop_data: Variant) -> bool:
+	if not drop_data is Dictionary:
+		return false
+	if drop_data.get("type") != "campaign_blueprint_items":
+		return false
+	if not drop_data.get("items"):
+		return false
+	return true
+
+
+func _drop_data(_at_position: Vector2, drop_data: Variant) -> void:
+	var blueprint_item: TreeItem = drop_data.items[0]
+	var blueprint: CampaignBlueprint = blueprint_item.get_metadata(0)
+	match blueprint.type:
+		CampaignBlueprint.Type.DIRECTORY:
+			Utils.temp_error_tooltip("Drop an Element", 2, true)
+		_:
+			Game.ui.tab_blueprints.tree.item_activated.emit()
+
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		if event.pressed:
+			scene_has_focus = is_mouse_over
+			map.camera.is_operated = is_mouse_over
+			

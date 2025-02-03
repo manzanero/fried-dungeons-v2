@@ -5,6 +5,7 @@
 
 [node name="DroppableTextureButton" type="Button"]
 size_flags_horizontal = 3
+focus_mode = 0
 icon = ExtResource("1_morg4")
 icon_alignment = 1
 script = ExtResource("2_ycw8h")

@@ -13,6 +13,7 @@ signal reload_campaign_button_pressed
 @onready var host_campaign_window: HostCampaignWindow = %HostCampaignWindow
 @onready var join_campaign_window: JoinCampaignWindow = %JoinCampaignWindow
 @onready var campaign_players_window: CampaignPlayersWindow = %CampaignPlayersWindow
+@onready var how_to_start_window: HowToStartWindow = %HowToStartWindow
 @onready var center_windows: CenterContainer = %CenterWindows
 @onready var delete_element_window: DeleteElementWindow = %DeleteElementWindow
 
@@ -21,9 +22,10 @@ signal reload_campaign_button_pressed
 @onready var left_up: Control = %LeftUp
 @onready var left_down: Control = %LeftDown
 @onready var tab_elements: TabElements = %Elements
-@onready var tab_jukebox: TabJukebox = %Jukebox
-@onready var tab_world: TabWorld = %World
 @onready var tab_players: TabPlayers = %Players
+@onready var tab_blueprints: TabBlueprints = %Blueprints
+@onready var tab_world: TabWorld = %World
+@onready var tab_jukebox: TabJukebox = %Jukebox
 
 # right section
 @onready var right: Control = %Right
@@ -47,7 +49,7 @@ signal reload_campaign_button_pressed
 @onready var mode_controller: ModeController = %ModeController
 @onready var state_label_value: Label = %StateLabelValue
 @onready var player_label_value: Label = %PlayerLabelValue
-@onready var tab_builder: TabBuilder = %Builder
+@onready var tab_builder: TabBuilder = %Materials
 @onready var tab_resources: TabResources = %Resources
 @onready var minimize_down_button: Button = %MinimizeDownButton
 @onready var restore_down_button: Button = %RestoreDownButton
@@ -60,7 +62,13 @@ var selected_map: Map :
 	get: return selected_scene_tab.map if selected_scene_tab else null
 		
 var is_mouse_over_scene_tab: bool :
-	get: return selected_scene_tab.is_mouse_over
+	get: 
+		return selected_scene_tab.is_mouse_over
+		
+var scene_tab_has_focus: bool :
+	get: 
+		#print(selected_scene_tab.scene_has_focus and not Game.control_uses_keyboard)
+		return selected_scene_tab.scene_has_focus and not Game.control_uses_keyboard
 
 
 func init() -> UI:
@@ -81,11 +89,13 @@ func _ready() -> void:
 	host_campaign_window.visible = false
 	join_campaign_window.visible = false
 	campaign_players_window.visible = false
+	how_to_start_window.visible = false
 	delete_element_window.visible = false
 	new_campaign_window.close_window.connect(_on_close_window_pressed)
 	host_campaign_window.close_window.connect(_on_close_window_pressed)
 	join_campaign_window.close_window.connect(_on_close_window_pressed)
 	campaign_players_window.close_window.connect(_on_close_window_pressed)
+	how_to_start_window.close_window.connect(_on_close_window_pressed)
 	delete_element_window.close_window.connect(_on_close_window_pressed)
 	mouse_blocker.gui_input.connect(remove_mouse_blocker)
 	
@@ -103,6 +113,7 @@ func _ready() -> void:
 	nav_bar.campaign_reload_pressed.connect(_on_campaign_reload_pressed)
 	nav_bar.campaign_quit_pressed.connect(_on_campaign_quit_pressed)
 	
+	nav_bar.help_how_to_start_pressed.connect(_on_help_how_to_start_pressed)
 	nav_bar.help_manual_pressed.connect(_on_help_manual_pressed)
 	
 
@@ -174,6 +185,12 @@ func _on_campaign_reload_pressed():
 
 func _on_campaign_quit_pressed():
 	quit()
+
+
+func _on_help_how_to_start_pressed():
+	mouse_blocker.visible = true
+	how_to_start_window.visible = true
+	join_campaign_window.refresh()
 
 
 func _on_help_manual_pressed():

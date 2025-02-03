@@ -144,7 +144,7 @@ func _on_item_activated():
 func _set_playing(sound_item: TreeItem, is_playing: bool, from_position := 0.0) -> void:
 	var sound := item_resource(sound_item)
 	if is_playing and not FileAccess.file_exists(sound.abspath):
-		Utils.temp_tooltip("This file no longer exists")
+		Utils.temp_error_tooltip("This file no longer exists")
 		return
 		
 	if is_playing:
@@ -216,12 +216,12 @@ func _on_import_button_pressed():
 	var resource: CampaignResource = resources_tab.resource_selected
 	if not resource or resource.resource_type != CampaignResource.Type.SOUND:
 		resources_tab.visible = true
-		Utils.temp_tooltip("Select a Sound", 1)
+		Utils.temp_error_tooltip("Select a Sound", 1)
 		return
 	
 	var sound_item := add_sound(resource)
 	if not sound_item:
-		Utils.temp_tooltip("Sound already in list", 1)
+		Utils.temp_error_tooltip("Sound already in list", 1)
 		Debug.print_info_message("Sound already in list: \"%s\"" % resource.path)
 		return
 		
@@ -250,7 +250,7 @@ func _on_items_dropped(drop_data: Dictionary, _parent_item: TreeItem, _item_inde
 		var resource: CampaignResource = item.get_metadata(0)
 		sounds.append(resource)
 		if resource.resource_type != CampaignResource.Type.SOUND:
-			Utils.temp_tooltip("Cannot add a non sound resource: %s" % resource.path)
+			Utils.temp_error_tooltip("Cannot add a non sound resource: %s" % resource.path)
 			return
 
 	for sound in sounds:

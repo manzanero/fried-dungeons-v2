@@ -94,13 +94,13 @@ func _on_player_add_button_pressed():
 		new_player_username = steam_player_username_edit.text
 		
 	if not new_player_username:
-		Utils.temp_tooltip("Username cannot be empty")
+		Utils.temp_error_tooltip("Username cannot be empty")
 		return
 	
 	var new_player_slug := Utils.slugify(new_player_username)
 	var player_slugs := DirAccess.get_directories_at(Game.campaign.players_path)
 	if new_player_slug in player_slugs:
-		Utils.temp_tooltip("Username slug collides with another user")
+		Utils.temp_error_tooltip("Username slug collides with another user")
 		return
 	
 	var new_player_data := {
@@ -122,7 +122,7 @@ func _generate_pass() -> String:
 func refresh():
 	steam_refresh()
 	enet_refresh()
-	Game.ui.tab_players.refresh()
+	Game.ui.tab_control.refresh()
 
 
 func _on_steam_filter_changed():
@@ -168,7 +168,7 @@ func _on_enet_item_button_clicked(enet_item: TreeItem, _column: int, id: int, _m
 func _on_enet_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int):
 	if mouse_button_index == MOUSE_BUTTON_RIGHT:
 		DisplayServer.clipboard_set(enet_tree.get_selected().get_metadata(0).password)
-		Utils.temp_tooltip("Copied!")
+		Utils.temp_info_tooltip("Copied!")
 	
 
 func _on_show_password_pressed(item: TreeItem):

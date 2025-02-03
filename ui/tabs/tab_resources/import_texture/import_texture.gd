@@ -143,7 +143,7 @@ func _ready() -> void:
 	sliced_shape_attribute_fields = {
 		"size": Vector2Field.SCENE.instantiate().init(
 			sliced_shape_attributes_container, "size", 
-			Element.Property.new("", Element.Property.Hints.VECTOR_2, {
+			Element.Property.new("", Element.Hint.VECTOR_2, {
 				"x_suffix": "px",
 				"y_suffix": "px",
 				"rounded": true,
@@ -155,7 +155,7 @@ func _ready() -> void:
 		),
 		"thickness": IntegerField.SCENE.instantiate().init(
 			sliced_shape_attributes_container, "thickness", 
-			Element.Property.new("", Element.Property.Hints.INTEGER, {
+			Element.Property.new("", Element.Hint.INTEGER, {
 				"suffix": "px",
 				"has_arrows": true,
 				"has_slider": false,
@@ -166,7 +166,7 @@ func _ready() -> void:
 		),
 		"scale": IntegerField.SCENE.instantiate().init(
 			sliced_shape_attributes_container, "scale", 
-			Element.Property.new("", Element.Property.Hints.INTEGER, {
+			Element.Property.new("", Element.Hint.INTEGER, {
 				"suffix": "%",
 				"has_arrows": true,
 				"has_slider": true,
@@ -179,7 +179,7 @@ func _ready() -> void:
 		),
 		"frames": IntegerField.SCENE.instantiate().init(
 			sliced_shape_attributes_container, "frames",
-			Element.Property.new("", Element.Property.Hints.INTEGER, {
+			Element.Property.new("", Element.Hint.INTEGER, {
 				"has_arrows": true,
 				"has_slider": false,
 				"step": 1,
@@ -189,7 +189,7 @@ func _ready() -> void:
 		),
 		"slices": IntegerField.SCENE.instantiate().init(
 			sliced_shape_attributes_container, "slices",
-			Element.Property.new("", Element.Property.Hints.INTEGER, {
+			Element.Property.new("", Element.Hint.INTEGER, {
 				"has_arrows": true,
 				"has_slider": false,
 				"step": 1,
@@ -199,7 +199,7 @@ func _ready() -> void:
 		),
 		"direction": ChoiceField.SCENE.instantiate().init(
 			sliced_shape_attributes_container, "direction",
-			Element.Property.new("", Element.Property.Hints.INTEGER, {
+			Element.Property.new("", Element.Hint.INTEGER, {
 				"choices": [
 					["front", "Front"],
 					["top", "Top"],
@@ -213,7 +213,7 @@ func _ready() -> void:
 	texture_index_attribute_fields = {
 		"size": Vector2Field.SCENE.instantiate().init(
 			texture_index_attributes_container, "size", 
-			Element.Property.new("", Element.Property.Hints.VECTOR_2, {
+			Element.Property.new("", Element.Hint.VECTOR_2, {
 				"x_suffix": "px",
 				"y_suffix": "px",
 				"rounded": true,
@@ -221,7 +221,7 @@ func _ready() -> void:
 		),
 		"textures": IntegerField.SCENE.instantiate().init(
 			texture_index_attributes_container, "textures",
-			Element.Property.new("", Element.Property.Hints.INTEGER, {
+			Element.Property.new("", Element.Hint.INTEGER, {
 				"has_arrows": true,
 				"has_slider": false,
 				"min_value": 1,
@@ -230,7 +230,7 @@ func _ready() -> void:
 		),
 		"frames": IntegerField.SCENE.instantiate().init(
 			texture_index_attributes_container, "frames",
-			Element.Property.new("", Element.Property.Hints.INTEGER, {
+			Element.Property.new("", Element.Hint.INTEGER, {
 				"has_arrows": true,
 				"has_slider": false,
 				"min_value": 1,

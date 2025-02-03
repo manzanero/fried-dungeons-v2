@@ -46,6 +46,7 @@ var hidden := true :
 
 var dirty_light := false
 var dirty_mesh := false
+var selector_disabled := false : set = _set_selector_disabled
 
 
 @onready var omni_light_3d := $OmniLight3D as OmniLight3D
@@ -54,7 +55,7 @@ var dirty_mesh := false
 @onready var inner_material := inner_mesh.get_surface_override_material(0) as StandardMaterial3D
 @onready var outer_mesh := %OuterMesh as MeshInstance3D
 @onready var outer_material := outer_mesh.get_surface_override_material(0) as StandardMaterial3D
-@onready var selector: StaticBody3D = %Selector
+@onready var selector_collider: StaticBody3D = %SelectorCollider
 @onready var line_renderer_3d := %LineRenderer3D as LineRenderer
 
 
@@ -66,56 +67,79 @@ const ACTIVE = "active"
 const RANGE = "range"
 const COLOR = "color"
 
+const light_init_properties = {
+	LABEL: {
+		"container": "info",
+		"hint": Hint.STRING,
+		"params": {},
+		"default": "Light Unknown",
+	},
+	DESCRIPTION: {
+		"container": "info",
+		"hint": Hint.STRING,
+		"params": {},
+		"default": "",
+	},
+	PARENT: {
+		"container": "info",
+		"hint": Hint.STRING,
+		"params": {},
+		"default": "",
+	},
+	ACTIVE: {
+		"container": "physics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": true,
+	},
+	RANGE: {
+		"container": "physics",
+		"hint": Hint.FLOAT,
+		"params":  {
+			"suffix": "u",
+			"has_slider": true,
+			"has_arrows": true,
+			"min_value": 1,
+			"max_value": 10,
+			"step": 1,
+		},
+		"default": 5,
+	},
+	COLOR: {
+		"container": "physics",
+		"hint": Hint.COLOR,
+		"params": {},
+		"default": Color.WHITE,
+	},
+}
 
 func _ready() -> void:
-	init_properties = {
-		LABEL: {
-			"container": "info",
-			"hint": Property.Hints.STRING,
-			"params": {},
-			"default": "Light Unknown",
-		},
-		DESCRIPTION: {
-			"container": "info",
-			"hint": Property.Hints.STRING,
-			"params": {},
-			"default": "",
-		},
-		PARENT: {
-			"container": "info",
-			"hint": Property.Hints.STRING,
-			"params": {},
-			"default": "",
-		},
-		ACTIVE: {
-			"container": "physics",
-			"hint": Property.Hints.BOOL,
-			"params": {},
-			"default": true,
-		},
-		RANGE: {
-			"container": "physics",
-			"hint": Property.Hints.FLOAT,
-			"params":  {
-				"suffix": "u",
-				"has_slider": true,
-				"has_arrows": true,
-				"min_value": 1,
-				"max_value": 10,
-				"step": 1,
-			},
-			"default": 5,
-		},
-		COLOR: {
-			"container": "physics",
-			"hint": Property.Hints.COLOR,
-			"params": {},
-			"default": Color.WHITE,
-		},
-	}
+	type = "light"
+	init_properties = light_init_properties
+	
+	is_ceiling_element = true
+	
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
 	line_renderer_3d.points.append_array([Vector3.ZERO, Vector3.UP * 0.75])
+
+
+static func parse_property_values(property_values: Dictionary) -> Dictionary:
+	var raw_property_values := {}
+	for property_name in property_values:
+		var property_value: Variant = property_values[property_name]
+		var init_property_data: Dictionary = light_init_properties[property_name]
+		raw_property_values[property_name] = get_raw_property(init_property_data.hint, property_value)
+	return raw_property_values
+
+
+static func parse_raw_property_values(raw_property_values: Dictionary) -> Dictionary:
+	var property_values := {}
+	for property_name in raw_property_values:
+		var raw_property_value: Variant = raw_property_values[property_name]
+		var init_property_data: Dictionary = light_init_properties[property_name]
+		property_values[property_name] = set_raw_property(init_property_data.hint, raw_property_value)
+	return property_values
 	
 
 func change_property(property_name: String, new_value: Variant) -> void:
@@ -144,11 +168,16 @@ func update_light():
 		hidden = not is_watched
 	elif Game.player:
 		hidden = true
+		
+
+func _set_selector_disabled(value: bool) -> void:
+	selector_collider.get_child(0).disabled = value
+		
 
 func _set_selectable(value: bool) -> void:
 	super._set_selectable(value)
 		
-	selector.set_collision_layer_value(Game.SELECTOR_LAYER, value)
+	selector_collider.set_collision_layer_value(Game.SELECTOR_LAYER, value)
 
 
 func _set_selected(value: bool) -> void:
@@ -172,7 +201,7 @@ func json():
 		values[property] = properties[property].get_raw()
 		
 	return {
-		"type": "light",
+		"type": type,
 		"id": id,
 		"position": Utils.v3_to_a2(global_position),
 		"rotation": snappedf(rotation_y, 0.001),

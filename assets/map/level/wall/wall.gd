@@ -83,7 +83,7 @@ func compatible_with(wall: Wall) -> bool:
 
 
 func size() -> int:
-	return points.size()
+	return curve.point_count
 	
 func clear() -> void:
 	Utils.queue_free_children(points_parent)
@@ -144,15 +144,18 @@ func refresh():
 
 func refresh_points():
 	dirty_points = true
+	call_deferred("update")
 
 func refresh_highlight():
 	dirty_highlight = true
+	call_deferred("update")
 
 func refresh_mesh():
 	dirty_mesh = true
+	call_deferred("update")
 
 
-func _physics_process(_delta: float) -> void:
+func update() -> void:
 	if dirty_points:
 		dirty_points = false
 		dirty_mesh = true
@@ -287,17 +290,66 @@ func reverse():
 	Debug.print_info_message("Wall \"%s\" changed" % id)
 	
 	
-func cut(a: Vector2, b: Vector2):
+func break_points(point_indexes: Array[int]) -> Array[Wall]:
+	var walls: Array[Wall] = []
+	var walls_points := []
+	var wall_points: Array[Vector2] = []
+	
+	for point in points:
+		var index := point.index
+		var position_2d := point.position_2d
+		wall_points.append(position_2d)
+		
+		if index in point_indexes:
+			walls_points.append(wall_points)
+			wall_points = []
+			
+			if index + 1 not in point_indexes:
+				wall_points.append(position_2d)
+	
+	walls_points.append(wall_points)
+	
+	if is_closed and walls_points[0][0].is_equal_approx(walls_points[-1][-1]):
+		walls_points[-1].resize(walls_points[-1].size() - 1)
+		walls_points[0] = walls_points[-1] + walls_points[0]
+		walls_points.resize(walls_points.size() - 1)
+	
+	remove()
+	Game.server.rpcs.remove_wall.rpc(map.slug, level.index, id)
+	
+	for ps in walls_points:
+		if ps.size() > 1:
+			walls.append(mimic(ps))
+	
+	return walls
+	
+
+func mimic(_points_position_2d: Array[Vector2]) -> Wall:
+	var wall := map.instancer.create_wall(level, Utils.random_string(8, true),
+			_points_position_2d, material_index, material_seed, material_layer, two_sided)
+			
+	Game.server.rpcs.create_wall.rpc(map.slug, level.index, 
+			wall.id,
+			wall.points_position_2d, 
+			wall.material_index, 
+			wall.material_seed, 
+			wall.material_layer, 
+			wall.two_sided)
+			
+	return wall
+	
+	
+func cut(a: Vector2, b: Vector2) -> Array[Wall]:
 	if is_closed:
-		cut_closed(a, b)
+		return cut_closed(a, b)
 	else:
-		cut_open(a, b)
+		return cut_open(a, b)
 	
 	
-func cut_closed(a: Vector2, b: Vector2):
-	var point_snap := Game.PIXEL_SNAPPING_QUARTER
+func cut_closed(a: Vector2, b: Vector2) -> Array[Wall]:
+	var point_snap := Game.SNAPPING_QUARTER
 	if Input.is_key_pressed(KEY_ALT):
-		point_snap = Game.PIXEL
+		point_snap = Game.U
 	
 	if curve.get_closest_offset(Utils.v2_to_v3(a)) > curve.get_closest_offset(Utils.v2_to_v3(b)):
 		var temp = a
@@ -311,10 +363,10 @@ func cut_closed(a: Vector2, b: Vector2):
 			[], material_index, material_seed, material_layer, two_sided)
 	
 	# first section
-	wall.add_point(b.snapped(point_snap))
+	wall.add_point(b.snappedf(point_snap))
 
 	var start_index := Utils.get_boundary_points(curve, Utils.v2_to_v3(b))[1]
-	point_1 = Utils.v2_to_v3(b.snapped(point_snap))
+	point_1 = Utils.v2_to_v3(b.snappedf(point_snap))
 	point_2 = curve.get_point_position(start_index)
 	
 	if point_1.distance_to(point_2) > 0.031:
@@ -334,7 +386,7 @@ func cut_closed(a: Vector2, b: Vector2):
 		wall.add_point(Utils.v3_to_v2(point_2))
 		
 	point_1 = point_2
-	point_2 = Utils.v2_to_v3(a.snapped(point_snap))
+	point_2 = Utils.v2_to_v3(a.snappedf(point_snap))
 	
 	if point_1.distance_to(point_2) > 0.031:
 		wall.add_point(Utils.v3_to_v2(point_2))
@@ -342,14 +394,19 @@ func cut_closed(a: Vector2, b: Vector2):
 	remove()
 	
 	Game.server.rpcs.divide_wall.rpc(map.slug, level.index, id, [wall.id], [wall.points_position_2d])
-		
+	
 	Debug.print_info_message("Wall \"%s\" cutted" % id)
+		
+	var new_walls: Array[Wall] = []
+	if is_instance_valid(wall):
+		new_walls.append(wall)
+	return new_walls
 	
 	
-func cut_open(a: Vector2, b: Vector2):
-	var point_snap := Game.PIXEL_SNAPPING_QUARTER
+func cut_open(a: Vector2, b: Vector2) -> Array[Wall]:
+	var point_snap := Game.SNAPPING_QUARTER
 	if Input.is_key_pressed(KEY_ALT):
-		point_snap = Game.PIXEL
+		point_snap = Game.U
 	
 	var segment_1_offset := curve.get_closest_offset(Utils.v2_to_v3(a))
 	var segment_2_offset := curve.get_closest_offset(Utils.v2_to_v3(b))
@@ -381,8 +438,8 @@ func cut_open(a: Vector2, b: Vector2):
 		if offset < segment_1_offset:
 			wall_1.add_point(Utils.v3_to_v2(point_2))
 			continue
-		elif point_1.distance_to(Utils.v2_to_v3(a.snapped(point_snap))) > 0.031:
-			wall_1.add_point(a.snapped(point_snap))
+		elif point_1.distance_to(Utils.v2_to_v3(a.snappedf(point_snap))) > 0.031:
+			wall_1.add_point(a.snappedf(point_snap))
 		break
 	
 	Debug.print_info_message("Wall \"%s\" created" % wall_1.id)
@@ -391,10 +448,10 @@ func cut_open(a: Vector2, b: Vector2):
 		
 	var wall_2 := map.instancer.create_wall(level, Utils.random_string(8, true),
 			[], material_index, material_seed, material_layer, two_sided)
-	wall_2.add_point(b.snapped(point_snap))
+	wall_2.add_point(b.snappedf(point_snap))
 	
 	# first point of 2nd wall may be in the same index
-	point_1 = Utils.v2_to_v3(b.snapped(point_snap))
+	point_1 = Utils.v2_to_v3(b.snappedf(point_snap))
 	point_2 = curve.get_point_position(index)
 	delta = point_1.distance_to(point_2)
 	
@@ -410,7 +467,7 @@ func cut_open(a: Vector2, b: Vector2):
 		if offset > segment_2_offset and delta > 0.031:
 			wall_2.add_point(Utils.v3_to_v2(point_2))
 	
-	if curve.get_point_position(curve.point_count - 1).distance_to(Utils.v2_to_v3(b.snapped(point_snap))) < 0.031:
+	if curve.get_point_position(curve.point_count - 1).distance_to(Utils.v2_to_v3(b.snappedf(point_snap))) < 0.031:
 		wall_2.remove()
 	
 	Debug.print_info_message("Wall \"%s\" created" % wall_2.id)
@@ -418,7 +475,7 @@ func cut_open(a: Vector2, b: Vector2):
 	var wall_2_created := wall_2.check()
 	
 	if wall_2_created and curve.get_point_position(curve.point_count - 1).distance_to(
-			Utils.v2_to_v3(b.snapped(point_snap))) < 0.031:
+			Utils.v2_to_v3(b.snappedf(point_snap))) < 0.031:
 		wall_2.remove()
 		wall_2_created = false
 			
@@ -434,6 +491,13 @@ func cut_open(a: Vector2, b: Vector2):
 		new_wall_points.append(wall_2.points_position_2d)
 	
 	Game.server.rpcs.divide_wall.rpc(map.slug, level.index, id, new_wall_ids, new_wall_points)
+	
+	var new_walls: Array[Wall] = []
+	if is_instance_valid(wall_1):
+		new_walls.append(wall_1)
+	if is_instance_valid(wall_2):
+		new_walls.append(wall_2)
+	return new_walls
 
 
 func merge(wall: Wall):

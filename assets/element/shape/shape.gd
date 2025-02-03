@@ -41,6 +41,7 @@ var texture_attributes := {}
 
 var dirty_light := false
 var dirty_mesh := false
+var selector_disabled := false : set = _set_selector_disabled
 
 
 @onready var selector_mesh_instance: MeshInstance3D = %SelectorMeshInstance
@@ -63,88 +64,109 @@ const INVISIBLE := "invisible"
 const OPAQUE := "opaque"
 const SOLID := "solid"
 
+const prop_init_properties = {
+	LABEL: {
+		"container": "info",
+		"hint": Hint.STRING,
+		"params": {},
+		"default": "Shape Unknown",
+	},
+	SHOW_LABEL: {
+		"container": "info",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": false,
+	},
+	COLOR: {
+		"container": "info",
+		"hint": Hint.COLOR,
+		"params": {},
+		"default": Color.WHITE,
+	},
+	DESCRIPTION: {
+		"container": "info",
+		"hint": Hint.STRING,
+		"params": {},
+		"default": "",
+	},
+	TEXTURE: {
+		"container": "graphics",
+		"hint": Hint.TEXTURE,
+		"params": {},
+		"default": "",
+	},
+	FRAME: {
+		"container": "graphics",
+		"hint": Hint.INTEGER,
+		"params": {
+			"has_arrows": true,
+			"min_value": 0,
+			"max_value": 64,
+			"step": 1,
+			"allow_greater": true,
+		},
+		"default": 0,
+	},
+	SCALE: {
+		"container": "graphics",
+		"hint": Hint.FLOAT,
+		"params":  {
+			"is_percentage": true,
+			"suffix": "%",
+			"has_slider": true,
+			"has_arrows": true,
+			"min_value": 0,
+			"max_value": 200,
+			"step": 5,
+			"allow_greater": true,
+		},
+		"default": 1.0,
+	},
+	INVISIBLE: {
+		"container": "physics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": false,
+	},
+	SOLID: {
+		"container": "physics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": true,
+	},
+	OPAQUE: {
+		"container": "physics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": true,
+	},
+}
 
 func _ready() -> void:
-	init_properties = {
-		LABEL: {
-			"container": "info",
-			"hint": Property.Hints.STRING,
-			"params": {},
-			"default": "Shape Unknown",
-		},
-		SHOW_LABEL: {
-			"container": "info",
-			"hint": Property.Hints.BOOL,
-			"params": {},
-			"default": false,
-		},
-		COLOR: {
-			"container": "info",
-			"hint": Property.Hints.COLOR,
-			"params": {},
-			"default": Color.WHITE,
-		},
-		DESCRIPTION: {
-			"container": "info",
-			"hint": Property.Hints.STRING,
-			"params": {},
-			"default": "",
-		},
-		TEXTURE: {
-			"container": "graphics",
-			"hint": Property.Hints.TEXTURE,
-			"params": {},
-			"default": "",
-		},
-		FRAME: {
-			"container": "graphics",
-			"hint": Property.Hints.INTEGER,
-			"params": {
-				"has_arrows": true,
-				"min_value": 0,
-				"max_value": 64,
-				"step": 1,
-				"allow_greater": true,
-			},
-			"default": 0,
-		},
-		SCALE: {
-			"container": "graphics",
-			"hint": Property.Hints.FLOAT,
-			"params":  {
-				"is_percentage": true,
-				"suffix": "%",
-				"has_slider": true,
-				"has_arrows": true,
-				"min_value": 0,
-				"max_value": 200,
-				"step": 5,
-				"allow_greater": true,
-			},
-			"default": 1.0,
-		},
-		INVISIBLE: {
-			"container": "physics",
-			"hint": Property.Hints.BOOL,
-			"params": {},
-			"default": false,
-		},
-		SOLID: {
-			"container": "physics",
-			"hint": Property.Hints.BOOL,
-			"params": {},
-			"default": true,
-		},
-		OPAQUE: {
-			"container": "physics",
-			"hint": Property.Hints.BOOL,
-			"params": {},
-			"default": true,
-		},
-	}
+	type = "prop"
+	init_properties = prop_init_properties
+	
 	snapping = Game.U
 	selector_mesh_instance.visible = false
 	collider.disabled = true
+
+
+static func parse_property_values(property_values: Dictionary) -> Dictionary:
+	var raw_property_values := {}
+	for property_name in property_values:
+		var property_value: Variant = property_values[property_name]
+		var init_property_data: Dictionary = prop_init_properties[property_name]
+		raw_property_values[property_name] = get_raw_property(init_property_data.hint, property_value)
+	return raw_property_values
+
+
+static func parse_raw_property_values(raw_property_values: Dictionary) -> Dictionary:
+	var property_values := {}
+	for property_name in raw_property_values:
+		var raw_property_value: Variant = raw_property_values[property_name]
+		var init_property_data: Dictionary = prop_init_properties[property_name]
+		property_values[property_name] = set_raw_property(init_property_data.hint, raw_property_value)
+	return property_values
 
 
 func change_property(property_name: String, new_value: Variant) -> void:
@@ -206,14 +228,12 @@ func _process(_delta: float) -> void:
 	if ligth != cached_light:
 		dirty_light = true
 	cached_light = ligth
-		
-	if dirty_light:
-		update_light()
-		dirty_light = false
 	
 	if dirty_mesh:
 		update_mesh()
-		dirty_mesh = false
+		
+	if dirty_light:
+		update_light()
 		
 	if show_label and is_watched:
 		if level.map.camera.is_fps:
@@ -224,7 +244,14 @@ func _process(_delta: float) -> void:
 			info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
 
 
+func update():
+	update_mesh()
+	update_light()
+
+
 func update_light():
+	dirty_light = false
+	
 	if is_watched:
 		body_color = Color(luminance, luminance, luminance)
 	else:
@@ -233,6 +260,8 @@ func update_light():
 
 
 func update_mesh():
+	dirty_mesh = false
+	
 	Utils.queue_free_children(slices_parent)
 	
 	#if not texture_resource or not FileAccess.file_exists(texture_resource.abspath):
@@ -320,6 +349,11 @@ func update_mesh():
 	Debug.print_info_message("Mesh of Shape \"%s\" updated" % id)
 
 
+func _set_selector_disabled(value: bool) -> void:
+	for slice in slices_parent.get_children():
+		slice.collider.get_child(0).disabled = value
+		
+
 func _set_selectable(value: bool) -> void:
 	super._set_selectable(value)
 		
@@ -352,7 +386,7 @@ func json():
 		values[property] = properties[property].get_raw()
 	
 	return {
-		"type": "shape",
+		"type": type,
 		"id": id,
 		"position": Utils.v3_to_a2(global_position),
 		"rotation": snappedf(rotation_y, 0.001),

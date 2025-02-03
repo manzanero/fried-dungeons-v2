@@ -178,23 +178,22 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_0dk4o")
 text = "Shape"
 
-[node name="S" type="HSplitContainer" parent="C"]
+[node name="S2" type="HSplitContainer" parent="C"]
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 0
 
-[node name="C" type="PanelContainer" parent="C/S"]
+[node name="C" type="PanelContainer" parent="C/S2"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_553t8")
 
-[node name="V" type="VBoxContainer" parent="C/S/C"]
+[node name="V" type="VBoxContainer" parent="C/S2/C"]
 layout_mode = 2
 
-[node name="H" type="HBoxContainer" parent="C/S/C/V"]
+[node name="H" type="HBoxContainer" parent="C/S2/C/V"]
 layout_mode = 2
 
-[node name="FolderButton" type="Button" parent="C/S/C/V/H"]
+[node name="FolderButton" type="Button" parent="C/S2/C/V/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -202,11 +201,11 @@ tooltip_text = "Open Maps folder in file explorer"
 icon = ExtResource("2_85spq")
 icon_alignment = 1
 
-[node name="ScanButton" type="Button" parent="C/S/C/V/H"]
+[node name="ScanButton" type="Button" parent="C/S2/C/V/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Scan Maps folder"
+tooltip_text = "Scan Resources folder"
 theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_ayjdp")
 theme_override_styles/hover = SubResource("StyleBoxFlat_pvlj2")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_fo6sh")
@@ -214,16 +213,15 @@ theme_override_styles/normal = SubResource("StyleBoxEmpty_ycinc")
 icon = ExtResource("3_5yge8")
 icon_alignment = 1
 
-[node name="DraggableTree" parent="C/S/C/V" instance=ExtResource("2_ke6og")]
+[node name="DraggableTree" parent="C/S2/C/V" instance=ExtResource("2_ke6og")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
-hide_root = false
 scroll_horizontal_enabled = false
 allow_drag = true
 drag_type = "campaign_resouce_items"
 
-[node name="ImportContainers" type="PanelContainer" parent="C/S"]
+[node name="ImportContainers" type="PanelContainer" parent="C/S2"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(300, 0)
 layout_mode = 2
@@ -232,16 +230,16 @@ size_flags_vertical = 3
 size_flags_stretch_ratio = 3.0
 theme_override_styles/panel = SubResource("StyleBoxFlat_5334t")
 
-[node name="C" type="VBoxContainer" parent="C/S/ImportContainers"]
+[node name="C" type="VBoxContainer" parent="C/S2/ImportContainers"]
 layout_mode = 2
 size_flags_horizontal = 3
 
-[node name="ImportTexture" parent="C/S/ImportContainers/C" instance=ExtResource("3_m6jp2")]
+[node name="ImportTexture" parent="C/S2/ImportContainers/C" instance=ExtResource("3_m6jp2")]
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(480, 0)
 layout_mode = 2
 
-[node name="ImportSound" parent="C/S/ImportContainers/C" instance=ExtResource("4_f6n13")]
+[node name="ImportSound" parent="C/S2/ImportContainers/C" instance=ExtResource("4_f6n13")]
 unique_name_in_owner = true
 layout_mode = 2

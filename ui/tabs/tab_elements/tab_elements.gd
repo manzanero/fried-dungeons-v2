@@ -74,7 +74,7 @@ func _on_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int):
 	
 	if mouse_button_index == MOUSE_BUTTON_RIGHT:
 		DisplayServer.clipboard_set(element.id)
-		Utils.temp_tooltip("Copied!", 1)
+		Utils.temp_info_tooltip("Copied!", 1)
 
 
 func _on_item_activated():

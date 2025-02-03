@@ -17,7 +17,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.745098, 0.752941, 0.752941, 0.756863)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_y8xsx"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_6yx6n"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_3dj65"]
 radial_segments = 16
@@ -67,7 +67,7 @@ material_override = SubResource("StandardMaterial3D_aqxnx")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_y8xsx")
+mesh = SubResource("ImmediateMesh_6yx6n")
 script = ExtResource("3_dc0qo")
 start_thickness = 0.031
 end_thickness = 0.031
@@ -96,12 +96,12 @@ mesh = SubResource("SphereMesh_3dj65")
 skeleton = NodePath("../../OmniLight3D")
 surface_material_override/0 = SubResource("StandardMaterial3D_0sd7k")
 
-[node name="Selector" type="StaticBody3D" parent="."]
+[node name="SelectorCollider" type="StaticBody3D" parent="."]
 unique_name_in_owner = true
 transform = Transform3D(0.125, 0, 0, 0, 0.125, 0, 0, 0, 0.125, 0, 1, 0)
 collision_layer = 134217728
 collision_mask = 0
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="Selector"]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="SelectorCollider"]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 shape = SubResource("SphereShape3D_66866")

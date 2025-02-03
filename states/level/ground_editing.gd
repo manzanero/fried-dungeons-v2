@@ -70,10 +70,10 @@ func _physics_process_state(_delta: float) -> String:
 
 
 func process_build_point() -> void:
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		selector.area.visible = true
 		
-	if Input.is_action_pressed("left_click") and _click_origin_tile != level.tile_hovered and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_pressed("left_click") and _click_origin_tile != level.tile_hovered and Game.ui.scene_tab_has_focus:
 		var tile := level.tile_hovered
 		_click_origin_tile = tile
 		selector.tiled_move_area_to(level.position_hovered, level.position_hovered)
@@ -92,12 +92,12 @@ func process_build_rect() -> void:
 		selector.area.visible = false
 		_is_rect_being_builded = false
 		
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		_click_origin_position = level.position_hovered
 		_is_rect_being_builded = true
 		selector.area.visible = true
 		
-	if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		selector.tiled_move_area_to(_click_origin_position, level.position_hovered)
 		
 	if Input.is_action_just_released("left_click") and _is_rect_being_builded:
@@ -125,12 +125,12 @@ func process_erase_rect() -> void:
 		selector.area.visible = false
 		_is_rect_being_builded = false
 		
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		_click_origin_position = level.position_hovered
 		_is_rect_being_builded = true
 		selector.area.visible = true
 		
-	if Input.is_action_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		selector.tiled_move_area_to(_click_origin_position, level.position_hovered)
 		
 	if Input.is_action_just_released("left_click") and _is_rect_being_builded:
@@ -151,10 +151,10 @@ func process_erase_rect() -> void:
 
 
 func process_paint_bucket() -> void:
-	if Input.is_action_just_pressed("left_click") and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_just_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		selector.area.visible = true
 		
-	if Input.is_action_pressed("left_click") and _click_origin_tile != level.tile_hovered and Game.ui.is_mouse_over_scene_tab:
+	if Input.is_action_pressed("left_click") and _click_origin_tile != level.tile_hovered and Game.ui.scene_tab_has_focus:
 		_click_origin_tile = level.tile_hovered
 		selector.tiled_move_area_to(level.position_hovered, level.position_hovered)
 	
