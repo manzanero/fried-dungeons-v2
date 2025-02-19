@@ -85,18 +85,18 @@ var _has_changed : bool
 var position_2d := Vector2.ZERO : 
 	set(value): 
 		target_position.position = Vector3(value.x, eyes_hight, value.y)
-		focus.position = target_position.position
+		#focus.position = target_position.position
 	get: 
-		var target_position_2d := target_position.position
-		return Vector2(target_position_2d.x, target_position_2d.y)
+		var target_position_3d := target_position.position
+		return Vector2(target_position_3d.x, target_position_3d.z)
 
 var position_3d := Vector3.ZERO : 
 	set(value): position_2d = Utils.v3_to_v2(value)
 	get: return Utils.v2_to_v3(position_2d)
 
-
-func lerp_position_2d(target_position_2d: Vector2) -> void: 
-	target_position.position = Vector3(target_position_2d.x, eyes_hight, target_position_2d.y)
+var rotation_3d := Vector3.ZERO : 
+	set(value): target_rotation.rotation = value
+	get: return target_rotation.rotation
 
 
 func _ready():
@@ -171,14 +171,21 @@ func _process(delta: float) -> void:
 	if allow_tp and is_fps and zoom > 0:
 		is_fps = false
 	
-	# focus position
+	# Focus position
+	var distance = focus.position.distance_to(target_position.position)
 	if not focus.position.is_equal_approx(target_position.position):
-		focus.position = focus.position.lerp(target_position.position, swing_speed * delta)
+		var speed = swing_speed * distance * delta
+		focus.position = focus.position.move_toward(target_position.position, speed)
 		_has_changed = true
 		
-	# pivot rotation
-	if not pivot.rotation.is_equal_approx(target_rotation.rotation):
-		pivot.rotation = pivot.rotation.lerp(target_rotation.rotation, swing_speed * delta)
+	# Pivot rotation
+	var from_quat = pivot.transform.basis.get_rotation_quaternion()
+	var to_quat = target_rotation.transform.basis.get_rotation_quaternion()
+
+	if not from_quat.is_equal_approx(to_quat):
+		var max_step = swing_speed * delta * 1.5
+		var new_quat = from_quat.slerp(to_quat, max_step)  # Moves in fixed steps
+		pivot.transform.basis = Basis(new_quat)
 		_has_changed = true
 
 	# zoom

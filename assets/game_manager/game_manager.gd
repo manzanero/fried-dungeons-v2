@@ -70,13 +70,16 @@ func _on_tab_changed(tab: int):
 	Game.ui.tab_builder.reset()
 	Game.ui.tab_elements.reset()
 	Game.ui.tab_properties.reset()
-	Game.ui.tab_settings.reset()
+	Game.ui.tab_properties.settings.reset()
 	
 	Game.modes.reset()
 	Game.ui.build_border.visible = false
 	
 	if Game.ui.selected_map and Game.ui.selected_map.selected_level:
 		Game.ui.selected_map.selected_level.change_state(Level.State.GO_IDLE)
+		Game.ui.selected_map.selected_level.set_master_control()
+		Game.ui.selected_map.is_master_view = true
+		Game.ui.tab_players.reset_colors()
 	
 	# disable process in hidden and non players tab
 	for i in Game.ui.scene_tabs.get_tab_count():
@@ -199,7 +202,7 @@ func _on_reload_campaign():
 	if Game.campaign.is_master:
 		_on_host_campaign(Game.campaign.slug, Game.campaign.json(), Game.server.is_steam_game)
 	elif Game.server.is_steam_game:
-		_on_join_steam_server(Game.server.lobby_id)
+		_on_join_steam_server(Game.server.lobby_id, Game.server.steam_user)
 	else:
 		_on_join_enet_server(Game.server.enet_host, Game.server.enet_username, Game.server.enet_password)
 
@@ -244,8 +247,8 @@ func save_map(map: Map):
 	Debug.print_info_message("Map \"%s\" saved" % map.slug)
 
 
-func _on_join_steam_server(lobby_id: int):
-	Game.server.join_steam_multiplayer(lobby_id)
+func _on_join_steam_server(lobby_id: int, username: String):
+	Game.server.join_steam_multiplayer(lobby_id, username)
 
 
 func _on_join_enet_server(host: String, username: String, password: String):
@@ -282,7 +285,13 @@ func _process(_delta: float) -> void:
 	Game.radian_friendly_tick = floor(Time.get_ticks_msec() / (2 * PI) / 32)
 	Game.wave_global = sin(Game.radian_friendly_tick)
 	Game.control_with_focus = get_viewport().gui_get_focus_owner()
-	Game.control_uses_keyboard = Game.control_with_focus is LineEdit
+	Game.control_uses_keyboard = false
+	if Game.control_with_focus is LineEdit:
+		Game.control_uses_keyboard = true
+	elif Game.control_with_focus is Tree:
+		Game.control_uses_keyboard = true
+	elif Game.control_with_focus is TextEdit:
+		Game.control_uses_keyboard = true
 	
 	# restart the frame input handled
 	Game.handled_input = false

@@ -38,6 +38,10 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_4isnj")
 [node name="C" type="HBoxContainer" parent="C3"]
 layout_mode = 2
 
+[node name="Preferences" type="PopupMenu" parent="C3/C"]
+unique_name_in_owner = true
+auto_translate_mode = 1
+
 [node name="MenuBar" type="MenuBar" parent="C3/C"]
 layout_mode = 2
 size_flags_horizontal = 0
@@ -49,10 +53,6 @@ prefer_global_menu = false
 unique_name_in_owner = true
 auto_translate_mode = 1
 size = Vector2i(181, 100)
-
-[node name="Preferences" type="PopupMenu" parent="C3/C/MenuBar"]
-unique_name_in_owner = true
-auto_translate_mode = 1
 
 [node name="Help" type="PopupMenu" parent="C3/C/MenuBar"]
 unique_name_in_owner = true

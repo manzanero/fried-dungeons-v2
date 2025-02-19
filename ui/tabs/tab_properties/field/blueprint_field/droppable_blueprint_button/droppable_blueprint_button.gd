@@ -21,7 +21,8 @@ func _can_drop_data(_at_position: Vector2, drop_data: Variant) -> bool:
 func _drop_data(_at_position: Vector2, drop_data: Variant) -> void:
 	var blueprint_item: TreeItem = drop_data.items[0]
 	var blueprint: CampaignBlueprint = blueprint_item.get_metadata(0)
-	if blueprint.type != Game.ui.tab_properties.element_selected.type:
-		Utils.temp_error_tooltip("Drop %s" % blueprint.type.capitalize(), 2, true)
+	var element_type := Game.ui.tab_properties.element_selected.type
+	if blueprint.type != element_type:
+		Utils.temp_error_tooltip("Drop a blueprint of type %s" % element_type.capitalize(), 2, true)
 		return
 	dropped_blueprint.emit(blueprint)

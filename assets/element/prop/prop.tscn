@@ -1,8 +1,8 @@
 [gd_scene load_steps=13 format=3 uid="uid://curk4vjra3lx5"]
 
-[ext_resource type="Script" path="res://assets/element/shape/shape.gd" id="1_spwb5"]
-[ext_resource type="PackedScene" uid="uid://upfcm5wo63fj" path="res://assets/element/shape/shape_slice/shape_slice.tscn" id="2_4juhu"]
-[ext_resource type="Shader" uid="uid://ccvt7m473m6ql" path="res://assets/element/shape/materials/shader.tres" id="2_r2us3"]
+[ext_resource type="Script" path="res://assets/element/prop/prop.gd" id="1_spwb5"]
+[ext_resource type="PackedScene" uid="uid://upfcm5wo63fj" path="res://assets/element/prop/shape_slice/shape_slice.tscn" id="2_4juhu"]
+[ext_resource type="Shader" uid="uid://ccvt7m473m6ql" path="res://assets/element/prop/materials/shader.tres" id="2_r2us3"]
 [ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="4_3klkt"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_86s78"]

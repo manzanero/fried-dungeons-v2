@@ -33,60 +33,83 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
-theme_override_constants/separation = 32
+theme_override_constants/separation = 8
 script = ExtResource("1_2wa7l")
 
-[node name="ScrollContainer" type="ScrollContainer" parent="."]
-layout_mode = 2
-horizontal_scroll_mode = 0
-
-[node name="VBoxContainer" type="VBoxContainer" parent="ScrollContainer"]
+[node name="V3" type="VBoxContainer" parent="."]
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
 
-[node name="ImportAsChoiceField" parent="ScrollContainer/VBoxContainer" instance=ExtResource("7_5m7st")]
+[node name="ImportAsChoiceField" parent="V3" instance=ExtResource("7_5m7st")]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 1
 
-[node name="Label" parent="ScrollContainer/VBoxContainer/ImportAsChoiceField/H" index="0"]
+[node name="Label" parent="V3/ImportAsChoiceField/H" index="0"]
 text = "Import As"
 
-[node name="OptionButton" parent="ScrollContainer/VBoxContainer/ImportAsChoiceField/H" index="1"]
+[node name="OptionButton" parent="V3/ImportAsChoiceField/H" index="1"]
 item_count = 2
 popup/item_0/text = "Sliced Shape"
 popup/item_1/text = "Texture Index"
 
-[node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+[node name="HSeparator" type="HSeparator" parent="V3"]
 layout_mode = 2
 
-[node name="SlicedShapeAttributesContainer" parent="ScrollContainer/VBoxContainer" instance=ExtResource("1_0a7i1")]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(216.705, 0)
+[node name="ScrollContainer" type="ScrollContainer" parent="V3"]
+layout_mode = 2
+size_flags_vertical = 3
+horizontal_scroll_mode = 0
+
+[node name="VBoxContainer" type="VBoxContainer" parent="V3/ScrollContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CollapseButton" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer" index="0"]
-visible = false
-text = "Ambient"
-
-[node name="Background" parent="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M" index="0"]
-visible = false
-
-[node name="TextureIndexAttributesContainer" parent="ScrollContainer/VBoxContainer" instance=ExtResource("1_0a7i1")]
+[node name="SlicedShapeAttributesContainer" parent="V3/ScrollContainer/VBoxContainer" instance=ExtResource("1_0a7i1")]
 unique_name_in_owner = true
 visible = false
-custom_minimum_size = Vector2(216.705, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="CollapseButton" parent="ScrollContainer/VBoxContainer/TextureIndexAttributesContainer" index="0"]
+[node name="CollapseButton" parent="V3/ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer" index="0"]
 visible = false
 text = "Ambient"
 
-[node name="Background" parent="ScrollContainer/VBoxContainer/TextureIndexAttributesContainer/M" index="0"]
+[node name="Background" parent="V3/ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer/M" index="0"]
 visible = false
+
+[node name="TextureIndexAttributesContainer" parent="V3/ScrollContainer/VBoxContainer" instance=ExtResource("1_0a7i1")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+
+[node name="CollapseButton" parent="V3/ScrollContainer/VBoxContainer/TextureIndexAttributesContainer" index="0"]
+visible = false
+text = "Ambient"
+
+[node name="Background" parent="V3/ScrollContainer/VBoxContainer/TextureIndexAttributesContainer/M" index="0"]
+visible = false
+
+[node name="HSeparator2" type="HSeparator" parent="V3"]
+layout_mode = 2
+
+[node name="FriedConvexPanel" parent="V3" instance=ExtResource("7_c05cm")]
+layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="ResetButton" type="Button" parent="V3/FriedConvexPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+tooltip_text = "Reset import attributes"
+focus_mode = 0
+icon = ExtResource("9_qebvm")
+icon_alignment = 1
 
 [node name="V2" type="BoxContainer" parent="."]
 layout_mode = 2
@@ -243,8 +266,8 @@ icon = ExtResource("6_t1jcj")
 
 [node name="Slices" type="Control" parent="V2"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(160, 160)
 layout_mode = 2
+size_flags_vertical = 3
 
 [node name="TextureRect" type="TextureRect" parent="V2/Slices"]
 layout_mode = 1
@@ -256,27 +279,16 @@ grow_vertical = 2
 size_flags_horizontal = 6
 size_flags_vertical = 0
 texture = ExtResource("7_8agyp")
-expand_mode = 1
+expand_mode = 5
 stretch_mode = 5
 
 [node name="V" type="BoxContainer" parent="."]
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_constants/separation = 4
+theme_override_constants/separation = 8
 vertical = true
 
-[node name="ResetButton" type="Button" parent="V"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(64, 0)
-layout_mode = 2
-size_flags_horizontal = 0
-tooltip_text = "Reset import attributes"
-focus_mode = 0
-icon = ExtResource("9_qebvm")
-icon_alignment = 1
-
 [node name="Label" type="Label" parent="V"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 2
 size_flags_vertical = 0
@@ -303,6 +315,6 @@ offset_bottom = 720.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[editable path="ScrollContainer/VBoxContainer/ImportAsChoiceField"]
-[editable path="ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer"]
-[editable path="ScrollContainer/VBoxContainer/TextureIndexAttributesContainer"]
+[editable path="V3/ImportAsChoiceField"]
+[editable path="V3/ScrollContainer/VBoxContainer/SlicedShapeAttributesContainer"]
+[editable path="V3/ScrollContainer/VBoxContainer/TextureIndexAttributesContainer"]

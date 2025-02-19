@@ -1,13 +1,15 @@
-[gd_scene load_steps=11 format=3 uid="uid://bxt6nwjxeo4i8"]
+[gd_scene load_steps=13 format=3 uid="uid://bxt6nwjxeo4i8"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_jukebox/tab_jukebox.gd" id="1_enohi"]
 [ext_resource type="Script" path="res://assets/game_manager/audio/audio.gd" id="2_eujgv"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_o2hp0"]
 [ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="3_inyrj"]
+[ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_kqjd4"]
 [ext_resource type="Texture2D" uid="uid://dufx3biipbvha" path="res://resources/icons/mute_icon.png" id="3_mxqcy"]
-[ext_resource type="Texture2D" uid="uid://dwfkjnyl85tqn" path="res://resources/icons/stop_icon.png" id="4_af58b"]
+[ext_resource type="PackedScene" uid="uid://gy2c5q5o665" path="res://ui/fried_button/fried_button_yellow.tscn" id="4_2nua5"]
 [ext_resource type="Texture2D" uid="uid://ckd03gcqkho3n" path="res://resources/icons/sound_icon.png" id="4_bkosv"]
 [ext_resource type="Texture2D" uid="uid://ph36o52jrb1h" path="res://resources/icons/cross_icon.png" id="4_h0nbq"]
+[ext_resource type="PackedScene" uid="uid://cq6rcy2ktpx36" path="res://ui/fried_button/fried_button_red.tscn" id="6_5mig2"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t4urb"]
 
@@ -36,25 +38,25 @@ script = ExtResource("2_eujgv")
 [node name="C" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="C2" type="HBoxContainer" parent="C"]
+[node name="C3" parent="C" instance=ExtResource("3_kqjd4")]
 layout_mode = 2
 
-[node name="MuteButton" type="Button" parent="C/C2"]
+[node name="C2" type="HBoxContainer" parent="C/C3"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="MuteButton" parent="C/C3/C2" instance=ExtResource("4_2nua5")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 tooltip_text = "Mute the music for all players"
 toggle_mode = true
 icon = ExtResource("3_mxqcy")
-icon_alignment = 1
 
-[node name="StopButton" type="Button" parent="C/C2"]
+[node name="StopButton" parent="C/C3/C2" instance=ExtResource("6_5mig2")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 tooltip_text = "Stop the music for all players"
-icon = ExtResource("4_af58b")
-icon_alignment = 1
 
 [node name="C" type="PanelContainer" parent="C"]
 layout_mode = 2
@@ -63,10 +65,12 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_7lfy0")
 
 [node name="C" type="VBoxContainer" parent="C/C"]
 layout_mode = 2
+theme_override_constants/separation = 0
 
 [node name="DraggableTree" parent="C/C/C" instance=ExtResource("2_o2hp0")]
 unique_name_in_owner = true
 layout_mode = 2
+mouse_force_pass_scroll_events = false
 hide_folding = true
 scroll_horizontal_enabled = false
 drag_type = "Jukebox_tab_music_items"
@@ -82,29 +86,34 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="C" type="HBoxContainer" parent="C/C/C/MarginContainer"]
+[node name="C3" parent="C/C/C/MarginContainer" instance=ExtResource("3_kqjd4")]
 layout_mode = 2
 
-[node name="ResouceButton" type="Button" parent="C/C/C/MarginContainer/C"]
+[node name="C" type="HBoxContainer" parent="C/C/C/MarginContainer/C3"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ResouceButton" type="Button" parent="C/C/C/MarginContainer/C3/C"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Edit attributes in Resources tab"
+focus_mode = 0
 icon = ExtResource("4_bkosv")
 icon_alignment = 1
 
-[node name="ImportButton" type="Button" parent="C/C/C/MarginContainer/C"]
+[node name="ImportButton" type="Button" parent="C/C/C/MarginContainer/C3/C"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Import selected resorce of Resouces tab"
+focus_mode = 0
 icon = ExtResource("3_inyrj")
 icon_alignment = 1
 
-[node name="ClearButton" type="Button" parent="C/C/C/MarginContainer/C"]
+[node name="ClearButton" parent="C/C/C/MarginContainer/C3/C" instance=ExtResource("6_5mig2")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 tooltip_text = "Remove selected music from list"
 icon = ExtResource("4_h0nbq")
-icon_alignment = 1

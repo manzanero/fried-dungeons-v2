@@ -56,7 +56,7 @@ func process_wall_selection():
 
 
 func process_element_selection():
-	if not Game.ui.scene_tab_has_focus or Game.handled_input:
+	if not Game.ui.is_mouse_over_scene_tab or Game.handled_input:
 		return
 	
 	if not Input.is_action_just_pressed("left_click"):
@@ -89,7 +89,7 @@ func process_element_movement():
 		level.element_selected.is_dragged = false
 		level.drag_offset = Vector2.ZERO
 	
-	if not Game.ui.scene_tab_has_focus:
+	if not Game.ui.is_mouse_over_scene_tab:
 		return
 	
 	if not Game.campaign.is_master and Game.flow.is_paused:

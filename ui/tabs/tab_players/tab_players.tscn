@@ -1,11 +1,14 @@
-[gd_scene load_steps=11 format=3 uid="uid://bgemyy0f7bxdq"]
+[gd_scene load_steps=14 format=3 uid="uid://bgemyy0f7bxdq"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_players/tab_players.gd" id="1_nosqj"]
 [ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="2_0s4s4"]
-[ext_resource type="Texture2D" uid="uid://cximt675xkvkn" path="res://resources/icons/directory_icon.png" id="3_m3vcg"]
-[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="4_s6erj"]
+[ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="2_7djuh"]
+[ext_resource type="PackedScene" uid="uid://bmjoy32xi5brf" path="res://ui/fried_button/fried_button_green.tscn" id="3_ni2ep"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="5_fggvs"]
+[ext_resource type="PackedScene" uid="uid://gy2c5q5o665" path="res://ui/fried_button/fried_button_yellow.tscn" id="5_md6vh"]
 [ext_resource type="Texture2D" uid="uid://o0w65dsng3rt" path="res://resources/icons/entities_white_icon.png" id="6_0xi4i"]
+[ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="6_ja7i8"]
+[ext_resource type="PackedScene" uid="uid://b3d83roncqixw" path="res://ui/fried_button/fried_button_blue.tscn" id="7_7pk53"]
 [ext_resource type="Texture2D" uid="uid://bb6y71i7wsjf7" path="res://resources/icons/visibility_visible_icon.png" id="7_s7tjj"]
 [ext_resource type="Texture2D" uid="uid://u6c5wrx476el" path="res://resources/icons/center_view_icon.png" id="8_spqtu"]
 
@@ -29,46 +32,48 @@ mouse_filter = 2
 theme_override_styles/panel = SubResource("StyleBoxEmpty_m802i")
 script = ExtResource("1_nosqj")
 
-[node name="V" type="VBoxContainer" parent="."]
+[node name="HSplitContainer" type="HSplitContainer" parent="."]
 layout_mode = 2
+theme_override_constants/separation = 0
 
-[node name="H" type="HBoxContainer" parent="V"]
-layout_mode = 2
-
-[node name="NewButton" type="Button" parent="V/H"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 25)
+[node name="V" type="VBoxContainer" parent="HSplitContainer"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="FriedConvexPanel" parent="HSplitContainer/V" instance=ExtResource("2_7djuh")]
+visible = false
+layout_mode = 2
+
+[node name="H" type="HBoxContainer" parent="HSplitContainer/V/FriedConvexPanel"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="NewButton" parent="HSplitContainer/V/FriedConvexPanel/H" instance=ExtResource("3_ni2ep")]
+unique_name_in_owner = true
+layout_mode = 2
 icon = ExtResource("2_0s4s4")
-icon_alignment = 1
 
-[node name="FoldersButton" type="Button" parent="V/H"]
+[node name="FoldersButton" parent="HSplitContainer/V/FriedConvexPanel/H" instance=ExtResource("5_md6vh")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+icon = ExtResource("6_ja7i8")
+
+[node name="ScanButton" parent="HSplitContainer/V/FriedConvexPanel/H" instance=ExtResource("7_7pk53")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Open Maps folder in file explorer"
-icon = ExtResource("3_m3vcg")
-icon_alignment = 1
 
-[node name="ScanButton" type="Button" parent="V/H"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-size_flags_horizontal = 3
-icon = ExtResource("4_s6erj")
-icon_alignment = 1
-
-[node name="C" type="PanelContainer" parent="V"]
+[node name="C" type="PanelContainer" parent="HSplitContainer/V"]
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_8uw5w")
 
-[node name="V" type="VBoxContainer" parent="V/C"]
+[node name="V" type="VBoxContainer" parent="HSplitContainer/V/C"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="C2" type="MarginContainer" parent="V/C/V"]
+[node name="C2" type="MarginContainer" parent="HSplitContainer/V/C/V"]
 visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 4
@@ -76,7 +81,7 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 0
 
-[node name="NameLineEdit" type="LineEdit" parent="V/C/V/C2"]
+[node name="NameLineEdit" type="LineEdit" parent="HSplitContainer/V/C/V/C2"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
@@ -84,46 +89,115 @@ size_flags_horizontal = 3
 placeholder_text = "username..."
 clear_button_enabled = true
 
-[node name="Tree" parent="V/C/V" instance=ExtResource("5_fggvs")]
+[node name="PlayersTree" parent="HSplitContainer/V/C/V" instance=ExtResource("5_fggvs")]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath(".")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath(".")
+focus_next = NodePath(".")
+focus_previous = NodePath(".")
+theme_override_constants/item_margin = 0
+theme_override_constants/draw_relationship_lines = 0
+hide_folding = true
 hide_root = false
 scroll_horizontal_enabled = false
-scroll_vertical_enabled = false
 allow_drop_on_item = true
 drop_types_allowed = ["element"]
 
-[node name="C" type="MarginContainer" parent="V/C/V"]
+[node name="C" type="MarginContainer" parent="HSplitContainer/V/C/V"]
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="H" type="BoxContainer" parent="V/C/V/C"]
-custom_minimum_size = Vector2(0, 25)
+[node name="C" parent="HSplitContainer/V/C/V/C" instance=ExtResource("2_7djuh")]
 layout_mode = 2
 
-[node name="AddEntityButton" type="Button" parent="V/C/V/C/H"]
+[node name="H" type="BoxContainer" parent="HSplitContainer/V/C/V/C/C"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="AddEntityButton" type="Button" parent="HSplitContainer/V/C/V/C/C/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Add the control of selected element to the selected player"
+focus_mode = 0
 icon = ExtResource("6_0xi4i")
 icon_alignment = 1
 
-[node name="OpenVisionButton" type="Button" parent="V/C/V/C/H"]
+[node name="OpenVisionButton" type="Button" parent="HSplitContainer/V/C/V/C/C/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Use vision of the selected player"
+focus_mode = 0
 icon = ExtResource("7_s7tjj")
 icon_alignment = 1
 
-[node name="CenterViewButton" type="Button" parent="V/C/V/C/H"]
+[node name="CenterViewButton" type="Button" parent="HSplitContainer/V/C/V/C/C/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Use vision of the selected player"
+focus_mode = 0
 icon = ExtResource("8_spqtu")
 icon_alignment = 1
+
+[node name="C" type="PanelContainer" parent="HSplitContainer"]
+custom_minimum_size = Vector2(200, 56)
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_8uw5w")
+
+[node name="VSplitContainer" type="VSplitContainer" parent="HSplitContainer/C"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+
+[node name="V" type="VBoxContainer" parent="HSplitContainer/C/VSplitContainer"]
+custom_minimum_size = Vector2(0, 36)
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_constants/separation = 0
+
+[node name="C2" type="MarginContainer" parent="HSplitContainer/C/VSplitContainer/V"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 0
+
+[node name="NameLineEdit" type="LineEdit" parent="HSplitContainer/C/VSplitContainer/V/C2"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "username..."
+clear_button_enabled = true
+
+[node name="PermissionsTree" parent="HSplitContainer/C/VSplitContainer/V" instance=ExtResource("5_fggvs")]
+unique_name_in_owner = true
+layout_mode = 2
+hide_folding = true
+scroll_horizontal_enabled = false
+allow_drop_on_item = true
+drop_types_allowed = ["element"]
+
+[node name="C" type="MarginContainer" parent="HSplitContainer/C/VSplitContainer/V"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="H" type="BoxContainer" parent="HSplitContainer/C/VSplitContainer/V/C"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2

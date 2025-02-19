@@ -339,7 +339,7 @@ func load_map(map_data: Dictionary):
 				match element_data.type:
 					"light": properties = Light.parse_raw_property_values(element_data.properties)
 					"entity": properties = Entity.parse_raw_property_values(element_data.properties)
-					"prop": properties = Shape.parse_raw_property_values(element_data.properties)
+					"prop": properties = Prop.parse_raw_property_values(element_data.properties)
 				map.instancer.create_element(element_data.type, level, element_data.id, 
 						Utils.a2_to_v2(element_data.position), properties, rotation_y, flipped)
 	

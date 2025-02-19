@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3 uid="uid://dndmjccb14xki"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/color_edit/color_edit.gd" id="1_5v5qt"]
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_6wfvk"]
+content_margin_left = 7.0
+content_margin_top = 7.0
+content_margin_right = 7.0
+content_margin_bottom = 7.0
+
+[node name="ColorEdit" type="Button"]
+custom_minimum_size = Vector2(25, 25)
+size_flags_horizontal = 3
+script = ExtResource("1_5v5qt")
+
+[node name="ColorPickerButton" type="ColorPickerButton" parent="."]
+unique_name_in_owner = true
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 2
+focus_mode = 0
+mouse_filter = 1
+theme_override_styles/normal = SubResource("StyleBoxEmpty_6wfvk")
+flat = true
+color = Color(1, 1, 1, 1)

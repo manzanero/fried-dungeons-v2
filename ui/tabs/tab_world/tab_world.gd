@@ -28,6 +28,7 @@ var players_map := ""
 @onready var filter_line_edit: LineEdit = %TitleLineEdit
 @onready var tree: Tree = %Tree
 @onready var open_button: Button = %OpenButton
+@onready var players_button: Button = %PlayersButton
 @onready var close_button: Button = %CloseButton
 @onready var remove_button: Button = %RemoveButton
 
@@ -52,6 +53,7 @@ func _ready() -> void:
 	tree.button_clicked.connect(_on_button_clicked)
 	
 	open_button.pressed.connect(open_selected_map)
+	players_button.pressed.connect(_on_players_button_pressed)
 	close_button.pressed.connect(_on_close_selected_map_pressed)
 	remove_button.pressed.connect(_on_remove_button_pressed)
 
@@ -118,10 +120,13 @@ func refresh_tree():
 func open_selected_map():
 	var map_item := tree.get_selected()
 	if not map_item:
-		Utils.temp_error_tooltip("Select a map to be opened")
+		Utils.temp_error_tooltip("Select a map to be open")
 		return
 		
 	var map_slug: String = selected_map_slug
+	if map_slug == Game.ui.selected_map.slug:
+		Utils.temp_warning_tooltip("Select a map is already open")
+		return
 		
 	if map_slug in Game.maps:
 		var tab_index = Game.maps.keys().find(map_slug)
@@ -137,12 +142,11 @@ func open_selected_map():
 	tab_scene.map.camera.target_position.position = camera_init_position
 
 
-func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:
-	item.select(column)
+func _on_players_button_pressed():
 	var map_slug: String = selected_map_slug
 	
 	if map_slug == players_map:
-		Utils.temp_error_tooltip("Players already are in this map")
+		Utils.temp_warning_tooltip("Players already are in this map")
 		return
 	
 	open_selected_map()
@@ -150,6 +154,11 @@ func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_ind
 	send_players_to_map(map_slug)
 	
 	refresh_tree()
+
+
+func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:
+	item.select(column)
+	_on_players_button_pressed()
 
 
 func send_players_to_map(map_slug):
@@ -197,7 +206,7 @@ func _on_close_selected_map_pressed():
 		return
 	
 	if selected_map_slug == players_map:
-		Utils.temp_error_tooltip("Player's map cannot be closed. Send them to another map")
+		Utils.temp_error_tooltip("Send player them to another map")
 		return
 		
 	_close_selected_map()
@@ -212,12 +221,12 @@ func _on_remove_button_pressed():
 		return
 	
 	if selected_map_slug == players_map:
-		Utils.temp_error_tooltip("Player's map cannot be removed. Send them to another map")
+		Utils.temp_error_tooltip("Send player them to another map")
 		return
 		
 	_close_selected_map()
 	Game.maps.erase(selected_map_slug)
-	Utils.remove_dirs(campaign_selected.get_map_path(selected_map_slug))
+	Utils.move_to_trash(campaign_selected.get_map_path(selected_map_slug))
 	reset()
 
 

@@ -33,7 +33,7 @@ signal reload_campaign_button_pressed
 @onready var right_down: Control = %RightDown
 @onready var right_down_tabs: Control = %RightDownTabs
 @onready var tab_properties: TabProperties = %Properties
-@onready var tab_settings: TabSettings = %Settings
+#@onready var tab_settings: TabSettings = %Settings
 @onready var tab_messages: TabMessages = %Messages
 
 # center section
@@ -67,7 +67,6 @@ var is_mouse_over_scene_tab: bool :
 		
 var scene_tab_has_focus: bool :
 	get: 
-		#print(selected_scene_tab.scene_has_focus and not Game.control_uses_keyboard)
 		return selected_scene_tab.scene_has_focus and not Game.control_uses_keyboard
 
 
@@ -99,7 +98,7 @@ func _ready() -> void:
 	delete_element_window.close_window.connect(_on_close_window_pressed)
 	mouse_blocker.gui_input.connect(remove_mouse_blocker)
 	
-	tab_settings.info_changed.connect(_on_info_changed)
+	tab_properties.settings.info_changed.connect(_on_info_changed)
 	
 	minimize_down_button.pressed.connect(_on_minimize_down_pressed.bind(true))
 	restore_down_button.pressed.connect(_on_minimize_down_pressed.bind(false))
@@ -167,7 +166,6 @@ func _on_campaign_settings_pressed():
 func _on_campaign_players_pressed():
 	mouse_blocker.visible = true
 	campaign_players_window.visible = true
-	join_campaign_window.refresh()
 
 
 func _on_campaign_save_pressed():

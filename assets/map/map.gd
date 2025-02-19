@@ -99,7 +99,7 @@ func json() -> Dictionary:
 			"atlas_texture": atlas_texture_resource.path if atlas_texture_resource else "",
 			"ambient_light": ambient_light,
 			"ambient_color": Utils.color_to_html_color(ambient_color),
-			"is_master_view": is_master_view,
+			#"is_master_view": is_master_view,
 			"master_ambient_light": master_ambient_light,
 			"master_ambient_color": Utils.color_to_html_color(master_ambient_color),
 			"override_ambient_light": override_ambient_light,

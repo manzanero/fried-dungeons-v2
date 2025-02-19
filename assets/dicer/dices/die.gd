@@ -8,7 +8,7 @@ signal stopped
 	set(value):
 		color = value
 		material_base.albedo_color = value
-		material_digits.albedo_color = Color.BLACK if color.get_luminance() > 0.5 else Color.WHITE
+		material_digits.albedo_color = Color.BLACK if color.get_luminance() > 0.33 else Color.WHITE
 @export var roll_seed := 0
 @export var throw_strength := 5.0
 

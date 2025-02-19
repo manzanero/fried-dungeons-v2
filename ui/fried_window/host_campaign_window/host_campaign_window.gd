@@ -84,7 +84,7 @@ func _on_item_button_clicked(item: TreeItem, _column: int, id: int, _mouse_butto
 		1: 
 			Utils.open_in_file_manager(campaign_path)
 		2: 
-			Utils.remove_dirs(campaign_path)
+			Utils.move_to_trash(campaign_path)
 			refresh()
 
 

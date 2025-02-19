@@ -38,7 +38,7 @@ func init(map_slug: String, map_data: Dictionary, send_players := false):
 	
 	name = map_data.label
 	
-	Game.ui.tab_settings.reset()
+	Game.ui.tab_properties.settings.reset()
 	
 	loaded.emit()
 	return self
@@ -63,15 +63,11 @@ func _on_camera_fps_enabled(value: bool):
 	map.current_ambient_color = map.ambient_color
 	
 	if not value:
-		if Game.campaign.is_master:
-			map.is_master_view = Game.ui.tab_settings.master_view_check.button_pressed
-			if map.is_master_view:
-				if Game.ui.tab_settings.override_ambient_light_check.button_pressed:
-					map.current_ambient_light = map.master_ambient_light
-				if Game.ui.tab_settings.override_ambient_color_check.button_pressed:
-					map.current_ambient_color = map.master_ambient_color
-		else:
+		if Game.player:
 			map.is_master_view = false
+		else:
+			map.current_ambient_light = map.master_ambient_light
+			map.current_ambient_color = map.master_ambient_color
 	
 	# exit build mode
 	Utils.reset_button_group(Game.modes.modes_button_group, true)
@@ -82,13 +78,14 @@ func _on_mouse_entered():
 	is_mouse_over = true
 	cursor_control.visible = false  # prevent have cursor previous shape
 	
-	## prevent trigger keys while writting
+	# prevent trigger keys while writting or using a control
 	if Game.control_uses_keyboard:
 		return
 		 
-	focus_mode = FOCUS_ALL
-	grab_focus()
+	#focus_mode = FOCUS_ALL
+	#grab_focus()
 	#focus_mode = FOCUS_NONE
+	get_viewport().gui_release_focus()
 	scene_has_focus = true
 	map.camera.is_operated = true
 
@@ -118,7 +115,7 @@ func _drop_data(_at_position: Vector2, drop_data: Variant) -> void:
 	var blueprint_item: TreeItem = drop_data.items[0]
 	var blueprint: CampaignBlueprint = blueprint_item.get_metadata(0)
 	match blueprint.type:
-		CampaignBlueprint.Type.DIRECTORY:
+		CampaignBlueprint.Type.FOLDER:
 			Utils.temp_error_tooltip("Drop an Element", 2, true)
 		_:
 			Game.ui.tab_blueprints.tree.item_activated.emit()
@@ -129,4 +126,8 @@ func _input(event: InputEvent) -> void:
 		if event.pressed:
 			scene_has_focus = is_mouse_over
 			map.camera.is_operated = is_mouse_over
+			if is_mouse_over:
+				focus_mode = FOCUS_ALL
+				grab_focus()
+				focus_mode = FOCUS_NONE
 			

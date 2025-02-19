@@ -1,14 +1,17 @@
-[gd_scene load_steps=9 format=3 uid="uid://cxb7ssvks0wlj"]
+[gd_scene load_steps=11 format=3 uid="uid://cxb7ssvks0wlj"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_wmk2c"]
 [ext_resource type="Script" path="res://ui/fried_window/host_campaign_window/host_campaign_window.gd" id="2_fr76l"]
-[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="3_g12vm"]
+[ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_6a6ll"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="3_p624n"]
 [ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="3_tyu7f"]
+[ext_resource type="PackedScene" uid="uid://bmjoy32xi5brf" path="res://ui/fried_button/fried_button_green.tscn" id="4_nv6je"]
+[ext_resource type="PackedScene" uid="uid://b3d83roncqixw" path="res://ui/fried_button/fried_button_blue.tscn" id="6_63cjh"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_g6i2j"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
+content_margin_top = 2.0
 bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
 border_color = Color(0.0705882, 0.0705882, 0.0705882, 1)
 corner_radius_top_left = 6
@@ -17,7 +20,7 @@ corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 corner_detail = 1
 
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_y2p2k"]
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_nq2p6"]
 
 [node name="HostCampaignWindow" instance=ExtResource("1_wmk2c")]
 offset_right = 0.0
@@ -72,58 +75,45 @@ size_flags_vertical = 1
 text = "Saved campaigns:"
 vertical_alignment = 2
 
-[node name="C" type="PanelContainer" parent="M/VBoxContainer/Body/V" index="1"]
-layout_mode = 2
-size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
-
-[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body/V/C" index="0"]
-layout_mode = 2
-theme_override_constants/separation = -4
-
-[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/C/V" index="0"]
-layout_mode = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 4
-theme_override_constants/margin_bottom = 4
-
-[node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/C/V/M" index="0"]
+[node name="FriedConvexPanel" parent="M/VBoxContainer/Body/V" index="1" instance=ExtResource("3_6a6ll")]
 layout_mode = 2
 
-[node name="NewButton" type="Button" parent="M/VBoxContainer/Body/V/C/V/M/H" index="0"]
+[node name="H" type="HBoxContainer" parent="M/VBoxContainer/Body/V/FriedConvexPanel" index="0"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="NewButton" parent="M/VBoxContainer/Body/V/FriedConvexPanel/H" index="0" instance=ExtResource("4_nv6je")]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 1
 icon = ExtResource("3_tyu7f")
 
-[node name="FilterLineEdit" type="LineEdit" parent="M/VBoxContainer/Body/V/C/V/M/H" index="1"]
+[node name="FilterLineEdit" type="LineEdit" parent="M/VBoxContainer/Body/V/FriedConvexPanel/H" index="1"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 size_flags_horizontal = 3
 placeholder_text = "filter..."
 
-[node name="RefreshButton" type="Button" parent="M/VBoxContainer/Body/V/C/V/M/H" index="2"]
+[node name="RefreshButton" parent="M/VBoxContainer/Body/V/FriedConvexPanel/H" index="2" instance=ExtResource("6_63cjh")]
 unique_name_in_owner = true
 layout_mode = 2
-icon = ExtResource("3_g12vm")
+size_flags_horizontal = 1
 
-[node name="C" type="ScrollContainer" parent="M/VBoxContainer/Body/V/C/V" index="1"]
+[node name="C" type="PanelContainer" parent="M/VBoxContainer/Body/V" index="2"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="C" type="ScrollContainer" parent="M/VBoxContainer/Body/V/C" index="0"]
 custom_minimum_size = Vector2(0, 100)
 layout_mode = 2
 size_flags_vertical = 3
-theme_override_styles/panel = SubResource("StyleBoxEmpty_y2p2k")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_nq2p6")
 
-[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/C/V/C" index="0"]
-custom_minimum_size = Vector2(0, 100)
-layout_mode = 2
-size_flags_horizontal = 3
-size_flags_vertical = 3
-
-[node name="Tree" parent="M/VBoxContainer/Body/V/C/V/C/M" index="0" instance=ExtResource("3_p624n")]
+[node name="Tree" parent="M/VBoxContainer/Body/V/C/C" index="0" instance=ExtResource("3_p624n")]
 unique_name_in_owner = true
 layout_mode = 2
-theme_override_constants/draw_guides = 1
 columns = 2
 column_titles_visible = true
 hide_folding = true

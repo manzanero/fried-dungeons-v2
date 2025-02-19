@@ -47,13 +47,20 @@ func _process_state(_delta: float) -> String:
 		Game.modes.reset()
 		return Level.State.GO_IDLE
 	
+	# end with right clik with no movement
+	if not Input.is_action_pressed("right_click") and Game.ui.scene_tab_has_focus:
+		if not mouse_move and Input.is_action_just_released("right_click"):
+			Game.modes.reset()
+			return Level.State.GO_IDLE
+		mouse_move = false
+	
 	match mode:
 		OMNILIGHT:
 			process_instance_light()
 		ENTITY_3D:
 			process_instance_entity()
 		PROP_3D:
-			process_instance_shape()
+			process_instance_prop()
 			
 	return Level.State.KEEP
 
@@ -106,8 +113,8 @@ func process_instance_entity():
 		map.instancer.create_entity(level, id, 
 				entity.position_2d, entity.properties_values, entity.rotation_y)
 	
-		Game.server.rpcs.create_entity.rpc(map.slug, level.index, entity.id, 
-				entity.position_2d, entity.properties_values, entity.rotation_y)
+		Game.server.rpcs.create_entity.rpc(map.slug, level.index, id, 
+				entity.position_2d, entity.get_raw_property_values(), entity.rotation_y)
 	
 
 func process_instance_light():
@@ -137,8 +144,8 @@ func process_instance_light():
 				light.position_2d, light.properties_values, light.rotation_y)
 
 
-func process_instance_shape():
-	var prop := level.preview_element as Shape if is_instance_valid(level.preview_element) else null
+func process_instance_prop():
+	var prop := level.preview_element as Prop if is_instance_valid(level.preview_element) else null
 	if not prop:
 		prop = map.instancer.create_prop(level, Utils.random_string(8, true), 
 				selector.position_2d, preview_properties, preview_rotation)
@@ -153,7 +160,7 @@ func process_instance_shape():
 			var collider = hit_info.collider
 			while not collider is Element:
 				collider = collider.get_parent()
-			var hovered_prop := collider as Shape
+			var hovered_prop := collider as Prop
 			if hovered_prop:
 				prop.properties = hovered_prop.properties
 				Game.ui.tab_properties.element_selected = prop
@@ -165,5 +172,13 @@ func process_instance_shape():
 		map.instancer.create_prop(level, id, 
 				prop.position_2d, prop.properties_values, prop.rotation_y)
 	
-		Game.server.rpcs.create_prop.rpc(map.slug, level.index, prop.id,
+		Game.server.rpcs.create_prop.rpc(map.slug, level.index, id,
 				prop.position_2d, prop.properties_values, prop.rotation_y)
+				
+
+var mouse_move: bool
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		if Input.is_action_pressed("right_click"):
+			mouse_move = true

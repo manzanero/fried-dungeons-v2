@@ -8,7 +8,7 @@ extends Node
 const WALL = preload("res://assets/map/level/wall/wall.tscn")
 const ENTITY = preload("res://assets/element/entity/entity.tscn")
 const LIGHT = preload("res://assets/element/light/light.tscn")
-const SHAPE = preload("res://assets/element/shape/shape.tscn")
+const PROP = preload("res://assets/element/prop/prop.tscn")
 const PLAYER_SIGNAL = preload("res://assets/player_signal/player_signal.tscn")
 
 
@@ -29,8 +29,8 @@ func create_element(type: String, level: Level, id: String, position_2d: Vector2
 			element = ENTITY.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
 		"light": 
 			element = LIGHT.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
-		"shape", "prop": 
-			element = SHAPE.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
+		"prop", "shape": 
+			element = PROP.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
 			
 	level.elements[id] = element
 	Game.ui.tab_elements.add_element(element)
@@ -38,13 +38,6 @@ func create_element(type: String, level: Level, id: String, position_2d: Vector2
 	Debug.print_info_message(element.get_class() + " \"%s\" created" % element.id)
 	
 	return element
-
-#func parse_raw_properties(_type: String, properties: Dictionary) -> Dictionary:
-	#if properties.has("color"):
-		#properties["color"] = Utils.html_color_to_color(properties["color"])
-	#if properties.has("blueprint"):
-		#properties["blueprint"] = Game.blueprints.get(properties["blueprint"])
-	#return properties
 		
 
 func create_entity(level: Level, id: String, position_2d: Vector2,
@@ -56,7 +49,7 @@ func create_light(level: Level, id: String, position_2d: Vector2,
 	return create_element("light", level, id, position_2d, properties, rotation_y, flipped)
 
 func create_prop(level: Level, id: String, position_2d: Vector2,
-		properties := {}, rotation_y := 0.0, flipped := false) -> Shape:
+		properties := {}, rotation_y := 0.0, flipped := false) -> Prop:
 	return create_element("prop", level, id, position_2d, properties, rotation_y, flipped)
 
 func create_player_signal(level: Level, position_2d: Vector2, color: Color) -> PlayerSignal:

@@ -217,8 +217,15 @@ func process_build_one_sided_next_point() -> void:
 		
 		
 func process_build_one_sided_new_point() -> void:
-	if Input.is_action_just_pressed("right_click"):
-		_stop_creating_wall()
+	
+	# end with right clik with no movement
+	if not Input.is_action_pressed("right_click") and Game.ui.scene_tab_has_focus:
+		if not mouse_move and Input.is_action_just_released("right_click"):
+			_stop_creating_wall()
+		mouse_move = false
+		
+	#if Input.is_action_just_pressed("right_click"):
+		#_stop_creating_wall()
 	
 	if Input.is_action_just_pressed("left_click"):
 		var destiny := Utils.v3_to_v2(selector.column.position)
@@ -596,3 +603,11 @@ func _create_temp_passage(origin: Vector3, destiny: Vector3, thickness: float) -
 	
 	var mesh := st.commit()
 	selector.wall.mesh = mesh
+
+
+var mouse_move: bool
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		if Input.is_action_pressed("right_click"):
+			mouse_move = true

@@ -1,7 +1,7 @@
 class_name Entity
 extends Element
 
-const SHAPE_SLICE := preload("res://assets/element/shape/shape_slice/shape_slice.tscn")
+const SHAPE_SLICE := preload("res://assets/element/prop/shape_slice/shape_slice.tscn")
 
 @export var slices_parent: Node3D
 @export var material: ShaderMaterial
@@ -364,7 +364,7 @@ func update_mesh():
 			slice.material_override = material
 			slice.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		
-	Debug.print_info_message("Mesh of Shape \"%s\" updated" % id)
+	Debug.print_info_message("Mesh of Prop \"%s\" updated" % id)
 
 
 func _set_selector_disabled(value: bool) -> void:

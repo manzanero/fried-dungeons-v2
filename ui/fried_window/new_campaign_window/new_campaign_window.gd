@@ -55,7 +55,7 @@ func _ready() -> void:
 	master_color_field = ColorField.SCENE.instantiate()
 	fields.add_child(master_color_field)
 	master_color_field.label.text = "Master Color"
-	master_color_field.color_picker_button.color = Color.WHITE
+	master_color_field.color_edit.color = Color.WHITE
 	
 	reset()
 

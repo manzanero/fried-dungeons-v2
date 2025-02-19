@@ -14,6 +14,7 @@ var origin_color := Color.WHITE
 @onready var dice_panel: PanelDice = %Dice
 @onready var history_panel: PanelHistory = %History
 
+@onready var command_button: MenuButton = %CommandButton
 @onready var master_as_origin_button: Button = %AsMasterButton
 @onready var player_as_origin_button: Button = %AsPlayerButton
 @onready var selection_as_origin_button: Button = %AsSelectionButton
@@ -30,9 +31,12 @@ func _ready() -> void:
 	history_button.button_pressed = false
 	
 	dice_panel.add_dice.connect(_on_add_dice)
-
 	history_panel.command_pressed.connect(_on_history_message_pressed)
 	
+	command_button.pressed.connect(_on_command_button_pressed)
+	var command_popup := command_button.get_popup()
+	command_popup.get_window().transparent = true
+	command_popup.id_pressed.connect(_on_command_id_pressed)
 	message_edit.text_submitted.connect(_on_submit)
 	send_message_button.pressed.connect(_on_send_message_button)
 	
@@ -43,9 +47,11 @@ func _ready() -> void:
 func set_profile():
 	if Game.campaign and Game.campaign.is_master:
 		master_as_origin_button.visible = true
+		player_as_origin_button.visible = false
 		master_as_origin_button.button_pressed = true
 	else:
 		master_as_origin_button.visible = false
+		player_as_origin_button.visible = true
 		player_as_origin_button.button_pressed = true
 
 
@@ -80,14 +86,27 @@ func _on_dicer_roll_result(_origin_label: String, _origin_color: Color, dice_str
 
 func _on_history_message_pressed(text: String) -> void:
 	if message_edit.text == text:
-		process_message(text)
+		if process_message(text):
+			return
 		message_edit.clear()
 		return
 	
 	message_edit.clear()
 	message_edit.insert_text_at_caret(text)
 	message_edit.grab_focus()
+	
+	
+func _on_command_button_pressed() -> void:
+	command_button.get_popup().position.y -= command_button.get_popup().size.y
 
+
+func _on_command_id_pressed(id: int) -> void:
+	message_edit.clear()
+	match id:
+		0: message_edit.text = "/roll "
+		1: message_edit.text = "/echo "
+	message_edit.grab_focus()
+	message_edit.caret_column = len(message_edit.text)
 
 func _on_submit(new_text: String) -> void:
 	if not new_text:
@@ -95,8 +114,10 @@ func _on_submit(new_text: String) -> void:
 		Utils.temp_error_tooltip("Write a message", 2, true)
 		return
 	
+	if process_message(new_text):
+		return
+		
 	message_edit.clear()
-	process_message(new_text)
 
 
 func _on_send_message_button() -> void:
@@ -131,17 +152,19 @@ func _get_origin() -> bool:
 	return true
 
 
-func process_message(text: String):
+func process_message(text: String) -> Error:
 	if not _get_origin():
-		return
+		return ERR_UNCONFIGURED
 		
 	history_panel.add_command(text)
 	new_message.rpc(origin_label, origin_color, text)
 
-	if text.begins_with('/roll '):
+	if text.begins_with('/roll ') and text != '/roll ':
 		var dice_string = text.split('/roll ', false, 1)[0]
 		var output_text = "Dice result:\n[center]%s[/center]" % [roll_command(dice_string)]
 		new_message.rpc(origin_label, origin_color, output_text)
+	
+	return OK
 
 
 func roll_command(dice_string: String) -> String:
@@ -162,7 +185,7 @@ func roll_command(dice_string: String) -> String:
 @rpc("call_local", "any_peer", "reliable")
 func new_message(label: String, color: Color, text: String):
 	var label_rich := label
-	if color.get_luminance() < 0.5:
+	if color.get_luminance() < 0.33:
 		label_rich = "[outline_color=white][outline_size=8]%s[/outline_size][/outline_color]" % label
 	output_text_label.append_text("[b][color=%s]%s[/color]  ·  [/b]%s\n" % [color.to_html(), label_rich, text])
 	output_text_label.append_text("[center][b][color=dark_gray]·[/color][/b][/center]\n")

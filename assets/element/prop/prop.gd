@@ -1,9 +1,9 @@
-class_name Shape
+class_name Prop
 extends Element
 
-const SCENE := preload("res://assets/element/shape/shape.tscn")
+const SCENE := preload("res://assets/element/prop/prop.tscn")
 
-const SHAPE_SLICE := preload("res://assets/element/shape/shape_slice/shape_slice.tscn")
+const SHAPE_SLICE := preload("res://assets/element/prop/shape_slice/shape_slice.tscn")
 
 @export var slices_parent: Node3D
 @export var material: ShaderMaterial
@@ -69,7 +69,7 @@ const prop_init_properties = {
 		"container": "info",
 		"hint": Hint.STRING,
 		"params": {},
-		"default": "Shape Unknown",
+		"default": "Prop Unknown",
 	},
 	SHOW_LABEL: {
 		"container": "info",
@@ -181,7 +181,7 @@ func change_property(property_name: String, new_value: Variant) -> void:
 			label_label.label_settings.outline_color = Utils.get_outline_color(new_value)
 		DESCRIPTION: description = new_value
 		
-		# shape properties
+		# prop properties
 		TEXTURE: texture_resource_path = new_value
 		FRAME: frame = new_value
 		SCALE: shape_scale = clamp(new_value, 0.125, 64)
@@ -346,7 +346,7 @@ func update_mesh():
 			slice.material_override = material
 			slice.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_OFF
 		
-	Debug.print_info_message("Mesh of Shape \"%s\" updated" % id)
+	Debug.print_info_message("Mesh of prop \"%s\" updated" % id)
 
 
 func _set_selector_disabled(value: bool) -> void:

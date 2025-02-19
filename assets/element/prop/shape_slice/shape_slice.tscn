@@ -1,8 +1,8 @@
 [gd_scene load_steps=9 format=4 uid="uid://upfcm5wo63fj"]
 
 [ext_resource type="Texture2D" uid="uid://j04vtki4o5mi" path="res://resources/textures/bookshelf.png" id="1_dll86"]
-[ext_resource type="Material" uid="uid://7u05bsnb3i4y" path="res://assets/element/shape/materials/shape_slice.tres" id="1_nxtt2"]
-[ext_resource type="Script" path="res://assets/element/shape/shape_slice/shape_slice.gd" id="3_t8vpq"]
+[ext_resource type="Material" uid="uid://7u05bsnb3i4y" path="res://assets/element/prop/materials/shape_slice.tres" id="1_nxtt2"]
+[ext_resource type="Script" path="res://assets/element/prop/shape_slice/shape_slice.gd" id="3_t8vpq"]
 [ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="4_ivvom"]
 
 [sub_resource type="ArrayMesh" id="ArrayMesh_lljfk"]

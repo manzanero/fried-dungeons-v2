@@ -1,4 +1,4 @@
-[gd_scene load_steps=47 format=3 uid="uid://bo0uwbj6jw1oj"]
+[gd_scene load_steps=46 format=3 uid="uid://bo0uwbj6jw1oj"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
@@ -14,7 +14,6 @@
 [ext_resource type="PackedScene" uid="uid://pojmf4m23i0" path="res://addons/fade_transition/fade_transition.tscn" id="6_mw1aj"]
 [ext_resource type="Texture2D" uid="uid://cf4nrufodnamj" path="res://resources/icons/arrow_up.png" id="6_o08ft"]
 [ext_resource type="PackedScene" uid="uid://dhbx748ct8awa" path="res://ui/tabs/tab_messages/tab_messages.tscn" id="6_r4wjl"]
-[ext_resource type="PackedScene" uid="uid://qg2jutjaad46" path="res://ui/tabs/tab_settings/tab_settings.tscn" id="7_cdf46"]
 [ext_resource type="PackedScene" uid="uid://bxt6nwjxeo4i8" path="res://ui/tabs/tab_jukebox/tab_jukebox.tscn" id="7_s1ltk"]
 [ext_resource type="PackedScene" uid="uid://cf4l6g0krsom" path="res://ui/tabs/tab_blueprints/tab_blueprints.tscn" id="8_4jyo6"]
 [ext_resource type="PackedScene" uid="uid://c3oq3t62qadp0" path="res://ui/tabs/tab_resources/tab_resources.tscn" id="9_l1602"]
@@ -265,7 +264,7 @@ theme_override_constants/separation = 0
 
 [node name="Left" type="VSplitContainer" parent="V/IDE/H/H"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(256, 0)
+custom_minimum_size = Vector2(265, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
@@ -279,15 +278,22 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_trsl8")
 
 [node name="LeftUpTabs" type="TabContainer" parent="V/IDE/H/H/Left/LeftUp"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 300)
+custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
+tab_focus_mode = 0
 
 [node name="Elements" parent="V/IDE/H/H/Left/LeftUp/LeftUpTabs" instance=ExtResource("3_636ai")]
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
+
+[node name="Jukebox" parent="V/IDE/H/H/Left/LeftUp/LeftUpTabs" instance=ExtResource("7_s1ltk")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+metadata/_tab_index = 1
 
 [node name="LeftDown" type="PanelContainer" parent="V/IDE/H/H/Left"]
 unique_name_in_owner = true
@@ -297,10 +303,11 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_trsl8")
 
 [node name="LeftDownTabs" type="TabContainer" parent="V/IDE/H/H/Left/LeftDown"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 300)
+custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
+tab_focus_mode = 0
 
 [node name="Blueprints" parent="V/IDE/H/H/Left/LeftDown/LeftDownTabs" instance=ExtResource("8_4jyo6")]
 unique_name_in_owner = true
@@ -320,10 +327,11 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 size_flags_stretch_ratio = 8.0
 theme_override_constants/separation = 0
-split_offset = 2820
 
 [node name="V" type="HSplitContainer" parent="V/IDE/H/H/Middle"]
 layout_mode = 2
+size_flags_vertical = 3
+size_flags_stretch_ratio = 2.0
 theme_override_constants/separation = 0
 
 [node name="ManualContainer" parent="V/IDE/H/H/Middle/V" instance=ExtResource("9_uc1vt")]
@@ -357,7 +365,7 @@ size_flags_vertical = 3
 tabs_visible = false
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
-tab_focus_mode = 1
+tab_focus_mode = 0
 
 [node name="SceneCoverings" type="Control" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs"]
 unique_name_in_owner = true
@@ -447,7 +455,7 @@ stretch = true
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(353, 353)
+size = Vector2i(411, 411)
 render_target_update_mode = 4
 
 [node name="Dicer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
@@ -530,9 +538,6 @@ alignment = 2
 [node name="ModeController" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings" instance=ExtResource("14_yiu68")]
 unique_name_in_owner = true
 layout_mode = 1
-anchors_preset = -1
-offset_right = 0.0
-offset_bottom = 0.0
 
 [node name="RestoreDownButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs"]
 unique_name_in_owner = true
@@ -595,30 +600,31 @@ text = "None"
 
 [node name="MiddleDown" type="PanelContainer" parent="V/IDE/H/H/Middle"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 280)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_trsl8")
 
 [node name="DownTabs" type="TabContainer" parent="V/IDE/H/H/Middle/MiddleDown"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(640, 160)
 layout_mode = 2
-current_tab = 1
+current_tab = 0
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
+tab_focus_mode = 0
 
 [node name="Players" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("5_w7n2g")]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="Materials" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("6_jy8ng")]
+[node name="Resources" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("9_l1602")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 metadata/_tab_index = 1
 
-[node name="Resources" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("9_l1602")]
+[node name="Materials" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("6_jy8ng")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -639,7 +645,7 @@ icon = ExtResource("5_5f26e")
 
 [node name="Right" type="VSplitContainer" parent="V/IDE/H"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(256, 0)
+custom_minimum_size = Vector2(265, 0)
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
@@ -652,29 +658,18 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_trsl8")
 
 [node name="RightUpTabs" type="TabContainer" parent="V/IDE/H/Right/RightUp"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 300)
+custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
+tab_focus_mode = 0
 
 [node name="Properties" parent="V/IDE/H/Right/RightUp/RightUpTabs" instance=ExtResource("5_groax")]
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
-
-[node name="Settings" parent="V/IDE/H/Right/RightUp/RightUpTabs" instance=ExtResource("7_cdf46")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-metadata/_tab_index = 1
-
-[node name="Jukebox" parent="V/IDE/H/Right/RightUp/RightUpTabs" instance=ExtResource("7_s1ltk")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-metadata/_tab_index = 2
 
 [node name="RightDown" type="PanelContainer" parent="V/IDE/H/Right"]
 unique_name_in_owner = true
@@ -684,12 +679,13 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_trsl8")
 
 [node name="RightDownTabs" type="TabContainer" parent="V/IDE/H/Right/RightDown"]
 unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 300)
+custom_minimum_size = Vector2(0, 160)
 layout_mode = 2
 size_flags_vertical = 3
 current_tab = 0
 drag_to_rearrange_enabled = true
 tabs_rearrange_group = 0
+tab_focus_mode = 0
 
 [node name="Messages" parent="V/IDE/H/Right/RightDown/RightDownTabs" instance=ExtResource("6_r4wjl")]
 unique_name_in_owner = true
@@ -715,7 +711,7 @@ layout_mode = 2
 offset_left = 100.0
 offset_top = 100.0
 offset_right = 538.0
-offset_bottom = 319.0
+offset_bottom = 291.0
 is_invisible_on_close = true
 
 [node name="HostCampaignWindow" parent="CornerWindows" instance=ExtResource("21_677rs")]
@@ -724,8 +720,8 @@ visible = false
 layout_mode = 0
 offset_left = 100.0
 offset_top = 100.0
-offset_right = 699.0
-offset_bottom = 634.0
+offset_right = 700.0
+offset_bottom = 632.0
 is_invisible_on_close = true
 
 [node name="JoinCampaignWindow" parent="CornerWindows" instance=ExtResource("22_0du2c")]
@@ -744,8 +740,8 @@ visible = false
 layout_mode = 0
 offset_left = 100.0
 offset_top = 100.0
-offset_right = 503.0
-offset_bottom = 590.0
+offset_right = 548.0
+offset_bottom = 504.0
 is_invisible_on_close = true
 
 [node name="HowToStartWindow" parent="CornerWindows" instance=ExtResource("28_2wh67")]

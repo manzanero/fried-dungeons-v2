@@ -52,6 +52,10 @@ var element_selected: Element :
 	set(value):
 		element_selected = value
 		element_selection.emit(value)
+	get:
+		if is_instance_valid(element_selected):
+			return element_selected
+		return null
 var preview_element: Element
 var follower_entity: Entity :
 	set(value):
@@ -126,7 +130,7 @@ func _ready():
 	Game.modes.mode_changed.connect(update_mode)
 	visibility_changed.connect(update_mode)
 	Game.flow.changed.connect(func ():
-		if element_selected:
+		if is_instance_valid(element_selected):
 			element_selected.is_dragged = false
 	)
 	change_state(State.GO_IDLE)
@@ -317,6 +321,30 @@ func select(thing):
 		selected_wall = null
 		for wall in walls_parent.get_children():
 			wall.is_selected = false
+
+
+func set_master_control():
+	for entity in Game.ui.selected_map.selected_level.elements.values():
+		entity.is_selectable = true
+		if entity is Entity:
+			entity.eye.visible = false
+
+func set_control(control_elements: Dictionary):
+	var elements_under_control := control_elements.keys()
+	for entity in Game.ui.selected_map.selected_level.elements.values():
+		if entity is Entity:
+			if entity.label in elements_under_control:
+				var entity_control_data: Dictionary = control_elements[entity.label]
+				entity.is_selectable = entity_control_data.get("movement", false)
+				entity.eye.visible = entity_control_data.get("senses", false)
+				
+				Debug.print_info_message("Player got control of \"%s\"" % entity.label)
+				
+			else:
+				entity.is_selectable = false
+				entity.eye.visible = false
+		else:
+			entity.is_selectable = false
 
 
 #region input

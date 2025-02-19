@@ -43,6 +43,12 @@ content_margin_bottom = 4.0
 [node name="FriedButtonGreen" type="Button"]
 custom_minimum_size = Vector2(0, 25)
 size_flags_horizontal = 3
+focus_neighbor_left = NodePath(".")
+focus_neighbor_top = NodePath(".")
+focus_neighbor_right = NodePath(".")
+focus_neighbor_bottom = NodePath(".")
+focus_next = NodePath(".")
+focus_previous = NodePath(".")
 focus_mode = 0
 theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_hhjtx")
 theme_override_styles/hover = SubResource("StyleBoxFlat_hhjtx")

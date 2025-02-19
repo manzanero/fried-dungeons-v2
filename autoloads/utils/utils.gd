@@ -117,6 +117,19 @@ func get_bitmask(x : int) -> int:
 	return int(pow(2, x - 1))
 
 
+func clean_array(array: Array) -> Array: 
+	var _clean_array := []
+	for item in array:
+		if is_instance_valid(item):
+			_clean_array.append(item)
+	return _clean_array
+	
+	
+func change_key(dict: Dictionary, from: String, to: String) -> Dictionary: 
+	dict[to] = dict[from]
+	dict.erase(from)
+	return dict
+
 #endregion
 
 #region node shortcuts
@@ -134,14 +147,6 @@ func safe_disconnect(connect_signal : Signal, callabe : Callable):
 func queue_free_children(node: Node):
 	for child in node.get_children():
 		child.queue_free()
-
-
-func clean_array(array: Array) -> Array: 
-	var _clean_array := []
-	for item in array:
-		if is_instance_valid(item):
-			_clean_array.append(item)
-	return _clean_array
 
 
 func create_button_group(buttons: Array, allow_unpress: bool = false) -> ButtonGroup:
@@ -168,6 +173,13 @@ func reset_button_group(button_group: ButtonGroup, emit_pressed_signal := false)
 func safe_queue_free(node: Variant):
 	if is_instance_valid(node):
 		node.queue_free()
+
+
+func find_type(parent: Node, type: Variant, include_internal := false) -> Node:
+	for child in parent.get_children(include_internal):
+		if is_instance_of(child, type):
+			return child
+	return null
 
 
 #endregion
@@ -254,7 +266,34 @@ func get_tree_path(item: TreeItem) -> String:
 		path = "%s/%s" % [item.get_text(0), path]
 		item = item.get_parent()
 	return path.rstrip("/")
-	
+
+func is_tree_descendant(item: TreeItem, reference_item: TreeItem) -> bool:
+	var current = item.get_parent()
+	while current:
+		if current == reference_item:
+			return true
+		current = current.get_parent()
+	return false
+
+func is_tree_sibling(item: TreeItem, reference_item: TreeItem) -> bool:
+	var parent_item = item.get_parent()
+	var parent_ref = reference_item.get_parent()
+	return parent_item and parent_ref and parent_item == parent_ref and item != reference_item
+
+func sort_item_children(item: TreeItem, short_children := false):
+	if short_children:
+		for child in item.get_children():
+			sort_item_children(child, short_children)
+		
+	var sorted_children := item.get_children()
+	sorted_children.sort_custom(func(a: TreeItem, b: TreeItem) -> int:
+		return a.get_text(0).naturalnocasecmp_to(b.get_text(0)) == -1
+	)
+	for child in item.get_children():
+		item.remove_child(child)
+	for child in sorted_children:
+		item.add_child(child)
+
 
 func temp_info_tooltip(text: String, timeout: float = 2.0, mirrowed := false) -> Control:
 	var panel := temp_tooltip(text, timeout, mirrowed)
@@ -319,7 +358,7 @@ func png_to_atlas(path: String) -> AtlasTexture:
 
 
 func get_outline_color(color: Color) -> Color:
-	return Color.WHITE if color.get_luminance() < 0.5 else Color.BLACK
+	return Color.WHITE if color.get_luminance() < 0.33 else Color.BLACK
 
 
 #endregion
@@ -342,7 +381,7 @@ func load_json(path: String, not_exist_ok := false) -> Dictionary:
 	var open_error := FileAccess.get_open_error()
 	if open_error:
 		if not not_exist_ok:
-			printerr("Error: \"%s\" when reading: %" % [error_string(open_error), path])
+			printerr("Error: \"%s\" when reading: %s" % [error_string(open_error), path])
 		return {}
 		
 	var text := file.get_as_text()
@@ -402,15 +441,37 @@ func remove_dir(path: String) -> Error:
 	return DirAccess.remove_absolute(path)
 
 
-func remove_dirs(path: String) -> void:
+func move_to_trash(path: String) -> void:
 	var global_path := ProjectSettings.globalize_path(path)
 	OS.move_to_trash(global_path)
+
+
+func remove_dirs(path: String) -> Error:
+	var dir = DirAccess.open(path)
+	if not dir:
+		return OK
+	
+	for file in dir.get_files():
+		var file_path := path.path_join(file)
+		if dir.remove(path.path_join(file)):
+			printerr("Error removing file: %s. Error: %s" % [file_path, FileAccess.get_open_error()])
+			
+	for subdir in dir.get_directories():
+		var subdir_path := path.path_join(subdir)
+		if remove_dirs(subdir_path):
+			printerr("Error removing directory: %s. Error: %s" % [subdir_path, DirAccess.get_open_error()])
+	
+	var error = remove_dir(path)
+	if error:
+		printerr("Error removing directory: %s. Error: %s" % [path, DirAccess.get_open_error()])
+		return error
+	return OK
 
 
 func rename(from: String, to: String) -> Error:
 	var error := DirAccess.rename_absolute(from, to)
 	if error:
-		printerr("Error renaming: " + str(error))
+		printerr("Error renaming (%s): %s" % [error, error_string(error)])
 	return error
 
 
@@ -433,16 +494,23 @@ func create_unique_folder(path: String, sep_char := "-") -> int:
 	return siblins
 
 
-func file_siblings_count(path: String) -> int:
+func dir_siblings_count(abspath: String, sep_char := " ") -> int:
 	var siblins := 0
-	var extension := path.get_extension()
-	var basename := path.get_basename()
-	var unique_path := basename
+	var unique_path := abspath
+	while DirAccess.dir_exists_absolute(unique_path):
+		siblins += 1
+		unique_path = "%s%s%s" % [abspath, sep_char, siblins + 1]
+	return siblins
 
+
+func file_siblings_count(abspath: String, sep_char := " ") -> int:
+	var siblins := 0
+	var extension := abspath.get_extension()
+	var basename := abspath.get_basename()
+	var unique_path := basename
 	while FileAccess.file_exists("%s.%s" % [unique_path, extension]):
 		siblins += 1
-		unique_path = "%s %s" % [basename, siblins + 1]
-
+		unique_path = "%s%s%s" % [basename, sep_char, siblins + 1]
 	return siblins
 	
 
@@ -502,6 +570,13 @@ func slugify(text: String, whitespace_to: String = "-", simbols_to: String = "_"
 	return slug
 
 
+func unsorted_list_string(strings_array: Array) -> String:
+	var res := ""
+	for string: String in strings_array:
+		res += " - " + string + "\n"
+	return res
+		
+		
 func random_string(lenght := 8, reset_seed := false) -> String:
 	if reset_seed:
 		randomize()

@@ -15,20 +15,20 @@ func _init(_slug: String, _data: Dictionary):
 	elements = _data.get("elements", {})
 	
 
-func set_element_control(element_id: String, control_data := {}):
-	elements[element_id] = control_data
+func set_element_control(element_label: String, control_data := {}):
+	elements[element_label] = control_data
 	
 
-func get_permission(entity_id: String, permission: String) -> bool:
-	if not elements.has(entity_id): 
+func get_permission(element_label: String, permission: String) -> bool:
+	if not elements.has(element_label): 
 		return false
-	return elements[entity_id].get(permission, false)
+	return elements[element_label].get(permission, false)
 
 
-func set_permission(entity_id: String, permission: String, is_allowed: bool) -> void:
-	if not elements.has(entity_id):
-		elements[entity_id] = {}
-	elements[entity_id][permission] = is_allowed
+func set_permission(element_label: String, permission: String, is_allowed: bool) -> void:
+	if not elements.has(element_label):
+		elements[element_label] = {}
+	elements[element_label][permission] = is_allowed
 
 
 class Permission:

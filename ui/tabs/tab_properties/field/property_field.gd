@@ -16,6 +16,11 @@ var property_name := "Unnamed Property" :
 		label.text = value.capitalize()
 		tooltip_text = value
 
+var show_name := true :
+	set(value):
+		show_name = value
+		label.visible = value
+
 @onready var label: Label = %Label
 
 

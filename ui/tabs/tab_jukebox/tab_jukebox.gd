@@ -206,6 +206,7 @@ func _on_stop_button_pressed() -> void:
 func _on_resouce_button_pressed():
 	if not item_selected:
 		Game.ui.tab_resources.visible = true
+		Utils.temp_warning_tooltip("Select a Sound to see source")
 		return
 	
 	_on_item_activated()
@@ -216,7 +217,7 @@ func _on_import_button_pressed():
 	var resource: CampaignResource = resources_tab.resource_selected
 	if not resource or resource.resource_type != CampaignResource.Type.SOUND:
 		resources_tab.visible = true
-		Utils.temp_error_tooltip("Select a Sound", 1)
+		Utils.temp_warning_tooltip("Select a Sound to import")
 		return
 	
 	var sound_item := add_sound(resource)
@@ -233,6 +234,7 @@ func _on_import_button_pressed():
 
 func _on_clear_button_pressed():
 	if not item_selected: 
+		Utils.temp_error_tooltip("Select a Sound forget")
 		return
 	
 	for sound in now_playing:
@@ -244,7 +246,7 @@ func _on_clear_button_pressed():
 	Debug.print_info_message("Songs removed")
 
 
-func _on_items_dropped(drop_data: Dictionary, _parent_item: TreeItem, _item_index: int):
+func _on_items_dropped(drop_data: Dictionary, _item_at_position: TreeItem, _drop_section: int):
 	var sounds := []
 	for item in drop_data.items:
 		var resource: CampaignResource = item.get_metadata(0)

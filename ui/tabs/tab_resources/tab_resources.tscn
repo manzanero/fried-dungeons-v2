@@ -1,11 +1,13 @@
-[gd_scene load_steps=16 format=3 uid="uid://c3oq3t62qadp0"]
+[gd_scene load_steps=14 format=3 uid="uid://c3oq3t62qadp0"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_resources/tab_resources.gd" id="1_yoq87"]
-[ext_resource type="Texture2D" uid="uid://cximt675xkvkn" path="res://resources/icons/directory_icon.png" id="2_85spq"]
+[ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="2_8hd1k"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_ke6og"]
-[ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="3_5yge8"]
+[ext_resource type="PackedScene" uid="uid://gy2c5q5o665" path="res://ui/fried_button/fried_button_yellow.tscn" id="3_8xoag"]
 [ext_resource type="PackedScene" uid="uid://d2x02vgtidrgn" path="res://ui/tabs/tab_resources/import_texture/import_texture.tscn" id="3_m6jp2"]
 [ext_resource type="PackedScene" uid="uid://bwmhcqk0qsymk" path="res://ui/tabs/tab_resources/import_sound/import_sound.tscn" id="4_f6n13"]
+[ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="4_yy1xd"]
+[ext_resource type="PackedScene" uid="uid://b3d83roncqixw" path="res://ui/fried_button/fried_button_blue.tscn" id="5_7v1sg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d531e"]
 
@@ -25,70 +27,12 @@ corner_detail = 1
 allow_unpress = true
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_553t8"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
 bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6
 corner_radius_bottom_left = 6
 corner_detail = 1
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ayjdp"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.492207, 0.453996, 0.329807, 1)
-border_width_top = 8
-border_width_bottom = 8
-border_color = Color(0.615316, 0.572901, 0.431425, 1)
-border_blend = true
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 1
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pvlj2"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.492207, 0.453996, 0.329807, 1)
-border_width_top = 8
-border_width_bottom = 8
-border_color = Color(0.615316, 0.572901, 0.431425, 1)
-border_blend = true
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 1
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_fo6sh"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
-bg_color = Color(0.398979, 0.366055, 0.25905, 1)
-border_width_top = 8
-border_width_bottom = 8
-border_color = Color(0.51876, 0.476478, 0.34968, 1)
-border_blend = true
-corner_radius_top_left = 4
-corner_radius_top_right = 4
-corner_radius_bottom_right = 4
-corner_radius_bottom_left = 4
-corner_detail = 1
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_ycinc"]
-content_margin_left = 8.0
-content_margin_top = 4.0
-content_margin_right = 8.0
-content_margin_bottom = 4.0
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_5334t"]
 content_margin_left = 8.0
@@ -181,39 +125,37 @@ text = "Shape"
 [node name="S2" type="HSplitContainer" parent="C"]
 layout_mode = 2
 size_flags_vertical = 3
+theme_override_constants/separation = 0
 
-[node name="C" type="PanelContainer" parent="C/S2"]
+[node name="V" type="VBoxContainer" parent="C/S2"]
 layout_mode = 2
 size_flags_horizontal = 3
+
+[node name="C2" parent="C/S2/V" instance=ExtResource("2_8hd1k")]
+layout_mode = 2
+
+[node name="H" type="HBoxContainer" parent="C/S2/V/C2"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+
+[node name="FolderButton" parent="C/S2/V/C2/H" instance=ExtResource("3_8xoag")]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Open Resouces folder in file explorer"
+icon = ExtResource("4_yy1xd")
+
+[node name="ScanButton" parent="C/S2/V/C2/H" instance=ExtResource("5_7v1sg")]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Scan Resources folder"
+
+[node name="C" type="PanelContainer" parent="C/S2/V"]
+layout_mode = 2
+size_flags_horizontal = 3
+size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_553t8")
 
-[node name="V" type="VBoxContainer" parent="C/S2/C"]
-layout_mode = 2
-
-[node name="H" type="HBoxContainer" parent="C/S2/C/V"]
-layout_mode = 2
-
-[node name="FolderButton" type="Button" parent="C/S2/C/V/H"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Open Maps folder in file explorer"
-icon = ExtResource("2_85spq")
-icon_alignment = 1
-
-[node name="ScanButton" type="Button" parent="C/S2/C/V/H"]
-unique_name_in_owner = true
-layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Scan Resources folder"
-theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_ayjdp")
-theme_override_styles/hover = SubResource("StyleBoxFlat_pvlj2")
-theme_override_styles/pressed = SubResource("StyleBoxFlat_fo6sh")
-theme_override_styles/normal = SubResource("StyleBoxEmpty_ycinc")
-icon = ExtResource("3_5yge8")
-icon_alignment = 1
-
-[node name="DraggableTree" parent="C/S2/C/V" instance=ExtResource("2_ke6og")]
+[node name="DraggableTree" parent="C/S2/V/C" instance=ExtResource("2_ke6og")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
@@ -236,10 +178,9 @@ size_flags_horizontal = 3
 
 [node name="ImportTexture" parent="C/S2/ImportContainers/C" instance=ExtResource("3_m6jp2")]
 unique_name_in_owner = true
-visible = false
-custom_minimum_size = Vector2(480, 0)
 layout_mode = 2
 
 [node name="ImportSound" parent="C/S2/ImportContainers/C" instance=ExtResource("4_f6n13")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2

@@ -82,6 +82,9 @@ var tween: Tween
 	[area_options_button, area_options, area_button_group, AREA_MODES],
 ]
 
+@onready var darkvision_button: Button = %DarkvisionButton
+
+
 func reset():
 	_reset_mode()
 	Utils.reset_button_group(modes_button_group, true)
@@ -110,6 +113,8 @@ func _ready() -> void:
 	_set_options(3, light_options)
 	_set_options(4, entity_options)
 	_set_options(5, prop_options)
+	
+	darkvision_button.pressed.connect(_on_darkvision_button_pressed)
 	
 	
 # mode options
@@ -219,6 +224,11 @@ func show_mode():
 	tween.tween_property(mode_hint, "modulate", Color.TRANSPARENT, 1.0)
 	tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
 
+
+func _on_darkvision_button_pressed():
+	var darkvision_enabled := darkvision_button.button_pressed
+	RenderingServer.global_shader_parameter_set("is_darkvision_view", darkvision_enabled)
+	
 
 var _last_input: Key
 

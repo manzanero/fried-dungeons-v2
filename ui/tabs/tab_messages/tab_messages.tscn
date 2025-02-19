@@ -1,12 +1,14 @@
-[gd_scene load_steps=16 format=3 uid="uid://dhbx748ct8awa"]
+[gd_scene load_steps=22 format=3 uid="uid://dhbx748ct8awa"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_messages/tab_messages.gd" id="1_kklqb"]
+[ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="2_0nko0"]
 [ext_resource type="PackedScene" uid="uid://6pq2k4jg8hbv" path="res://ui/tabs/tab_messages/panel_dice/tab_messages_panel_dice.tscn" id="2_e88ub"]
 [ext_resource type="Texture2D" uid="uid://l2o4uxi0xljd" path="res://resources/icons/dice_icon.png" id="2_nx2ej"]
 [ext_resource type="Texture2D" uid="uid://2fls5i1w10wb" path="res://resources/icons/previous_line.png" id="3_87epd"]
 [ext_resource type="PackedScene" uid="uid://dw4t2g37sotcj" path="res://ui/tabs/tab_messages/panel_history/tab_messages_panel_history.tscn" id="3_e3rt8"]
 [ext_resource type="Texture2D" uid="uid://cljhvimdq50ft" path="res://resources/icons/terminal_icon.png" id="4_7g2oo"]
 [ext_resource type="Texture2D" uid="uid://djhtp0rlxmu50" path="res://resources/icons/play_icon.png" id="4_wsjw0"]
+[ext_resource type="Texture2D" uid="uid://cy0o1wg7glu7i" path="res://resources/icons/echo_icon.png" id="8_6agrl"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_q84c7"]
 
@@ -47,6 +49,56 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_r0wus"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.184416, 0.32211, 0.305106, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.277821, 0.459445, 0.438482, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_wj2on"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.184416, 0.32211, 0.305106, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.277821, 0.459445, 0.438482, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_bhnsl"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.145922, 0.262909, 0.248497, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.210106, 0.362414, 0.342017, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yp8nn"]
+
 [sub_resource type="ButtonGroup" id="ButtonGroup_udd2s"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_1y7qd"]
@@ -78,12 +130,15 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer"]
+[node name="C2" parent="VBoxContainer" instance=ExtResource("2_0nko0")]
+layout_mode = 2
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="VBoxContainer/C2"]
 layout_mode = 2
 size_flags_horizontal = 3
 alignment = 1
 
-[node name="DiceButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
+[node name="DiceButton" type="Button" parent="VBoxContainer/C2/HBoxContainer2"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
@@ -95,7 +150,7 @@ button_group = SubResource("ButtonGroup_6y5qp")
 icon = ExtResource("2_nx2ej")
 icon_alignment = 1
 
-[node name="ActionButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
+[node name="ActionButton" type="Button" parent="VBoxContainer/C2/HBoxContainer2"]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -106,7 +161,7 @@ button_pressed = true
 button_group = SubResource("ButtonGroup_6y5qp")
 text = "Actions"
 
-[node name="HistoryButton" type="Button" parent="VBoxContainer/HBoxContainer2"]
+[node name="HistoryButton" type="Button" parent="VBoxContainer/C2/HBoxContainer2"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -173,11 +228,24 @@ theme_override_constants/separation = 0
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="TemplateButton" type="Button" parent="VBoxContainer/VSplitContainer/C/C/C2/V/H"]
+[node name="CommandButton" type="MenuButton" parent="VBoxContainer/VSplitContainer/C/C/C2/V/H"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(32, 0)
 layout_mode = 2
-focus_mode = 0
+tooltip_text = "Create new Blueprint"
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_r0wus")
+theme_override_styles/hover = SubResource("StyleBoxFlat_wj2on")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_bhnsl")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_yp8nn")
 icon = ExtResource("4_7g2oo")
+flat = false
+icon_alignment = 1
+item_count = 2
+popup/item_0/text = "/roll <dice>"
+popup/item_0/icon = ExtResource("2_nx2ej")
+popup/item_1/text = "/echo <message>"
+popup/item_1/icon = ExtResource("8_6agrl")
+popup/item_1/id = 1
 
 [node name="MessageLineEdit" type="LineEdit" parent="VBoxContainer/VSplitContainer/C/C/C2/V/H"]
 unique_name_in_owner = true

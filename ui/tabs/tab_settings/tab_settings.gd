@@ -22,9 +22,9 @@ var cached_valid_label: String
 @onready var ambient_light_field: FloatField = %AmbientLightField
 @onready var ambient_light_field_edit: NumberEdit = ambient_light_field.number_edit
 @onready var ambient_color_field: ColorField = %AmbientColorField
-@onready var ambient_color_button: ColorPickerButton = ambient_color_field.color_picker_button
-@onready var master_view_field: BoolField = %MasterViewField
-@onready var master_view_check: CheckBox = master_view_field.check_box
+@onready var ambient_color_button: ColorEdit = ambient_color_field.color_edit
+#@onready var master_view_field: BoolField = %MasterViewField
+#@onready var master_view_check: CheckBox = master_view_field.check_box
 @onready var override_ambient_light_field: BoolField = %OverrideAmbientLightField
 @onready var override_ambient_light_check: CheckBox = override_ambient_light_field.check_box
 @onready var master_ambient_light_field: FloatField = %MasterAmbientLightField
@@ -32,8 +32,7 @@ var cached_valid_label: String
 @onready var override_ambient_color_field: BoolField = %OverrideAmbientColorField
 @onready var override_ambient_color_check: CheckBox = override_ambient_color_field.check_box
 @onready var master_ambient_color_field: ColorField = %MasterAmbientColorField
-@onready var master_ambient_color_button: ColorPickerButton = master_ambient_color_field.color_picker_button
-
+@onready var master_ambient_color_button: ColorEdit = master_ambient_color_field.color_edit
 
 
 func _ready() -> void:
@@ -47,7 +46,7 @@ func _ready() -> void:
 	# ambient
 	ambient_light_field_edit.value_changed.connect(_on_ambient_edited.unbind(1))
 	ambient_color_button.color_changed.connect(_on_ambient_edited.unbind(1))
-	master_view_check.pressed.connect(_on_ambient_edited)
+	#master_view_check.pressed.connect(_on_ambient_edited)
 	override_ambient_light_check.pressed.connect(_on_ambient_edited)
 	master_ambient_light_field_edit.value_changed.connect(_on_ambient_edited.unbind(1))
 	override_ambient_color_check.pressed.connect(_on_ambient_edited)
@@ -91,9 +90,9 @@ func _on_ambient_edited():
 			map.master_ambient_light,
 			map.master_ambient_color)
 	
-	map.is_master_view = master_view_check.button_pressed
-	if not map.is_master_view:
-		return
+	#map.is_master_view = master_view_check.button_pressed
+	#if not map.is_master_view:
+		#return
 	
 	if override_ambient_light_check.button_pressed:
 		map.current_ambient_light = map.master_ambient_light

@@ -1,0 +1,161 @@
+[gd_scene load_steps=14 format=3 uid="uid://bslrfxbdnkrpb"]
+
+[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/blueprint_field/blueprint_field.gd" id="2_eucs4"]
+[ext_resource type="PackedScene" uid="uid://c2n75w65cr7gu" path="res://ui/tabs/tab_properties/field/blueprint_field/droppable_blueprint_button/droppable_blueprint_button.tscn" id="4_dbin8"]
+[ext_resource type="Texture2D" uid="uid://cmjv1nfv6da8u" path="res://resources/icons/unlink_icon.png" id="5_kod10"]
+[ext_resource type="Texture2D" uid="uid://mdaepaknysud" path="res://resources/icons/link_icon.png" id="6_pk8jj"]
+[ext_resource type="Texture2D" uid="uid://ph36o52jrb1h" path="res://resources/icons/cross_icon.png" id="7_gdrwd"]
+[ext_resource type="Texture2D" uid="uid://buu6lmpdptkqd" path="res://resources/icons/save_icon.png" id="8_3fahh"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_d257o"]
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.143122, 0.152725, 0.162329, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_57f4f"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.511329, 0.245046, 0.236259, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.641389, 0.323196, 0.311678, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_cq5oe"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.380495, 0.173065, 0.166535, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.506082, 0.242074, 0.233384, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_i4n35"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_v006p"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.184416, 0.32211, 0.305106, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.277821, 0.459445, 0.438482, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3e0j5"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.184416, 0.32211, 0.305106, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.277821, 0.459445, 0.438482, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_x17tc"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.145922, 0.262909, 0.248497, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.210106, 0.362414, 0.342017, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[node name="BlueprintPanel" type="PanelContainer"]
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 23.0
+grow_horizontal = 2
+size_flags_horizontal = 3
+size_flags_vertical = 4
+theme_override_styles/panel = SubResource("StyleBoxFlat_d257o")
+script = ExtResource("2_eucs4")
+
+[node name="HBoxContainer" type="HBoxContainer" parent="."]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 0
+alignment = 2
+
+[node name="EmptyBlueprintButton" parent="HBoxContainer" instance=ExtResource("4_dbin8")]
+unique_name_in_owner = true
+layout_mode = 2
+icon = ExtResource("5_kod10")
+
+[node name="BlueprintButton" parent="HBoxContainer" instance=ExtResource("4_dbin8")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+toggle_mode = true
+icon = ExtResource("6_pk8jj")
+
+[node name="ClearButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_57f4f")
+theme_override_styles/hover = SubResource("StyleBoxFlat_57f4f")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_cq5oe")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_i4n35")
+icon = ExtResource("7_gdrwd")
+icon_alignment = 1
+
+[node name="SaveButton" type="Button" parent="HBoxContainer"]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_v006p")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3e0j5")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_x17tc")
+theme_override_styles/normal = SubResource("StyleBoxEmpty_i4n35")
+icon = ExtResource("8_3fahh")
+icon_alignment = 1

@@ -1,7 +1,7 @@
 class_name JoinCampaignWindow
 extends FriedWindow
 
-signal steam_campaign_joined(lobby_id: int)
+signal steam_campaign_joined(lobby_id: int, username: String)
 signal enet_campaign_joined(host: String, username: String, password: String)
 
 
@@ -14,16 +14,17 @@ const REMOVE_ICON := preload("res://resources/icons/cross_icon.png")
 @onready var enet_button: Button = %EnetButton
 
 @onready var steam_container: Control = %SteamContainer
-@onready var host_steam_line_edit: LineEdit = %HostSteamLineEdit
+@onready var steam_username_line_edit: LineEdit = %SteamUsernameLineEdit
+@onready var steam_host_user_line_edit: LineEdit = %SteamHostUserLineEdit
 @onready var steam_connect_button: Button = %SteamConnectButton
 @onready var steam_filter_line_edit: LineEdit = %SteamFilterLineEdit
 @onready var steam_refresh_button: Button = %SteamRefreshButton
 @onready var steam_tree: DraggableTree = %SteamTree
 
 @onready var enet_container: Control = %EnetContainer
-@onready var host_line_edit: LineEdit = %HostLineEdit
-@onready var username_line_edit: LineEdit = %UsernameLineEdit
-@onready var password_line_edit: LineEdit = %PasswordLineEdit
+@onready var enet_username_line_edit: LineEdit = %EnetUsernameLineEdit
+@onready var enet_password_line_edit: LineEdit = %EnetPasswordLineEdit
+@onready var enet_host_line_edit: LineEdit = %EnetHostLineEdit
 @onready var enet_connect_button: Button = %EnetConnectButton
 @onready var enet_filter_line_edit: LineEdit = %EnetFilterLineEdit
 @onready var enet_refresh_button: Button = %EnetRefreshButton
@@ -55,10 +56,12 @@ func _ready() -> void:
 	steam_button.pressed.connect(func (): 
 		steam_container.visible = true
 		enet_container.visible = false
+		_clear()
 	)
 	enet_button.pressed.connect(func (): 
 		steam_container.visible = false
 		enet_container.visible = true
+		_clear()
 	)
 	
 	## steam
@@ -67,10 +70,6 @@ func _ready() -> void:
 	steam_filter_line_edit.text_changed.connect(_on_steam_filter_changed.unbind(1))
 	steam_refresh_button.pressed.connect(steam_refresh)
 	
-	steam_tree.set_column_title(0, "Mastered by      ")
-	steam_tree.set_column_title(1, "Title")
-	steam_tree.set_column_expand(0, false)
-	steam_tree.set_column_expand(1, true)
 	steam_tree.set_column_title_alignment(0, HORIZONTAL_ALIGNMENT_LEFT)
 	steam_tree.set_column_title_alignment(1, HORIZONTAL_ALIGNMENT_LEFT)
 	
@@ -89,40 +88,31 @@ func _ready() -> void:
 	enet_refresh_button.pressed.connect(enet_refresh)
 	
 	enet_tree.columns = 2
-	enet_tree.set_column_title(0, "Played As        ")
-	enet_tree.set_column_title(1, "Title")
-	enet_tree.set_column_expand(0, false)
-	enet_tree.set_column_expand(1, true)
 	enet_tree.set_column_title_alignment(0, HORIZONTAL_ALIGNMENT_LEFT)
 	enet_tree.set_column_title_alignment(1, HORIZONTAL_ALIGNMENT_LEFT)
 	
 	enet_tree.item_selected.connect(_on_enet_item_selected)
 	enet_tree.item_activated.connect(_on_enet_item_activated)
 	enet_tree.button_clicked.connect(_on_enet_item_button_clicked)
-	
-
-func _on_steam_connect_button_pressed():
-	var host_username := host_steam_line_edit.text
-	load_lobbies(host_username)
-	await Game.server.lobbies_loaded
-	
-	if steam_lobbies:
-		var lobby_id = steam_lobbies[host_username]
-		Game.server.owner_steam_username = host_username
-		steam_campaign_joined.emit(lobby_id)
-		_on_close_button_pressed()
-	else:
-		Utils.temp_error_tooltip("Host is not connected")
-
-
-func _on_enet_connect_button_pressed():
-	enet_campaign_joined.emit(host_line_edit.text, username_line_edit.text, password_line_edit.text)
-	_on_close_button_pressed()
 
 
 func refresh():
 	steam_refresh()
 	enet_refresh()
+	_clear()
+
+func _clear():
+	if steam_button.button_pressed:
+		steam_filter_line_edit.grab_focus()
+	else:
+		enet_filter_line_edit.grab_focus()
+	steam_username_line_edit.clear()
+	steam_host_user_line_edit.clear()
+	enet_username_line_edit.clear()
+	enet_password_line_edit.clear()
+	enet_host_line_edit.clear()
+	enet_tree.deselect_all()
+	steam_tree.deselect_all()
 
 
 func _on_steam_filter_changed():
@@ -142,28 +132,29 @@ func _on_enet_filter_changed():
 			item.visible = false
 		else:
 			item.visible = true
-		
-
-func _on_steam_item_activated():
-	var server_data: Dictionary = steam_tree.get_selected().get_metadata(1)
-	var host_username = server_data.host
 	
+
+func _on_steam_connect_button_pressed():
+	var host_username := steam_host_user_line_edit.text
+	var username := steam_username_line_edit.text
 	load_lobbies(host_username)
 	await Game.server.lobbies_loaded
-
+	
 	if steam_lobbies:
 		var lobby_id = steam_lobbies[host_username]
 		Game.server.owner_steam_username = host_username
-		steam_campaign_joined.emit(lobby_id)
+		steam_campaign_joined.emit(lobby_id, username)
 		_on_close_button_pressed()
 	else:
 		Utils.temp_error_tooltip("Host is not connected")
-		
-func _on_steam_item_selected():
-	var server_data: Dictionary = steam_tree.get_selected().get_metadata(1)
-	var host_username = server_data.host
-	host_steam_line_edit.text = host_username
 
+func _on_enet_connect_button_pressed():
+	enet_campaign_joined.emit(enet_host_line_edit.text, enet_username_line_edit.text, enet_password_line_edit.text)
+	_on_close_button_pressed()
+		
+
+func _on_steam_item_activated():
+	_on_steam_connect_button_pressed()
 
 func _on_enet_item_activated():
 	var server_data: Dictionary = enet_tree.get_selected().get_metadata(1)
@@ -172,13 +163,21 @@ func _on_enet_item_activated():
 	enet_campaign_joined.emit(server_data.host, player_username, player_password)
 	_on_close_button_pressed()
 
+
+func _on_steam_item_selected():
+	var server_data: Dictionary = steam_tree.get_selected().get_metadata(1)
+	var username = server_data.get("username", "Anonymous")
+	var host_username = server_data.host
+	steam_username_line_edit.text = username
+	steam_host_user_line_edit.text = host_username
+
 func _on_enet_item_selected():
 	var server_data: Dictionary = enet_tree.get_selected().get_metadata(1)
 	var player_username: String = server_data.get("username", "Anonymous")
 	var player_password: String = server_data.get("password", "")
-	host_line_edit.text = server_data.host
-	username_line_edit.text = player_username
-	password_line_edit.text = player_password
+	enet_username_line_edit.text = player_username
+	enet_password_line_edit.text = player_password
+	enet_host_line_edit.text = server_data.host
 
 
 func _on_steam_item_button_clicked(steam_item: TreeItem, _column: int, id: int, _mouse_button_index: int):
@@ -187,13 +186,12 @@ func _on_steam_item_button_clicked(steam_item: TreeItem, _column: int, id: int, 
 	var server_path := servers_path.path_join(server_slug)
 	match id:
 		0: 
-			_on_steam_item_activated()
+			_on_steam_connect_button_pressed()
 		1: 
 			Utils.open_in_file_manager(server_path)
 		2: 
-			Utils.remove_dirs(server_path)
+			Utils.move_to_trash(server_path)
 			steam_refresh()
-
 
 func _on_enet_item_button_clicked(enet_item: TreeItem, _column: int, id: int, _mouse_button_index: int):
 	enet_item.select(0)
@@ -205,7 +203,7 @@ func _on_enet_item_button_clicked(enet_item: TreeItem, _column: int, id: int, _m
 		1: 
 			Utils.open_in_file_manager(server_path)
 		2: 
-			Utils.remove_dirs(server_path)
+			Utils.move_to_trash(server_path)
 			enet_refresh()
 
 
@@ -246,7 +244,7 @@ func steam_refresh():
 			continue
 			
 		var server_label: String = server_data.label
-		var server_host: String = server_data.host
+		var server_username: String = server_data.get("username", "Anonymous")
 		
 		var item := steam_root.create_child()
 		
@@ -255,9 +253,9 @@ func steam_refresh():
 		else:
 			item.visible = true
 		
-		item.set_text(0, server_host)
-		item.set_tooltip_text(0, " ")
-		item.set_text(1, server_label)
+		item.set_text(0, server_label)
+		item.set_text(1, "As " + server_username)
+		item.set_tooltip_text(0, server_slug)
 		item.set_tooltip_text(1, server_slug)
 		
 		item.add_button(1, PLAY_ICON, 0)
@@ -276,9 +274,9 @@ func enet_refresh():
 	enet_tree.clear()
 	enet_items.clear()
 	enet_root = enet_tree.create_item()
-	host_line_edit.clear()
-	username_line_edit.clear()
-	password_line_edit.clear()
+	enet_host_line_edit.clear()
+	enet_username_line_edit.clear()
+	enet_password_line_edit.clear()
 	
 	var filter := enet_filter_line_edit.text.to_lower()
 	
@@ -301,9 +299,9 @@ func enet_refresh():
 		else:
 			item.visible = true
 		
-		item.set_text(0, username_label)
-		item.set_tooltip_text(0, " ")
-		item.set_text(1, server_label)
+		item.set_text(0, server_label)
+		item.set_text(1, "As " + username_label)
+		item.set_tooltip_text(0, server_slug)
 		item.set_tooltip_text(1, server_slug)
 		
 		item.add_button(1, PLAY_ICON, 0)

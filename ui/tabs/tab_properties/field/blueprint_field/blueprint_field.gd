@@ -5,7 +5,7 @@ extends PropertyField
 static var SCENE := preload("res://ui/tabs/tab_properties/field/blueprint_field/blueprint_field.tscn")
 
 
-signal blueprint_changed(property_name: String, blueprint_path: String)
+signal blueprint_changed(property_name: String, blueprint_id: String)
 signal blueprint_saved
 
 
@@ -65,20 +65,22 @@ func _ready() -> void:
 func _on_blueprint_button_pressed():
 	blueprint_button.button_pressed = true
 	Game.ui.tab_blueprints.visible = true
-	var blueprint_item := Game.ui.tab_blueprints.blueprint_items.get(property_value.path) as TreeItem
+	var blueprint_item := Game.ui.tab_blueprints.blueprint_items.get(property_value.id) as TreeItem
 	if not blueprint_item:
-		Utils.temp_error_tooltip("File \"%s\" no longer exist" % property_value.path, 2, true)
+		Utils.temp_error_tooltip("Blueprint \"%s\" no longer exist" % property_value.id, 2, true)
 		return
 		
 	blueprint_item.uncollapse_tree()
+	blueprint_item.get_tree().deselect_all()
 	blueprint_item.select(0)
 
 
 func _on_empty_blueprint_button_pressed():
 	Game.ui.tab_blueprints.visible = true
 	var blueprint: CampaignBlueprint = Game.ui.tab_blueprints.blueprint_selected
-	if not blueprint or blueprint.type == CampaignBlueprint.Type.DIRECTORY:
-		Utils.temp_warning_tooltip("Select a Blueprint from Blueprints tab", 1, true)
+	var element_type := Game.ui.tab_properties.element_selected.type
+	if not blueprint or blueprint.type != element_type:
+		Utils.temp_error_tooltip("Select a blueprint of type %s" % element_type.capitalize(), 2, true)
 		return
 		
 	property_value = blueprint

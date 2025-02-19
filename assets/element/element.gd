@@ -158,11 +158,10 @@ func update_properties():
 		
 ## override
 func _set_dragged(value: bool) -> void:
-	is_dragged = value
-	
-	if not value:
+	if is_dragged and not value:
 		if Game.server.is_peer_connected:  # may disconnect while dragging
 			Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
+	is_dragged = value
 
 
 ## override
@@ -378,9 +377,9 @@ func remove():
 
 func _on_blueprint_changed() -> void:
 	set_property_values(blueprint.properties)
-	if is_selected:
-		Game.ui.tab_properties.refresh()
+	
 	Debug.print_info_message("Element %s changed Blueprint: " + blueprint.path)
+	
 	Game.server.rpcs.change_element_properties.rpc(map.slug, level.index, id, get_raw_property_values())
 
 
@@ -416,7 +415,7 @@ static func set_raw_property(hint: StringName, value: Variant) -> Variant:
 		Hint.COLOR:
 			return Utils.html_color_to_color(value)
 		Hint.BLUEPRINT:
-			return Game.blueprints.get(value)
+			return Game.blueprints.get(value) if value else null
 	return value
 
 static func get_raw_property(hint: StringName, value: Variant) -> Variant:
@@ -424,7 +423,7 @@ static func get_raw_property(hint: StringName, value: Variant) -> Variant:
 		Hint.COLOR:
 			return Utils.color_to_html_color(value)
 		Hint.BLUEPRINT:
-			return value.path if value else ""
+			return value.id if value else ""
 	return value
 
 

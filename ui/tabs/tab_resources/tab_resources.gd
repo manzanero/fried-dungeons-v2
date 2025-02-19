@@ -26,9 +26,9 @@ var orphan_resource_data := []
 @onready var scan_button: Button = %ScanButton
 @onready var folder_button: Button = %FolderButton
 
-@onready var entity_button: Button = %EntityButton
-@onready var light_button: Button = %LightButton
-@onready var shape_button: Button = %ShapeButton
+#@onready var entity_button: Button = %EntityButton
+#@onready var light_button: Button = %LightButton
+#@onready var shape_button: Button = %ShapeButton
 
 @onready var tree: DraggableTree = %DraggableTree
 

@@ -1,10 +1,11 @@
-[gd_scene load_steps=6 format=3 uid="uid://bwmhcqk0qsymk"]
+[gd_scene load_steps=7 format=3 uid="uid://bwmhcqk0qsymk"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_resources/import_sound/import_sound.gd" id="1_ebk8j"]
 [ext_resource type="PackedScene" uid="uid://dl0m5fa0feqgj" path="res://ui/tabs/tab_properties/container/property_container.tscn" id="2_xekfo"]
 [ext_resource type="PackedScene" uid="uid://d0ch44utbuhby" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn" id="3_pmyk0"]
 [ext_resource type="PackedScene" uid="uid://cvlbw6pjdx7sd" path="res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn" id="4_f3qwf"]
 [ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="5_iydvl"]
+[ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="5_nohoq"]
 
 [node name="ImportSound" type="BoxContainer"]
 clip_contents = true
@@ -14,70 +15,79 @@ anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
 size_flags_vertical = 3
-theme_override_constants/separation = 32
+theme_override_constants/separation = 8
 script = ExtResource("1_ebk8j")
 
 [node name="V" type="BoxContainer" parent="."]
-custom_minimum_size = Vector2(180.87, 0)
+custom_minimum_size = Vector2(220, 0)
 layout_mode = 2
-theme_override_constants/separation = 8
+theme_override_constants/separation = 4
 vertical = true
 
-[node name="FieldsContainer" parent="V" instance=ExtResource("2_xekfo")]
+[node name="ScrollContainer" type="ScrollContainer" parent="V"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="FieldsContainer" parent="V/ScrollContainer" instance=ExtResource("2_xekfo")]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_vertical = 3
 
-[node name="CollapseButton" parent="V/FieldsContainer" index="0"]
+[node name="CollapseButton" parent="V/ScrollContainer/FieldsContainer" index="0"]
 visible = false
 text = "Ambient"
 
-[node name="Background" parent="V/FieldsContainer/M" index="0"]
+[node name="Background" parent="V/ScrollContainer/FieldsContainer/M" index="0"]
 visible = false
 
-[node name="LoopField" parent="V/FieldsContainer/M/PropertyFields" index="0" instance=ExtResource("3_pmyk0")]
+[node name="LoopField" parent="V/ScrollContainer/FieldsContainer/M/PropertyFields" index="0" instance=ExtResource("3_pmyk0")]
 unique_name_in_owner = true
 layout_mode = 2
 
-[node name="Label" parent="V/FieldsContainer/M/PropertyFields/LoopField/H" index="0"]
+[node name="Label" parent="V/ScrollContainer/FieldsContainer/M/PropertyFields/LoopField/H" index="0"]
 text = "Loop"
 
-[node name="VolumeField" parent="V/FieldsContainer/M/PropertyFields" index="1" instance=ExtResource("4_f3qwf")]
+[node name="VolumeField" parent="V/ScrollContainer/FieldsContainer/M/PropertyFields" index="1" instance=ExtResource("4_f3qwf")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 
-[node name="Label" parent="V/FieldsContainer/M/PropertyFields/VolumeField/H" index="0"]
+[node name="Label" parent="V/ScrollContainer/FieldsContainer/M/PropertyFields/VolumeField/H" index="0"]
 text = "Volume"
 
-[node name="NumberEdit" parent="V/FieldsContainer/M/PropertyFields/VolumeField/H" index="1"]
+[node name="NumberEdit" parent="V/ScrollContainer/FieldsContainer/M/PropertyFields/VolumeField/H" index="1"]
 suffix = "%"
 max_value = 200.0
 step = 5.0
 text = "100"
 
-[node name="PitchField" parent="V/FieldsContainer/M/PropertyFields" index="2" instance=ExtResource("4_f3qwf")]
+[node name="PitchField" parent="V/ScrollContainer/FieldsContainer/M/PropertyFields" index="2" instance=ExtResource("4_f3qwf")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 31)
 layout_mode = 2
 
-[node name="Label" parent="V/FieldsContainer/M/PropertyFields/PitchField/H" index="0"]
+[node name="Label" parent="V/ScrollContainer/FieldsContainer/M/PropertyFields/PitchField/H" index="0"]
 text = "Pitch"
 
-[node name="NumberEdit" parent="V/FieldsContainer/M/PropertyFields/PitchField/H" index="1"]
+[node name="NumberEdit" parent="V/ScrollContainer/FieldsContainer/M/PropertyFields/PitchField/H" index="1"]
 suffix = "%"
 min_value = 1.0
 max_value = 200.0
 step = 5.0
 text = "100"
 
-[node name="V2" type="BoxContainer" parent="."]
+[node name="HSeparator2" type="HSeparator" parent="V"]
 layout_mode = 2
-theme_override_constants/separation = 8
-vertical = true
 
-[node name="ResetButton" type="Button" parent="V2"]
-unique_name_in_owner = true
+[node name="FriedConvexPanel" parent="V" instance=ExtResource("5_nohoq")]
 layout_mode = 2
+size_flags_horizontal = 0
+
+[node name="ResetButton" type="Button" parent="V/FriedConvexPanel"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(64, 0)
+layout_mode = 2
+tooltip_text = "Reset import attributes"
 focus_mode = 0
 icon = ExtResource("5_iydvl")
 icon_alignment = 1
@@ -107,7 +117,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[editable path="V/FieldsContainer"]
-[editable path="V/FieldsContainer/M/PropertyFields/LoopField"]
-[editable path="V/FieldsContainer/M/PropertyFields/VolumeField"]
-[editable path="V/FieldsContainer/M/PropertyFields/PitchField"]
+[editable path="V/ScrollContainer/FieldsContainer"]
+[editable path="V/ScrollContainer/FieldsContainer/M/PropertyFields/LoopField"]
+[editable path="V/ScrollContainer/FieldsContainer/M/PropertyFields/VolumeField"]
+[editable path="V/ScrollContainer/FieldsContainer/M/PropertyFields/PitchField"]

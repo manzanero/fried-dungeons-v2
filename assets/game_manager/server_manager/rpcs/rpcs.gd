@@ -14,6 +14,23 @@ func change_flow_state(global_state: FlowController.State, campaign_players: Dic
 	Game.flow.change_flow_state(state)
 	
 	Debug.print_info_message("Game flow state changed to %s" % state)
+	
+
+@rpc("any_peer", "reliable")
+func change_player(player_slug: String, player_username: String, player_color: Color):
+	if Game.player.slug != player_slug: return
+	Game.player.username = player_username
+	Game.player.slug = Utils.slugify(player_username)
+	Game.player.color = player_color
+	
+
+@rpc("any_peer", "reliable")
+func copy_master_camera(master_position: Vector3, master_rotation: Vector3, zoom: float, player_slug := ""):
+	if player_slug and Game.player.slug != player_slug: return
+	var camera := Game.ui.selected_map.camera
+	camera.position_3d = master_position
+	camera.rotation_3d = master_rotation
+	camera.zoom = zoom
 
 
 @rpc("any_peer", "reliable")
@@ -47,31 +64,12 @@ func change_ambient(map_slug: String,
 
 
 @rpc("any_peer", "reliable")
-func set_player_element_control(player_slug: String, element_id: String, control_data := {}):
+func set_player_element_control(player_slug: String, element_label: String, control_data := {}):
 	if Game.player.slug != player_slug: return
 	var level := Game.ui.selected_map.selected_level
-	var element := _get_element_by_id(level, element_id); if not element: return
-	
-	control_data.get_or_add("senses", false)
-	element.eye.visible = control_data.senses
-	control_data.get_or_add("movement", false)
-	element.is_selectable = control_data.movement
 		
-	Game.player.set_element_control(element_id, control_data)
-
-
-@rpc("any_peer", "reliable")
-func clear_player_element_control(player_slug: String, element_id: String):
-	if Game.player.slug != player_slug: return
-	var level := Game.ui.selected_map.selected_level
-	var element := _get_element_by_id(level, element_id); if not element: return
-	
-	element.eye.visible = false
-	element.is_selectable = false
-	
-	Game.player.elements.erase(element_id)
-#
-	Debug.print_info_message("Player \"%s\" clear control data of \"%s\"" % [player_slug, element_id])
+	Game.player.set_element_control(element_label, control_data)
+	level.set_control(Game.player.elements)
 
 
 @rpc("any_peer", "reliable")
@@ -221,32 +219,33 @@ func set_wall_properties(map_slug: String, level_index: int, id: String,
 
 @rpc("any_peer", "reliable")
 func create_entity(map_slug: String, level_index: int, id: String, position_2d: Vector2, 
-		properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
+		raw_properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var entity := map.instancer.create_entity(level, id, position_2d,
-			properties_values, rotation_y, flipped)
+			Entity.parse_raw_property_values(raw_properties_values), rotation_y, flipped)
 	Debug.print_info_message("Entity \"%s\" created" % entity.id)
+	level.set_control(Game.player.elements)
 
 
 @rpc("any_peer", "reliable")
 func create_light(map_slug: String, level_index: int, id: String, position_2d: Vector2, 
-		properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
+		raw_properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var light := map.instancer.create_light(level, id, position_2d,
-			properties_values, rotation_y, flipped)
+			Light.parse_raw_property_values(raw_properties_values), rotation_y, flipped)
 	Debug.print_info_message("Light \"%s\" created" % light.id)
 
 
 @rpc("any_peer", "reliable")
 func create_prop(map_slug: String, level_index: int, id: String, position_2d: Vector2,
-		properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
+		raw_properties_values := {}, rotation_y := 0.0, flipped := false) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	var shape := map.instancer.create_prop(level, id, position_2d, 
-			properties_values, rotation_y, flipped)
-	Debug.print_info_message("Shape \"%s\" created" % shape.id)
+	var prop := map.instancer.create_prop(level, id, position_2d, 
+			Prop.parse_raw_property_values(raw_properties_values), rotation_y, flipped)
+	Debug.print_info_message("Prop \"%s\" created" % prop.id)
 
 
 @rpc("any_peer", "reliable")
@@ -279,25 +278,24 @@ func set_element_position(map_slug: String, level_index: int, id: String,
 
 @rpc("any_peer", "reliable")
 func change_element_property(map_slug: String, level_index: int, id: String, 
-		property_name: String, new_value: Variant) -> void:
+		property_name: String, new_raw_value: Variant) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var element := _get_element_by_id(level, id); if not element: return
-	element.set_property_value(property_name, new_value)
-	Debug.print_info_message("Element \"%s\" changed property \"%s\" to value \"%s\"" % [element.id, property_name, new_value])
+	element.set_raw_property_value(property_name, new_raw_value)
+	if property_name == "label" and element.type == "entity":
+		level.set_control(Game.player.elements)
+	Debug.print_info_message("Element \"%s\" changed property \"%s\" to value \"%s\"" % [element.id, property_name, new_raw_value])
 
 
 @rpc("any_peer", "reliable")
 func change_element_properties(map_slug: String, level_index: int, id: String, 
-		property_values: Dictionary) -> void:
+		raw_property_values: Dictionary) -> void:
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
 	var element := _get_element_by_id(level, id); if not element: return
-	match element.type:
-		"light": property_values = Light.parse_raw_property_values(property_values)
-		"entity": property_values = Entity.parse_raw_property_values(property_values)
-		"prop": property_values = Shape.parse_raw_property_values(property_values)
-	element.set_property_values(property_values)
+	element.set_raw_property_values(raw_property_values)
+	level.set_control(Game.player.elements)
 	Debug.print_info_message("Element \"%s\" changed properties" % [element.id])
 
 

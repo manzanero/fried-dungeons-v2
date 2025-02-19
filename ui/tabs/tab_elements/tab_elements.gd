@@ -8,7 +8,7 @@ signal element_activated(element: Element)
 
 const ENTITIES_ICON = preload("res://resources/icons/entities_icon.png")
 const LIGHT_ICON = preload("res://resources/icons/light_icon.png")
-const SHAPE_ICON = preload("res://resources/icons/shape_icon.png")
+const PROP_ICON = preload("res://resources/icons/shape_icon.png")
 
 @onready var tree: DraggableTree = %DraggableTree
 
@@ -31,8 +31,8 @@ func add_element(element: Element):
 		element_item.set_icon(0, ENTITIES_ICON)
 	elif element is Light:
 		element_item.set_icon(0, LIGHT_ICON)
-	elif element is Shape:
-		element_item.set_icon(0, SHAPE_ICON)
+	elif element is Prop:
+		element_item.set_icon(0, PROP_ICON)
 		
 	element_item.set_text(0, "%s" % element.label)
 	element_item.set_tooltip_text(0, element.id)
@@ -42,8 +42,9 @@ func add_element(element: Element):
 
 
 func changed_element(element: Element):
-	var element_item: TreeItem = elements[element.id]
-	element_item.set_text(0, element.label)
+	var element_item: TreeItem = elements.get(element.id)
+	if element_item:
+		element_item.set_text(0, element.label)
 
 
 func remove_element(element: Element):
@@ -88,7 +89,7 @@ func _on_item_activated():
 	element.map.camera.target_position.position = element.position + Vector3.UP * 0.5
 
 
-func _on_items_dropped(_items_data: Array[Dictionary], _parent_item: TreeItem, _item_index: int):
+func _on_items_dropped(_drop_data: Dictionary, _item_at_position: TreeItem, _drop_section: int):
 	return
 	
 

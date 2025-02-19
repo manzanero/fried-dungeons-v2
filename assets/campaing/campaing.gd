@@ -70,42 +70,34 @@ func set_map_data(map_slug: String, map_data: Dictionary) -> Error:
 func get_player_path(player_slug: String) -> String:
 	return players_path.path_join(player_slug)
 
-func get_player_data(player_slug: String) -> Dictionary:
-	return Utils.load_json(get_player_path(player_slug).path_join("player.json"))
+func get_player_data(player_slug: String, not_exist_ok := false) -> Dictionary:
+	return Utils.load_json(get_player_path(player_slug).path_join("player.json"), not_exist_ok)
 
 func set_player_data(player_slug: String, player_data: Dictionary) -> Error:
 	return Utils.dump_json(get_player_path(player_slug).path_join("player.json"), player_data, 2)
 
 
-func get_blueprint_dir_abspath(blueprint_file_path: String) -> String:
-	return blueprints_path.path_join(blueprint_file_path)
+func get_blueprint_abspath(blueprint_path: String) -> String:
+	return blueprints_path.path_join(blueprint_path)
 
-func blueprint_dir_exists(resource_file_path: String) -> bool:
-	return DirAccess.dir_exists_absolute(get_blueprint_file_abspath(resource_file_path))
+func blueprint_exists(blueprint_path: String) -> bool:
+	return FileAccess.file_exists(get_blueprint_abspath(blueprint_path).path_join("blueprint.json"))
 
-func get_blueprint_file_abspath(blueprint_file_path: String) -> String:
-	return blueprints_path.path_join(blueprint_file_path) + ".json"
+func get_blueprint_data(blueprint_path: String) -> Dictionary:
+	return Utils.load_json(get_blueprint_abspath(blueprint_path).path_join("blueprint.json"), true)
 
-func blueprint_file_exists(resource_file_path: String) -> bool:
-	return FileAccess.file_exists(get_blueprint_file_abspath(resource_file_path))
-
-func get_blueprint_data(blueprint_file_path: String) -> Dictionary:
-	return Utils.load_json(get_blueprint_file_abspath(blueprint_file_path), true)
-
-func set_blueprint_data(blueprint_file_path: String, blueprint_data: Dictionary) -> Error:
-	return Utils.dump_json(get_blueprint_file_abspath(blueprint_file_path), blueprint_data, 2)
-
+func set_blueprint_data(blueprint_path: String, blueprint_data: Dictionary) -> Error:
+	return Utils.dump_json(get_blueprint_abspath(blueprint_path).path_join("blueprint.json"), blueprint_data, 2)
+	
 
 func get_resource_abspath(resource_file_path: String) -> String:
 	return resources_path.path_join(resource_file_path)
 
 func resource_file_exists(resource_file_path: String) -> bool:
-	var resource_abspath := get_resource_abspath(resource_file_path)
-	return FileAccess.file_exists(resource_abspath)
+	return FileAccess.file_exists(get_resource_abspath(resource_file_path))
 
 func get_resource_data(resource_file_path: String) -> Dictionary:
-	var resource_abspath := get_resource_abspath(resource_file_path)
-	return Utils.load_json(resource_abspath + ".json", true)
+	return Utils.load_json(get_resource_abspath(resource_file_path) + ".json", true)
 
 func set_resource_data(resource_file_path: String, resource_data: Dictionary) -> Error:
 	var resource_abspath := get_resource_abspath(resource_file_path)
