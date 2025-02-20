@@ -6,9 +6,10 @@ signal loaded
 const PLAY_SCENE_ICON := preload("res://resources/icons/play_scene_icon.png")
 const SCENE_ICON := preload("res://resources/icons/scene_icon.png")
 
-@onready var sub_viewport: SubViewport = $SubViewportContainer/SubViewport
+@onready var sub_viewport: SubViewport = %SubViewport
 @onready var world_3d: World3D = sub_viewport.world_3d
 
+@onready var crt: Panel = %CRT
 @onready var map: Map = %Map
 
 @onready var fade_transition: FadeTransition = %FadeTransition
@@ -40,8 +41,19 @@ func init(map_slug: String, map_data: Dictionary, send_players := false):
 	
 	Game.ui.tab_properties.settings.reset()
 	
+	visibility_changed.connect(_on_visibility_changed)
+	_on_visibility_changed()
+	
+	item_rect_changed.connect(func ():
+		crt.material.set_shader_parameter("resolution", sub_viewport.size)
+	)
+	
 	loaded.emit()
 	return self
+	
+
+func _on_visibility_changed():
+	crt.visible = visible
 
 
 func remove():
@@ -58,16 +70,26 @@ func _ready() -> void:
 
 
 func _on_camera_fps_enabled(value: bool):
-	map.is_master_view = true
-	map.current_ambient_light = map.ambient_light
-	map.current_ambient_color = map.ambient_color
-	
-	if not value:
-		if Game.player:
+	if value:
+		if Game.master_is_player:
 			map.is_master_view = false
+			map.current_ambient_light = map.ambient_light
+			map.current_ambient_color = map.ambient_color
 		else:
+			map.is_master_view = true
+			map.current_ambient_light = map.ambient_light
+			map.current_ambient_color = map.ambient_color
+	else:
+		if Game.master_is_player:
+			map.is_master_view = false
+			map.current_ambient_light = map.ambient_light
+			map.current_ambient_color = map.ambient_color
+		else:
+			map.is_master_view = true
 			map.current_ambient_light = map.master_ambient_light
 			map.current_ambient_color = map.master_ambient_color
+		
+	map.is_darkvision_view = Game.modes.darkvision_enabled
 	
 	# exit build mode
 	Utils.reset_button_group(Game.modes.modes_button_group, true)

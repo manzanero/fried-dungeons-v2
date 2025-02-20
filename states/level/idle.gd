@@ -87,7 +87,7 @@ func _input(event: InputEvent):
 	if event is InputEventMouseButton:
 		if event.button_index == MOUSE_BUTTON_LEFT and event.double_click:
 			if level.is_ground_hovered:
-				var color := Game.player.color if Game.player else Game.master.color
+				var color := Game.master.color if Game.player_is_master else Game.player.color
 				map.instancer.create_player_signal(level, level.position_hovered, color)
 				
 				Game.server.rpcs.create_player_signal.rpc(map.slug, level.index, 

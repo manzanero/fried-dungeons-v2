@@ -49,10 +49,10 @@ func _ready() -> void:
 	
 	filter_line_edit.text_changed.connect(refresh_tree.unbind(1))
 	tree.hide_root = true
-	tree.item_activated.connect(open_selected_map)
+	tree.item_activated.connect(_on_open_button_pressed)
 	tree.button_clicked.connect(_on_button_clicked)
 	
-	open_button.pressed.connect(open_selected_map)
+	open_button.pressed.connect(_on_open_button_pressed)
 	players_button.pressed.connect(_on_players_button_pressed)
 	close_button.pressed.connect(_on_close_selected_map_pressed)
 	remove_button.pressed.connect(_on_remove_button_pressed)
@@ -100,8 +100,7 @@ func refresh_tree():
 		map_item.add_button(0, PLAY_ICON, 0)
 		map_item.set_button_tooltip_text(0, 0, "Send players to map")
 		
-		if map_slug in Game.maps:
-			_set_opened(map_item, true)
+		_set_opened(map_item, map_slug in Game.maps) 
 	
 		if cached_slug == map_slug:
 			map_item.select(0)
@@ -112,34 +111,32 @@ func refresh_tree():
 			map_item.set_button_color(0, 0, Color.DARK_GRAY)
 			
 		if Game.ui.selected_map and Game.ui.selected_map.slug == map_slug:
-			map_item.set_icon_modulate(0, Color.GREEN)
+			map_item.set_custom_color(0, Color.GREEN)
 		else:
-			map_item.set_icon_modulate(0, Color.WHITE)
+			map_item.clear_custom_color(0)
 
 
-func open_selected_map():
-	var map_item := tree.get_selected()
-	if not map_item:
-		Utils.temp_error_tooltip("Select a map to be open")
-		return
-		
-	var map_slug: String = selected_map_slug
+func open_map(map_slug: String):
 	if map_slug == Game.ui.selected_map.slug:
 		Utils.temp_warning_tooltip("Select a map is already open")
 		return
 		
 	if map_slug in Game.maps:
-		var tab_index = Game.maps.keys().find(map_slug)
-		Game.ui.scene_tabs.current_tab = tab_index
+		Game.ui.scene_tabs.current_tab = Game.maps.keys().find(map_slug)
 		return
 
-	_set_opened(map_item, true)
-	var new_tab_index := Game.ui.scene_tabs.get_tab_count()
-	var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, cached_maps[map_slug])
-	Game.ui.scene_tabs.current_tab = new_tab_index
+	if Game.ui.scene_tabs.get_tab_count() == 2:
+		for slug in Game.maps:
+			if slug != players_map:
+				_close_map(slug)
 	
-	var camera_init_position := Utils.v2i_to_v3(tab_scene.map.selected_level.rect.get_center()) + Vector3.UP * 0.5
-	tab_scene.map.camera.target_position.position = camera_init_position
+	var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, cached_maps[map_slug])
+	Game.ui.scene_tabs.current_tab = Game.maps.keys().find(map_slug)
+	
+	await get_tree().process_frame
+	refresh_tree()
+
+	tab_scene.map.camera.position_2d = tab_scene.map.selected_level.rect.get_center()
 
 
 func _on_players_button_pressed():
@@ -148,21 +145,10 @@ func _on_players_button_pressed():
 	if map_slug == players_map:
 		Utils.temp_warning_tooltip("Players already are in this map")
 		return
-	
-	open_selected_map()
-	
-	send_players_to_map(map_slug)
-	
-	refresh_tree()
-
-
-func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:
-	item.select(column)
-	_on_players_button_pressed()
-
-
-func send_players_to_map(map_slug):
+		
 	players_map = map_slug
+	
+	open_map(map_slug)
 	
 	Game.server.request_map_notification.rpc(players_map)
 	
@@ -178,6 +164,22 @@ func send_players_to_map(map_slug):
 				Game.ui.scene_tabs.set_tab_icon(tab_index, SCENE_ICON)
 				Game.ui.scene_tabs.get_tab_control(tab_index).process_mode = Node.PROCESS_MODE_DISABLED
 			map_item.set_button_color(0, 0, Color.DARK_GRAY)
+	
+	refresh_tree()
+
+
+func _on_open_button_pressed() -> void:
+	var map_item := tree.get_selected()
+	if not map_item:
+		Utils.temp_error_tooltip("Select a map to be open")
+		return
+		
+	open_map(selected_map_slug)
+
+
+func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:
+	item.select(column)
+	_on_players_button_pressed()
 
 
 func _on_folders_button_pressed() -> void:
@@ -185,13 +187,12 @@ func _on_folders_button_pressed() -> void:
 	OS.shell_show_in_file_manager(ProjectSettings.globalize_path(path))
 	
 
-func _close_selected_map():
-	for tab_index in range(Game.ui.scene_tabs.get_tab_count()):
+func _close_map(map_slug: String):
+	for tab_index in Game.ui.scene_tabs.get_tab_count():
 		var tab_scene: TabScene = Game.ui.scene_tabs.get_tab_control(tab_index)
-		var map := tab_scene.map
-			
-		if map.slug == selected_map_slug:
+		if tab_scene.map.slug == map_slug:
 			tab_scene.queue_free()
+			Game.maps.erase(map_slug)
 			break
 
 
@@ -209,8 +210,7 @@ func _on_close_selected_map_pressed():
 		Utils.temp_error_tooltip("Send player them to another map")
 		return
 		
-	_close_selected_map()
-	Game.maps.erase(selected_map_slug)
+	_close_map(selected_map_slug)
 	reset()
 
 
@@ -224,8 +224,7 @@ func _on_remove_button_pressed():
 		Utils.temp_error_tooltip("Send player them to another map")
 		return
 		
-	_close_selected_map()
-	Game.maps.erase(selected_map_slug)
+	_close_map(selected_map_slug)
 	Utils.move_to_trash(campaign_selected.get_map_path(selected_map_slug))
 	reset()
 

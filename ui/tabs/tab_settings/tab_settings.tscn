@@ -95,7 +95,27 @@ layout_mode = 2
 [node name="CollapseButton" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer" index="0"]
 text = "Ambient"
 
-[node name="AmbientLightField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="0" instance=ExtResource("5_boduf")]
+[node name="OverrideAmbientLightField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="0" instance=ExtResource("7_uwijb")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="H" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientLightField" index="0"]
+size_flags_horizontal = 3
+
+[node name="Label" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientLightField/H" index="0"]
+text = "Override Light"
+
+[node name="OverrideAmbientColorField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="1" instance=ExtResource("7_uwijb")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="H" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientColorField" index="0"]
+size_flags_horizontal = 3
+
+[node name="Label" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientColorField/H" index="0"]
+text = "Override Color"
+
+[node name="AmbientLightField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="2" instance=ExtResource("5_boduf")]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -113,7 +133,7 @@ max_value = 100.0
 step = 5.0
 allow_greater = true
 
-[node name="MasterAmbientLightField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="1" instance=ExtResource("5_boduf")]
+[node name="MasterAmbientLightField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="3" instance=ExtResource("5_boduf")]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -127,17 +147,7 @@ max_value = 100.0
 step = 5.0
 allow_greater = true
 
-[node name="OverrideAmbientLightField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="2" instance=ExtResource("7_uwijb")]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="H" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientLightField" index="0"]
-size_flags_horizontal = 3
-
-[node name="Label" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientLightField/H" index="0"]
-text = "Override Light"
-
-[node name="AmbientColorField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="3" instance=ExtResource("6_rmua0")]
+[node name="AmbientColorField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="4" instance=ExtResource("6_rmua0")]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -147,7 +157,7 @@ size_flags_horizontal = 3
 [node name="Label" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/AmbientColorField/H" index="0"]
 text = "Ambient Color"
 
-[node name="MasterViewField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="4" instance=ExtResource("7_uwijb")]
+[node name="MasterViewField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="5" instance=ExtResource("7_uwijb")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -161,7 +171,7 @@ text = "Master View"
 [node name="CheckBox" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/MasterViewField/H/FriedConvexPanel" index="0"]
 button_pressed = true
 
-[node name="MasterAmbientColorField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="5" instance=ExtResource("6_rmua0")]
+[node name="MasterAmbientColorField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="6" instance=ExtResource("6_rmua0")]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -172,25 +182,15 @@ size_flags_horizontal = 3
 text = "Master Color
 "
 
-[node name="OverrideAmbientColorField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="6" instance=ExtResource("7_uwijb")]
-unique_name_in_owner = true
-layout_mode = 2
-
-[node name="H" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientColorField" index="0"]
-size_flags_horizontal = 3
-
-[node name="Label" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientColorField/H" index="0"]
-text = "Override Color"
-
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/InfoContainer"]
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/InfoContainer/M/PropertyFields/TitleField"]
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/GraphicsContainer"]
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/GraphicsContainer/M/PropertyFields/AtlasTextureField"]
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer"]
+[editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientLightField"]
+[editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientColorField"]
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/AmbientLightField"]
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/MasterAmbientLightField"]
-[editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientLightField"]
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/AmbientColorField"]
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/MasterViewField"]
 [editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/MasterAmbientColorField"]
-[editable path="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/OverrideAmbientColorField"]

@@ -57,6 +57,7 @@ var selector_disabled := false : set = _set_selector_disabled
 
 ## properties
 const LABEL := "label"
+const COLOR := "color"
 const DESCRIPTION := "description"
 const BLUEPRINT := "blueprint"
 const SHOW_LABEL := "show_label"
@@ -66,7 +67,7 @@ const BODY_FRAME := "body_frame"
 const BODY_SIZE := "body_size"
 const SHOW_BASE = "show_base"
 const BASE_SIZE := "base_size"
-const COLOR := "color"
+const DARKVISION := "darkvision"
 
 
 
@@ -107,6 +108,12 @@ const entity_init_properties = {
 		"params": {},
 		"default": true,
 	},
+	SHOW_BASE: {
+		"container": "graphics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": true,
+	},
 	BODY_TEXTURE: {
 		"container": "graphics",
 		"hint": Hint.TEXTURE,
@@ -139,12 +146,6 @@ const entity_init_properties = {
 		},
 		"default": 1.0,
 	},
-	SHOW_BASE: {
-		"container": "graphics",
-		"hint": Hint.BOOL,
-		"params": {},
-		"default": true,
-	},
 	BASE_SIZE: {
 		"container": "graphics",
 		"hint": Hint.FLOAT,
@@ -159,6 +160,20 @@ const entity_init_properties = {
 			"allow_greater": true,
 		},
 		"default": 0.5,
+	},
+	DARKVISION: {
+		"container": "physics",
+		"hint": Hint.FLOAT,
+		"params": {
+			"is_percentage": true,
+			"suffix": "%",
+			"has_slider": true,
+			"has_arrows": true,
+			"min_value": 0,
+			"max_value": 100,
+			"step": 5,
+		},
+		"default": 0.0,
 	},
 }
 
@@ -204,18 +219,20 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		# entity properties
 		SHOW_LABEL: show_label = new_value
 		SHOW_BODY: body.visible = new_value
+		SHOW_BASE: base.visible = new_value
 		BODY_TEXTURE: texture_resource_path = new_value
 		BODY_FRAME: frame = new_value
 		BODY_SIZE: 
 			body.scale = (Vector3.ONE * new_value).clampf(0.1, 64)
 			body.scale.x *= -1 if flipped else 1
-		SHOW_BASE: base.visible = new_value
 		BASE_SIZE:
 			base_mesh_instance.scale = Vector3(new_value * 2, 1, new_value * 2).clampf(0.1, 64)
 			selector_collider.scale = (Vector3.ONE * new_value * 2).clampf(0.1, 64)
 			var selector_mesh: TorusMesh = selector_mesh_instance.mesh
 			selector_mesh.inner_radius = new_value / 2
 			selector_mesh.outer_radius = new_value / 2 + Game.U
+		DARKVISION:
+			enable_darkvision(map.is_darkvision_view)
 	
 	
 func _set_blueprint(_blueprint: CampaignBlueprint) -> void:
@@ -263,8 +280,11 @@ func _on_texture_resource_changed() -> void:
 
 func _process(_delta: float) -> void:
 	body.position.y = 1. / 16. + 1. / 128. * (1 + Game.wave_global)
-
-	var ligth = level.get_light(position_2d)
+	
+	var ligth := cached_light
+	if (Game.process_frame) % 6 == 0:
+		ligth = level.get_light(position_2d)
+	#var ligth = level.get_light(position_2d)
 	if ligth != cached_light:
 		dirty_light = true
 	cached_light = ligth
@@ -400,6 +420,18 @@ func _set_preview(value: bool) -> void:
 	else:
 		transparency = 0
 
+
+func enable_darkvision(enabled: bool):
+	eye.omni_light_3d.visible = not enabled
+	var darkvision_range: float = get_property(DARKVISION).value
+	var darkvision: bool = darkvision_range > 0
+	if enabled and darkvision:
+		eye.darkvision_light.visible = enabled
+		eye.darkvision_light.light_specular = 16 * darkvision_range ** 3
+		#eye.darkvision_light.omni_range = 32 * (-1 * darkvision_range ** 2 + 2 * darkvision_range)
+	else:
+		eye.darkvision_light.visible = false
+	
 
 ###############
 # Serializing #

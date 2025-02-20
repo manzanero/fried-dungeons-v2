@@ -288,7 +288,7 @@ func _process(_delta: float) -> void:
 	if not is_selected:
 		return
 	
-	if Engine.get_process_frames() % 6 == 0:
+	if Game.process_frame % 6 == 0:
 		_on_refreshed_light()
 
 

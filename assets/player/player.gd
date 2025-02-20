@@ -19,6 +19,10 @@ func set_element_control(element_label: String, control_data := {}):
 	elements[element_label] = control_data
 	
 
+func clear_element_control(element_label: String):
+	elements.erase(element_label)
+	
+
 func get_permission(element_label: String, permission: String) -> bool:
 	if not elements.has(element_label): 
 		return false

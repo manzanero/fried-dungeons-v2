@@ -39,7 +39,9 @@ var mode_str: String :
 func mode_to_str(_mode: Mode) -> String:
 	return str(Mode.keys()[_mode]).capitalize()
 
-var tween: Tween
+
+var darkvision_enabled: bool :
+	get: return darkvision_button.button_pressed
 
 
 @onready var modes: Control = %Modes
@@ -83,6 +85,9 @@ var tween: Tween
 ]
 
 @onready var darkvision_button: Button = %DarkvisionButton
+
+
+var tween: Tween
 
 
 func reset():
@@ -226,8 +231,7 @@ func show_mode():
 
 
 func _on_darkvision_button_pressed():
-	var darkvision_enabled := darkvision_button.button_pressed
-	RenderingServer.global_shader_parameter_set("is_darkvision_view", darkvision_enabled)
+	Game.ui.selected_map.is_darkvision_view = darkvision_enabled
 	
 
 var _last_input: Key

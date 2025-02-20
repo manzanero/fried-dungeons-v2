@@ -153,7 +153,9 @@ func change_property(property_name: String, new_value: Variant) -> void:
 
 
 func _process(_delta: float) -> void:
-	var ligth = level.get_light(position_2d)
+	var ligth := cached_light
+	if (Game.process_frame + 1) % 6 == 0:
+		ligth = level.get_light(position_2d)
 	if ligth != cached_light:
 		dirty_light = true
 	cached_light = ligth

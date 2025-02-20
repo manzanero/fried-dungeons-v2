@@ -283,7 +283,7 @@ func _toggle_permission(player_slug: String, item: TreeItem, permission: String)
 	
 	Game.server.rpcs.set_player_element_control.rpc(player_slug, element_label, control_data)
 	
-	if Game.player.slug == player_slug:
+	if Game.master_is_player:
 		Game.player.set_element_control(element_label, control_data)
 		Game.ui.selected_map.selected_level.set_control(player_data.elements)
 	
@@ -295,7 +295,6 @@ func _clear_permisions(player_slug: String, item: TreeItem):
 	var element_label := get_element_id(item)
 	var player_data := Game.campaign.get_player_data(player_slug)
 	player_data.elements.erase(element_label)
-	var element_control_data: Dictionary = player_data.elements.get_or_add(element_label, {})
 	
 	item.free()
 	
@@ -303,8 +302,8 @@ func _clear_permisions(player_slug: String, item: TreeItem):
 	
 	Game.server.rpcs.set_player_element_control.rpc(player_slug, element_label)
 	
-	if Game.player.slug == player_slug:
-		Game.player.set_element_control(element_label, element_control_data)
+	if Game.master_is_player:
+		Game.player.clear_element_control(element_label)
 		Game.ui.selected_map.selected_level.set_control(player_data.elements)
 	
 	Debug.print_info_message("Entity \"%s\" removed to player \"%s\"" % \
@@ -322,8 +321,9 @@ func _on_add_entity_button_pressed():
 		return
 	
 	if players_tree.get_selected() == players_tree.get_root():
-		for player_slug in player_items:
-			add_entity(player_slug, element_selected, true)
+		pass
+		#for player_slug in player_items:
+			#add_entity(player_slug, element_selected, true)
 	else:
 		add_entity(player_selected_slug, element_selected)
 	
@@ -361,16 +361,19 @@ func _on_open_vision_button_pressed():
 		level.set_master_control()
 		map.is_master_view = true
 		reset_colors()
+		Game.master_is_player = false
 		return
 	
-	if item_selected.get_custom_color(0) == Color.GREEN:
+	if Game.master_is_player:
 		level.set_master_control()
 		map.is_master_view = true
 		reset_colors()
+		Game.master_is_player = false
 	else:
 		level.set_control(Game.player.elements)
 		map.is_master_view = false
 		reset_colors()
+		Game.master_is_player = true
 		item_selected.set_custom_color(0, Color.GREEN)
 		
 

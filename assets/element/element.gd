@@ -266,7 +266,7 @@ func _physics_process(delta: float) -> void:
 			var distance_to_target := vector_to_target.length()
 			var direction_to_target := vector_to_target.normalized()
 			const input_velocity: float = 1000
-			var velocity_to_target := clampf(delta * distance_to_target * input_velocity, 0, 10)
+			var velocity_to_target := clampf(delta * distance_to_target * input_velocity, 0, 4)
 			velocity = direction_to_target * velocity_to_target
 			if move_and_slide() and velocity.length() < 0.001:
 				var ticks_msec := Time.get_ticks_msec()

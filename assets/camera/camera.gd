@@ -172,8 +172,8 @@ func _process(delta: float) -> void:
 		is_fps = false
 	
 	# Focus position
-	var distance = focus.position.distance_to(target_position.position)
-	if not focus.position.is_equal_approx(target_position.position):
+	var distance := focus.position.distance_to(target_position.position)
+	if not is_zero_approx(distance):
 		var speed = swing_speed * distance * delta
 		focus.position = focus.position.move_toward(target_position.position, speed)
 		_has_changed = true
@@ -181,10 +181,9 @@ func _process(delta: float) -> void:
 	# Pivot rotation
 	var from_quat = pivot.transform.basis.get_rotation_quaternion()
 	var to_quat = target_rotation.transform.basis.get_rotation_quaternion()
-
 	if not from_quat.is_equal_approx(to_quat):
 		var max_step = swing_speed * delta * 1.5
-		var new_quat = from_quat.slerp(to_quat, max_step)  # Moves in fixed steps
+		var new_quat = from_quat.slerp(to_quat, max_step)
 		pivot.transform.basis = Basis(new_quat)
 		_has_changed = true
 

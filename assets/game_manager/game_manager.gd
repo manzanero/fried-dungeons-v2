@@ -77,9 +77,13 @@ func _on_tab_changed(tab: int):
 	
 	if Game.ui.selected_map and Game.ui.selected_map.selected_level:
 		Game.ui.selected_map.selected_level.change_state(Level.State.GO_IDLE)
-		Game.ui.selected_map.selected_level.set_master_control()
-		Game.ui.selected_map.is_master_view = true
-		Game.ui.tab_players.reset_colors()
+		if Game.master_is_player:
+			Game.ui.selected_map.selected_level.set_control(Game.player.elements)
+			Game.ui.selected_map.is_master_view = false
+		else:
+			Game.ui.selected_map.selected_level.set_master_control()
+			Game.ui.selected_map.is_master_view = true
+		Game.ui.selected_map.is_darkvision_view = Game.modes.darkvision_enabled
 	
 	# disable process in hidden and non players tab
 	for i in Game.ui.scene_tabs.get_tab_count():
@@ -284,6 +288,7 @@ func _on_tab_close_pressed(tab_index: int):
 func _process(_delta: float) -> void:
 	Game.radian_friendly_tick = floor(Time.get_ticks_msec() / (2 * PI) / 32)
 	Game.wave_global = sin(Game.radian_friendly_tick)
+	Game.process_frame = Engine.get_process_frames()
 	Game.control_with_focus = get_viewport().gui_get_focus_owner()
 	Game.control_uses_keyboard = false
 	if Game.control_with_focus is LineEdit:
