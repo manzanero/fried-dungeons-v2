@@ -51,7 +51,7 @@ func _ready() -> void:
 	ui.save_campaign_button_pressed.connect(_on_save_campaign)
 	ui.reload_campaign_button_pressed.connect(_on_reload_campaign)
 	
-	ui.scene_tabs.get_tab_bar().tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ALWAYS
+	#ui.scene_tabs.get_tab_bar().tab_close_display_policy = TabBar.CLOSE_BUTTON_SHOW_ALWAYS
 	ui.scene_tabs.get_tab_bar().add_theme_stylebox_override("button_highlight", StyleBoxEmpty.new())
 	ui.scene_tabs.get_tab_bar().add_theme_stylebox_override("button_pressed", StyleBoxEmpty.new())
 	ui.scene_tabs.get_tab_bar().tab_close_pressed.connect(_on_tab_close_pressed)
@@ -78,12 +78,12 @@ func _on_tab_changed(tab: int):
 	if Game.ui.selected_map and Game.ui.selected_map.selected_level:
 		Game.ui.selected_map.selected_level.change_state(Level.State.GO_IDLE)
 		if Game.master_is_player:
-			Game.ui.selected_map.selected_level.set_control(Game.player.elements)
+			Game.ui.selected_map.selected_level.set_control(Game.master_is_player.elements)
 			Game.ui.selected_map.is_master_view = false
 		else:
 			Game.ui.selected_map.selected_level.set_master_control()
 			Game.ui.selected_map.is_master_view = true
-		Game.ui.selected_map.is_darkvision_view = Game.modes.darkvision_enabled
+		Game.ui.selected_map.is_darkvision_view = Game.ui.darkvision_enabled
 	
 	# disable process in hidden and non players tab
 	for i in Game.ui.scene_tabs.get_tab_count():
@@ -92,6 +92,9 @@ func _on_tab_changed(tab: int):
 			tab_scene.process_mode = PROCESS_MODE_ALWAYS
 		else:
 			tab_scene.process_mode = PROCESS_MODE_DISABLED
+	
+	if Game.ui.selected_map:
+		Game.flow.players_in_scene = Game.ui.selected_map.slug == Game.ui.tab_world.players_map
 
 
 func refresh_tabs():
@@ -140,6 +143,7 @@ func _on_host_campaign(campaign_slug: String, campaign_data: Dictionary, steam: 
 		return
 	
 	Game.master = Player.new("master", campaign_data.get("master", {"username": "Master"}))
+	Game.player = null
 	var campaign := Campaign.new(true, campaign_slug, campaign_data)
 	Game.campaign = campaign
 	
@@ -168,6 +172,7 @@ func load_campaign(campaign_data: Dictionary):
 	map_loaded.emit(players_map_tab.map.slug)
 	
 	Game.ui.tab_world.players_map = players_map_slug
+	Game.flow.players_in_scene = true
 	
 	# open map where master is (if different)
 	if players_map_slug != selected_map_slug:
@@ -175,6 +180,7 @@ func load_campaign(campaign_data: Dictionary):
 		var selected_map_tab: TabScene = TAB_SCENE.instantiate().init(selected_map_slug, selected_map_data)
 		map_loaded.emit(selected_map_tab.map.slug)
 		Game.ui.scene_tabs.current_tab = 1
+		Game.flow.players_in_scene = false
 		
 	Game.ui.tab_world.refresh_tree()
 	
@@ -262,7 +268,7 @@ func _on_join_enet_server(host: String, username: String, password: String):
 func _on_server_disconected():
 	Game.campaign = null
 	Game.ui.tab_jukebox.reset()
-	Game.ui.flow_border.visible = false
+	#Game.ui.flow_border.visible = false
 	reset()
 
 
@@ -289,6 +295,7 @@ func _process(_delta: float) -> void:
 	Game.radian_friendly_tick = floor(Time.get_ticks_msec() / (2 * PI) / 32)
 	Game.wave_global = sin(Game.radian_friendly_tick)
 	Game.process_frame = Engine.get_process_frames()
+	Game.ticks_msec = Time.get_ticks_msec()
 	Game.control_with_focus = get_viewport().gui_get_focus_owner()
 	Game.control_uses_keyboard = false
 	if Game.control_with_focus is LineEdit:
@@ -389,7 +396,12 @@ func remove_resource(resource_path: String) -> void:
 
 func safe_quit():
 	save_campaign()
-	get_tree().quit()
+	
+	Game.ui.exit_window.visible = true
+	Game.ui.exit_window.exit_type = "Fried Dungeons"
+	var response = await Game.ui.exit_window.response
+	if response:
+		get_tree().quit()
 	
 
 func _on_focus_changed(control: Control) -> void:

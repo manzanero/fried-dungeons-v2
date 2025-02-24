@@ -43,15 +43,16 @@ func _ready() -> void:
 	)
 	refresh_button.pressed.connect(refresh)
 	
-	tree.set_column_title(0, "Last Save        ")
-	tree.set_column_title(1, "Title")
-	tree.set_column_expand(0, false)
-	tree.set_column_expand(1, true)
+	#tree.set_column_title(0, "Last Save        ")
+	#tree.set_column_title(1, "Title")
+	#tree.set_column_expand(0, false)
+	#tree.set_column_expand(1, true)
 	tree.set_column_title_alignment(0, HORIZONTAL_ALIGNMENT_LEFT)
 	tree.set_column_title_alignment(1, HORIZONTAL_ALIGNMENT_LEFT)
 	
 	tree.item_activated.connect(_on_item_activated)
 	tree.button_clicked.connect(_on_item_button_clicked)
+	tree.empty_clicked.connect(tree.deselect_all.unbind(2))
 	
 	reset()
 
@@ -109,11 +110,10 @@ func refresh():
 		var item := root.create_child()
 		
 		var modified_time := FileAccess.get_modified_time(campaign_json)
-		item.set_text(0, Time.get_date_string_from_unix_time(modified_time))
-		#item.set_selectable(0, false)
-		item.set_tooltip_text(0, "")
-		item.set_text(1, campaign_label)
+		item.set_tooltip_text(0, campaign_slug)
 		item.set_tooltip_text(1, campaign_slug)
+		item.set_text(0, campaign_label)
+		item.set_text(1, Time.get_date_string_from_unix_time(modified_time))
 		
 		item.add_button(1, PLAY_ICON, 0)
 		item.set_button_color(1, 0, Color.DARK_GRAY)

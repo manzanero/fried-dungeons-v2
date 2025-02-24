@@ -83,5 +83,5 @@ func roll():
 		
 	# force
 	var direction := Vector3(randf_range(-1, 1), 0, randf_range(-1, 1)).normalized()
-	angular_velocity = direction * throw_strength * 2
-	apply_central_impulse(direction * throw_strength)
+	angular_velocity = direction * throw_strength * 1.5
+	apply_central_impulse(direction * throw_strength * 0.75)

@@ -1,6 +1,8 @@
 class_name TabPlayers
 extends Control
 
+signal control_changed
+
 const PLAY_ICON := preload("res://resources/icons/play_icon.png")
 const PAUSE_ICON := preload("res://resources/icons/pause_icon.png")
 const STOP_ICON := preload("res://resources/icons/stop_icon.png")
@@ -16,11 +18,15 @@ const SQUARE_ICON = preload("res://resources/icons/square_icon.png")
 @onready var name_line_edit: LineEdit = %NameLineEdit
 
 @onready var players_tree: DraggableTree = %PlayersTree
-@onready var persmissions_tree: DraggableTree = %PermissionsTree
 
 @onready var add_entity_button: Button = %AddEntityButton
 @onready var open_vision_button: Button = %OpenVisionButton
 @onready var center_view_button: Button = %CenterViewButton
+
+@onready var persmissions_tree: DraggableTree = %PermissionsTree
+
+@onready var control_entity_line_edit: LineEdit = %ControlEntityLineEdit
+@onready var add_control_entity_button: Button = %AddControlEntityButton
 
 
 var player_items: Dictionary :  # slug: TreeItem
@@ -54,8 +60,8 @@ func get_player_item_data(player_slug: String) -> Dictionary:
 	var player_item := get_player_item(player_slug)
 	return player_item.get_metadata(0) if player_item else {}
 
-func get_element_id(element_item: TreeItem) -> String:
-	return element_item.get_tooltip_text(0)
+func get_element_label(element_item: TreeItem) -> String:
+	return element_item.get_text(0)
 
 
 func _ready() -> void:
@@ -66,7 +72,6 @@ func _ready() -> void:
 			_set_flow(root, Game.flow.state)
 	)
 	
-	new_button.pressed.connect(_on_new_button_pressed)
 	#folders_button.pressed.connect(_on_folders_button_pressed)
 	scan_button.pressed.connect(_on_scan_button_pressed)
 	name_line_edit.text_changed.connect(_on_filter_text_changed)
@@ -74,19 +79,23 @@ func _ready() -> void:
 	players_tree.button_clicked.connect(_on_player_item_button_clicked)
 	players_tree.item_selected.connect(_on_player_item_selected)
 	players_tree.item_activated.connect(_on_open_vision_button_pressed)
+	players_tree.empty_clicked.connect(players_tree.deselect_all.unbind(2))
 	
 	persmissions_tree.button_clicked.connect(_on_persmission_item_button_clicked)
+	persmissions_tree.empty_clicked.connect(persmissions_tree.deselect_all.unbind(2))
 	
+	new_button.pressed.connect(_on_new_button_pressed)
 	add_entity_button.pressed.connect(_on_add_entity_button_pressed)
 	open_vision_button.pressed.connect(_on_open_vision_button_pressed)
 	center_view_button.pressed.connect(_on_center_view_button_pressed)
+	add_control_entity_button.pressed.connect(_on_add_control_entity_button_pressed)
 	
 
 func _on_new_button_pressed():
 	Game.ui.nav_bar.campaign_players_pressed.emit()
-
-#func _on_folders_button_pressed() -> void:
-	#OS.shell_show_in_file_manager(ProjectSettings.globalize_path(Game.campaign.players_path))
+	if Game.player:
+		Game.ui.campaign_players_window.edit_player_by_username(Game.player.username)
+	
 
 func _on_filter_text_changed():
 	var filter := Utils.slugify(name_line_edit.text.to_lower())
@@ -112,16 +121,17 @@ func reset():
 	players_root.set_icon(0, SQUARE_ICON)
 	players_root.set_icon_modulate(0, Game.master.color)
 	players_root.set_tooltip_text(0, " ")
+	players_root.set_custom_color(0, Color.WHITE)
 	players_root.set_metadata(0, {})
 	
 	players_root.add_button(0, RESET_ICON, 0)
 	players_root.add_button(0, PLAY_ICON, 1)
 	players_root.add_button(0, PAUSE_ICON, 2)
 	players_root.add_button(0, STOP_ICON, 3)
-	players_root.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
-	players_root.set_button_color(0, 1, Game.TREE_BUTTON_OFF_COLOR)
-	players_root.set_button_color(0, 2, Game.TREE_BUTTON_OFF_COLOR)
-	players_root.set_button_color(0, 3, Game.TREE_BUTTON_OFF_COLOR)
+	players_root.set_button_color(0, 0, Color.WHITE)
+	players_root.set_button_color(0, 1, Color.WHITE)
+	players_root.set_button_color(0, 2, Color.WHITE)
+	players_root.set_button_color(0, 3, Color.WHITE)
 	
 	persmissions_tree.clear()
 	persmissions_tree.create_item()
@@ -130,6 +140,7 @@ func reset():
 	var campaign_players: Dictionary = campaign_data.get("players", {})
 	
 	_set_flow(players_root, Game.flow.state)
+	_on_open_vision_button_pressed()
 	
 	var player_slugs := DirAccess.get_directories_at(Game.campaign.players_path)
 	for player_slug in player_slugs:
@@ -184,7 +195,7 @@ func _on_player_item_selected():
 func create_child_element(element_id: String, element_control_data: Dictionary):
 	var element_item := persmissions_tree.get_root().create_child()
 	element_item.set_text(0, element_id)
-	element_item.set_tooltip_text(0, element_id)
+	element_item.set_tooltip_text(0, " ")
 	#element_item.set_metadata(0, element_item_data)
 	
 	# set buttons
@@ -224,6 +235,13 @@ func _on_player_item_button_clicked(item: TreeItem, _column: int, id: int, _mous
 		2: _set_flow(item, FlowController.State.PAUSED)
 		3: _set_flow(item, FlowController.State.STOPPED)
 	
+	var control_data: Dictionary = get_data()
+	Game.flow.players_flow_aligned = true
+	for player_slug in control_data:
+		if control_data[player_slug].get("state", 0) != 0:
+			Game.flow.players_flow_aligned = false
+			break
+	
 	Game.server.rpcs.change_flow_state.rpc(Game.flow.state, get_data())
 	return
 
@@ -233,18 +251,25 @@ func _on_persmission_item_button_clicked(item: TreeItem, _column: int, id: int, 
 		0: _toggle_permission(current_player_slug, item, Player.Permission.MOVEMENT)
 		1: _toggle_permission(current_player_slug, item, Player.Permission.SENSES)
 		2: _clear_permisions(current_player_slug, item)
-		
+
 
 func reset_all_players():
 	_set_flow(players_tree.get_root(), Game.flow.state)
 	for player_slug in player_items:
 		_set_flow(player_items[player_slug], FlowController.State.NONE)
+	
+	Game.server.rpcs.change_flow_state.rpc(Game.flow.state, get_data())
+		
+	Game.flow.players_flow_aligned = true
 
 
-func _reset_item_flow(item):
-	item.set_button_color(0, 1, Game.TREE_BUTTON_OFF_COLOR)
-	item.set_button_color(0, 2, Game.TREE_BUTTON_OFF_COLOR)
-	item.set_button_color(0, 3, Game.TREE_BUTTON_OFF_COLOR)
+func _reset_item_flow(item: TreeItem):
+	var color := Game.TREE_BUTTON_OFF_COLOR
+	if item == players_tree.get_root():
+		color = Color.WHITE
+	item.set_button_color(0, 1, color)
+	item.set_button_color(0, 2, color)
+	item.set_button_color(0, 3, color)
 
 
 func _set_flow(item: TreeItem, state: FlowController.State):
@@ -264,7 +289,7 @@ func _set_flow(item: TreeItem, state: FlowController.State):
 
 
 func _toggle_permission(player_slug: String, item: TreeItem, permission: String):
-	var element_label := get_element_id(item)
+	var element_label := get_element_label(item)
 	var player_data := Game.campaign.get_player_data(player_slug)
 	var player_elements: Dictionary = player_data.get_or_add("elements", {})
 	var control_data: Dictionary = player_elements.get_or_add(element_label, {})
@@ -280,31 +305,37 @@ func _toggle_permission(player_slug: String, item: TreeItem, permission: String)
 			item.set_button_color(0, 1, Color.WHITE if allow_senses else Game.TREE_BUTTON_OFF_COLOR)
 	
 	Game.campaign.set_player_data(player_slug, player_data)
+	if Game.player and Game.player.slug == player_slug:
+		Game.player.elements = player_elements
 	
 	Game.server.rpcs.set_player_element_control.rpc(player_slug, element_label, control_data)
 	
 	if Game.master_is_player:
-		Game.player.set_element_control(element_label, control_data)
+		Game.master_is_player.set_element_control(element_label, control_data)
 		Game.ui.selected_map.selected_level.set_control(player_data.elements)
+		control_changed.emit()
 	
 	Debug.print_info_message("Entity \"%s\" %s added to player \"%s\"" % \
 			[element_label, permission, player_slug])
 
 
 func _clear_permisions(player_slug: String, item: TreeItem):
-	var element_label := get_element_id(item)
+	var element_label := get_element_label(item)
 	var player_data := Game.campaign.get_player_data(player_slug)
 	player_data.elements.erase(element_label)
 	
 	item.free()
 	
 	Game.campaign.set_player_data(player_slug, player_data)
+	if Game.player and Game.player.slug == player_slug:
+		Game.player.elements.erase(element_label)
 	
 	Game.server.rpcs.set_player_element_control.rpc(player_slug, element_label)
 	
 	if Game.master_is_player:
-		Game.player.clear_element_control(element_label)
+		Game.master_is_player.clear_element_control(element_label)
 		Game.ui.selected_map.selected_level.set_control(player_data.elements)
+		control_changed.emit()
 	
 	Debug.print_info_message("Entity \"%s\" removed to player \"%s\"" % \
 			[element_label, player_slug])
@@ -313,14 +344,15 @@ func _clear_permisions(player_slug: String, item: TreeItem):
 func _on_add_entity_button_pressed():
 	var element_selected := Game.ui.selected_map.selected_level.element_selected; 
 	if not is_instance_valid(element_selected) or element_selected is not Entity:
-		Utils.temp_error_tooltip("Select an Entity to asign")
+		Utils.temp_error_tooltip("Select an Entity to be asignted")
 		return
 	
 	if not player_selected_item:
-		Utils.temp_error_tooltip("Select the player to be asignted")
+		Utils.temp_error_tooltip("Select the player to asign")
 		return
 	
 	if players_tree.get_selected() == players_tree.get_root():
+		Utils.temp_error_tooltip("Select the player to asign")
 		pass
 		#for player_slug in player_items:
 			#add_entity(player_slug, element_selected, true)
@@ -329,11 +361,17 @@ func _on_add_entity_button_pressed():
 	
 
 func add_entity(player_slug: String, element_selected: Element, assigned_ok := false):
+	add_label(player_slug, element_selected.label, assigned_ok)
+	
+func add_label(player_slug: String, element_label: String, assigned_ok := false):
+	if not element_label:
+		Utils.temp_error_tooltip("Label is empty")
+		return
 	var player_data := Game.campaign.get_player_data(player_slug)
 	var player_elements: Dictionary = player_data.get_or_add("elements", {})
-	if element_selected.label in player_elements:
+	if element_label in player_elements:
 		if not assigned_ok:
-			Utils.temp_error_tooltip("Element already asigned to the player")
+			Utils.temp_error_tooltip("Label already asigned to the player")
 			return
 	
 	var entity_control_data := {
@@ -341,40 +379,42 @@ func add_entity(player_slug: String, element_selected: Element, assigned_ok := f
 		"senses": false,
 	}
 	
-	player_elements[element_selected.label] = entity_control_data
+	player_elements[element_label] = entity_control_data
 	Game.campaign.set_player_data(player_slug, player_data)
 	
-	create_child_element(element_selected.label, entity_control_data)
+	if Game.player and Game.player.slug == player_slug:
+		Game.player.elements = player_elements
+	
+	create_child_element(element_label, entity_control_data)
 
 	Utils.sort_item_children(persmissions_tree.get_root())
 	
-	Game.server.rpcs.set_player_element_control.rpc(player_slug, element_selected.label, entity_control_data)
+	Game.server.rpcs.set_player_element_control.rpc(player_slug, element_label, entity_control_data)
 	
-	Debug.print_info_message("Element \"%s\" asigned to player \"%s\"" % [element_selected.label, player_slug])
+	Debug.print_info_message("Label \"%s\" asigned to player \"%s\"" % [element_label, player_slug])
 
 
 func _on_open_vision_button_pressed():
 	var map := Game.ui.selected_map
-	var level := map.selected_level
-	var item_selected := players_tree.get_selected()
-	if not item_selected or item_selected == players_tree.get_root():
-		level.set_master_control()
-		map.is_master_view = true
-		reset_colors()
-		Game.master_is_player = false
+	if not map:
 		return
 	
-	if Game.master_is_player:
+	var level := map.selected_level
+	var item_selected := players_tree.get_selected()
+	if not item_selected or item_selected == players_tree.get_root() or Game.master_is_player:
 		level.set_master_control()
 		map.is_master_view = true
 		reset_colors()
-		Game.master_is_player = false
-	else:
-		level.set_control(Game.player.elements)
-		map.is_master_view = false
-		reset_colors()
-		Game.master_is_player = true
-		item_selected.set_custom_color(0, Color.GREEN)
+		Game.master_is_player = null
+		control_changed.emit()
+		return
+
+	level.set_control(Game.player.elements)
+	map.is_master_view = false
+	reset_colors()
+	Game.master_is_player = Game.player
+	control_changed.emit()
+	item_selected.set_custom_color(0, Color.GREEN)
 		
 
 func reset_colors():
@@ -391,12 +431,23 @@ func _on_center_view_button_pressed():
 	var master_position := Game.ui.selected_map.camera.position_3d
 	var master_rotation := Game.ui.selected_map.camera.rotation_3d
 	var master_zoom := Game.ui.selected_map.camera.zoom
-	print(master_position)
-	print(Game.ui.selected_map.camera.position_2d)
 	if Game.player:
 		Game.server.rpcs.copy_master_camera.rpc(master_position, master_rotation, master_zoom, Game.player.slug)
 	else:
 		Game.server.rpcs.copy_master_camera.rpc(master_position, master_rotation, master_zoom)
+		
+
+func _on_add_control_entity_button_pressed():
+	if not Game.player:
+		Utils.temp_error_tooltip("Select a player to asign the control of this label")
+		return
+		
+	var new_label := control_entity_line_edit.text
+	if Game.player.elements.has(new_label):
+		Utils.temp_warning_tooltip("Player already has the control of this label")
+		return
+	
+	add_label(Game.player.slug, new_label)
 	
 
 func get_data():

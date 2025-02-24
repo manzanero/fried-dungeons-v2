@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=3 uid="uid://hwvpsllrlqk6"]
+[gd_scene load_steps=15 format=3 uid="uid://hwvpsllrlqk6"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/number_edit/number_edit.gd" id="1_gghfl"]
 [ext_resource type="Texture2D" uid="uid://ddqqp0ni1aegm" path="res://resources/icons/grabber.png" id="2_cu3px"]
@@ -14,6 +14,78 @@ border_color = Color(0.143122, 0.152725, 0.162329, 1)
 border_blend = true
 corner_radius_top_left = 4
 corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_to273"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.369293, 0.351825, 0.340185, 1)
+border_width_top = 8
+border_width_bottom = 3
+border_color = Color(0.470959, 0.450622, 0.435383, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_3rbcp"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.369293, 0.351825, 0.340185, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.470959, 0.450622, 0.435383, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_affon"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+border_width_top = 8
+border_width_bottom = 3
+border_color = Color(0.313726, 0.298039, 0.286275, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_as8my"]
+bg_color = Color(0.369293, 0.351825, 0.340185, 1)
+border_width_top = 3
+border_width_bottom = 8
+border_color = Color(0.470959, 0.450622, 0.435383, 1)
+border_blend = true
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yu6b4"]
+bg_color = Color(0.369293, 0.351825, 0.340185, 1)
+border_width_top = 3
+border_width_bottom = 8
+border_color = Color(0.470959, 0.450622, 0.435383, 1)
+border_blend = true
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xgl75"]
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+border_width_top = 3
+border_width_bottom = 8
+border_color = Color(0.313726, 0.298039, 0.286275, 1)
+border_blend = true
 corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
@@ -75,20 +147,55 @@ layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
-[node name="LeftButton" type="Button" parent="V/H"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(26, 0)
+[node name="V" type="VBoxContainer" parent="V/H"]
 layout_mode = 2
-text = "-"
-icon_alignment = 1
+theme_override_constants/separation = 0
 
-[node name="RightButton" type="Button" parent="V/H"]
+[node name="RightButton" type="Button" parent="V/H/V"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(26, 0)
 layout_mode = 2
-text = "+
-"
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_to273")
+theme_override_styles/hover = SubResource("StyleBoxFlat_3rbcp")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_affon")
 icon_alignment = 1
+metadata/_edit_group_ = true
+
+[node name="Label" type="Label" parent="V/H/V/RightButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="LeftButton" type="Button" parent="V/H/V"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(26, 0)
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_as8my")
+theme_override_styles/hover = SubResource("StyleBoxFlat_yu6b4")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_xgl75")
+icon_alignment = 1
+metadata/_edit_group_ = true
+
+[node name="Label" type="Label" parent="V/H/V/LeftButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "-"
+horizontal_alignment = 1
+vertical_alignment = 1
 
 [node name="PrefixContainer" type="MarginContainer" parent="V/H"]
 unique_name_in_owner = true

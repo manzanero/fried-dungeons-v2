@@ -41,6 +41,15 @@ func _exit_state(next_state: String) -> void:
 	selector.grid.visible = false
 	selector.column.visible = false
 	_wall_being_builded = null
+		
+	if is_instance_valid(_wall_hovered):
+		_wall_hovered.line_renderer_3d.disabled = true
+		_wall_hovered.first_point.selector.reset()  # cut mode makes it visible
+		_wall_hovered.last_point.selector.reset()  # cut mode makes it visible
+		
+
+func _process_state(_delta: float) -> String:
+	return super(_delta)
 
 
 func _physics_process_state(_delta: float) -> String:
@@ -603,11 +612,3 @@ func _create_temp_passage(origin: Vector3, destiny: Vector3, thickness: float) -
 	
 	var mesh := st.commit()
 	selector.wall.mesh = mesh
-
-
-var mouse_move: bool
-
-func _input(event: InputEvent) -> void:
-	if event is InputEventMouseMotion:
-		if Input.is_action_pressed("right_click"):
-			mouse_move = true

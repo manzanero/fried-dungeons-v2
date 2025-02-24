@@ -1,8 +1,15 @@
 class_name TabBlueprints
 extends Control
 
+signal tree_edit_end
+
 const DIRECTORY_ICON = preload("res://resources/icons/directory_icon.png")
 const GODOT_ICON = preload("res://resources/icons/godot_icon.png")
+const EDIT_ICON = preload("res://resources/icons/edit_icon.png")
+
+const ENTITY_ICON = preload("res://resources/icons/entities_white_icon.png")
+const LIGHT_ICON = preload("res://resources/icons/sun_icon.png")
+const PROP_ICON = preload("res://resources/icons/prop_icon.png")
 
 var map: Map :
 	get: return Game.ui.selected_map
@@ -25,7 +32,7 @@ var blueprint_selected: CampaignBlueprint :
 var blueprint_items := {}  # id: TreeItem
 var items_collapsed := {}  # TreeItem: bool
 var items_selected := {}  # TreeItem: bool
-#var current_item_selected: TreeItem
+var current_item_edited: TreeItem
 var current_item_path: String
 var current_item_id: String
 
@@ -41,6 +48,7 @@ func get_tree_path(id: String) -> String:
 @onready var tree: DraggableTree = %DraggableTree
 
 @onready var instance_button: Button = %InstanceButton
+@onready var instance_detached_button: Button = %InstanceDetachedButton
 @onready var edit_button: Button = %EditButton
 @onready var duplicate_button: Button = %DuplicateButton
 @onready var remove_button: Button = %RemoveButton
@@ -54,6 +62,7 @@ func _ready() -> void:
 	scan_button.pressed.connect(_on_scan_button_pressed)
 	
 	instance_button.pressed.connect(_on_instance_button_pressed)
+	instance_detached_button.pressed.connect(_on_instance_button_pressed.bind(true))
 	edit_button.pressed.connect(_on_edit_button_pressed)
 	duplicate_button.pressed.connect(_on_duplicate_button_pressed)
 	remove_button.pressed.connect(_on_remove_button_pressed)
@@ -63,15 +72,34 @@ func _ready() -> void:
 	#tree.item_selected.connect(_on_item_selected)
 	tree.multi_selected.connect(_on_multi_selected)
 	tree.item_mouse_selected.connect(_on_item_mouse_selected)
+	tree.button_clicked.connect(_on_button_clicked)
 	tree.item_activated.connect(_on_item_activated)
 	tree.item_collapsed.connect(_on_item_collapsed)
 	tree.item_edited.connect(_on_item_edited)
 	tree.items_dropped.connect(_on_items_dropped)
+	tree.empty_clicked.connect(tree.deselect_all.unbind(2))
+	tree_edit_end.connect(_on_tree_edit_end)
 	
 	tree.drag_type = "campaign_blueprint_items"
 	tree.drop_types_allowed = [
 		"campaign_blueprint_items"
 	]
+	
+	# customize item line_edit
+	for child in tree.get_children(true):
+		if is_instance_of(child, Popup):
+			var popup: Popup = child
+			popup.transparent = true
+			popup.popup_hide.connect(tree_edit_end.emit)
+			
+			for child_2 in popup.get_children(true):
+				if is_instance_of(child_2, VBoxContainer):
+					var container: VBoxContainer = child_2
+					
+					for child_3 in container.get_children(true):
+						if is_instance_of(child_3, LineEdit):
+							var line_edit: LineEdit = child_3
+							line_edit.caret_blink = true
 	
 
 func _on_new_popup_id_pressed(id: int) -> void:
@@ -127,17 +155,19 @@ func _on_item_collapsed(item: TreeItem):
 	
 func _on_item_edited():
 	var item := tree.get_edited()
+	item.set_button_disabled(0, 0, false)
+	var old_name := current_item_path.get_file()
 	var new_name := item.get_text(0)
 	if not new_name:
-		item.set_text(0, current_item_path.get_file())
+		item.set_text(0, old_name)
 		return
 		
-	var abspath := Game.campaign.get_blueprint_abspath(current_item_path)
+	if old_name == new_name:
+		return
+		
+	var old_abspath := Game.campaign.get_blueprint_abspath(current_item_path)
 	var new_path = Utils.get_tree_path(item)
 	var new_abspath := Game.campaign.get_blueprint_abspath(new_path)
-	
-	if abspath == new_abspath:
-		return
 		
 	var siblings := Utils.dir_siblings_count(new_abspath, " ")
 	if siblings > 0:
@@ -146,8 +176,9 @@ func _on_item_edited():
 			
 		item.set_text(0, new_abspath.get_file())
 		
-	if Utils.rename(abspath, new_abspath):
-		Utils.temp_error_tooltip("\"%s\" In use by another app" % abspath)
+	if Utils.rename(old_abspath, new_abspath):
+		Utils.temp_error_tooltip("Error renaming \"%s\"" % current_item_path)
+		item.set_text(0, old_name)
 		return
 		
 	Debug.print_info_message("Renamed blueprint from \"%s\" to \"%s\"" % [current_item_path, new_path])
@@ -243,16 +274,14 @@ func reset() -> void:
 	walk_dirs(root, Game.campaign.blueprints_path)
 	sort_children(root)
 	_regenerate_selection()
-	
-	# customize item line_edit
-	for child in tree.get_children(true):
-		if is_instance_of(child, Popup):
-			child.transparent = true
-			for child_child in child.get_children(true):
-				if is_instance_of(child_child, VBoxContainer):
-					for child_child_child in child_child.get_children(true):
-						if is_instance_of(child_child_child, LineEdit):
-							child_child_child.caret_blink = true
+
+
+func _on_tree_edit_end():
+	if is_instance_valid(current_item_edited):
+		current_item_edited.set_button_disabled(0, 0, false)
+	else:
+		Utils.temp_error_tooltip("Error on edit end")
+		reset()
 
 
 func _regenerate_selection():
@@ -274,9 +303,13 @@ func add_blueprint(parent: TreeItem, blueprint_name: String, blueprint: Campaign
 	
 	blueprint_item.set_text(0, blueprint_name)
 	blueprint_item.set_tooltip_text(0, " ")
+	blueprint_item.add_button(0, EDIT_ICON)
 	blueprint_item.set_metadata(0, blueprint)
 	match blueprint.type:
 		CampaignBlueprint.Type.FOLDER: blueprint_item.set_icon(0, DIRECTORY_ICON)
+		CampaignBlueprint.Type.LIGHT: blueprint_item.set_icon(0, LIGHT_ICON)
+		CampaignBlueprint.Type.ENTITY: blueprint_item.set_icon(0, ENTITY_ICON)
+		CampaignBlueprint.Type.PROP: blueprint_item.set_icon(0, PROP_ICON)
 		_: blueprint_item.set_icon(0, GODOT_ICON)
 	
 	var color: Color = blueprint.properties.get("color", Color.WHITE)
@@ -286,6 +319,15 @@ func add_blueprint(parent: TreeItem, blueprint_name: String, blueprint: Campaign
 	Game.blueprints[blueprint.id] = blueprint
 	
 	return blueprint_item
+
+
+func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int):
+	#tree.deselect_all()
+	item.select(column)
+	item.set_button_disabled(0, 0, true)
+	_on_edit_button_pressed()
+	tree.deselect_all()
+
 
 
 func set_item_color(id: String, color: Color):
@@ -316,44 +358,43 @@ func walk_dirs(parent: TreeItem, path: String):
 		walk_dirs(blueprint_item, path.path_join(blueprint_name))
 
 
-func _on_instance_button_pressed():
-	if item_selected == root:
-		Utils.temp_error_tooltip("Cannot instance root")
+func _on_instance_button_pressed(detached := false):
+	if not tree.get_selected() or item_selected == root:
+		Utils.temp_error_tooltip("Select a Blueprint")
 		return
 	var blueprint := blueprint_selected
 	if not blueprint:
 		Utils.temp_error_tooltip("Select a Blueprint")
 		return
 	
+	blueprint.set_property("label", item_selected.get_text(0))
+	
+	if blueprint.type == CampaignBlueprint.Type.FOLDER:
+		item_selected.collapsed = not item_selected.collapsed
+		return
+		
 	match blueprint.type:
-		CampaignBlueprint.Type.FOLDER:
-			item_selected.collapsed = not item_selected.collapsed
-	
-		CampaignBlueprint.Type.ENTITY:
-			Game.modes.change_mode(ModeController.Mode.ENTITY_3D_SHAPE)
-			level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).preview_blueprint = blueprint
-	
-		CampaignBlueprint.Type.LIGHT:
-			Game.modes.change_mode(ModeController.Mode.LIGHT_OMNILIGHT)
-			level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).preview_blueprint = blueprint
-	
-		CampaignBlueprint.Type.PROP:
-			Game.modes.change_mode(ModeController.Mode.PROP_3D_SHAPE)
-			level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).preview_blueprint = blueprint
+		CampaignBlueprint.Type.ENTITY: Game.modes.change_mode(ModeController.Mode.ENTITY_3D_SHAPE)
+		CampaignBlueprint.Type.LIGHT: Game.modes.change_mode(ModeController.Mode.LIGHT_OMNILIGHT)
+		CampaignBlueprint.Type.PROP: Game.modes.change_mode(ModeController.Mode.PROP_3D_SHAPE)
+		
+	level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).preview_blueprint = blueprint
+	level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).detached_blueprint = detached
 
 
 func _on_edit_button_pressed():
-	if item_selected == root:
-		Utils.temp_error_tooltip("Cannot rename root")
+	if not tree.get_selected() or item_selected == root:
+		Utils.temp_error_tooltip("Select a Blueprint")
 		return
 	tree.edit_selected(true)
+	current_item_edited = item_selected
 	current_item_path = blueprint_selected.path
 	current_item_id = blueprint_selected.id
 	
 
 func _on_duplicate_button_pressed():
-	if item_selected == root:
-		Utils.temp_error_tooltip("Cannot duplicate root")
+	if not tree.get_selected() or item_selected == root:
+		Utils.temp_error_tooltip("Select a Blueprint")
 		return
 	
 	save_new(blueprint_selected.type, blueprint_selected.name, 
@@ -363,10 +404,34 @@ func _on_duplicate_button_pressed():
 func _on_remove_button_pressed():
 	var selected_items: Array[TreeItem] = []
 	var next_selected := tree.get_next_selected(null)
-	var item_to_be_selected := next_selected.get_prev_in_tree()
+	var item_to_be_selected: TreeItem
 	while next_selected:
 		selected_items.append(next_selected)
+		item_to_be_selected = next_selected.get_prev_in_tree()
 		next_selected = tree.get_next_selected(next_selected)
+	
+	selected_items.erase(root)
+	if not selected_items:
+		Utils.temp_error_tooltip("Select a Blueprint")
+		return
+		
+	var labels = []
+	for item in selected_items:
+		labels.append(item.get_text(0))
+		if labels.size() > 10:
+			labels.append("")
+			labels.append("... and %s more" % (selected_items.size() - 10))
+			break
+
+	var response = true
+	if not Input.is_key_pressed(KEY_SHIFT):
+		Game.ui.delete_window.visible = true
+		Game.ui.delete_window.item_type = "Blueprints"
+		Game.ui.delete_window.item_selected = "\n".join(labels)
+		response = await Game.ui.delete_window.response
+		
+	if not response:
+		return
 	
 	if root in selected_items:
 		Utils.temp_error_tooltip("Cannot remove root")
@@ -379,9 +444,10 @@ func _on_remove_button_pressed():
 		item.free()
 		
 	tree.deselect_all()
-	item_to_be_selected.select(0)
-	items_selected.clear()
-	items_selected[get_item_blueprint(item_to_be_selected).id] = true
+	if item_to_be_selected:
+		item_to_be_selected.select(0)
+		items_selected.clear()
+		items_selected[get_item_blueprint(item_to_be_selected).id] = true
 
 
 func save_new(type: String, blueprint_name: String, 
@@ -391,6 +457,12 @@ func save_new(type: String, blueprint_name: String,
 		item = root
 	if not parent:
 		parent = item
+	if not get_item_blueprint(parent).is_folder:
+		parent = parent.get_parent()
+	blueprint_name = blueprint_name.validate_filename()
+	
+	raw_properties.erase("label")
+	raw_properties.erase("blueprint")
 	
 	var blueprint_basedir: String = Utils.get_tree_path(parent)
 	var blueprint_path := blueprint_basedir.path_join(blueprint_name)

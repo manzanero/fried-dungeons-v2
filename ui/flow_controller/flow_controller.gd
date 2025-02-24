@@ -3,6 +3,7 @@ extends PanelContainer
 
 const SCENE := preload("res://ui/flow_controller/flow_controller.tscn")
 
+const PLAY_COLOR := Color(0.159, 0.3, 0.282)
 const PAUSE_COLOR := Color(0.436, 0.4, 0.285)
 const STOP_COLOR := Color(0.416, 0.214, 0.209)
 enum State {NONE, PLAYING, PAUSED, STOPPED}
@@ -20,6 +21,15 @@ var state: State
 var is_paused: bool
 var is_stopped: bool
 
+var players_flow_aligned := false :
+	set(value): 
+		players_flow_aligned = value
+		reset_button.disabled = value
+
+var players_in_scene := false :
+	set(value): 
+		players_in_scene = value
+		scene_button.disabled = value
 
 @onready var play_button: Button = %PlayButton
 @onready var pause_button: Button = %PauseButton
@@ -66,15 +76,18 @@ func _ready() -> void:
 	pause_button.pressed.connect(_on_paused_button_pressed)
 	stop_button.set_pressed_no_signal(is_stopped)
 	stop_button.pressed.connect(_on_stop_button_pressed)
-	flow_border.border_color = Color.TRANSPARENT
+	#flow_border.border_color = Color.TRANSPARENT
+	flow_border.border_color = PLAY_COLOR
 
 
 func _on_reset_button_pressed() -> void:
 	Game.ui.tab_players.reset_all_players()
+	players_flow_aligned = true
 
 
 func _on_scene_button_pressed() -> void:
 	Game.ui.tab_world.send_players_to_map(Game.ui.selected_map.slug)
+	players_in_scene = true
 
 
 func _on_play_button_pressed() -> void:
@@ -116,7 +129,8 @@ func play() -> void:
 	play_button.set_pressed_no_signal(true)
 	pause_button.set_pressed_no_signal(false)
 	stop_button.set_pressed_no_signal(false)
-	Game.ui.flow_border.visible = false
+	flow_border.bg_color = PLAY_COLOR
+	#Game.ui.flow_border.visible = false
 	Game.ui.master_cover.uncover(0)
 	
 func pause() -> void:

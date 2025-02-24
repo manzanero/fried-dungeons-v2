@@ -35,13 +35,13 @@ allow_greater = true
 allow_lesser = true
 metadata/_edit_group_ = true
 
-[node name="LeftButton" parent="H/C/V/XNumberEdit/V/H" index="0"]
+[node name="RightButton" parent="H/C/V/XNumberEdit/V/H/V" index="0"]
 visible = false
 
-[node name="RightButton" parent="H/C/V/XNumberEdit/V/H" index="1"]
+[node name="LeftButton" parent="H/C/V/XNumberEdit/V/H/V" index="1"]
 visible = false
 
-[node name="PrefixContainer" parent="H/C/V/XNumberEdit/V/H" index="2"]
+[node name="PrefixContainer" parent="H/C/V/XNumberEdit/V/H" index="1"]
 visible = true
 
 [node name="PrefixLabel" parent="H/C/V/XNumberEdit/V/H/PrefixContainer" index="0"]
@@ -68,13 +68,13 @@ allow_greater = true
 allow_lesser = true
 metadata/_edit_group_ = true
 
-[node name="LeftButton" parent="H/C/V/YNumberEdit/V/H" index="0"]
+[node name="RightButton" parent="H/C/V/YNumberEdit/V/H/V" index="0"]
 visible = false
 
-[node name="RightButton" parent="H/C/V/YNumberEdit/V/H" index="1"]
+[node name="LeftButton" parent="H/C/V/YNumberEdit/V/H/V" index="1"]
 visible = false
 
-[node name="PrefixContainer" parent="H/C/V/YNumberEdit/V/H" index="2"]
+[node name="PrefixContainer" parent="H/C/V/YNumberEdit/V/H" index="1"]
 visible = true
 
 [node name="PrefixLabel" parent="H/C/V/YNumberEdit/V/H/PrefixContainer" index="0"]

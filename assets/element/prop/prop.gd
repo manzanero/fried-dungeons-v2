@@ -9,8 +9,7 @@ const SHAPE_SLICE := preload("res://assets/element/prop/shape_slice/shape_slice.
 @export var material: ShaderMaterial
 
 
-var cached_light: Color :
-	set(value): cached_light = value; material.set_shader_parameter("light", cached_light)
+var cached_light: Color
 var body_color: Color :
 	set(value): body_color = value; material.set_shader_parameter("albedo", body_color)
 var transparency := 0. : 
@@ -22,6 +21,15 @@ var is_watched: bool :
 
 
 # properties
+var light_active := true :
+	set(value): light_active = value; omni_light_3d.visible = value; ligth_mesh.visible = value
+var light_range := 5.0 :
+	set(value): light_range = value; omni_light_3d.omni_range = value
+var light_color := Color.WHITE :
+	set(value):
+		light_color = value
+		ligth_mesh.material_override.albedo_color = value
+		omni_light_3d.light_color = value
 var show_label: bool :
 	set(value): show_label = value; canvas_layer.visible = value
 var texture_resource_path := "" : set = _set_texture_resource_path
@@ -29,8 +37,8 @@ var frame := 0 :
 	set(value): frame = value; dirty_mesh = true
 var shape_scale := 1.0 :
 	set(value): shape_scale = value; dirty_mesh = true
-var is_invisible: bool :
-	set(value): is_invisible = value; slices_parent.visible = not value
+var hidden: bool :
+	set(value): hidden = value; slices_parent.visible = not value
 var is_solid: bool:
 	set(value): is_solid = value; set_collision_mask_value(1, value); set_collision_layer_value(1, value)
 var is_opaque: bool  # TODO
@@ -47,6 +55,8 @@ var selector_disabled := false : set = _set_selector_disabled
 @onready var selector_mesh_instance: MeshInstance3D = %SelectorMeshInstance
 @onready var collider: CollisionShape3D = %CollisionShape3D
 @onready var collider_shape: BoxShape3D = collider.shape
+@onready var ligth_mesh: MeshInstance3D = %LigthMesh
+@onready var omni_light_3d: OmniLight3D = %OmniLight3D
 @onready var canvas_layer: CanvasLayer = %CanvasLayer
 @onready var info: Control = %Info
 @onready var label_label: Label = %LabelLabel
@@ -54,40 +64,93 @@ var selector_disabled := false : set = _set_selector_disabled
 
 ## properties
 const LABEL := "label"
-const SHOW_LABEL := "show label"
-const COLOR := "color"
 const DESCRIPTION := "description"
+const COLOR := "color"
+const BLUEPRINT := "blueprint"
+const LIGHT_ACTIVE = "light_active"
+const LIGHT_RANGE = "light_range"
+const LIGHT_COLOR = "light_color"
+const SOLID := "solid"
+const SHOW_LABEL := "show label"
+const HIDDEN := "hidden"
 const SCALE := "scale"
 const TEXTURE := "texture"
 const FRAME := "frame"
-const INVISIBLE := "invisible"
 const OPAQUE := "opaque"
-const SOLID := "solid"
 
 const prop_init_properties = {
 	LABEL: {
-		"container": "info",
+		"container": "",
 		"hint": Hint.STRING,
 		"params": {},
 		"default": "Prop Unknown",
 	},
-	SHOW_LABEL: {
-		"container": "info",
-		"hint": Hint.BOOL,
+	DESCRIPTION: {
+		"container": "",
+		"hint": Hint.STRING,
 		"params": {},
-		"default": false,
+		"default": "",
 	},
 	COLOR: {
-		"container": "info",
+		"container": "",
 		"hint": Hint.COLOR,
 		"params": {},
 		"default": Color.WHITE,
 	},
-	DESCRIPTION: {
-		"container": "info",
-		"hint": Hint.STRING,
+	BLUEPRINT: {
+		"container": "",
+		"hint": Hint.BLUEPRINT,
 		"params": {},
-		"default": "",
+		"default": null,
+	},
+	LIGHT_ACTIVE: {
+		"container": "light",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": false,
+	},
+	LIGHT_RANGE: {
+		"container": "light",
+		"hint": Hint.FLOAT,
+		"params":  {
+			"suffix": "u",
+			"has_slider": true,
+			"has_arrows": true,
+			"min_value": 1,
+			"max_value": 10,
+			"step": 1,
+		},
+		"default": 5,
+	},
+	LIGHT_COLOR: {
+		"container": "light",
+		"hint": Hint.COLOR,
+		"params": {},
+		"default": Color.WHITE,
+	},
+	#OPAQUE: {
+		#"container": "light",
+		#"hint": Hint.BOOL,
+		#"params": {},
+		#"default": true,
+	#},
+	SOLID: {
+		"container": "physics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": true,
+	},
+	SHOW_LABEL: {
+		"container": "graphics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": false,
+	},
+	HIDDEN: {
+		"container": "graphics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": false,
 	},
 	TEXTURE: {
 		"container": "graphics",
@@ -122,24 +185,6 @@ const prop_init_properties = {
 		},
 		"default": 1.0,
 	},
-	INVISIBLE: {
-		"container": "physics",
-		"hint": Hint.BOOL,
-		"params": {},
-		"default": false,
-	},
-	SOLID: {
-		"container": "physics",
-		"hint": Hint.BOOL,
-		"params": {},
-		"default": true,
-	},
-	OPAQUE: {
-		"container": "physics",
-		"hint": Hint.BOOL,
-		"params": {},
-		"default": true,
-	},
 }
 
 func _ready() -> void:
@@ -148,12 +193,24 @@ func _ready() -> void:
 	
 	snapping = Game.U
 	selector_mesh_instance.visible = false
+	
+	element_velocity = 5
+	
+	cached_light = level.get_light(position_2d)
+	level.light_texture_updated.connect(_on_light_texture_updated)
+	
 	collider.disabled = true
+	map.darkvision_enabled.connect(func (_value):
+		cached_light = level.get_light(position_2d)
+		update_light()
+	)
 
 
 static func parse_property_values(property_values: Dictionary) -> Dictionary:
 	var raw_property_values := {}
 	for property_name in property_values:
+		if not prop_init_properties.has(property_name):  # to keep compatibility
+			continue
 		var property_value: Variant = property_values[property_name]
 		var init_property_data: Dictionary = prop_init_properties[property_name]
 		raw_property_values[property_name] = get_raw_property(init_property_data.hint, property_value)
@@ -163,6 +220,8 @@ static func parse_property_values(property_values: Dictionary) -> Dictionary:
 static func parse_raw_property_values(raw_property_values: Dictionary) -> Dictionary:
 	var property_values := {}
 	for property_name in raw_property_values:
+		if not prop_init_properties.has(property_name):  # to keep compatibility
+			continue
 		var raw_property_value: Variant = raw_property_values[property_name]
 		var init_property_data: Dictionary = prop_init_properties[property_name]
 		property_values[property_name] = set_raw_property(init_property_data.hint, raw_property_value)
@@ -174,20 +233,24 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		
 		# element properties
 		LABEL: label = new_value; label_label.text = new_value
-		SHOW_LABEL: show_label = new_value
+		DESCRIPTION: description = new_value
 		COLOR:
 			color = new_value
 			label_label.label_settings.font_color = new_value
 			label_label.label_settings.outline_color = Utils.get_outline_color(new_value)
-		DESCRIPTION: description = new_value
-		
+		BLUEPRINT: _set_blueprint(new_value)
+
 		# prop properties
+		LIGHT_ACTIVE: light_active = new_value
+		LIGHT_RANGE: light_range = new_value
+		LIGHT_COLOR: light_color = new_value
+		OPAQUE: is_opaque = new_value
+		SOLID: is_solid = new_value
+		SHOW_LABEL: show_label = new_value
+		HIDDEN: hidden = new_value
 		TEXTURE: texture_resource_path = new_value
 		FRAME: frame = new_value
 		SCALE: shape_scale = clamp(new_value, 0.125, 64)
-		INVISIBLE: is_invisible = new_value
-		OPAQUE: is_opaque = new_value
-		SOLID: is_solid = new_value
 	
 	
 func _set_texture_resource_path(_texture_resource_path: String) -> void:
@@ -223,20 +286,17 @@ func _on_texture_resource_changed() -> void:
 	dirty_mesh = true
 
 
-func _process(_delta: float) -> void:
-	var ligth := cached_light
-	if (Game.process_frame + 3) % 6 == 0:
-		ligth = level.get_light(position_2d)
+func _on_light_texture_updated():
+	var ligth := level.get_light(position_2d)
 	if ligth != cached_light:
-		dirty_light = true
-	cached_light = ligth
-	
+		cached_light = ligth
+		update_light()
+		
 	if dirty_mesh:
 		update_mesh()
 		
-	if dirty_light:
-		update_light()
 		
+func _process(_delta: float) -> void:
 	if show_label and is_watched:
 		if level.map.camera.is_fps:
 			info.visible = false
@@ -255,9 +315,9 @@ func update_light():
 	dirty_light = false
 	
 	if is_watched:
-		body_color = Color(luminance, luminance, luminance)
+		material.set_shader_parameter("light", cached_light)
 	else:
-		body_color = Color.TRANSPARENT
+		material.set_shader_parameter("light", Color.TRANSPARENT)
 		info.visible = false
 
 

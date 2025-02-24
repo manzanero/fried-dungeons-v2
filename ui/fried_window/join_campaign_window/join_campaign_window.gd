@@ -76,6 +76,7 @@ func _ready() -> void:
 	steam_tree.item_selected.connect(_on_steam_item_selected)
 	steam_tree.item_activated.connect(_on_steam_item_activated)
 	steam_tree.button_clicked.connect(_on_steam_item_button_clicked)
+	steam_tree.empty_clicked.connect(steam_tree.deselect_all.unbind(2))
 
 	Game.server.lobbies_loaded.connect(_on_lobbies_loaded)
 
@@ -94,6 +95,7 @@ func _ready() -> void:
 	enet_tree.item_selected.connect(_on_enet_item_selected)
 	enet_tree.item_activated.connect(_on_enet_item_activated)
 	enet_tree.button_clicked.connect(_on_enet_item_button_clicked)
+	enet_tree.empty_clicked.connect(enet_tree.deselect_all.unbind(2))
 
 
 func refresh():

@@ -219,6 +219,7 @@ theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_ue4d1")
 theme_override_styles/hover = SubResource("StyleBoxFlat_a8iq6")
 theme_override_styles/pressed = SubResource("StyleBoxFlat_iubon")
 theme_override_styles/normal = SubResource("StyleBoxEmpty_gfux3")
+disabled = true
 icon = ExtResource("2_rjp4c")
 
 [node name="PlayButton" type="Button" parent="H"]
@@ -267,4 +268,5 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 focus_mode = 0
+disabled = true
 icon = ExtResource("6_w4cq1")

@@ -87,6 +87,8 @@ func get_blueprint_data(blueprint_path: String) -> Dictionary:
 	return Utils.load_json(get_blueprint_abspath(blueprint_path).path_join("blueprint.json"), true)
 
 func set_blueprint_data(blueprint_path: String, blueprint_data: Dictionary) -> Error:
+	blueprint_data.properties.erase("label")
+	blueprint_data.properties.erase("blueprint")
 	return Utils.dump_json(get_blueprint_abspath(blueprint_path).path_join("blueprint.json"), blueprint_data, 2)
 	
 

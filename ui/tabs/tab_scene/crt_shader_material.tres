@@ -1,20 +1,13 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://jdskfu7sjmwd"]
 
-[ext_resource type="Shader" path="res://ui/tabs/tab_scene/crt.gdshader" id="1_6ssrb"]
+[ext_resource type="Shader" path="res://ui/tabs/tab_scene/crt_simple.gdshader" id="1_3kgn0"]
 
 [resource]
-shader = ExtResource("1_6ssrb")
-shader_parameter/resolution = Vector2(894, 492)
-shader_parameter/scan_line_amount = 0.0
-shader_parameter/warp_amount = 0.0
-shader_parameter/noise_amount = 0.0
-shader_parameter/interference_amount = 0.0
+shader = ExtResource("1_3kgn0")
+shader_parameter/resolution = Vector2(320, 180)
 shader_parameter/grille_amount = 0.1
 shader_parameter/grille_size = 1.0
 shader_parameter/vignette_amount = 0.2
 shader_parameter/vignette_intensity = 1.0
-shader_parameter/aberation_amount = 0.25
 shader_parameter/roll_line_amount = 0.1
 shader_parameter/roll_speed = 0.5
-shader_parameter/scan_line_strength = -12.0
-shader_parameter/pixel_strength = -4.0

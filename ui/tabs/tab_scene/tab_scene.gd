@@ -34,7 +34,7 @@ func init(map_slug: String, map_data: Dictionary, send_players := false):
 	for level: Level in map.levels_parent.get_children():
 		level.light_viewport.find_world_3d()
 	
-	map.camera.target_position.position = Utils.v2i_to_v3(map.selected_level.rect.get_center()) + Vector3.UP * 0.5
+	map.camera.position_2d = map.selected_level.rect.get_center()
 	map.camera.fps_enabled.connect(_on_camera_fps_enabled)
 	
 	name = map_data.label
@@ -69,31 +69,27 @@ func _ready() -> void:
 	cursor_control.gui_input.connect(_on_gui_input)
 
 
-func _on_camera_fps_enabled(value: bool):
-	if value:
-		if Game.master_is_player:
-			map.is_master_view = false
-			map.current_ambient_light = map.ambient_light
-			map.current_ambient_color = map.ambient_color
-		else:
-			map.is_master_view = true
-			map.current_ambient_light = map.ambient_light
-			map.current_ambient_color = map.ambient_color
-	else:
-		if Game.master_is_player:
-			map.is_master_view = false
-			map.current_ambient_light = map.ambient_light
-			map.current_ambient_color = map.ambient_color
-		else:
-			map.is_master_view = true
-			map.current_ambient_light = map.master_ambient_light
-			map.current_ambient_color = map.master_ambient_color
-		
-	map.is_darkvision_view = Game.modes.darkvision_enabled
-	
-	# exit build mode
-	Utils.reset_button_group(Game.modes.modes_button_group, true)
-	Game.ui.selected_map.selected_level.change_state(Level.State.GO_IDLE)
+func _on_camera_fps_enabled(_value: bool):
+	#if Game.master_is_player:
+		#map.is_master_view = false
+		#map.current_ambient_light = map.ambient_light
+		#map.current_ambient_color = map.ambient_color
+			#
+	#else:
+		#map.is_master_view = true
+		#if value:
+			#map.current_ambient_light = map.ambient_light
+			#map.current_ambient_color = map.ambient_color
+		#else:
+			#map.current_ambient_light = map.master_ambient_light
+			#map.current_ambient_color = map.master_ambient_color
+		#
+	#map.is_darkvision_view = Game.modes.darkvision_enabled
+	#
+	## exit build mode
+	#Utils.reset_button_group(Game.modes.modes_button_group, true)
+	#Game.ui.selected_map.selected_level.change_state(Level.State.GO_IDLE)
+	pass
 
 
 func _on_mouse_entered(): 

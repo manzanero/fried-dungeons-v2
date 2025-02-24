@@ -14,7 +14,7 @@
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_t4urb"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7lfy0"]
-bg_color = Color(0, 0, 0, 1)
+bg_color = Color(0.0156863, 0.0156863, 0.0156863, 1)
 corner_radius_top_left = 6
 corner_radius_top_right = 6
 corner_radius_bottom_right = 6

@@ -1,19 +1,105 @@
-[gd_scene load_steps=11 format=3 uid="uid://d2x02vgtidrgn"]
+[gd_scene load_steps=16 format=3 uid="uid://d2x02vgtidrgn"]
 
 [ext_resource type="PackedScene" uid="uid://dl0m5fa0feqgj" path="res://ui/tabs/tab_properties/container/property_container.tscn" id="1_0a7i1"]
 [ext_resource type="Script" path="res://ui/tabs/tab_resources/import_texture/import_texture.gd" id="1_2wa7l"]
 [ext_resource type="Texture2D" uid="uid://j04vtki4o5mi" path="res://resources/textures/bookshelf.png" id="5_c56ql"]
-[ext_resource type="Texture2D" uid="uid://bt3up1tul5ff4" path="res://resources/icons/arrow_left.png" id="5_esb5n"]
-[ext_resource type="Texture2D" uid="uid://cgou2gvplydjd" path="res://resources/icons/arrow_right.png" id="6_t1jcj"]
 [ext_resource type="PackedScene" uid="uid://cj4varycy448i" path="res://ui/tabs/tab_properties/field/choice_field/choice_field.tscn" id="7_5m7st"]
 [ext_resource type="Texture2D" uid="uid://deshy6dmtqy4c" path="res://resources/entity_textures/monsters/field/field_501.png" id="7_8agyp"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="7_c05cm"]
 [ext_resource type="Texture2D" uid="uid://c5rkhm5e8nrhd" path="res://resources/icons/reload_icon.png" id="9_qebvm"]
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yq8bh"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.369293, 0.351825, 0.340185, 1)
+border_width_top = 8
+border_width_bottom = 3
+border_color = Color(0.470959, 0.450622, 0.435383, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_pdhan"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.369293, 0.351825, 0.340185, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.470959, 0.450622, 0.435383, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_qrgxl"]
+content_margin_left = 8.0
+content_margin_top = 4.0
+content_margin_right = 8.0
+content_margin_bottom = 4.0
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+border_width_top = 8
+border_width_bottom = 3
+border_color = Color(0.313726, 0.298039, 0.286275, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_plsy2"]
+bg_color = Color(0.369293, 0.351825, 0.340185, 1)
+border_width_top = 3
+border_width_bottom = 8
+border_color = Color(0.470959, 0.450622, 0.435383, 1)
+border_blend = true
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_jrx83"]
+bg_color = Color(0.369293, 0.351825, 0.340185, 1)
+border_width_top = 3
+border_width_bottom = 8
+border_color = Color(0.470959, 0.450622, 0.435383, 1)
+border_blend = true
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_20uln"]
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+border_width_top = 3
+border_width_bottom = 8
+border_color = Color(0.313726, 0.298039, 0.286275, 1)
+border_blend = true
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t0iib"]
-content_margin_left = 4.0
+content_margin_left = 0.0
 content_margin_top = 0.0
-content_margin_right = 4.0
+content_margin_right = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.105882, 0.113725, 0.121569, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.0828378, 0.0895761, 0.0963149, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8anxg"]
+content_margin_left = 0.0
+content_margin_top = 0.0
+content_margin_right = 8.0
 content_margin_bottom = 0.0
 bg_color = Color(0.105882, 0.113725, 0.121569, 1)
 border_width_top = 8
@@ -39,7 +125,7 @@ theme_override_constants/separation = 8
 script = ExtResource("1_2wa7l")
 
 [node name="V3" type="VBoxContainer" parent="."]
-custom_minimum_size = Vector2(220, 0)
+custom_minimum_size = Vector2(240, 0)
 layout_mode = 2
 
 [node name="ImportAsChoiceField" parent="V3" instance=ExtResource("7_5m7st")]
@@ -112,6 +198,7 @@ icon = ExtResource("9_qebvm")
 icon_alignment = 1
 
 [node name="V2" type="BoxContainer" parent="."]
+custom_minimum_size = Vector2(180, 0)
 layout_mode = 2
 theme_override_constants/separation = 8
 vertical = true
@@ -126,6 +213,7 @@ custom_minimum_size = Vector2(0, 0)
 layout_mode = 2
 
 [node name="C" type="BoxContainer" parent="V2/VBoxContainer/TexturePanel"]
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_constants/separation = 0
 alignment = 1
@@ -143,6 +231,56 @@ size_flags_vertical = 1
 text = "Texture"
 vertical_alignment = 1
 
+[node name="V" type="VBoxContainer" parent="V2/VBoxContainer/TexturePanel/C"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="NextTextureButton" type="Button" parent="V2/VBoxContainer/TexturePanel/C/V"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(26, 0)
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_yq8bh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pdhan")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qrgxl")
+icon_alignment = 1
+metadata/_edit_group_ = true
+
+[node name="Label" type="Label" parent="V2/VBoxContainer/TexturePanel/C/V/NextTextureButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PreviousTextureButton" type="Button" parent="V2/VBoxContainer/TexturePanel/C/V"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(26, 0)
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_plsy2")
+theme_override_styles/hover = SubResource("StyleBoxFlat_jrx83")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_20uln")
+icon_alignment = 1
+metadata/_edit_group_ = true
+
+[node name="Label" type="Label" parent="V2/VBoxContainer/TexturePanel/C/V/PreviousTextureButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "-"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="FriedPanel" parent="V2/VBoxContainer/TexturePanel/C" instance=ExtResource("7_c05cm")]
 custom_minimum_size = Vector2(32, 25)
 layout_mode = 2
@@ -154,16 +292,17 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_colors/font_color = Color(1, 1, 1, 1)
 text = "1"
-alignment = 1
+alignment = 2
+max_length = 3
 
 [node name="HBoxContainer" type="HBoxContainer" parent="V2/VBoxContainer/TexturePanel/C"]
 layout_mode = 2
 alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="V2/VBoxContainer/TexturePanel/C"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_right = 4
+theme_override_constants/margin_left = 8
 
 [node name="HBoxContainer" type="HBoxContainer" parent="V2/VBoxContainer/TexturePanel/C/MarginContainer"]
 layout_mode = 2
@@ -177,20 +316,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 text = "1"
-
-[node name="PreviousTextureButton" type="Button" parent="V2/VBoxContainer/TexturePanel/C"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(25, 0)
-layout_mode = 2
-focus_mode = 0
-icon = ExtResource("5_esb5n")
-
-[node name="NextTextureButton" type="Button" parent="V2/VBoxContainer/TexturePanel/C"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(25, 0)
-layout_mode = 2
-focus_mode = 0
-icon = ExtResource("6_t1jcj")
+horizontal_alignment = 2
 
 [node name="FramePanel" parent="V2/VBoxContainer" instance=ExtResource("7_c05cm")]
 unique_name_in_owner = true
@@ -215,27 +341,78 @@ size_flags_vertical = 1
 text = "Frame"
 vertical_alignment = 1
 
+[node name="V" type="VBoxContainer" parent="V2/VBoxContainer/FramePanel/C"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="NextFrameButton" type="Button" parent="V2/VBoxContainer/FramePanel/C/V"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(26, 0)
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_yq8bh")
+theme_override_styles/hover = SubResource("StyleBoxFlat_pdhan")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_qrgxl")
+icon_alignment = 1
+metadata/_edit_group_ = true
+
+[node name="Label" type="Label" parent="V2/VBoxContainer/FramePanel/C/V/NextFrameButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "+"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="PreviousFrameButton" type="Button" parent="V2/VBoxContainer/FramePanel/C/V"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(26, 0)
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 0
+theme_override_styles/hover_pressed = SubResource("StyleBoxFlat_plsy2")
+theme_override_styles/hover = SubResource("StyleBoxFlat_jrx83")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_20uln")
+icon_alignment = 1
+metadata/_edit_group_ = true
+
+[node name="Label" type="Label" parent="V2/VBoxContainer/FramePanel/C/V/PreviousFrameButton"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+text = "-"
+horizontal_alignment = 1
+vertical_alignment = 1
+
 [node name="FriedPanel" parent="V2/VBoxContainer/FramePanel/C" instance=ExtResource("7_c05cm")]
 custom_minimum_size = Vector2(32, 25)
 layout_mode = 2
 size_flags_horizontal = 3
-theme_override_styles/panel = SubResource("StyleBoxFlat_t0iib")
+theme_override_styles/panel = SubResource("StyleBoxFlat_8anxg")
 
 [node name="FrameLabel" type="Label" parent="V2/VBoxContainer/FramePanel/C/FriedPanel"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(25, 0)
 layout_mode = 2
 text = "1"
-horizontal_alignment = 1
+horizontal_alignment = 2
 
 [node name="HBoxContainer" type="HBoxContainer" parent="V2/VBoxContainer/FramePanel/C"]
 layout_mode = 2
 alignment = 1
 
 [node name="MarginContainer" type="MarginContainer" parent="V2/VBoxContainer/FramePanel/C"]
+custom_minimum_size = Vector2(40, 0)
 layout_mode = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_right = 4
+theme_override_constants/margin_left = 8
+theme_override_constants/margin_right = 0
 
 [node name="HBoxContainer" type="HBoxContainer" parent="V2/VBoxContainer/FramePanel/C/MarginContainer"]
 layout_mode = 2
@@ -249,20 +426,7 @@ unique_name_in_owner = true
 custom_minimum_size = Vector2(16, 0)
 layout_mode = 2
 text = "1"
-
-[node name="PreviousFrameButton" type="Button" parent="V2/VBoxContainer/FramePanel/C"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(25, 0)
-layout_mode = 2
-focus_mode = 0
-icon = ExtResource("5_esb5n")
-
-[node name="NextFrameButton" type="Button" parent="V2/VBoxContainer/FramePanel/C"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(25, 0)
-layout_mode = 2
-focus_mode = 0
-icon = ExtResource("6_t1jcj")
+horizontal_alignment = 2
 
 [node name="Slices" type="Control" parent="V2"]
 unique_name_in_owner = true
@@ -281,6 +445,9 @@ size_flags_vertical = 0
 texture = ExtResource("7_8agyp")
 expand_mode = 5
 stretch_mode = 5
+
+[node name="VSeparator" type="VSeparator" parent="."]
+layout_mode = 2
 
 [node name="V" type="BoxContainer" parent="."]
 layout_mode = 2

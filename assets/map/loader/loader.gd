@@ -254,6 +254,7 @@ func load_map(map_data: Dictionary):
 	Debug.print_info_message("Loading map: " + map_data.label)
 	
 	map.label = map_data.label
+	map.description = map_data.description
 	
 	if map_data.has("settings"):
 		var atlas_texture_path: String = map_data.settings.get("atlas_texture", "")
@@ -335,11 +336,20 @@ func load_map(map_data: Dictionary):
 			for element_data in level_data.get("elements", []):
 				var rotation_y: float = element_data.get("rotation", 0.0)
 				var flipped: float = element_data.get("flipped", false)
+				var blueprint_id: String = element_data.properties.get("blueprint", "")
 				var properties: Dictionary
-				match element_data.type:
-					"light": properties = Light.parse_raw_property_values(element_data.properties)
-					"entity": properties = Entity.parse_raw_property_values(element_data.properties)
-					"prop": properties = Prop.parse_raw_property_values(element_data.properties)
+				if blueprint_id:
+					var blueprint: CampaignBlueprint = Game.blueprints.get(blueprint_id)
+					if blueprint:
+						properties = blueprint.properties
+						properties["label"] = element_data.properties["label"]
+						properties["blueprint"] = blueprint
+				if not properties:
+					match element_data.type:
+						"light": properties = Light.parse_raw_property_values(element_data.properties)
+						"entity": properties = Entity.parse_raw_property_values(element_data.properties)
+						"prop": properties = Prop.parse_raw_property_values(element_data.properties)
+						_: properties = {}
 				map.instancer.create_element(element_data.type, level, element_data.id, 
 						Utils.a2_to_v2(element_data.position), properties, rotation_y, flipped)
 	

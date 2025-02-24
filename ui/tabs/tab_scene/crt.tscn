@@ -1,0 +1,17 @@
+[gd_scene load_steps=3 format=3 uid="uid://bo1ljdqhepyut"]
+
+[ext_resource type="Material" uid="uid://jdskfu7sjmwd" path="res://ui/tabs/tab_scene/crt_shader_material.tres" id="1_5jbx8"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7gg1a"]
+bg_color = Color(1, 1, 1, 1)
+
+[node name="CRT" type="Panel"]
+visible = false
+material = ExtResource("1_5jbx8")
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_7gg1a")

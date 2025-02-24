@@ -5,6 +5,7 @@ extends Control
 @onready var scene_button: Button = %SceneButton
 @onready var messages_button: Button = %MessagesButton
 @onready var edit_modes_button: Button = %EditModesButton
+@onready var instance_modes_button: Button = %InstanceModesButton
 @onready var campaign_tabs_button: Button = %CampaignTabsButton
 
 @onready var rich_text_label: RichTextLabel = %RichTextLabel
@@ -17,6 +18,7 @@ func _ready() -> void:
 	scene_button.pressed.connect(_on_scene_button_pressed)
 	messages_button.pressed.connect(_on_messages_button_pressed)
 	edit_modes_button.pressed.connect(_on_edit_modes_button_pressed)
+	instance_modes_button.pressed.connect(_on_instance_modes_button_pressed)
 	campaign_tabs_button.pressed.connect(_on_campaign_tabs_button_pressed)
 	
 	scene_button.button_pressed = true
@@ -67,6 +69,8 @@ The game can operate in various modes, which may differ between players:
  moves [color=light_green]Element[/color] instantly to a position
  Hold [b]SHIFT + MOUSE_LEFT_CLICK[/b] on [color=light_green]Element[/color]: rotates selected [color=light_green]Element[/color]
  Hold [b]SHIFT + MOUSE_LEFT_CLICK + F[/b] on [color=light_green]Element[/color]: flips selected [color=light_green]Element[/color]
+ Press [b]SUPR[/b] while [color=light_green]Element[/color] selected: removes [color=light_green]Element[/color]
+ Hold [b]SHIFT + SUPR[/b] while [color=light_green]Element[/color] selected: removes [color=light_green]Element[/color] instantly
 [/ul]
 """
 
@@ -139,6 +143,28 @@ Pressing the C key copies hovered wall material.
  [color=CRIMSON]Change[/color]: Left-click to convert a single-sided wall into a double-sided one.
  [color=CRIMSON]Paint[/color]: Left-click to paint the wall with the selected material.
  [color=CRIMSON]Cut[/color]: Click and drag to delete the section between two points.
+[/ul]
+"""
+
+
+func _on_instance_modes_button_pressed():
+	rich_text_label.text = """\
+[u]Light[/u]
+Pressing the C key copies hovered [color=gold]Light[/color].
+[ul]
+ creates an omnidirectional light
+[/ul]
+
+[u]Entity[/u]
+Pressing the C key copies hovered [color=LIGHT_CORAL]Entity[/color].
+[ul]
+ creates an Entity whose control can be assigned to a player
+[/ul]
+
+[u]Prop[/u]
+Pressing the C key copies hovered [color=orange_red]Prop[/color].
+[ul]
+ Create a Prop to decorate the scene
 [/ul]
 """
 

@@ -1,15 +1,12 @@
-[gd_scene load_steps=7 format=3 uid="uid://d0j15bs28gt3i"]
+[gd_scene load_steps=6 format=3 uid="uid://d0j15bs28gt3i"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_scene/tab_scene.gd" id="1_yqq7h"]
 [ext_resource type="PackedScene" uid="uid://cfyusau8c7lt0" path="res://assets/map/map.tscn" id="2_mj6vq"]
-[ext_resource type="Material" uid="uid://jdskfu7sjmwd" path="res://ui/tabs/tab_scene/crt_shader_material.tres" id="3_kw7wj"]
+[ext_resource type="PackedScene" uid="uid://bo1ljdqhepyut" path="res://ui/tabs/tab_scene/crt.tscn" id="3_1vfoo"]
 [ext_resource type="PackedScene" uid="uid://pojmf4m23i0" path="res://addons/fade_transition/fade_transition.tscn" id="3_xb7ce"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ooqw2"]
 bg_color = Color(0, 0, 0, 1)
-
-[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_7gg1a"]
-bg_color = Color(1, 1, 1, 1)
 
 [node name="TabScene" type="Control"]
 layout_mode = 3
@@ -52,28 +49,20 @@ own_world_3d = true
 handle_input_locally = false
 snap_2d_transforms_to_pixel = true
 snap_2d_vertices_to_pixel = true
+vrs_update_mode = 2
 canvas_item_default_texture_filter = 0
-positional_shadow_atlas_size = 16384
-positional_shadow_atlas_quad_0 = 4
-positional_shadow_atlas_quad_1 = 4
-positional_shadow_atlas_quad_2 = 4
+positional_shadow_atlas_size = 8192
+positional_shadow_atlas_16_bits = false
+positional_shadow_atlas_quad_0 = 3
+positional_shadow_atlas_quad_1 = 3
 size = Vector2i(1280, 720)
 render_target_clear_mode = 1
 render_target_update_mode = 4
 
-[node name="CRT" type="Panel" parent="SubViewportContainer/SubViewport"]
-unique_name_in_owner = true
-visible = false
-material = ExtResource("3_kw7wj")
-anchors_preset = 15
-anchor_right = 1.0
-anchor_bottom = 1.0
-grow_horizontal = 2
-grow_vertical = 2
-mouse_filter = 2
-theme_override_styles/panel = SubResource("StyleBoxFlat_7gg1a")
-
 [node name="Map" parent="SubViewportContainer/SubViewport" instance=ExtResource("2_mj6vq")]
+unique_name_in_owner = true
+
+[node name="CRT" parent="SubViewportContainer/SubViewport" instance=ExtResource("3_1vfoo")]
 unique_name_in_owner = true
 
 [node name="FadeTransition" parent="." instance=ExtResource("3_xb7ce")]

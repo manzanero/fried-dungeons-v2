@@ -81,7 +81,7 @@ func _make_containers_tree(properties: Dictionary):
 
 func _on_field_value_changed(property_name: String, new_value: Variant):
 	var blueprint := element_selected.blueprint
-	if blueprint:
+	if blueprint and property_name != "label":
 		blueprint.set_property(property_name, new_value)
 		if property_name == "color":
 			Game.ui.tab_blueprints.set_item_color(blueprint.id, new_value)
@@ -96,8 +96,9 @@ func _on_field_value_changed(property_name: String, new_value: Variant):
 		var new_raw_value: Variant = element_selected.properties[property_name].get_raw()
 		Game.server.rpcs.change_element_property.rpc(map.slug, level.index, id, property_name, new_raw_value)
 	
-	if property_name == "label" and Game.player:
-		Game.ui.selected_map.selected_level.set_control(Game.player.elements)
+	# check if activated player changed permissions
+	if property_name == "label" and Game.master_is_player:
+		Game.ui.selected_map.selected_level.set_control(Game.master_is_player.elements)
 			
 	# custom params, update sliders
 	if element_selected is Entity and property_name == "body_texture":
@@ -132,7 +133,6 @@ func _on_blueprint_changed(_property_name: String, blueprint: CampaignBlueprint)
 
 func _on_blueprint_saved():
 	var blueprint_properties := element_selected.get_raw_property_values()
-	blueprint_properties.erase("blueprint")
 	var blueprint := Game.ui.tab_blueprints.save_new(element_selected.type, element_selected.label, blueprint_properties)
 	element_selected.set_property_value("blueprint", blueprint)
 	

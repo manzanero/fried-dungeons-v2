@@ -14,6 +14,7 @@ func _ready() -> void:
 	super()
 	start_button.button_pressed = true
 	set_up_button.button_pressed = false
+	visibility_changed.connect(_on_visibility_changed)
 	
 	reset()
 	start_rich_text_label.visible = true
@@ -26,3 +27,8 @@ func _ready() -> void:
 		reset()
 		set_up_rich_text_label.visible = true
 	)
+
+
+func _on_visibility_changed() -> void:
+	if visible:
+		Game.ui.mouse_blocker.visible = true

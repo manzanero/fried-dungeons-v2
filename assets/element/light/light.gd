@@ -18,31 +18,55 @@ var active := true :
 	set(value):
 		active = value
 		omni_light_3d.visible = value
+		_refresh_mesh()
 		
-		if active:
-			level.active_lights.append(self)
-			inner_material.albedo_color = Color(0.75, 0.75, 0.75, 0.5)
-			
-			# Only a certain number of lights can be active at a time
-			if level.active_lights.size() > Game.MAX_LIGHTS:
-				Debug.print_message(Debug.ERROR, "Max. lights exceeded")
-				var first_light: Light = level.active_lights.pop_front()
-				first_light.active = false
-				
-		else:
-			level.active_lights.erase(self)
-			inner_material.albedo_color = Color.BLACK
+		## This is not needed now
+		#if active:
+			#level.active_lights.append(self)
+			#
+			## Only a certain number of lights can be active at a time
+			#if level.active_lights.size() > Game.MAX_LIGHTS:
+				#Debug.print_message(Debug.ERROR, "Max. lights exceeded")
+				#var first_light: Light = level.active_lights.pop_front()
+				#first_light.active = false
+				#
+		#else:
+			#level.active_lights.erase(self)
 
 var light_color := Color.WHITE :
 	set(value):
 		light_color = value
 		color = value
-		outer_material.albedo_color = value
 		omni_light_3d.light_color = value
+		_refresh_mesh()
+		
 
 var hidden := true :
-	set(value): hidden = value; body.visible = not value
+	set(value): hidden = value; _refresh_mesh()
 
+
+func _refresh_mesh():
+	if active:
+		if hidden:
+			inner_material.set_shader_parameter("base_color", color)
+			inner_material.set_shader_parameter("inside_color", Color.LIGHT_GRAY)
+			inner_material.set_shader_parameter("use_dither", true)
+		else:
+			inner_material.set_shader_parameter("base_color", color)
+			inner_material.set_shader_parameter("inside_color", Color.LIGHT_GRAY)
+			inner_material.set_shader_parameter("use_dither", false)
+	else:
+		if hidden:
+			inner_material.set_shader_parameter("base_color", color)
+			inner_material.set_shader_parameter("inside_color", Color.LIGHT_GRAY)
+			inner_material.set_shader_parameter("use_dither", true)
+		else:
+			inner_material.set_shader_parameter("base_color", color)
+			inner_material.set_shader_parameter("inside_color", Color.LIGHT_GRAY)
+			inner_material.set_shader_parameter("use_dither", false)
+	
+	update_light()
+	
 
 var dirty_light := false
 var dirty_mesh := false
@@ -52,7 +76,7 @@ var selector_disabled := false : set = _set_selector_disabled
 @onready var omni_light_3d := $OmniLight3D as OmniLight3D
 @onready var body = $Body as Node3D
 @onready var inner_mesh := %InnerMesh as MeshInstance3D
-@onready var inner_material := inner_mesh.get_surface_override_material(0) as StandardMaterial3D
+@onready var inner_material := inner_mesh.get_surface_override_material(0) as ShaderMaterial
 @onready var outer_mesh := %OuterMesh as MeshInstance3D
 @onready var outer_material := outer_mesh.get_surface_override_material(0) as StandardMaterial3D
 @onready var selector_collider: StaticBody3D = %SelectorCollider
@@ -61,39 +85,46 @@ var selector_disabled := false : set = _set_selector_disabled
 
 ## properties
 const LABEL := "label"
+const COLOR = "color"
 const DESCRIPTION := "description"
-const PARENT := "parent"
+const BLUEPRINT := "blueprint"
 const ACTIVE = "active"
 const RANGE = "range"
-const COLOR = "color"
+const HIDDEN = "hidden"
 
 const light_init_properties = {
 	LABEL: {
-		"container": "info",
+		"container": "",
 		"hint": Hint.STRING,
 		"params": {},
 		"default": "Light Unknown",
 	},
 	DESCRIPTION: {
-		"container": "info",
+		"container": "",
 		"hint": Hint.STRING,
 		"params": {},
 		"default": "",
 	},
-	PARENT: {
-		"container": "info",
-		"hint": Hint.STRING,
+	COLOR: {
+		"container": "",
+		"hint": Hint.COLOR,
 		"params": {},
-		"default": "",
+		"default": Color.WHITE,
+	},
+	BLUEPRINT: {
+		"container": "",
+		"hint": Hint.BLUEPRINT,
+		"params": {},
+		"default": null,
 	},
 	ACTIVE: {
-		"container": "physics",
+		"container": "light",
 		"hint": Hint.BOOL,
 		"params": {},
 		"default": true,
 	},
 	RANGE: {
-		"container": "physics",
+		"container": "light",
 		"hint": Hint.FLOAT,
 		"params":  {
 			"suffix": "u",
@@ -105,11 +136,11 @@ const light_init_properties = {
 		},
 		"default": 5,
 	},
-	COLOR: {
-		"container": "physics",
-		"hint": Hint.COLOR,
+	HIDDEN: {
+		"container": "graphics",
+		"hint": Hint.BOOL,
 		"params": {},
-		"default": Color.WHITE,
+		"default": true,
 	},
 }
 
@@ -118,6 +149,11 @@ func _ready() -> void:
 	init_properties = light_init_properties
 	
 	is_ceiling_element = true
+	element_velocity = 10
+	
+	cached_light = level.get_light(position_2d)
+	level.light_texture_updated.connect(_on_light_texture_updated)
+	Game.ui.tab_players.control_changed.connect(update_light)
 	
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
@@ -127,6 +163,8 @@ func _ready() -> void:
 static func parse_property_values(property_values: Dictionary) -> Dictionary:
 	var raw_property_values := {}
 	for property_name in property_values:
+		if not light_init_properties.has(property_name):  # to keep compatibility
+			continue
 		var property_value: Variant = property_values[property_name]
 		var init_property_data: Dictionary = light_init_properties[property_name]
 		raw_property_values[property_name] = get_raw_property(init_property_data.hint, property_value)
@@ -136,6 +174,8 @@ static func parse_property_values(property_values: Dictionary) -> Dictionary:
 static func parse_raw_property_values(raw_property_values: Dictionary) -> Dictionary:
 	var property_values := {}
 	for property_name in raw_property_values:
+		if not light_init_properties.has(property_name):  # to keep compatibility
+			continue
 		var raw_property_value: Variant = raw_property_values[property_name]
 		var init_property_data: Dictionary = light_init_properties[property_name]
 		property_values[property_name] = set_raw_property(init_property_data.hint, raw_property_value)
@@ -146,30 +186,25 @@ func change_property(property_name: String, new_value: Variant) -> void:
 	match property_name:
 		LABEL: label = new_value
 		DESCRIPTION: description = new_value
-		PARENT: parent = level.elements.get(new_value)
+		COLOR: light_color = new_value
+		BLUEPRINT: _set_blueprint(new_value)
 		ACTIVE: active = new_value
 		RANGE: range_radius = new_value
-		COLOR: light_color = new_value
+		HIDDEN: hidden = new_value
 
 
-func _process(_delta: float) -> void:
-	var ligth := cached_light
-	if (Game.process_frame + 1) % 6 == 0:
-		ligth = level.get_light(position_2d)
+func _on_light_texture_updated():
+	var ligth := level.get_light(position_2d)
 	if ligth != cached_light:
-		dirty_light = true
-	cached_light = ligth
-
-	if dirty_light:
+		cached_light = ligth
 		update_light()
-		dirty_light = false
 
 
 func update_light():
-	if active:
-		hidden = not is_watched
-	elif Game.player:
-		hidden = true
+	if Game.master_is_player:
+		body.visible = is_watched and not hidden and active
+	else:
+		body.visible = true
 		
 
 func _set_selector_disabled(value: bool) -> void:

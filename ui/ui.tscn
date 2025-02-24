@@ -1,4 +1,4 @@
-[gd_scene load_steps=46 format=3 uid="uid://bo0uwbj6jw1oj"]
+[gd_scene load_steps=51 format=3 uid="uid://bo0uwbj6jw1oj"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
@@ -22,13 +22,16 @@
 [ext_resource type="Texture2D" uid="uid://xmqlvuy6fnik" path="res://resources/icons/pause_icon.png" id="12_blpem"]
 [ext_resource type="Texture2D" uid="uid://dwfkjnyl85tqn" path="res://resources/icons/stop_icon.png" id="13_4613w"]
 [ext_resource type="PackedScene" uid="uid://da81cp8j448wv" path="res://ui/mode_controller/mode_controller.tscn" id="14_yiu68"]
+[ext_resource type="Texture2D" uid="uid://b7fqssqprjci4" path="res://resources/icons/visibility_xray_icon.png" id="16_0jukb"]
 [ext_resource type="StyleBox" uid="uid://kfbbn8gligsk" path="res://ui/flow_controller/flow_border.tres" id="19_xvfg2"]
 [ext_resource type="PackedScene" uid="uid://c32tijiy5co8o" path="res://ui/fried_window/new_campaign_window/new_campaign_window.tscn" id="20_ecsro"]
 [ext_resource type="PackedScene" uid="uid://cxb7ssvks0wlj" path="res://ui/fried_window/host_campaign_window/host_campaign_window.tscn" id="21_677rs"]
 [ext_resource type="PackedScene" uid="uid://bu5aahaphq4oa" path="res://ui/fried_window/join_campaign_window/join_campaign_window.tscn" id="22_0du2c"]
-[ext_resource type="PackedScene" uid="uid://b6q5i32b5tq6y" path="res://ui/fried_window/delete_element_window/delete_element_window.tscn" id="22_ljr54"]
 [ext_resource type="PackedScene" uid="uid://uo3ugi4hm5ry" path="res://ui/fried_window/campaign_players_window/campaign_players_window.tscn" id="25_1r2m4"]
 [ext_resource type="PackedScene" uid="uid://df6f4gleuroml" path="res://ui/fried_window/how_to_start_window/how_to_start_window.tscn" id="28_2wh67"]
+[ext_resource type="PackedScene" uid="uid://cqbd6ya1w441y" path="res://ui/fried_window/exit_window/exit_window.tscn" id="30_uci4b"]
+[ext_resource type="PackedScene" uid="uid://dl5jls6tc7a2t" path="res://ui/fried_window/delete_window/delete_window.tscn" id="31_7ffsj"]
+[ext_resource type="PackedScene" uid="uid://vnstceqbrj3b" path="res://ui/fried_window/credits_window/credits_window.tscn" id="32_2vomp"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yr7b3"]
 
@@ -211,6 +214,26 @@ corner_radius_bottom_right = 4
 corner_radius_bottom_left = 4
 corner_detail = 1
 
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8hryt"]
+content_margin_left = 2.0
+content_margin_top = 2.0
+content_margin_right = 2.0
+content_margin_bottom = 2.0
+bg_color = Color(0.0431373, 0.0470588, 0.0470588, 1)
+border_width_bottom = 2
+border_color = Color(0, 0, 0, 1)
+border_blend = true
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+shadow_size = 2
+shadow_offset = Vector2(0, 1)
+
+[sub_resource type="ButtonGroup" id="ButtonGroup_qel18"]
+allow_unpress = true
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ujvvg"]
 bg_color = Color(0, 0, 0, 0.25)
 
@@ -228,7 +251,6 @@ script = ExtResource("2_axtiy")
 
 [node name="FlowBorder" type="Panel" parent="."]
 unique_name_in_owner = true
-visible = false
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = ExtResource("19_xvfg2")
@@ -539,6 +561,46 @@ alignment = 2
 unique_name_in_owner = true
 layout_mode = 1
 
+[node name="Utilities" type="MarginContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings"]
+layout_mode = 1
+anchors_preset = 1
+anchor_left = 1.0
+anchor_right = 1.0
+offset_left = -44.0
+offset_bottom = 37.0
+grow_horizontal = 0
+size_flags_horizontal = 8
+size_flags_vertical = 0
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="HBoxContainer" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities"]
+layout_mode = 2
+
+[node name="C" type="PanelContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_8hryt")
+
+[node name="Modes" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/HBoxContainer/C"]
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+theme_override_constants/separation = 0
+alignment = 1
+
+[node name="DarkvisionButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/HBoxContainer/C/Modes"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "Ground Editing"
+focus_mode = 0
+toggle_mode = true
+button_group = SubResource("ButtonGroup_qel18")
+icon = ExtResource("16_0jukb")
+
 [node name="RestoreDownButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs"]
 unique_name_in_owner = true
 visible = false
@@ -584,7 +646,6 @@ layout_mode = 2
 text = "None"
 
 [node name="H2" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/InfoContainer"]
-visible = false
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 0
@@ -630,18 +691,18 @@ visible = false
 layout_mode = 2
 metadata/_tab_index = 2
 
-[node name="Debugger" parent="V/IDE/H/H/Middle/MiddleDown/DownTabs" instance=ExtResource("4_g7vlm")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
-metadata/_tab_index = 3
-
 [node name="MinimizeDownButton" type="Button" parent="V/IDE/H/H/Middle/MiddleDown"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 0
+focus_mode = 0
 icon = ExtResource("5_5f26e")
+
+[node name="Debugger" parent="V/IDE/H/H/Middle/MiddleDown" instance=ExtResource("4_g7vlm")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
 
 [node name="Right" type="VSplitContainer" parent="V/IDE/H"]
 unique_name_in_owner = true
@@ -707,6 +768,7 @@ mouse_filter = 2
 [node name="NewCampaignWindow" parent="CornerWindows" instance=ExtResource("20_ecsro")]
 unique_name_in_owner = true
 visible = false
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 2
 offset_left = 100.0
 offset_top = 100.0
@@ -717,6 +779,7 @@ is_invisible_on_close = true
 [node name="HostCampaignWindow" parent="CornerWindows" instance=ExtResource("21_677rs")]
 unique_name_in_owner = true
 visible = false
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 0
 offset_left = 100.0
 offset_top = 100.0
@@ -727,6 +790,7 @@ is_invisible_on_close = true
 [node name="JoinCampaignWindow" parent="CornerWindows" instance=ExtResource("22_0du2c")]
 unique_name_in_owner = true
 visible = false
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 0
 offset_left = 100.0
 offset_top = 100.0
@@ -737,6 +801,7 @@ is_invisible_on_close = true
 [node name="CampaignPlayersWindow" parent="CornerWindows" instance=ExtResource("25_1r2m4")]
 unique_name_in_owner = true
 visible = false
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 0
 offset_left = 100.0
 offset_top = 100.0
@@ -747,6 +812,7 @@ is_invisible_on_close = true
 [node name="HowToStartWindow" parent="CornerWindows" instance=ExtResource("28_2wh67")]
 unique_name_in_owner = true
 visible = false
+custom_minimum_size = Vector2(100, 100)
 layout_mode = 1
 anchors_preset = 1
 anchor_left = 1.0
@@ -763,8 +829,19 @@ visible = false
 layout_mode = 2
 mouse_filter = 2
 
-[node name="DeleteElementWindow" parent="CenterWindows" instance=ExtResource("22_ljr54")]
+[node name="ExitWindow" parent="CenterWindows" instance=ExtResource("30_uci4b")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-is_invisible_on_close = true
+
+[node name="DeleteWindow" parent="CenterWindows" instance=ExtResource("31_7ffsj")]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(100, 100)
+layout_mode = 2
+
+[node name="CreditsWindow" parent="CenterWindows" instance=ExtResource("32_2vomp")]
+unique_name_in_owner = true
+visible = false
+custom_minimum_size = Vector2(400, 400)
+layout_mode = 2

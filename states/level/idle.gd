@@ -13,7 +13,10 @@ func _exit_state(next_state: String) -> void:
 
 
 var drag_origin := Vector2.ZERO
-var mouse_move := false
+
+
+func _process_state(_delta: float) -> String:
+	return Level.State.KEEP
 
 
 func _physics_process_state(_delta: float) -> String:
@@ -70,11 +73,11 @@ func _process_delete() -> void:
 			
 	elif Input.is_action_just_pressed("delete"):
 		if is_instance_valid(level.element_selected):
-			Game.ui.mouse_blocker.visible = true
-			Game.ui.delete_element_window.visible = true
-			Game.ui.delete_element_window.element_selected = level.element_selected
+			Game.ui.delete_window.visible = true
+			Game.ui.delete_window.item_type = "Element"
+			Game.ui.delete_window.item_selected = level.element_selected.label
 			
-			var response = await Game.ui.delete_element_window.response
+			var response = await Game.ui.delete_window.response
 			if response:
 				level.element_selected.remove()
 				Game.server.rpcs.remove_element.rpc(map.slug, level.index, level.element_selected.id)
@@ -90,8 +93,7 @@ func _input(event: InputEvent):
 				var color := Game.master.color if Game.player_is_master else Game.player.color
 				map.instancer.create_player_signal(level, level.position_hovered, color)
 				
+				var force_show := Input.is_key_pressed(KEY_SHIFT) and Game.player_is_master
+				
 				Game.server.rpcs.create_player_signal.rpc(map.slug, level.index, 
-						level.position_hovered, color)
-	
-	if event is InputEventMouseMotion:
-		mouse_move = true
+						level.position_hovered, color, force_show)

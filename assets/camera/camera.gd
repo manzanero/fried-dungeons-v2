@@ -128,11 +128,12 @@ func _physics_process(delta: float) -> void:
 		target_rotation.rotation += Vector3(-offset_rot_y * rot_y_speed, -offset_rot_x * rot_x_speed, 0)
 		target_rotation.rotation.x = clampf(target_rotation.rotation.x, deg_to_rad(-90), deg_to_rad(90))
 			
-		if is_move:
-			var direction := Vector3.FORWARD.rotated(Vector3.UP, target_rotation.rotation.y)
-			target_position.velocity = direction * delta * move_speed * 100
-		else:
-			target_position.velocity = Vector3.ZERO
+		# should I include this in the future?
+		#if is_move:
+			#var direction := Vector3.FORWARD.rotated(Vector3.UP, target_rotation.rotation.y)
+			#target_position.velocity = direction * delta * move_speed * 100
+		#else:
+			#target_position.velocity = Vector3.ZERO
 	
 	else:
 		if is_rotate:
@@ -155,10 +156,16 @@ func _physics_process(delta: float) -> void:
 			target_position.velocity = Vector3.ZERO
 	
 	var input_dir := Input.get_vector("ui_left", "ui_right", "ui_up", "ui_down")
+	if not input_dir:
+		input_dir = Input.get_vector("key_a", "key_d", "key_w", "key_s")
 	if input_dir and is_operated:
 		var direction := Vector3(input_dir.x, 0, input_dir.y).rotated(Vector3.UP, target_rotation.rotation.y)
 		target_position.velocity = direction * delta * (10 + zoom) * 20
-		
+		if is_fps:
+			target_position.velocity = direction * delta * move_speed * 100
+	elif not is_move:
+		target_position.velocity = Vector3.ZERO
+	
 	target_position.move_and_slide()
 	offset_mouse_move = Vector2.ZERO
 
@@ -170,6 +177,26 @@ func _process(delta: float) -> void:
 		is_fps = true
 	if allow_tp and is_fps and zoom > 0:
 		is_fps = false
+		
+	_process_transform(delta)
+	
+	# fov
+	if not is_equal_approx(eyes.fov, fov):
+		eyes.fov = lerpf(eyes.fov, fov, swing_speed * delta)
+		_has_changed = true
+	
+	if _has_changed:
+		_has_changed = false
+		floor_projection = Vector3(eyes.global_position.x, 0, eyes.global_position.z)
+		const color = Color(0.25, 0.25, 0.25, 0.5)
+		focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
+		changed.emit()
+	else:
+		const color = Color(0.25, 0.25, 0.25, 0)
+		focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
+
+
+func _process_transform(delta: float) -> void:
 	
 	# Focus position
 	var distance := focus.position.distance_to(target_position.position)
@@ -197,21 +224,6 @@ func _process(delta: float) -> void:
 		if not is_equal_approx(eyes.position.z, zoom):
 			eyes.position.z = lerpf(eyes.position.z, zoom, swing_speed * delta)
 			_has_changed = true
-		
-	# fov
-	if not is_equal_approx(eyes.fov, fov):
-		eyes.fov = lerpf(eyes.fov, fov, swing_speed * delta)
-		_has_changed = true
-	
-	if _has_changed:
-		_has_changed = false
-		floor_projection = Vector3(eyes.global_position.x, 0, eyes.global_position.z)
-		const color = Color(0.25, 0.25, 0.25, 0.5)
-		focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
-		changed.emit()
-	else:
-		const color = Color(0.25, 0.25, 0.25, 0)
-		focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
 
 
 func _input(event):

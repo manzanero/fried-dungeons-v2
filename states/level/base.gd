@@ -18,6 +18,24 @@ func _exit_state(next_state: String) -> void:
 	Debug.print_info_message("Level %s of map \"%s\" entering state: %s" % [level.index, map.slug, next_state])
 
 
+func _process_state(_delta: float) -> String:
+	if not map.is_selected or not level.is_selected:
+		return Level.State.GO_BACKGROUND
+		
+	if Input.is_action_just_pressed("ui_cancel"):
+		Game.modes.reset()
+		return Level.State.GO_IDLE
+	
+	# end with right clik with no movement
+	if not Input.is_action_pressed("right_click") and Game.ui.scene_tab_has_focus:
+		if not mouse_move and Input.is_action_just_released("right_click"):
+			Game.modes.reset()
+			return Level.State.GO_IDLE
+		mouse_move = false
+	
+	return Level.State.KEEP
+
+
 func process_change_grid() -> void:
 	if not Game.ui.scene_tab_has_focus:
 		return
@@ -135,3 +153,11 @@ func process_ceilling_hitted():
 		var hit_position = hit_info["position"]
 		level.exact_ceilling_hovered = Utils.v3_to_v2(hit_position)
 		level.ceilling_hovered = level.exact_ceilling_hovered.snappedf(Game.U)
+		
+
+var mouse_move: bool
+
+func _input(event: InputEvent) -> void:
+	if event is InputEventMouseMotion:
+		if Input.is_action_pressed("right_click"):
+			mouse_move = true

@@ -35,12 +35,6 @@ var players_map := ""
 
 var root: TreeItem
 
-func _set_opened(map_item: TreeItem, value: bool):
-	if value:
-		map_item.set_icon(0, SCENE_ICON)
-	else:
-		map_item.set_icon(0, null)
-
 
 func _ready() -> void:
 	new_button.pressed.connect(_on_new_button_pressed)
@@ -51,6 +45,7 @@ func _ready() -> void:
 	tree.hide_root = true
 	tree.item_activated.connect(_on_open_button_pressed)
 	tree.button_clicked.connect(_on_button_clicked)
+	tree.empty_clicked.connect(tree.deselect_all.unbind(2))
 	
 	open_button.pressed.connect(_on_open_button_pressed)
 	players_button.pressed.connect(_on_players_button_pressed)
@@ -99,26 +94,29 @@ func refresh_tree():
 		map_item.set_metadata(0, map_data)
 		map_item.add_button(0, PLAY_ICON, 0)
 		map_item.set_button_tooltip_text(0, 0, "Send players to map")
-		
-		_set_opened(map_item, map_slug in Game.maps) 
-	
-		if cached_slug == map_slug:
-			map_item.select(0)
-		
-		if players_map == map_slug:
-			map_item.set_button_color(0, 0, Color.GREEN)
-		else:
-			map_item.set_button_color(0, 0, Color.DARK_GRAY)
-			
+
 		if Game.ui.selected_map and Game.ui.selected_map.slug == map_slug:
 			map_item.set_custom_color(0, Color.GREEN)
 		else:
 			map_item.clear_custom_color(0)
+			
+		if players_map == map_slug:
+			map_item.set_button(0, 0, PLAY_SCENE_ICON)
+			map_item.set_button_color(0, 0, Color.GREEN)
+		else:
+			map_item.set_button(0, 0, SCENE_ICON)
+			if map_slug in Game.maps:
+				map_item.set_button_color(0, 0, Color.WHITE)
+			else:
+				map_item.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
+			
+		if cached_slug == map_slug:
+			map_item.select(0)
 
 
 func open_map(map_slug: String):
 	if map_slug == Game.ui.selected_map.slug:
-		Utils.temp_warning_tooltip("Select a map is already open")
+		Utils.temp_warning_tooltip("Selected map is already open")
 		return
 		
 	if map_slug in Game.maps:
@@ -141,29 +139,33 @@ func open_map(map_slug: String):
 
 func _on_players_button_pressed():
 	var map_slug: String = selected_map_slug
-	
+	send_players_to_map(map_slug)
+
+
+func send_players_to_map(map_slug: String):
 	if map_slug == players_map:
 		Utils.temp_warning_tooltip("Players already are in this map")
 		return
 		
 	players_map = map_slug
 	
-	open_map(map_slug)
+	if map_slug != Game.ui.selected_map.slug:
+		open_map(map_slug)
 	
 	Game.server.request_map_notification.rpc(players_map)
 	
-	for map_item in root.get_children():
-		var map_item_slug := map_item.get_tooltip_text(0)
-		var tab_index = Game.maps.keys().find(map_item_slug)
-		
-		if map_item_slug == players_map:
-			Game.ui.scene_tabs.set_tab_icon(tab_index, PLAY_SCENE_ICON)
-			map_item.set_button_color(0, 0, Color.GREEN)
-		else:
-			if tab_index != -1:
-				Game.ui.scene_tabs.set_tab_icon(tab_index, SCENE_ICON)
-				Game.ui.scene_tabs.get_tab_control(tab_index).process_mode = Node.PROCESS_MODE_DISABLED
-			map_item.set_button_color(0, 0, Color.DARK_GRAY)
+	#for map_item in root.get_children():
+		#var map_item_slug := map_item.get_tooltip_text(0)
+		#var tab_index = Game.maps.keys().find(map_item_slug)
+		#
+		#if map_item_slug == players_map:
+			#Game.ui.scene_tabs.set_tab_icon(tab_index, PLAY_SCENE_ICON)
+			#map_item.set_button_color(0, 0, Color.GREEN)
+		#else:
+			#if tab_index != -1:
+				#Game.ui.scene_tabs.set_tab_icon(tab_index, SCENE_ICON)
+				#Game.ui.scene_tabs.get_tab_control(tab_index).process_mode = Node.PROCESS_MODE_DISABLED
+			#map_item.set_button_color(0, 0, Color.DARK_GRAY)
 	
 	refresh_tree()
 
@@ -223,10 +225,18 @@ func _on_remove_button_pressed():
 	if selected_map_slug == players_map:
 		Utils.temp_error_tooltip("Send player them to another map")
 		return
+	
+	var response = true
+	if not Input.is_key_pressed(KEY_SHIFT):
+		Game.ui.delete_window.visible = true
+		Game.ui.delete_window.item_type = "Map"
+		Game.ui.delete_window.item_selected = map_item.get_text(0)
+		response = await Game.ui.delete_window.response
 		
-	_close_map(selected_map_slug)
-	Utils.move_to_trash(campaign_selected.get_map_path(selected_map_slug))
-	reset()
+	if response:
+		_close_map(selected_map_slug)
+		Utils.move_to_trash(campaign_selected.get_map_path(selected_map_slug))
+		reset()
 
 
 func reset():

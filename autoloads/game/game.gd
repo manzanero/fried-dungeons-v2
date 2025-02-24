@@ -6,7 +6,7 @@ var player: Player
 var campaign: Campaign
 var player_is_master: bool :
 	get: return campaign and campaign.is_master
-var master_is_player: bool
+var master_is_player: Player
 
 var manager: GameManager
 var server: ServerManager
@@ -28,6 +28,7 @@ var clipboard: Dictionary = {"type": "none", "items": []}
 var world_seed := randi_range(0, 999999)
 var handled_input: bool
 var process_frame: int
+var ticks_msec: int
 var radian_friendly_tick := 0
 var wave_global := 0.0
 var control_with_focus: Control

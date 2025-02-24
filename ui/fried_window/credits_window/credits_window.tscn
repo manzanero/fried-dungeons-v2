@@ -1,0 +1,65 @@
+[gd_scene load_steps=5 format=3 uid="uid://vnstceqbrj3b"]
+
+[ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_vxuih"]
+[ext_resource type="Script" path="res://ui/fried_window/credits_window/credits_window.gd" id="2_f6q00"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+border_color = Color(0.0705882, 0.0705882, 0.0705882, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_26am4"]
+
+[node name="CreditsWindow" instance=ExtResource("1_vxuih")]
+offset_right = 411.0
+offset_bottom = 394.0
+script = ExtResource("2_f6q00")
+is_invisible_on_close = true
+
+[node name="TitleLabel" parent="M/VBoxContainer/TitleBar/H" index="0"]
+text = "Credits"
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body" index="0"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="C" type="PanelContainer" parent="M/VBoxContainer/Body/V" index="0"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="StartRichTextLabel" type="RichTextLabel" parent="M/VBoxContainer/Body/V/C" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 3
+focus_mode = 2
+theme_override_styles/focus = SubResource("StyleBoxEmpty_26am4")
+bbcode_enabled = true
+text = "[center]
+[color=GOLDENROD][wave amp=50.0 freq=5.0 connected=1][b]FRIED DUNGEONS[/b]
+v1.0.0[/wave][/color]
+
+[color=GREEN][u]Programming[/u][/color]
+Alejandro Manzanero Sobrado 
+-> [url=https://github.com/manzanero]GitHub[/url] <-
+-> [url=https://manzanero.itch.io/]Itch.io[/url] <-
+
+[color=purple][u]Illustrations[/u][/color]
+Esperanza Moreno Jusdado
+-> [url=https://www.instagram.com/hopeharker_art/]Instagram[/url] <-
+-> [url=https://linktr.ee/khornnabel]Linktree[/url] <-
+
+[color=TURQUOISE][u]Music[/u][/color]
+Héctor Bermúdez Castro
+-> [url=https://www.instagram.com/thekeytothekey/]Instagram[/url] <-
+-> [url=http://hectorbermudezcastro.com]Web[/url] <-
+[/center]"
+selection_enabled = true

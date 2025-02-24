@@ -63,16 +63,19 @@ func get_raw_properties() -> Dictionary:
 
 
 func set_raw_properties(raw_properties: Dictionary) -> void:
-	var parsed_properties
-	match type:
-		"light": parsed_properties = Light.parse_raw_property_values(raw_properties)
-		"entity": parsed_properties = Entity.parse_raw_property_values(raw_properties)
-		"prop": parsed_properties = Prop.parse_raw_property_values(raw_properties)
-		_: return
+	var parsed_properties := parse_raw_properties(raw_properties)
 	for property_name in parsed_properties:
 		var property_value: Variant = parsed_properties[property_name]
 		if properties.get(property_name) != property_value:
 			set_property(property_name, property_value)
+
+
+func parse_raw_properties(raw_properties: Dictionary) -> Dictionary:
+	match type:
+		"light": return Light.parse_raw_property_values(raw_properties)
+		"entity": return Entity.parse_raw_property_values(raw_properties)
+		"prop": return Prop.parse_raw_property_values(raw_properties)
+		_: return {}
 
 
 #func _set_path(value):

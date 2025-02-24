@@ -76,7 +76,6 @@ func set_value_no_signal(_value: float):
 	slider.set_value_no_signal(_value)
 	
 
-
 #region onready
 
 @onready var prefix_container: MarginContainer = %PrefixContainer

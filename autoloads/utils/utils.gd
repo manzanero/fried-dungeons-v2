@@ -324,6 +324,8 @@ func temp_tooltip(text: String, timeout: float = 2.0, mirrowed := false) -> Cont
 	panel.position.y -= panel.size.y * 3
 	if mirrowed:
 		panel.position.x -= panel.size.x + panel.size.y
+	if panel.position.y < 0:
+		panel.position.y += 4 * panel.size.y
 	return panel
 
 

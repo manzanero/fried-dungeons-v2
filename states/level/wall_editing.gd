@@ -14,7 +14,6 @@ var drag_origin: Vector3
 var point_offsets := {}
 
 var double_click: bool
-var mouse_move: bool
 
 var next_update_ticks_msec := Time.get_ticks_msec()
 
@@ -26,9 +25,14 @@ func _enter_state(previous_state: String) -> void:
 func _exit_state(next_state: String) -> void:
 	super(next_state)
 	Game.ui.build_border.visible = false
+	wall_hovered = null
 	_end_drag()
 	_set_hovered([])
 	_set_selected([])
+
+
+func _process_state(_delta: float) -> String:
+	return super(_delta)
 
 
 func _physics_process_state(_delta: float) -> String:

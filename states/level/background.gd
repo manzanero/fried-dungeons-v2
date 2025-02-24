@@ -1,2 +1,2 @@
 class_name LevelGroundPaintTileState
-extends LevelBaseState
+extends StateNode

@@ -19,10 +19,6 @@ var _click_origin_tile := Game.NULL_TILE
 var _is_rect_being_builded := false
 
 
-var _is_something_being_builded: bool :
-	get: return _is_rect_being_builded
-
-
 func _enter_state(previous_state: String) -> void:
 	super(previous_state)
 	Game.ui.build_border.visible = true
@@ -42,6 +38,10 @@ func _exit_state(next_state: String) -> void:
 	_is_rect_being_builded = false
 
 
+func _process_state(_delta: float) -> String:
+	return super(_delta)
+		
+		
 func _physics_process_state(_delta: float) -> String:
 	if not map.is_selected or not level.is_selected:
 		return Level.State.GO_BACKGROUND
@@ -51,10 +51,6 @@ func _physics_process_state(_delta: float) -> String:
 	
 	if Input.is_action_just_pressed("key_c"):
 		Game.ui.tab_builder.material_index_selected = level.cells[level.tile_hovered].index
-	
-	if Input.is_action_just_pressed("ui_cancel") and not _is_something_being_builded:
-		Game.modes.reset()
-		return Level.State.GO_IDLE
 	
 	match Game.modes.mode:
 		ModeController.Mode.GROUND_PAINT_TILE:

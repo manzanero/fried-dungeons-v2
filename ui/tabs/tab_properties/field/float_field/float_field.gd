@@ -36,6 +36,7 @@ func set_value(_value: Variant):
 
 func _ready() -> void:
 	number_edit.value_changed.connect(_on_float_value_changed.unbind(1))
+	number_edit.line_edit.text_submitted.connect(number_edit.line_edit.release_focus.unbind(1))
 	
 
 func _on_float_value_changed():

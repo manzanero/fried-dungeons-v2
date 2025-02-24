@@ -27,7 +27,6 @@ func create_element(type: String, level: Level, id: String, position_2d: Vector2
 	match type:
 		"entity": 
 			element = ENTITY.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
-			map.darkvision_enabled.connect(element.enable_darkvision)
 		"light": 
 			element = LIGHT.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
 		"prop", "shape": 

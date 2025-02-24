@@ -4,6 +4,7 @@ extends Node3D
 static var SCENE := preload("res://assets/map/level/level.tscn")
 
 signal element_selection(element: Element)
+signal light_texture_updated()
 
 
 class State:
@@ -116,7 +117,8 @@ func _ready():
 		Game.ui.selected_scene_tab.fade_transition.cover()
 		get_tree().create_timer(0.2).timeout.connect(Game.ui.selected_scene_tab.fade_transition.uncover)
 		if value:
-			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+			#ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_ON
+			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
 		else:
 			_on_refreshed_light()
 			ceilling_mesh_instance_3d.cast_shadow = GeometryInstance3D.SHADOW_CASTING_SETTING_SHADOWS_ONLY
@@ -129,11 +131,13 @@ func _ready():
 	# modes
 	Game.modes.mode_changed.connect(update_mode)
 	visibility_changed.connect(update_mode)
-	Game.flow.changed.connect(func ():
+	Game.flow.changed.connect(func ():  # prevent keep draggin while pause in remote
 		if is_instance_valid(element_selected):
 			element_selected.is_dragged = false
 	)
 	change_state(State.GO_IDLE)
+	
+	map.darkvision_enabled.connect(_on_refreshed_light.unbind(1))
 	
 	#region light
 	light_texture = light_viewport.get_texture()
@@ -160,6 +164,7 @@ func _on_refreshed_light():
 	light_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	floor_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	light_sample_2d = light_texture.get_image()
+	light_texture_updated.emit()
 
 
 func _on_camera_changed():
@@ -174,7 +179,7 @@ func _on_camera_changed():
 func get_light(point: Vector2) -> Color:
 	if not light_sample_2d:
 		return Color.TRANSPARENT
-	var pixel_position := (point - Vector2(rect.position)) * 4 
+	var pixel_position := (point - Vector2(rect.position)) * 4
 	if pixel_position.x < 0 or pixel_position.x >= light_sample_2d.get_width():
 		return Color.TRANSPARENT
 	if pixel_position.y < 0 or pixel_position.y >= light_sample_2d.get_height():
@@ -283,13 +288,27 @@ func change_state(state: String):
 	Game.ui.state_label_value.text = state
 	state_machine.change_state(state)
 	
-	
+
+var next_update_process_frame := 0
+var next_update_ticks_msec := 0
+
 func _process(_delta: float) -> void:
 	if not is_selected:
 		return
-	
-	if Game.process_frame % 6 == 0:
+		
+	if next_update_ticks_msec < Game.ticks_msec and next_update_process_frame < Game.process_frame:
+		next_update_ticks_msec = Game.ticks_msec + 100
+		next_update_process_frame = Game.process_frame + 6
 		_on_refreshed_light()
+		
+		# can i improve this?
+		map.camera.allow_fp = [
+			is_watched(map.camera.position_2d),
+			is_watched(map.camera.position_2d + 0.25 * Vector2.UP),
+			is_watched(map.camera.position_2d + 0.25 * Vector2.RIGHT),
+			is_watched(map.camera.position_2d + 0.25 * Vector2.DOWN),
+			is_watched(map.camera.position_2d + 0.25 * Vector2.LEFT),
+		].all(func (x): return x)
 
 
 func set_cell_data(tile: Vector2i, tile_data: Dictionary):

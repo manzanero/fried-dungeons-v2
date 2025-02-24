@@ -2,7 +2,7 @@
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_nv70a"]
 resource_local_to_scene = true
-ground_bottom_color = Color(0, 0, 0, 1)
+ground_bottom_color = Color(0.0431373, 0.0470588, 0.0470588, 1)
 
 [sub_resource type="Sky" id="Sky_x2lja"]
 resource_local_to_scene = true

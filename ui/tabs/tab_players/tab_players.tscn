@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://bgemyy0f7bxdq"]
+[gd_scene load_steps=15 format=3 uid="uid://bgemyy0f7bxdq"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_players/tab_players.gd" id="1_nosqj"]
 [ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="2_0s4s4"]
@@ -10,6 +10,7 @@
 [ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="6_ja7i8"]
 [ext_resource type="PackedScene" uid="uid://b3d83roncqixw" path="res://ui/fried_button/fried_button_blue.tscn" id="7_7pk53"]
 [ext_resource type="Texture2D" uid="uid://bb6y71i7wsjf7" path="res://resources/icons/visibility_visible_icon.png" id="7_s7tjj"]
+[ext_resource type="Texture2D" uid="uid://cm6jd7qae4jb2" path="res://resources/icons/edit_icon.png" id="8_4vgpp"]
 [ext_resource type="Texture2D" uid="uid://u6c5wrx476el" path="res://resources/icons/center_view_icon.png" id="8_spqtu"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_m802i"]
@@ -49,11 +50,6 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="NewButton" parent="HSplitContainer/V/FriedConvexPanel/H" instance=ExtResource("3_ni2ep")]
-unique_name_in_owner = true
-layout_mode = 2
-icon = ExtResource("2_0s4s4")
-
 [node name="FoldersButton" parent="HSplitContainer/V/FriedConvexPanel/H" instance=ExtResource("5_md6vh")]
 unique_name_in_owner = true
 visible = false
@@ -68,6 +64,19 @@ layout_mode = 2
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_8uw5w")
+
+[node name="MarginContainer" type="MarginContainer" parent="HSplitContainer/V/C"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 4
+theme_override_constants/margin_bottom = 4
+
+[node name="FriedConvexPanel" parent="HSplitContainer/V/C/MarginContainer" instance=ExtResource("2_7djuh")]
+custom_minimum_size = Vector2(24, 21)
+layout_mode = 2
+size_flags_vertical = 0
 
 [node name="V" type="VBoxContainer" parent="HSplitContainer/V/C"]
 layout_mode = 2
@@ -89,7 +98,11 @@ size_flags_horizontal = 3
 placeholder_text = "username..."
 clear_button_enabled = true
 
-[node name="PlayersTree" parent="HSplitContainer/V/C/V" instance=ExtResource("5_fggvs")]
+[node name="C3" type="MarginContainer" parent="HSplitContainer/V/C/V"]
+layout_mode = 2
+size_flags_vertical = 3
+
+[node name="PlayersTree" parent="HSplitContainer/V/C/V/C3" instance=ExtResource("5_fggvs")]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(200, 0)
 layout_mode = 2
@@ -122,14 +135,19 @@ custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="AddEntityButton" type="Button" parent="HSplitContainer/V/C/V/C/C/H"]
+[node name="NewButton" parent="HSplitContainer/V/C/V/C/C/H" instance=ExtResource("3_ni2ep")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
-tooltip_text = "Add the control of selected element to the selected player"
-focus_mode = 0
+tooltip_text = "Add and edit players"
+text = "  "
+icon = ExtResource("8_4vgpp")
+
+[node name="AddEntityButton" parent="HSplitContainer/V/C/V/C/C/H" instance=ExtResource("3_ni2ep")]
+unique_name_in_owner = true
+layout_mode = 2
+tooltip_text = "Add selected Entity to player's control"
+text = "        +"
 icon = ExtResource("6_0xi4i")
-icon_alignment = 1
 
 [node name="OpenVisionButton" type="Button" parent="HSplitContainer/V/C/V/C/C/H"]
 unique_name_in_owner = true
@@ -144,60 +162,62 @@ icon_alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Use vision of the selected player"
+tooltip_text = "Move the player view to your position"
 focus_mode = 0
 icon = ExtResource("8_spqtu")
 icon_alignment = 1
 
-[node name="C" type="PanelContainer" parent="HSplitContainer"]
+[node name="V2" type="VBoxContainer" parent="HSplitContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_constants/separation = 4
+
+[node name="C" parent="HSplitContainer/V2" instance=ExtResource("2_7djuh")]
+layout_mode = 2
+
+[node name="H" type="HBoxContainer" parent="HSplitContainer/V2/C"]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="ControlEntityLineEdit" type="LineEdit" parent="HSplitContainer/V2/C/H"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Label..."
+max_length = 256
+clear_button_enabled = true
+right_icon = ExtResource("6_0xi4i")
+
+[node name="AddControlEntityButton" parent="HSplitContainer/V2/C/H" instance=ExtResource("3_ni2ep")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 1
+tooltip_text = "Add the contol of the entities with this label"
+icon = ExtResource("2_0s4s4")
+
+[node name="C2" type="PanelContainer" parent="HSplitContainer/V2"]
 custom_minimum_size = Vector2(200, 56)
 layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_8uw5w")
 
-[node name="VSplitContainer" type="VSplitContainer" parent="HSplitContainer/C"]
+[node name="VSplitContainer" type="VSplitContainer" parent="HSplitContainer/V2/C2"]
 layout_mode = 2
 size_flags_horizontal = 3
 theme_override_constants/separation = 0
 
-[node name="V" type="VBoxContainer" parent="HSplitContainer/C/VSplitContainer"]
+[node name="V" type="VBoxContainer" parent="HSplitContainer/V2/C2/VSplitContainer"]
 custom_minimum_size = Vector2(0, 36)
 layout_mode = 2
 size_flags_vertical = 3
 theme_override_constants/separation = 0
 
-[node name="C2" type="MarginContainer" parent="HSplitContainer/C/VSplitContainer/V"]
-visible = false
-layout_mode = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 4
-theme_override_constants/margin_bottom = 0
-
-[node name="NameLineEdit" type="LineEdit" parent="HSplitContainer/C/VSplitContainer/V/C2"]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "username..."
-clear_button_enabled = true
-
-[node name="PermissionsTree" parent="HSplitContainer/C/VSplitContainer/V" instance=ExtResource("5_fggvs")]
+[node name="PermissionsTree" parent="HSplitContainer/V2/C2/VSplitContainer/V" instance=ExtResource("5_fggvs")]
 unique_name_in_owner = true
 layout_mode = 2
 hide_folding = true
 scroll_horizontal_enabled = false
 allow_drop_on_item = true
 drop_types_allowed = ["element"]
-
-[node name="C" type="MarginContainer" parent="HSplitContainer/C/VSplitContainer/V"]
-visible = false
-layout_mode = 2
-theme_override_constants/margin_left = 4
-theme_override_constants/margin_top = 4
-theme_override_constants/margin_right = 4
-theme_override_constants/margin_bottom = 4
-
-[node name="H" type="BoxContainer" parent="HSplitContainer/C/VSplitContainer/V/C"]
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2

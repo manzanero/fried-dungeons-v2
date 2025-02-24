@@ -73,10 +73,10 @@ func set_player_element_control(player_slug: String, element_label: String, cont
 
 
 @rpc("any_peer", "reliable")
-func create_player_signal(map_slug: String, level_index: int, position_2d: Vector2, color: Color):
+func create_player_signal(map_slug: String, level_index: int, position_2d: Vector2, color: Color, force_show := false):
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	var level: Level = _get_level_by_index(map, level_index); if not level: return
-	if Game.campaign.is_master or level.is_watched(position_2d):
+	if Game.campaign.is_master or level.is_watched(position_2d) or force_show:
 	#if Game.campaign.is_master or multiplayer.get_remote_sender_id() == 1 or level.is_watched(position_2d):
 		map.instancer.create_player_signal(level, position_2d, color)
 

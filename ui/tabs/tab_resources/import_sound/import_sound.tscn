@@ -31,6 +31,7 @@ size_flags_vertical = 3
 [node name="FieldsContainer" parent="V/ScrollContainer" instance=ExtResource("2_xekfo")]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="CollapseButton" parent="V/ScrollContainer/FieldsContainer" index="0"]

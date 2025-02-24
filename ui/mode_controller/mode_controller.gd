@@ -40,10 +40,6 @@ func mode_to_str(_mode: Mode) -> String:
 	return str(Mode.keys()[_mode]).capitalize()
 
 
-var darkvision_enabled: bool :
-	get: return darkvision_button.button_pressed
-
-
 @onready var modes: Control = %Modes
 @onready var modes_button_group := Utils.create_button_group(modes.get_children(), true)
 
@@ -84,8 +80,6 @@ var darkvision_enabled: bool :
 	[area_options_button, area_options, area_button_group, AREA_MODES],
 ]
 
-@onready var darkvision_button: Button = %DarkvisionButton
-
 
 var tween: Tween
 
@@ -106,7 +100,7 @@ func _ready() -> void:
 	_reset_mode()
 	
 	# Modes
-	var mode_keys := ["Q", "W", "E", "R", "T", "Y", "U", "I", "O", "P"]
+	var mode_keys := ["R", "T", "Y", "U", "I", "O", "P"]
 	for i in modes.get_child_count():
 		var mode_button: Button = modes.get_child(i)
 		mode_button.pressed.connect(_on_options_button_pressed.bind(i))
@@ -119,11 +113,9 @@ func _ready() -> void:
 	_set_options(4, entity_options)
 	_set_options(5, prop_options)
 	
-	darkvision_button.pressed.connect(_on_darkvision_button_pressed)
-	
 	
 # mode options
-var mode_option_keys := ["A", "S", "D", "F", "G", "H", "J", "K", "L"]
+var mode_option_keys := ["F", "G", "H", "J", "K", "L"]
 
 func _set_options(mode_index: int, mode_options: Control):
 	for i in mode_options.get_child_count():
@@ -228,10 +220,6 @@ func show_mode():
 	tween.tween_property(mode_hint, "modulate", Color.WHITE, 1.0)
 	tween.tween_property(mode_hint, "modulate", Color.TRANSPARENT, 1.0)
 	tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-
-
-func _on_darkvision_button_pressed():
-	Game.ui.selected_map.is_darkvision_view = darkvision_enabled
 	
 
 var _last_input: Key
@@ -258,16 +246,16 @@ func _unhandled_input(event: InputEvent) -> void:
 		_last_input = input
 		
 		match event.keycode:
-			KEY_Q: _on_options_button_pressed(0, 0, true)
-			KEY_W: _on_options_button_pressed(1, 0, true)
-			KEY_E: _on_options_button_pressed(2, 0, true)
-			KEY_R: _on_options_button_pressed(3, 0, true)
-			KEY_T: _on_options_button_pressed(4, 0, true)
-			KEY_Y: _on_options_button_pressed(5, 0, true)
-			#KEY_U: _on_options_button_pressed(6, 0, true)  # Area
+			KEY_R: _on_options_button_pressed(0, 0, true)
+			KEY_T: _on_options_button_pressed(1, 0, true)
+			KEY_Y: _on_options_button_pressed(2, 0, true)
+			KEY_U: _on_options_button_pressed(3, 0, true)
+			KEY_I: _on_options_button_pressed(4, 0, true)
+			KEY_O: _on_options_button_pressed(5, 0, true)
+			#KEY_P: _on_options_button_pressed(6, 0, true)  # Area
 			
-			KEY_A: _on_mode_button_pressed(0)
-			KEY_S: _on_mode_button_pressed(1)
-			KEY_D: _on_mode_button_pressed(2)
-			KEY_F: _on_mode_button_pressed(3)
-			KEY_G: _on_mode_button_pressed(4)
+			KEY_F: _on_mode_button_pressed(0)
+			KEY_G: _on_mode_button_pressed(1)
+			KEY_H: _on_mode_button_pressed(2)
+			KEY_J: _on_mode_button_pressed(3)
+			KEY_K: _on_mode_button_pressed(4)

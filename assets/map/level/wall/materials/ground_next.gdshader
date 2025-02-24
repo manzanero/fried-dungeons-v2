@@ -30,27 +30,32 @@ void fragment() {
 	}
 }
 
+const float bool_true = 0.0001;
 
 void light() {
-	DIFFUSE_LIGHT += ATTENUATION * LIGHT_COLOR;
+	vec3 color = LIGHT_COLOR;
+	if (is_darkvision_view)
+		color = vec3(pow((color.r * color.g * color.b), 0.33));
+
+	DIFFUSE_LIGHT += ATTENUATION * color;
 
 	// if fragment is seen
-	if (is_master_view || SPECULAR_LIGHT.z > 0.) {
+	if (is_master_view || SPECULAR_LIGHT.z == bool_true) {
 		ALPHA = alpha;
 
 	} else {
 
 		// if is in view for any viewer
 		if (ATTENUATION * SPECULAR_AMOUNT > 0.01)
-			SPECULAR_LIGHT.y = 0.0001;                   // fragment is seen
+			SPECULAR_LIGHT.y = bool_true;                   // fragment is seen
 
 		// if is in light for any lighter
-		 if (has_ambient_light || DIFFUSE_LIGHT.x > 0.0001 || DIFFUSE_LIGHT.y > 0.0001 || DIFFUSE_LIGHT.z > 0.0001)
-			SPECULAR_LIGHT.x = 0.0001;
+		 if (has_ambient_light || DIFFUSE_LIGHT.x > bool_true || DIFFUSE_LIGHT.y > bool_true || DIFFUSE_LIGHT.z > bool_true)
+			SPECULAR_LIGHT.x = bool_true;
 
 		// if is in view and light
 		if (SPECULAR_LIGHT.x > 0. && SPECULAR_LIGHT.y > 0.) {
-			SPECULAR_LIGHT.z = 0.0001;
+			SPECULAR_LIGHT.z = bool_true;
 			ALPHA = alpha;
 		} else
 			ALPHA = 0.;

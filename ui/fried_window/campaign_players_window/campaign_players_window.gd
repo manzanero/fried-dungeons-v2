@@ -54,6 +54,14 @@ var steam_items: Array[TreeItem] = []
 var enet_items: Array[TreeItem] = []
 
 
+# shortcut to open and edit
+func edit_player_by_username(username: String) -> void:
+	var items := steam_items if steam_button.button_pressed else enet_items
+	for item in items:
+		if username == item.get_text(0):
+			item.select(0)
+
+
 func _ready() -> void:
 	super._ready()
 	
@@ -92,6 +100,7 @@ func _ready() -> void:
 	steam_tree.item_activated.connect(_on_steam_item_activated)
 	steam_tree.item_selected.connect(_on_steam_item_selected)
 	steam_tree.button_clicked.connect(_on_steam_item_button_clicked)
+	steam_tree.empty_clicked.connect(steam_tree.deselect_all.unbind(2))
 	
 	## enet
 	enet_player_add_button.pressed.connect(_on_player_add_button_pressed.bind(false))
@@ -103,6 +112,7 @@ func _ready() -> void:
 	enet_tree.item_selected.connect(_on_enet_item_selected)
 	enet_tree.button_clicked.connect(_on_enet_item_button_clicked)
 	enet_tree.item_mouse_selected.connect(_on_enet_item_mouse_selected)
+	enet_tree.empty_clicked.connect(enet_tree.deselect_all.unbind(2))
 
 
 func _on_folders_button_pressed():

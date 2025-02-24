@@ -15,7 +15,9 @@ signal reload_campaign_button_pressed
 @onready var campaign_players_window: CampaignPlayersWindow = %CampaignPlayersWindow
 @onready var how_to_start_window: HowToStartWindow = %HowToStartWindow
 @onready var center_windows: CenterContainer = %CenterWindows
-@onready var delete_element_window: DeleteElementWindow = %DeleteElementWindow
+@onready var delete_window: DeleteWindow = %DeleteWindow
+@onready var exit_window: ExitWindow = %ExitWindow
+@onready var credits_window: CreditsWindow = %CreditsWindow
 
 # left section
 @onready var left: Control = %Left
@@ -46,7 +48,10 @@ signal reload_campaign_button_pressed
 @onready var master_cover: FadeTransition = %MasterCover
 @onready var build_border: Panel = %BuildBorder
 @onready var dicer: Dicer = %Dicer
+
 @onready var mode_controller: ModeController = %ModeController
+@onready var darkvision_button: Button = %DarkvisionButton
+
 @onready var state_label_value: Label = %StateLabelValue
 @onready var player_label_value: Label = %PlayerLabelValue
 @onready var tab_builder: TabBuilder = %Materials
@@ -70,6 +75,10 @@ var scene_tab_has_focus: bool :
 		return selected_scene_tab.scene_has_focus and not Game.control_uses_keyboard
 
 
+var darkvision_enabled: bool :
+	get: return darkvision_button.button_pressed
+	
+
 func init() -> UI:
 	Game.ui = self
 	Game.manager.add_child(self)
@@ -89,13 +98,15 @@ func _ready() -> void:
 	join_campaign_window.visible = false
 	campaign_players_window.visible = false
 	how_to_start_window.visible = false
-	delete_element_window.visible = false
+	delete_window.visible = false
 	new_campaign_window.close_window.connect(_on_close_window_pressed)
 	host_campaign_window.close_window.connect(_on_close_window_pressed)
 	join_campaign_window.close_window.connect(_on_close_window_pressed)
 	campaign_players_window.close_window.connect(_on_close_window_pressed)
 	how_to_start_window.close_window.connect(_on_close_window_pressed)
-	delete_element_window.close_window.connect(_on_close_window_pressed)
+	delete_window.close_window.connect(_on_close_window_pressed)
+	exit_window.close_window.connect(_on_close_window_pressed)
+	credits_window.close_window.connect(_on_close_window_pressed)
 	mouse_blocker.gui_input.connect(remove_mouse_blocker)
 	
 	tab_properties.settings.info_changed.connect(_on_info_changed)
@@ -114,6 +125,9 @@ func _ready() -> void:
 	
 	nav_bar.help_how_to_start_pressed.connect(_on_help_how_to_start_pressed)
 	nav_bar.help_manual_pressed.connect(_on_help_manual_pressed)
+	nav_bar.help_about_pressed.connect(_on_help_about_pressed)
+	
+	darkvision_button.pressed.connect(_on_darkvision_button_pressed)
 	
 
 func remove_mouse_blocker(event: InputEvent):
@@ -131,9 +145,10 @@ func is_any_visible_child():
 	return false
 
 
-func _on_info_changed(label: String):
+func _on_info_changed(label: String, description: String):
 	selected_scene_tab.name = label
 	selected_map.label = label
+	selected_map.description = description
 
 
 func _on_minimize_down_pressed(minimize: bool):
@@ -186,7 +201,6 @@ func _on_campaign_quit_pressed():
 
 
 func _on_help_how_to_start_pressed():
-	mouse_blocker.visible = true
 	how_to_start_window.visible = true
 	join_campaign_window.refresh()
 
@@ -195,8 +209,30 @@ func _on_help_manual_pressed():
 	manual_container.visible = true
 
 
+func _on_help_about_pressed():
+	credits_window.visible = true
+
+
 func quit():
-	if Game.campaign and Game.campaign.is_master:
-		Game.manager.save_campaign()
-		
-	get_tree().quit()
+	Game.manager.save_campaign()
+	
+	Game.ui.exit_window.visible = true
+	Game.ui.exit_window.exit_type = "Fried Dungeons"
+	var response = await Game.ui.exit_window.response
+	if response:
+		get_tree().quit()
+
+
+
+func _on_darkvision_button_pressed():
+	Game.ui.selected_map.is_darkvision_view = darkvision_enabled
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.pressed:
+			if event.keycode == KEY_Q:
+				if Game.campaign:
+					darkvision_button.button_pressed = not darkvision_button.button_pressed
+					_on_darkvision_button_pressed()
+	

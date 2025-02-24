@@ -115,6 +115,5 @@ theme_override_styles/panel = SubResource("StyleBoxEmpty_nq2p6")
 unique_name_in_owner = true
 layout_mode = 2
 columns = 2
-column_titles_visible = true
 hide_folding = true
 select_mode = 1

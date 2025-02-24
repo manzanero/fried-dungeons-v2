@@ -7,11 +7,7 @@ const SHAPE_SLICE := preload("res://assets/element/prop/shape_slice/shape_slice.
 @export var material: ShaderMaterial
 
 
-var cached_light: Color :
-	set(value): 
-		cached_light = value; 
-		base_mesh_instance.material_override.set_shader_parameter("light", cached_light)
-		material.set_shader_parameter("light", cached_light)
+var cached_light: Color
 var base_color: Color :
 	set(value): base_color = value; base_mesh_instance.material_override.set_shader_parameter("albedo", base_color)
 var body_color: Color :
@@ -26,8 +22,16 @@ var transparency := 0. :
 		base_mesh_instance.material_override.set_shader_parameter("transparency", transparency)
 		material.set_shader_parameter("transparency", transparency)
 
-
 ## properties
+var light_active := true :
+	set(value): light_active = value; omni_light_3d.visible = value; ligth_mesh.visible = value
+var light_range := 5.0 :
+	set(value): light_range = value; omni_light_3d.omni_range = value
+var light_color := Color.WHITE :
+	set(value):
+		light_color = value
+		ligth_mesh.material_override.albedo_color = value
+		omni_light_3d.light_color = value
 var texture_resource_path := "" : set = _set_texture_resource_path
 var frame := 0 :
 	set(value): frame = value; dirty_mesh = true
@@ -50,6 +54,8 @@ var selector_disabled := false : set = _set_selector_disabled
 @onready var selector_mesh_instance: MeshInstance3D = %SelectorMeshInstance3D
 @onready var body: Node3D = $Body
 @onready var selector_collider: StaticBody3D = %SelectorCollider
+@onready var ligth_mesh: MeshInstance3D = %LigthMesh
+@onready var omni_light_3d: OmniLight3D = %OmniLight3D
 @onready var eye: Eye = $Eye
 @onready var info: Control = %Info
 @onready var label_label: Label = %LabelLabel
@@ -57,9 +63,15 @@ var selector_disabled := false : set = _set_selector_disabled
 
 ## properties
 const LABEL := "label"
-const COLOR := "color"
 const DESCRIPTION := "description"
+const COLOR := "color"
 const BLUEPRINT := "blueprint"
+const LIGHT_ACTIVE = "light_active"
+const LIGHT_RANGE = "light_range"
+const LIGHT_COLOR = "light_color"
+const BLINDNESS := "blindness"
+const DARKVISION := "darkvision"
+const VELOCITY := "velocity"
 const SHOW_LABEL := "show_label"
 const SHOW_BODY = "show_body"
 const BODY_TEXTURE := "body_texture"
@@ -67,7 +79,6 @@ const BODY_FRAME := "body_frame"
 const BODY_SIZE := "body_size"
 const SHOW_BASE = "show_base"
 const BASE_SIZE := "base_size"
-const DARKVISION := "darkvision"
 
 
 
@@ -95,6 +106,63 @@ const entity_init_properties = {
 		"hint": Hint.BLUEPRINT,
 		"params": {},
 		"default": null,
+	},
+	LIGHT_ACTIVE: {
+		"container": "light",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": false,
+	},
+	LIGHT_RANGE: {
+		"container": "light",
+		"hint": Hint.FLOAT,
+		"params":  {
+			"suffix": "u",
+			"has_slider": true,
+			"has_arrows": true,
+			"min_value": 1,
+			"max_value": 10,
+			"step": 1,
+		},
+		"default": 5,
+	},
+	LIGHT_COLOR: {
+		"container": "light",
+		"hint": Hint.COLOR,
+		"params": {},
+		"default": Color.WHITE,
+	},
+	BLINDNESS: {
+		"container": "light",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": false,
+	},
+	DARKVISION: {
+		"container": "light",
+		"hint": Hint.FLOAT,
+		"params":  {
+			"suffix": "u",
+			"has_slider": true,
+			"has_arrows": true,
+			"min_value": 1,
+			"max_value": 10,
+			"step": 1,
+		},
+		"default": 5,
+	},
+	VELOCITY: {
+		"container": "physics",
+		"hint": Hint.FLOAT,
+		"params":  {
+			"suffix": "u/s",
+			"has_slider": true,
+			"has_arrows": true,
+			"min_value": 1,
+			"max_value": 10,
+			"step": 1,
+		},
+		"default": 5,
 	},
 	SHOW_LABEL: {
 		"container": "graphics",
@@ -160,34 +228,31 @@ const entity_init_properties = {
 			"allow_greater": true,
 		},
 		"default": 0.5,
-	},
-	DARKVISION: {
-		"container": "physics",
-		"hint": Hint.FLOAT,
-		"params": {
-			"is_percentage": true,
-			"suffix": "%",
-			"has_slider": true,
-			"has_arrows": true,
-			"min_value": 0,
-			"max_value": 100,
-			"step": 5,
-		},
-		"default": 0.0,
-	},
+	}
 }
 
 func _ready() -> void:
 	type = "entity"
-	#blueprint_excluded_properties = [LABEL, DESCRIPTION, COLOR]
 	init_properties = entity_init_properties
+	
 	selector_mesh_instance.visible = false
 	cached_light = level.get_light(position_2d)
+	level.light_texture_updated.connect(_on_light_texture_updated)
+	
+	map.map_visibility_changed.connect(_on_map_visibility_changed)
+	map.darkvision_enabled.connect(func (value):
+		cached_light = level.get_light(position_2d)
+		update_light()
+		
+		eye.darkvision_enabled = value
+	)
 
 
 static func parse_property_values(property_values: Dictionary) -> Dictionary:
 	var raw_property_values := {}
 	for property_name in property_values:
+		if not entity_init_properties.has(property_name):  # to keep compatibility
+			continue
 		var property_value: Variant = property_values[property_name]
 		var init_property_data: Dictionary = entity_init_properties[property_name]
 		raw_property_values[property_name] = get_raw_property(init_property_data.hint, property_value)
@@ -197,6 +262,8 @@ static func parse_property_values(property_values: Dictionary) -> Dictionary:
 static func parse_raw_property_values(raw_property_values: Dictionary) -> Dictionary:
 	var property_values := {}
 	for property_name in raw_property_values:
+		if not entity_init_properties.has(property_name):  # to keep compatibility
+			continue
 		var raw_property_value: Variant = raw_property_values[property_name]
 		var init_property_data: Dictionary = entity_init_properties[property_name]
 		property_values[property_name] = set_raw_property(init_property_data.hint, raw_property_value)
@@ -208,15 +275,21 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		
 		# element properties
 		LABEL: label = new_value; label_label.text = new_value
-		BLUEPRINT: _set_blueprint(new_value)
 		DESCRIPTION: description = new_value
 		COLOR:
 			color = new_value
 			label_label.label_settings.font_color = new_value
 			label_label.label_settings.outline_color = Utils.get_outline_color(new_value)
-			base_color = Color(color.r * luminance, color.g * luminance, color.b * luminance, color.a)
+			base_color = color
+		BLUEPRINT: _set_blueprint(new_value)
 
 		# entity properties
+		LIGHT_ACTIVE: light_active = new_value
+		LIGHT_RANGE: light_range = new_value
+		LIGHT_COLOR: light_color = new_value
+		BLINDNESS: eye.blindness = new_value
+		DARKVISION: eye.darkvision = new_value
+		VELOCITY: element_velocity = new_value
 		SHOW_LABEL: show_label = new_value
 		SHOW_BODY: body.visible = new_value
 		SHOW_BASE: base.visible = new_value
@@ -231,18 +304,6 @@ func change_property(property_name: String, new_value: Variant) -> void:
 			var selector_mesh: TorusMesh = selector_mesh_instance.mesh
 			selector_mesh.inner_radius = new_value / 2
 			selector_mesh.outer_radius = new_value / 2 + Game.U
-		DARKVISION:
-			enable_darkvision(map.is_darkvision_view)
-	
-	
-func _set_blueprint(_blueprint: CampaignBlueprint) -> void:
-	if blueprint:
-		blueprint.blueprint_changed.disconnect(_on_blueprint_changed)
-		blueprint.blueprint_removed.disconnect(_on_blueprint_removed)
-	blueprint = _blueprint
-	if blueprint:
-		blueprint.blueprint_changed.connect(_on_blueprint_changed)
-		blueprint.blueprint_removed.connect(_on_blueprint_removed)
 	
 	
 func _set_texture_resource_path(_texture_resource_path: String) -> void:
@@ -278,31 +339,27 @@ func _on_texture_resource_changed() -> void:
 	dirty_mesh = true
 
 
-func _process(_delta: float) -> void:
-	body.position.y = 1. / 16. + 1. / 128. * (1 + Game.wave_global)
-	
-	var ligth := cached_light
-	if (Game.process_frame) % 6 == 0:
-		ligth = level.get_light(position_2d)
-	#var ligth = level.get_light(position_2d)
+func _on_light_texture_updated():
+	var ligth := level.get_light(position_2d)
 	if ligth != cached_light:
-		dirty_light = true
-	cached_light = ligth
-	
+		cached_light = ligth
+		update_light()
+		
 	if dirty_mesh:
 		update_mesh()
 
-	if dirty_light:
-		update_light()
 
-	if is_watched:
-		if show_label:
-			if level.map.camera.is_fps:
-				info.visible = false
-			else:
-				info.visible = not level.map.camera.eyes.is_position_behind(position)
-				const unproject_correction := Vector3.UP * 0.001  # bug: x axis points cannot be unproject
-				info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
+func _process(_delta: float) -> void:
+	body.position.y = 1. / 16. + 1. / 128. * (1 + Game.wave_global)
+
+	if show_label and is_watched:
+		if level.map.camera.is_fps:
+			info.visible = false
+		else:
+			info.visible = not level.map.camera.eyes.is_position_behind(position)
+			const unproject_correction := Vector3.UP * 0.001  # bug: x axis points cannot be unproject
+			info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
+
 
 func update():
 	update_mesh()
@@ -313,12 +370,14 @@ func update_light():
 	dirty_light = false
 	
 	if is_watched:
-		body_color = Color(luminance, luminance, luminance)
-		base_color = Color(color.r * luminance, color.g * luminance, color.b * luminance, color.a)
+		base_mesh_instance.material_override.set_shader_parameter("light", Color(luminance, luminance, luminance))
+		material.set_shader_parameter("light", cached_light)
+		ligth_mesh.visible = light_active
 	else:
-		body_color = Color.TRANSPARENT
-		base_color = Color.TRANSPARENT
+		base_mesh_instance.material_override.set_shader_parameter("light", Color.TRANSPARENT)
+		material.set_shader_parameter("light", Color.TRANSPARENT)
 		info.visible = false
+		ligth_mesh.visible = false
 
 
 func update_mesh():
@@ -421,16 +480,23 @@ func _set_preview(value: bool) -> void:
 		transparency = 0
 
 
-func enable_darkvision(enabled: bool):
-	eye.omni_light_3d.visible = not enabled
-	var darkvision_range: float = get_property(DARKVISION).value
-	var darkvision: bool = darkvision_range > 0
-	if enabled and darkvision:
-		eye.darkvision_light.visible = enabled
-		eye.darkvision_light.light_specular = 16 * darkvision_range ** 3
-		#eye.darkvision_light.omni_range = 32 * (-1 * darkvision_range ** 2 + 2 * darkvision_range)
-	else:
-		eye.darkvision_light.visible = false
+func _on_map_visibility_changed(visibility_range: float):
+	eye.visibility_range = visibility_range
+
+
+#func update_darkvision():
+	#var enabled := map.is_darkvision_view
+	#var darkvision: float = get_property(DARKVISION).value
+	#var has_darkvision: bool = darkvision > 0
+	#if enabled:
+		##eye.omni_light_3d.visible = false
+		#eye.darkvision_light.visible = has_darkvision
+		#if has_darkvision:
+			#eye.darkvision_light.omni_range = darkvision * 100
+			##eye.darkvision_light.light_specular = min(visibility_range * darkvision ** 2.75, eye.omni_light_3d.light_specular)
+	#else:
+		##eye.omni_light_3d.visible = true
+		#eye.darkvision_light.visible = false
 	
 
 ###############

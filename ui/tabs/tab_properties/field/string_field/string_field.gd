@@ -23,6 +23,7 @@ func set_value(_value: Variant):
 
 func _ready() -> void:
 	line_edit.text_changed.connect(_on_text_value_changed)
+	line_edit.text_submitted.connect(line_edit.release_focus.unbind(1))
 
 
 func _on_text_value_changed(new_text: String):

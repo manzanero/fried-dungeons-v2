@@ -12,7 +12,6 @@ var level: Level
 var snapping := Game.SNAPPING_QUARTER 
 var is_ceiling_element: bool
 var blueprint: CampaignBlueprint
-#var blueprint_excluded_properties: Array[String] = []
 
 var init_properties := {}
 var properties := {} :
@@ -45,6 +44,7 @@ var position_2d: Vector2 :
 var rotation_y: float :
 	get: return snappedf(rotation.y, 0.001)
 var flipped := false : set = _set_flipped
+var element_velocity := 5.0
 
 var properties_values: Dictionary :
 	get:
@@ -159,6 +159,7 @@ func update_properties():
 ## override
 func _set_dragged(value: bool) -> void:
 	if is_dragged and not value:
+		target_position = position.snappedf(Game.U)
 		if Game.server.is_peer_connected:  # may disconnect while dragging
 			Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
 	is_dragged = value
@@ -184,7 +185,8 @@ func _set_selectable(value: bool) -> void:
 	is_selectable = value
 	
 	if not is_selectable and is_selected:
-		is_selected = false
+		if not Game.player_is_master:  # keep selected if master, to continue editing
+			is_selected = false
 
 
 ## override
@@ -255,7 +257,7 @@ func _physics_process(delta: float) -> void:
 		_preview_process(delta)
 		return
 	
-	if is_dragged and not Game.flow.is_paused:
+	if is_dragged and (Game.campaign.is_master or not Game.flow.is_paused):
 		#set_multiplayer_authority(multiplayer.get_unique_id())  # TODO
 		_flip_process()
 		_dragged_process(delta)
@@ -266,12 +268,11 @@ func _physics_process(delta: float) -> void:
 			var distance_to_target := vector_to_target.length()
 			var direction_to_target := vector_to_target.normalized()
 			const input_velocity: float = 1000
-			var velocity_to_target := clampf(delta * distance_to_target * input_velocity, 0, 4)
+			var velocity_to_target := clampf(delta * distance_to_target * input_velocity, 0, element_velocity)
 			velocity = direction_to_target * velocity_to_target
 			if move_and_slide() and velocity.length() < 0.001:
-				var ticks_msec := Time.get_ticks_msec()
-				if next_update_ticks_msec < ticks_msec:
-					next_update_ticks_msec = ticks_msec + 100
+				if next_update_ticks_msec < Game.ticks_msec:
+					next_update_ticks_msec = Game.ticks_msec + 100
 					Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation)
 
 				is_moving_to_target = false
@@ -327,7 +328,6 @@ func _dragged_process(delta: float) -> void:
 	#level.mouse_move = false
 	
 	var target_hovered := _get_target_hovered()
-	var ticks_msec := Time.get_ticks_msec()
 	
 	# forced change
 	if multiplayer.is_server() and Input.is_key_pressed(KEY_CTRL):
@@ -336,8 +336,8 @@ func _dragged_process(delta: float) -> void:
 		else:
 			global_position = target_hovered
 
-		if next_update_ticks_msec < ticks_msec:
-			next_update_ticks_msec = ticks_msec + 100
+		if next_update_ticks_msec < Game.ticks_msec:
+			next_update_ticks_msec = Game.ticks_msec + 100
 			Game.server.rpcs.set_element_position.rpc(map.slug, level.index, id, global_position, rotation_y)
 			
 		return
@@ -353,8 +353,8 @@ func _dragged_process(delta: float) -> void:
 		target_position = target_hovered
 		is_moving_to_target = true
 	
-	if next_update_ticks_msec < ticks_msec:
-		next_update_ticks_msec = ticks_msec + 100
+	if next_update_ticks_msec < Game.ticks_msec:
+		next_update_ticks_msec = Game.ticks_msec + 100
 		Game.server.rpcs.set_element_target.rpc(map.slug, level.index, id, target_position, rotation)
 		
 
@@ -373,6 +373,16 @@ func remove():
 	level.elements.erase(id)
 	
 	queue_free()
+	
+	
+func _set_blueprint(_blueprint: CampaignBlueprint) -> void:
+	if blueprint:
+		blueprint.blueprint_changed.disconnect(_on_blueprint_changed)
+		blueprint.blueprint_removed.disconnect(_on_blueprint_removed)
+	blueprint = _blueprint
+	if blueprint:
+		blueprint.blueprint_changed.connect(_on_blueprint_changed)
+		blueprint.blueprint_removed.connect(_on_blueprint_removed)
 
 
 func _on_blueprint_changed() -> void:

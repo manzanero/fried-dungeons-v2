@@ -19,6 +19,7 @@ const _CRITICAL_STR := "[color=dark_red][b][CRITICAL][/b][/color]"
 var id := 1
 var is_debug := true
 var level := INFO
+var use_debug_tab := false
 
 
 func print_debug_message(message: Variant):
@@ -57,4 +58,6 @@ func print_message(debug_level: int, message: Variant):
 		
 		var debug_str = "%s %s %s %s" % [id_str, time_str, level_str, str(message)]
 		print_rich(debug_str)
-		send_message.emit(debug_str)
+		
+		if use_debug_tab:
+			send_message.emit(debug_str)

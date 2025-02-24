@@ -22,6 +22,7 @@ func _ready() -> void:
 	tree.item_activated.connect(_on_item_activated)
 	tree.items_dropped.connect(_on_items_dropped)
 	tree.item_mouse_selected.connect(_on_item_mouse_selected)
+	tree.empty_clicked.connect(tree.deselect_all.unbind(2))
 
 
 func add_element(element: Element):

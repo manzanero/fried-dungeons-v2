@@ -48,6 +48,7 @@ map = NodePath("..")
 max_rot_x = 0.0
 
 [node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+unique_name_in_owner = true
 environment = ExtResource("4_okbi2")
 
 [node name="CanvasLayer" type="CanvasLayer" parent="."]

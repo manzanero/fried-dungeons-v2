@@ -2,8 +2,9 @@ class_name Map
 extends Node3D
 
 
-signal master_view_enabled(value : bool)
-signal darkvision_enabled(value : bool)
+signal master_view_enabled(value: bool)
+signal darkvision_enabled(value: bool)
+signal map_visibility_changed(value: float)
 
 const DEFAULT_ATLAS_TEXTURE := preload("res://user/defaults/atlas/default.png")
 
@@ -15,6 +16,7 @@ const DEFAULT_ATLAS_TEXTURE := preload("res://user/defaults/atlas/default.png")
 
 var label := "Untitled"
 var slug := "untitled"
+var description := ""
 
 var is_selected: bool :
 	get: return Game.ui.selected_map == self
@@ -38,9 +40,7 @@ var is_master_view := false :
 var is_darkvision_view := false :
 	set(value):
 		is_darkvision_view = value
-		if is_darkvision_view:
-			current_ambient_light = 1
-		elif is_master_view:
+		if is_master_view:
 			current_ambient_light = master_ambient_light if override_ambient_light else ambient_light
 		else:
 			current_ambient_light = ambient_light
@@ -50,18 +50,20 @@ var is_darkvision_view := false :
 		
 var current_ambient_light := 0.0 :
 	set(value):
-		current_ambient_light = 1 if is_darkvision_view else value
+		current_ambient_light = value
 		RenderingServer.global_shader_parameter_set("has_ambient_light", current_ambient_light > 0.001)
 		environment.ambient_light_color = current_ambient_color * current_ambient_light
-	get:
-		return 1 if is_darkvision_view else current_ambient_light
 		
 var current_ambient_color := Color.WHITE :
 	set(value):
-		current_ambient_color = Color.WHITE if is_darkvision_view else value
+		current_ambient_color = value
 		environment.ambient_light_color = current_ambient_color * current_ambient_light
-	get:
-		return Color.WHITE if is_darkvision_view else current_ambient_color
+		sky_material.sky_top_color = sky_top_color * current_ambient_color
+		
+var visibility := 1.0 :
+	set(value):
+		visibility = value
+		map_visibility_changed.emit(value)
 
 var atlas_texture: Texture2D = DEFAULT_ATLAS_TEXTURE :
 	set(value):
@@ -92,9 +94,12 @@ func _on_atlas_texture_resource_changed():
 
 @onready var distance_label: Label = %DistanceLabel
 
-@onready var world_environment: WorldEnvironment = $WorldEnvironment
-@onready var environment := world_environment.environment as Environment
-@onready var sky := environment.sky as Sky
+@onready var world_environment: WorldEnvironment = %WorldEnvironment
+@onready var environment := world_environment.environment
+@onready var sky := environment.sky
+@onready var sky_material: ProceduralSkyMaterial = sky.sky_material
+@onready var sky_top_color := sky_material.sky_top_color
+#@onready var sky_horizon_color := sky_material.sky_horizon_color
 
 
 func _ready():
@@ -112,12 +117,12 @@ func json() -> Dictionary:
 	
 	return {
 		"label": label,
+		"description": description,
 		"levels": levels_data,
 		"settings": {
 			"atlas_texture": atlas_texture_resource.path if atlas_texture_resource else "",
 			"ambient_light": ambient_light,
 			"ambient_color": Utils.color_to_html_color(ambient_color),
-			#"is_master_view": is_master_view,
 			"master_ambient_light": master_ambient_light,
 			"master_ambient_color": Utils.color_to_html_color(master_ambient_color),
 			"override_ambient_light": override_ambient_light,

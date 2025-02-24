@@ -53,6 +53,7 @@ func _ready() -> void:
 	
 	tree.drop_types_allowed = ["campaign_resouce_items"]
 	tree.items_dropped.connect(_on_items_dropped)
+	tree.empty_clicked.connect(tree.deselect_all.unbind(2))
 	
 
 func _on_audio_finished():
