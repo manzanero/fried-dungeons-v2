@@ -15,6 +15,8 @@ var modes: ModeController
 var preloader: ResourcePreloader
 #var audio: Audio
 var ui: UI
+var audio_preferences: AudioPreferencesWindow
+var video_preferences: VideoPreferencesWindow
 
 var blueprints := {}
 var resources := {}

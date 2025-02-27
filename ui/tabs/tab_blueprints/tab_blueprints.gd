@@ -128,12 +128,6 @@ func _on_visibility_changed():
 	pass
 
 
-#func _on_item_selected():
-	#current_item_selected = item_selected
-	#current_item_path = Utils.get_tree_path(current_item_selected)
-	#current_item_id = blueprint_selected.id
-
-
 func _on_multi_selected(item: TreeItem, _column: int, selected: bool):
 	var blueprint := get_item_blueprint(item)
 	items_selected[blueprint.id] = selected
@@ -304,6 +298,7 @@ func add_blueprint(parent: TreeItem, blueprint_name: String, blueprint: Campaign
 	blueprint_item.set_text(0, blueprint_name)
 	blueprint_item.set_tooltip_text(0, " ")
 	blueprint_item.add_button(0, EDIT_ICON)
+	blueprint_item.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
 	blueprint_item.set_metadata(0, blueprint)
 	match blueprint.type:
 		CampaignBlueprint.Type.FOLDER: blueprint_item.set_icon(0, DIRECTORY_ICON)

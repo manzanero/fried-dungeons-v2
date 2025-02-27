@@ -35,17 +35,9 @@ func _process_state(_delta: float) -> String:
 	return super(_delta)
 
 
-func _physics_process_state(_delta: float) -> String:
-	Game.ui.build_border.visible = true
-	if not level.is_selected:
-		return Level.State.GO_BACKGROUND
-		
+func _physics_process_state(_delta: float) -> String:		
 	if Input.is_action_just_pressed("key_c") and wall_hovered:
 		Game.ui.tab_builder.material_index_selected = wall_hovered.material_index
-
-	if Input.is_action_just_pressed("ui_cancel"):
-		Game.modes.reset()
-		return Level.State.GO_IDLE
 		
 	# dragging ends
 	if Input.is_action_just_released("left_click"):
@@ -64,8 +56,8 @@ func _physics_process_state(_delta: float) -> String:
 	else:
 		_process_select_points()
 	
-	if mouse_move:
-		mouse_move = false
+	if dragging_move:
+		dragging_move = false
 		_process_drag_points()
 
 	# dragging starts
@@ -137,10 +129,14 @@ func _process_select_points():
 			var wall_selected := point_selected.wall
 			
 			# check join with another wall
-			wall_selected.collider.disabled = true
+			var wall_collider := wall_selected.collider
+			wall_collider.disabled = true
 			await get_tree().physics_frame
 			var hit_info_candidate := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.wall_ray)
-			wall_selected.collider.disabled = false
+			
+			# cannot create collider if only 2 wall points in the same position
+			if wall_selected.points.size() > 2 or not wall_selected.is_empty:
+				wall_collider.disabled = false
 			
 			wall_hovered = null
 			_set_hovered([])
@@ -319,10 +315,13 @@ func _process_new_point():
 		_set_selected([new_point])
 
 
+var dragging_move := false
+
 func _input(event: InputEvent) -> void:
+	super(event)
 	if event is InputEventMouseButton:
 		if event.is_action_pressed("left_click") and event.double_click:
 			double_click = true
 	
 	if event is InputEventMouseMotion:
-		mouse_move = true
+		dragging_move = true

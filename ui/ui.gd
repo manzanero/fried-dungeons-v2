@@ -4,6 +4,7 @@ extends Control
 signal save_campaign_button_pressed
 signal reload_campaign_button_pressed
 
+
 @onready var nav_bar: NavBar = %NavBar
 @onready var flow_border: Panel = %FlowBorder
 @onready var ide: MarginContainer = %IDE
@@ -17,6 +18,8 @@ signal reload_campaign_button_pressed
 @onready var center_windows: CenterContainer = %CenterWindows
 @onready var delete_window: DeleteWindow = %DeleteWindow
 @onready var exit_window: ExitWindow = %ExitWindow
+@onready var audio_preferences_window: AudioPreferencesWindow = %AudioPreferencesWindow
+@onready var video_preferences_window: VideoPreferencesWindow = %VideoPreferencesWindow
 @onready var credits_window: CreditsWindow = %CreditsWindow
 
 # left section
@@ -35,7 +38,6 @@ signal reload_campaign_button_pressed
 @onready var right_down: Control = %RightDown
 @onready var right_down_tabs: Control = %RightDownTabs
 @onready var tab_properties: TabProperties = %Properties
-#@onready var tab_settings: TabSettings = %Settings
 @onready var tab_messages: TabMessages = %Messages
 
 # center section
@@ -106,6 +108,8 @@ func _ready() -> void:
 	how_to_start_window.close_window.connect(_on_close_window_pressed)
 	delete_window.close_window.connect(_on_close_window_pressed)
 	exit_window.close_window.connect(_on_close_window_pressed)
+	audio_preferences_window.close_window.connect(_on_close_window_pressed)
+	video_preferences_window.close_window.connect(_on_close_window_pressed)
 	credits_window.close_window.connect(_on_close_window_pressed)
 	mouse_blocker.gui_input.connect(remove_mouse_blocker)
 	
@@ -113,6 +117,8 @@ func _ready() -> void:
 	
 	minimize_down_button.pressed.connect(_on_minimize_down_pressed.bind(true))
 	restore_down_button.pressed.connect(_on_minimize_down_pressed.bind(false))
+	
+	darkvision_button.pressed.connect(_on_darkvision_button_pressed)
 	
 	nav_bar.campaign_new_pressed.connect(_on_campaign_new_pressed)
 	nav_bar.campaign_host_pressed.connect(_on_campaign_host_pressed)
@@ -123,11 +129,13 @@ func _ready() -> void:
 	nav_bar.campaign_reload_pressed.connect(_on_campaign_reload_pressed)
 	nav_bar.campaign_quit_pressed.connect(_on_campaign_quit_pressed)
 	
+	nav_bar.preferences_audio_pressed.connect(_on_preferences_audio_pressed)
+	nav_bar.preferences_video_pressed.connect(_on_preferences_video_pressed)
+	
 	nav_bar.help_how_to_start_pressed.connect(_on_help_how_to_start_pressed)
 	nav_bar.help_manual_pressed.connect(_on_help_manual_pressed)
 	nav_bar.help_about_pressed.connect(_on_help_about_pressed)
 	
-	darkvision_button.pressed.connect(_on_darkvision_button_pressed)
 	
 
 func remove_mouse_blocker(event: InputEvent):
@@ -200,6 +208,14 @@ func _on_campaign_quit_pressed():
 	quit()
 
 
+func _on_preferences_audio_pressed():
+	audio_preferences_window.visible = true
+
+
+func _on_preferences_video_pressed():
+	video_preferences_window.visible = true
+
+
 func _on_help_how_to_start_pressed():
 	how_to_start_window.visible = true
 	join_campaign_window.refresh()
@@ -214,15 +230,8 @@ func _on_help_about_pressed():
 
 
 func quit():
-	Game.manager.save_campaign()
+	Game.manager.safe_quit()
 	
-	Game.ui.exit_window.visible = true
-	Game.ui.exit_window.exit_type = "Fried Dungeons"
-	var response = await Game.ui.exit_window.response
-	if response:
-		get_tree().quit()
-
-
 
 func _on_darkvision_button_pressed():
 	Game.ui.selected_map.is_darkvision_view = darkvision_enabled

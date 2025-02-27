@@ -66,11 +66,11 @@ func get_element_label(element_item: TreeItem) -> String:
 
 func _ready() -> void:
 	Game.manager.campaign_loaded.connect(reset)
-	Game.flow.changed.connect(func (): 
-		var root := players_tree.get_root()
-		if root:
-			_set_flow(root, Game.flow.state)
-	)
+	#Game.flow.changed.connect(func (): 
+		#var root := players_tree.get_root()
+		#if root:
+			#_set_flow(root, Game.flow.state)
+	#)
 	
 	#folders_button.pressed.connect(_on_folders_button_pressed)
 	scan_button.pressed.connect(_on_scan_button_pressed)

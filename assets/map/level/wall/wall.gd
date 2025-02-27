@@ -101,10 +101,19 @@ var points_position_2d: PackedVector2Array :
 			return wall_point.position_2d
 		)
 		
+var is_empty: bool :
+	get:
+		var _points_position_2d = points_position_2d
+		if points_position_2d.size() == 0:
+			return true
+		var first = _points_position_2d[0]
+		for i in range(1, _points_position_2d.size()):
+			if _points_position_2d[i] != first:
+				return false
+		return true
 
 
 var is_selected : bool : set = _set_selected
-
 
 @onready var points_parent: Node3D = %Points
 @onready var generator := $WallGenerator as WallGenerator

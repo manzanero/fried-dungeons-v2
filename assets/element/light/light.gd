@@ -12,12 +12,16 @@ var is_watched: bool :
 var range_radius := 5.0 :
 	set(value):
 		range_radius = value
-		omni_light_3d.omni_range = value
+		if range_radius_tween:
+			range_radius_tween.kill()
+		range_radius_tween = create_tween()
+		range_radius_tween.tween_property(light, "omni_range", range_radius, 0.1)
+var range_radius_tween: Tween = null
 
 var active := true :
 	set(value):
 		active = value
-		omni_light_3d.visible = value
+		light.visible = value
 		_refresh_mesh()
 		
 		## This is not needed now
@@ -37,7 +41,7 @@ var light_color := Color.WHITE :
 	set(value):
 		light_color = value
 		color = value
-		omni_light_3d.light_color = value
+		light.light_color = value
 		_refresh_mesh()
 		
 
@@ -73,7 +77,7 @@ var dirty_mesh := false
 var selector_disabled := false : set = _set_selector_disabled
 
 
-@onready var omni_light_3d := $OmniLight3D as OmniLight3D
+@onready var light := $OmniLight3D as OmniLight3D
 @onready var body = $Body as Node3D
 @onready var inner_mesh := %InnerMesh as MeshInstance3D
 @onready var inner_material := inner_mesh.get_surface_override_material(0) as ShaderMaterial
@@ -180,7 +184,7 @@ static func parse_raw_property_values(raw_property_values: Dictionary) -> Dictio
 		var init_property_data: Dictionary = light_init_properties[property_name]
 		property_values[property_name] = set_raw_property(init_property_data.hint, raw_property_value)
 	return property_values
-	
+
 
 func change_property(property_name: String, new_value: Variant) -> void:
 	match property_name:
@@ -201,7 +205,7 @@ func _on_light_texture_updated():
 
 
 func update_light():
-	if Game.master_is_player:
+	if not Game.player_is_master or Game.master_is_player:
 		body.visible = is_watched and not hidden and active
 	else:
 		body.visible = true

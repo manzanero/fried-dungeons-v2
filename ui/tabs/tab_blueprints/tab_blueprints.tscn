@@ -187,7 +187,6 @@ focus_neighbor_bottom = NodePath(".")
 focus_next = NodePath(".")
 focus_previous = NodePath(".")
 focus_mode = 1
-hide_root = false
 select_mode = 2
 allow_drag = true
 drag_type = "campaign_blueprint_items"

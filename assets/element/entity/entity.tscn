@@ -10,6 +10,7 @@
 [ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="7_ih4st"]
 [ext_resource type="Material" uid="uid://c1nel0ayea611" path="res://assets/element/entity/materials/sprite.tres" id="8_b4q87"]
 [ext_resource type="PackedScene" uid="uid://bg2g2ca2xolm6" path="res://assets/element/entity/eye/eye.tscn" id="9_5arlo"]
+[ext_resource type="LabelSettings" uid="uid://ywtmta1ah3jd" path="res://resources/themes/main/element_label_settings.tres" id="11_pcpoc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_o5im7"]
 resource_local_to_scene = true
@@ -96,12 +97,6 @@ radius = 0.25
 height = 0.5
 radial_segments = 16
 rings = 8
-
-[sub_resource type="LabelSettings" id="LabelSettings_kj3hi"]
-resource_local_to_scene = true
-font_size = 8
-outline_size = 8
-outline_color = Color(0, 0, 0, 1)
 
 [node name="Entity" node_paths=PackedStringArray("slices_parent") groups=["entities"] instance=ExtResource("1_fqk2b")]
 collision_layer = 196608
@@ -216,7 +211,7 @@ grow_horizontal = 2
 unique_name_in_owner = true
 layout_mode = 2
 text = "Unkown"
-label_settings = SubResource("LabelSettings_kj3hi")
+label_settings = ExtResource("11_pcpoc")
 horizontal_alignment = 1
 
 [node name="BarsContainer" type="VBoxContainer" parent="CanvasLayer/Info/VBoxContainer" index="1"]

@@ -1,0 +1,112 @@
+[gd_scene load_steps=6 format=3 uid="uid://ma36j02o2umv"]
+
+[ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_wdxiw"]
+[ext_resource type="Script" path="res://ui/fried_window/audio_preferences_window/audio_preferences_window.gd" id="2_yq2pb"]
+[ext_resource type="PackedScene" uid="uid://ddbco64u43nkk" path="res://ui/tabs/tab_properties/field/float_field/float_field.tscn" id="3_jo041"]
+[ext_resource type="PackedScene" uid="uid://d0ch44utbuhby" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn" id="4_dwpfx"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+
+[node name="AudioPreferencesWindow" instance=ExtResource("1_wdxiw")]
+offset_right = 388.0
+offset_bottom = 182.0
+script = ExtResource("2_yq2pb")
+is_invisible_on_close = true
+
+[node name="TitleLabel" parent="M/VBoxContainer/TitleBar/H" index="0"]
+text = "Audio Preferences"
+
+[node name="CloseButton" parent="M/VBoxContainer/TitleBar/H" index="1"]
+custom_minimum_size = Vector2(0, 25)
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body" index="0"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="M2" type="MarginContainer" parent="M/VBoxContainer/Body/V" index="0"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+
+[node name="Label" type="Label" parent="M/VBoxContainer/Body/V/M2" index="0"]
+layout_mode = 2
+text = "Basic information (* required):"
+
+[node name="C" type="PanelContainer" parent="M/VBoxContainer/Body/V" index="1"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/C" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 4
+
+[node name="Fields" type="VBoxContainer" parent="M/VBoxContainer/Body/V/C/M" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="MasterVolume" parent="M/VBoxContainer/Body/V/C/M/Fields" index="0" instance=ExtResource("3_jo041")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/MasterVolume/H" index="0"]
+text = "Master volume"
+
+[node name="NumberEdit" parent="M/VBoxContainer/Body/V/C/M/Fields/MasterVolume/H" index="1"]
+suffix = "%"
+rounded = true
+max_value = 100.0
+step = 5.0
+text = "75"
+
+[node name="AppSounds" parent="M/VBoxContainer/Body/V/C/M/Fields" index="1" instance=ExtResource("4_dwpfx")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/AppSounds/H" index="0"]
+text = "App sounds"
+
+[node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/AppSounds/H/FriedConvexPanel" index="0"]
+button_pressed = true
+
+[node name="SceneSounds" parent="M/VBoxContainer/Body/V/C/M/Fields" index="2" instance=ExtResource("4_dwpfx")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/SceneSounds/H" index="0"]
+text = "Scene sounds"
+
+[node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/SceneSounds/H/FriedConvexPanel" index="0"]
+button_pressed = true
+
+[node name="SceneVolume" parent="M/VBoxContainer/Body/V/C/M/Fields" index="3" instance=ExtResource("3_jo041")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/SceneVolume/H" index="0"]
+text = "Scene Volume"
+
+[node name="NumberEdit" parent="M/VBoxContainer/Body/V/C/M/Fields/SceneVolume/H" index="1"]
+suffix = "%"
+rounded = true
+max_value = 100.0
+step = 5.0
+text = "75"
+
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/MasterVolume"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/AppSounds"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/SceneSounds"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/SceneVolume"]

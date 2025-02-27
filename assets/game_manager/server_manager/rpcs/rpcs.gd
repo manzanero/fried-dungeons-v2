@@ -52,7 +52,7 @@ func change_atlas_texture(map_slug: String, resource_path: String):
 
 @rpc("any_peer", "reliable")
 func change_ambient(map_slug: String, 
-		light: float, color: Color, master_light: float, master_color: Color):
+		light: float, color: Color, master_light: float, master_color: Color, visibility: float):
 	var map: Map = _get_map_by_slug(map_slug); if not map: return
 	map.master_ambient_light = master_light
 	map.master_ambient_color = master_color
@@ -61,6 +61,7 @@ func change_ambient(map_slug: String,
 	map.current_ambient_light = light
 	map.current_ambient_color = color
 	map.current_ambient_light = light
+	map.visibility = visibility
 
 
 @rpc("any_peer", "reliable")
@@ -273,6 +274,7 @@ func set_element_position(map_slug: String, level_index: int, id: String,
 	element.rotation.y = rotation_y
 	element.flipped = flipped
 	element.is_moving_to_target = false
+	element.moved.emit()
 	Debug.print_info_message("Element \"%s\" has new position" % [element.id])
 
 

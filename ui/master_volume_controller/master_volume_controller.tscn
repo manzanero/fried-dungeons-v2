@@ -8,6 +8,10 @@
 theme_override_constants/separation = 16
 script = ExtResource("1_mi2re")
 
+[node name="Label" type="Label" parent="."]
+layout_mode = 2
+text = "Scene:"
+
 [node name="TextureRect" type="TextureRect" parent="."]
 layout_mode = 2
 texture = ExtResource("1_jo6ik")
@@ -33,6 +37,5 @@ custom_minimum_size = Vector2(128, 0)
 layout_mode = 2
 size_flags_horizontal = 8
 size_flags_vertical = 4
-max_value = 120.0
 value = 1.0
 rounded = true

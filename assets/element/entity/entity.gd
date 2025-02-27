@@ -24,14 +24,21 @@ var transparency := 0. :
 
 ## properties
 var light_active := true :
-	set(value): light_active = value; omni_light_3d.visible = value; ligth_mesh.visible = value
+	set(value): light_active = value; light.visible = value; ligth_mesh.visible = value
 var light_range := 5.0 :
-	set(value): light_range = value; omni_light_3d.omni_range = value
+	set(value):
+		light_range = value
+		if light_range_radius_tween:
+			light_range_radius_tween.kill()
+		light_range_radius_tween = create_tween()
+		light_range_radius_tween.tween_property(light, "omni_range", light_range, 0.1)
+var light_range_radius_tween: Tween = null
+
 var light_color := Color.WHITE :
 	set(value):
 		light_color = value
 		ligth_mesh.material_override.albedo_color = value
-		omni_light_3d.light_color = value
+		light.light_color = value
 var texture_resource_path := "" : set = _set_texture_resource_path
 var frame := 0 :
 	set(value): frame = value; dirty_mesh = true
@@ -55,7 +62,7 @@ var selector_disabled := false : set = _set_selector_disabled
 @onready var body: Node3D = $Body
 @onready var selector_collider: StaticBody3D = %SelectorCollider
 @onready var ligth_mesh: MeshInstance3D = %LigthMesh
-@onready var omni_light_3d: OmniLight3D = %OmniLight3D
+@onready var light: OmniLight3D = %OmniLight3D
 @onready var eye: Eye = $Eye
 @onready var info: Control = %Info
 @onready var label_label: Label = %LabelLabel
@@ -238,6 +245,11 @@ func _ready() -> void:
 	selector_mesh_instance.visible = false
 	cached_light = level.get_light(position_2d)
 	level.light_texture_updated.connect(_on_light_texture_updated)
+	map.camera.changed.connect(_on_position_in_viewport_changed)
+	map.tab_scene.sub_viewport.size_changed.connect(_on_position_in_viewport_changed)
+	moved.connect(_on_position_in_viewport_changed)
+	
+	label_label.label_settings.font_size = Game.video_preferences.get_font_size()
 	
 	map.map_visibility_changed.connect(_on_map_visibility_changed)
 	map.darkvision_enabled.connect(func (value):
@@ -278,8 +290,10 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		DESCRIPTION: description = new_value
 		COLOR:
 			color = new_value
-			label_label.label_settings.font_color = new_value
-			label_label.label_settings.outline_color = Utils.get_outline_color(new_value)
+			var color_label = new_value
+			color_label.a = 1
+			label_label.label_settings.font_color = color_label
+			label_label.label_settings.outline_color = Utils.get_outline_color(color_label)
 			base_color = color
 		BLUEPRINT: _set_blueprint(new_value)
 
@@ -290,7 +304,9 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		BLINDNESS: eye.blindness = new_value
 		DARKVISION: eye.darkvision = new_value
 		VELOCITY: element_velocity = new_value
-		SHOW_LABEL: show_label = new_value
+		SHOW_LABEL: 
+			show_label = new_value
+			update_light()
 		SHOW_BODY: body.visible = new_value
 		SHOW_BASE: base.visible = new_value
 		BODY_TEXTURE: texture_resource_path = new_value
@@ -352,13 +368,10 @@ func _on_light_texture_updated():
 func _process(_delta: float) -> void:
 	body.position.y = 1. / 16. + 1. / 128. * (1 + Game.wave_global)
 
-	if show_label and is_watched:
-		if level.map.camera.is_fps:
-			info.visible = false
-		else:
-			info.visible = not level.map.camera.eyes.is_position_behind(position)
-			const unproject_correction := Vector3.UP * 0.001  # bug: x axis points cannot be unproject
-			info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
+
+func _on_position_in_viewport_changed():
+	const unproject_correction := Vector3.UP * 0.001  # bug: x axis points cannot be unproject
+	info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
 
 
 func update():
@@ -369,7 +382,19 @@ func update():
 func update_light():
 	dirty_light = false
 	
+	if show_label and is_watched:
+		if level.map.camera.is_fps:
+			info.visible = false
+		else:
+			info.visible = not level.map.camera.eyes.is_position_behind(position)
+	
 	if is_watched:
+		if show_label:
+			if level.map.camera.is_fps:
+				info.visible = false
+			else:
+				info.visible = not level.map.camera.eyes.is_position_behind(position)
+		
 		base_mesh_instance.material_override.set_shader_parameter("light", Color(luminance, luminance, luminance))
 		material.set_shader_parameter("light", cached_light)
 		ligth_mesh.visible = light_active

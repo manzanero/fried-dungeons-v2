@@ -38,8 +38,9 @@ func init(map_slug: String, map_data: Dictionary, send_players := false):
 	map.camera.fps_enabled.connect(_on_camera_fps_enabled)
 	
 	name = map_data.label
+	sub_viewport.positional_shadow_atlas_size = Game.video_preferences.get_positional_shadow_atlas_size()
 	
-	Game.ui.tab_properties.settings.reset()
+	Game.ui.tab_properties.settings.reset()  # ???
 	
 	visibility_changed.connect(_on_visibility_changed)
 	_on_visibility_changed()
@@ -53,7 +54,7 @@ func init(map_slug: String, map_data: Dictionary, send_players := false):
 	
 
 func _on_visibility_changed():
-	crt.visible = visible
+	crt.visible = visible and Game.video_preferences.crt_filter
 
 
 func remove():

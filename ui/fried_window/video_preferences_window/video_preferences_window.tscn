@@ -1,0 +1,139 @@
+[gd_scene load_steps=6 format=3 uid="uid://c3vwuxrfaun3p"]
+
+[ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_g03ne"]
+[ext_resource type="Script" path="res://ui/fried_window/video_preferences_window/video_preferences_window.gd" id="2_acgwu"]
+[ext_resource type="PackedScene" uid="uid://ddbco64u43nkk" path="res://ui/tabs/tab_properties/field/float_field/float_field.tscn" id="3_m5wac"]
+[ext_resource type="PackedScene" uid="uid://d0ch44utbuhby" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn" id="4_i0gds"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
+bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
+corner_radius_top_left = 6
+corner_radius_top_right = 6
+corner_radius_bottom_right = 6
+corner_radius_bottom_left = 6
+corner_detail = 1
+
+[node name="VideoPreferncesWindow" instance=ExtResource("1_g03ne")]
+offset_right = 388.0
+offset_bottom = 182.0
+script = ExtResource("2_acgwu")
+is_invisible_on_close = true
+
+[node name="TitleLabel" parent="M/VBoxContainer/TitleBar/H" index="0"]
+text = "Video Preferences"
+
+[node name="CloseButton" parent="M/VBoxContainer/TitleBar/H" index="1"]
+custom_minimum_size = Vector2(0, 25)
+
+[node name="V" type="VBoxContainer" parent="M/VBoxContainer/Body" index="0"]
+custom_minimum_size = Vector2(300, 0)
+layout_mode = 2
+
+[node name="M2" type="MarginContainer" parent="M/VBoxContainer/Body/V" index="0"]
+visible = false
+layout_mode = 2
+theme_override_constants/margin_left = 4
+theme_override_constants/margin_right = 4
+
+[node name="Label" type="Label" parent="M/VBoxContainer/Body/V/M2" index="0"]
+layout_mode = 2
+text = "Basic information (* required):"
+
+[node name="C" type="PanelContainer" parent="M/VBoxContainer/Body/V" index="1"]
+layout_mode = 2
+size_flags_vertical = 3
+theme_override_styles/panel = SubResource("StyleBoxFlat_05vpd")
+
+[node name="M" type="MarginContainer" parent="M/VBoxContainer/Body/V/C" index="0"]
+layout_mode = 2
+theme_override_constants/margin_left = 0
+theme_override_constants/margin_top = 4
+theme_override_constants/margin_right = 0
+theme_override_constants/margin_bottom = 4
+
+[node name="Fields" type="VBoxContainer" parent="M/VBoxContainer/Body/V/C/M" index="0"]
+unique_name_in_owner = true
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="VisibleCameraPivot" parent="M/VBoxContainer/Body/V/C/M/Fields" index="0" instance=ExtResource("4_i0gds")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/VisibleCameraPivot/H" index="0"]
+text = "Visible Camera Pivot"
+
+[node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/VisibleCameraPivot/H/FriedConvexPanel" index="0"]
+button_pressed = true
+
+[node name="MouseSensibility" parent="M/VBoxContainer/Body/V/C/M/Fields" index="1" instance=ExtResource("3_m5wac")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/MouseSensibility/H" index="0"]
+text = "Mouse Sensibility"
+
+[node name="NumberEdit" parent="M/VBoxContainer/Body/V/C/M/Fields/MouseSensibility/H" index="1"]
+suffix = "%"
+rounded = true
+min_value = 25.0
+max_value = 100.0
+step = 5.0
+text = "50"
+
+[node name="OrthogonalCamera" parent="M/VBoxContainer/Body/V/C/M/Fields" index="2" instance=ExtResource("4_i0gds")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/OrthogonalCamera/H" index="0"]
+text = "Orthogonal Camera"
+
+[node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/OrthogonalCamera/H/FriedConvexPanel" index="0"]
+text = "No"
+
+[node name="LabelSize" parent="M/VBoxContainer/Body/V/C/M/Fields" index="3" instance=ExtResource("3_m5wac")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/LabelSize/H" index="0"]
+text = "Labels Size"
+
+[node name="NumberEdit" parent="M/VBoxContainer/Body/V/C/M/Fields/LabelSize/H" index="1"]
+suffix = "%"
+rounded = true
+min_value = 25.0
+max_value = 100.0
+step = 5.0
+text = "25"
+
+[node name="CRTFilter" parent="M/VBoxContainer/Body/V/C/M/Fields" index="4" instance=ExtResource("4_i0gds")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/CRTFilter/H" index="0"]
+text = "CRT Filter"
+
+[node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/CRTFilter/H/FriedConvexPanel" index="0"]
+button_pressed = true
+
+[node name="LowQualityShadows" parent="M/VBoxContainer/Body/V/C/M/Fields" index="5" instance=ExtResource("4_i0gds")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/LowQualityShadows/H" index="0"]
+text = "Low Quality Shadows"
+
+[node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/LowQualityShadows/H/FriedConvexPanel" index="0"]
+text = "No"
+
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/VisibleCameraPivot"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/MouseSensibility"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/OrthogonalCamera"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/LabelSize"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/CRTFilter"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/LowQualityShadows"]

@@ -183,9 +183,11 @@ func process_build_one_sided() -> void:
 		return
 		
 	if _wall_being_builded:
+		prevent_exit = true
 		process_build_one_sided_next_point()
 		process_build_one_sided_new_point()
 	else:
+		prevent_exit = false
 		process_build_one_sided_start()
 		
 
@@ -194,9 +196,11 @@ func process_build_two_sided() -> void:
 		return
 		
 	if _wall_being_builded:
+		prevent_exit = true
 		process_build_one_sided_next_point()
 		process_build_one_sided_new_point()
 	else:
+		prevent_exit = false
 		process_build_one_sided_start(true)
 		
 

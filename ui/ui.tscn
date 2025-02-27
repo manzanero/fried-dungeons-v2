@@ -1,4 +1,4 @@
-[gd_scene load_steps=51 format=3 uid="uid://bo0uwbj6jw1oj"]
+[gd_scene load_steps=53 format=3 uid="uid://bo0uwbj6jw1oj"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
@@ -31,6 +31,8 @@
 [ext_resource type="PackedScene" uid="uid://df6f4gleuroml" path="res://ui/fried_window/how_to_start_window/how_to_start_window.tscn" id="28_2wh67"]
 [ext_resource type="PackedScene" uid="uid://cqbd6ya1w441y" path="res://ui/fried_window/exit_window/exit_window.tscn" id="30_uci4b"]
 [ext_resource type="PackedScene" uid="uid://dl5jls6tc7a2t" path="res://ui/fried_window/delete_window/delete_window.tscn" id="31_7ffsj"]
+[ext_resource type="PackedScene" uid="uid://ma36j02o2umv" path="res://ui/fried_window/audio_preferences_window/audio_preferences_window.tscn" id="31_nvmjr"]
+[ext_resource type="PackedScene" uid="uid://c3vwuxrfaun3p" path="res://ui/fried_window/video_preferences_window/video_preferences_window.tscn" id="31_op2w2"]
 [ext_resource type="PackedScene" uid="uid://vnstceqbrj3b" path="res://ui/fried_window/credits_window/credits_window.tscn" id="32_2vomp"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_yr7b3"]
@@ -595,7 +597,7 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Ground Editing"
+tooltip_text = "Darkvision mode"
 focus_mode = 0
 toggle_mode = true
 button_group = SubResource("ButtonGroup_qel18")
@@ -823,16 +825,29 @@ offset_right = -85.0
 offset_bottom = 629.0
 grow_horizontal = 0
 
+[node name="AudioPreferencesWindow" parent="CornerWindows" instance=ExtResource("31_nvmjr")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+offset_left = 101.0
+offset_top = 101.0
+offset_right = 489.0
+offset_bottom = 283.0
+
+[node name="VideoPreferencesWindow" parent="CornerWindows" instance=ExtResource("31_op2w2")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 0
+offset_left = 102.0
+offset_top = 102.0
+offset_right = 490.0
+offset_bottom = 284.0
+
 [node name="CenterWindows" type="CenterContainer" parent="."]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
 mouse_filter = 2
-
-[node name="ExitWindow" parent="CenterWindows" instance=ExtResource("30_uci4b")]
-unique_name_in_owner = true
-visible = false
-layout_mode = 2
 
 [node name="DeleteWindow" parent="CenterWindows" instance=ExtResource("31_7ffsj")]
 unique_name_in_owner = true
@@ -844,4 +859,9 @@ layout_mode = 2
 unique_name_in_owner = true
 visible = false
 custom_minimum_size = Vector2(400, 400)
+layout_mode = 2
+
+[node name="ExitWindow" parent="CenterWindows" instance=ExtResource("30_uci4b")]
+unique_name_in_owner = true
+visible = false
 layout_mode = 2

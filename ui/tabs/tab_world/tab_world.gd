@@ -154,19 +154,6 @@ func send_players_to_map(map_slug: String):
 	
 	Game.server.request_map_notification.rpc(players_map)
 	
-	#for map_item in root.get_children():
-		#var map_item_slug := map_item.get_tooltip_text(0)
-		#var tab_index = Game.maps.keys().find(map_item_slug)
-		#
-		#if map_item_slug == players_map:
-			#Game.ui.scene_tabs.set_tab_icon(tab_index, PLAY_SCENE_ICON)
-			#map_item.set_button_color(0, 0, Color.GREEN)
-		#else:
-			#if tab_index != -1:
-				#Game.ui.scene_tabs.set_tab_icon(tab_index, SCENE_ICON)
-				#Game.ui.scene_tabs.get_tab_control(tab_index).process_mode = Node.PROCESS_MODE_DISABLED
-			#map_item.set_button_color(0, 0, Color.DARK_GRAY)
-	
 	refresh_tree()
 
 

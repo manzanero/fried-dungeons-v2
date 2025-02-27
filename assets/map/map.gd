@@ -9,6 +9,8 @@ signal map_visibility_changed(value: float)
 const DEFAULT_ATLAS_TEXTURE := preload("res://user/defaults/atlas/default.png")
 
 
+@export var tab_scene: TabScene
+
 @export var loader: Loader
 @export var instancer: Instancer
 @export var levels_parent: Node3D

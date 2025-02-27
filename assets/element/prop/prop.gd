@@ -198,6 +198,11 @@ func _ready() -> void:
 	
 	cached_light = level.get_light(position_2d)
 	level.light_texture_updated.connect(_on_light_texture_updated)
+	map.camera.changed.connect(_on_position_in_viewport_changed)
+	map.tab_scene.sub_viewport.size_changed.connect(_on_position_in_viewport_changed)
+	moved.connect(_on_position_in_viewport_changed)
+	
+	label_label.label_settings.font_size = Game.video_preferences.get_font_size()
 	
 	collider.disabled = true
 	map.darkvision_enabled.connect(func (_value):
@@ -236,8 +241,10 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		DESCRIPTION: description = new_value
 		COLOR:
 			color = new_value
-			label_label.label_settings.font_color = new_value
-			label_label.label_settings.outline_color = Utils.get_outline_color(new_value)
+			var color_label = new_value
+			color_label.a = 1
+			label_label.label_settings.font_color = color_label
+			label_label.label_settings.outline_color = Utils.get_outline_color(color_label)
 		BLUEPRINT: _set_blueprint(new_value)
 
 		# prop properties
@@ -246,7 +253,9 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		LIGHT_COLOR: light_color = new_value
 		OPAQUE: is_opaque = new_value
 		SOLID: is_solid = new_value
-		SHOW_LABEL: show_label = new_value
+		SHOW_LABEL: 
+			show_label = new_value
+			update_light()
 		HIDDEN: hidden = new_value
 		TEXTURE: texture_resource_path = new_value
 		FRAME: frame = new_value
@@ -295,15 +304,10 @@ func _on_light_texture_updated():
 	if dirty_mesh:
 		update_mesh()
 		
-		
-func _process(_delta: float) -> void:
-	if show_label and is_watched:
-		if level.map.camera.is_fps:
-			info.visible = false
-		else:
-			info.visible = not level.map.camera.eyes.is_position_behind(position)
-			const unproject_correction := Vector3.UP * 0.001  # x axis points cannot be unproject
-			info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
+
+func _on_position_in_viewport_changed():
+	const unproject_correction := Vector3.UP * 0.001  # bug: x axis points cannot be unproject
+	info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
 
 
 func update():
@@ -315,6 +319,12 @@ func update_light():
 	dirty_light = false
 	
 	if is_watched:
+		if show_label:
+			if level.map.camera.is_fps:
+				info.visible = false
+			else:
+				info.visible = not level.map.camera.eyes.is_position_behind(position)
+		
 		material.set_shader_parameter("light", cached_light)
 	else:
 		material.set_shader_parameter("light", Color.TRANSPARENT)

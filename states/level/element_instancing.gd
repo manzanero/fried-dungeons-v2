@@ -58,9 +58,6 @@ func _process_state(_delta: float) -> String:
 
 
 func _physics_process_state(_delta: float) -> String:
-	if not map.is_selected or not level.is_selected:
-		return Level.State.KEEP
-		
 	match mode:
 		OMNILIGHT:
 			process_ceilling_hitted()

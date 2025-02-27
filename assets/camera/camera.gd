@@ -30,11 +30,11 @@ signal mouse_exited()
 @export var tp_fov: float = 30
 @export var allow_fp: bool = true
 @export var allow_tp: bool = true
-@export var is_ortogonal : bool = false : 
+@export var is_orthogonal : bool = false : 
 	set(value):
-		is_ortogonal = value
+		is_orthogonal = value
 		if eyes:
-			if is_ortogonal:
+			if is_orthogonal:
 				eyes.projection = Camera3D.PROJECTION_ORTHOGONAL
 			else:
 				eyes.projection = Camera3D.PROJECTION_PERSPECTIVE
@@ -49,6 +49,8 @@ signal mouse_exited()
 @onready var focus_hint_3d_material: StandardMaterial3D = focus_hint_3d.get_surface_override_material(0)
 @onready var collider: CollisionShape3D = %Collider
 
+static var show_focus_point := true
+static var mouse_sensibility := 0.5
 
 var is_operated := true
 var is_mouse_visible := true
@@ -118,27 +120,27 @@ func _ready():
 	focus_hint_2d.visible = is_fps
 	focus_hint_3d.visible = not is_fps
 	collider.disabled = not is_fps
-	eyes.projection = Camera3D.PROJECTION_ORTHOGONAL if is_ortogonal else Camera3D.PROJECTION_PERSPECTIVE
+	eyes.projection = Camera3D.PROJECTION_ORTHOGONAL if is_orthogonal else Camera3D.PROJECTION_PERSPECTIVE
 
 
 func _physics_process(delta: float) -> void:
 	if is_fps:
-		var offset_rot_x := offset_mouse_move.x * 0.004
-		var offset_rot_y := offset_mouse_move.y * 0.004
+		var offset_rot_x := offset_mouse_move.x * 0.008 * mouse_sensibility
+		var offset_rot_y := offset_mouse_move.y * 0.008 * mouse_sensibility
 		target_rotation.rotation += Vector3(-offset_rot_y * rot_y_speed, -offset_rot_x * rot_x_speed, 0)
 		target_rotation.rotation.x = clampf(target_rotation.rotation.x, deg_to_rad(-90), deg_to_rad(90))
 			
 		# should I include this in the future?
-		#if is_move:
-			#var direction := Vector3.FORWARD.rotated(Vector3.UP, target_rotation.rotation.y)
-			#target_position.velocity = direction * delta * move_speed * 100
-		#else:
-			#target_position.velocity = Vector3.ZERO
+		if is_move:
+			var direction := Vector3.FORWARD.rotated(Vector3.UP, target_rotation.rotation.y)
+			target_position.velocity = direction * delta * move_speed * 100
+		else:
+			target_position.velocity = Vector3.ZERO
 	
 	else:
 		if is_rotate:
-			var offset_rot_x := offset_mouse_move.x * 0.008
-			var offset_rot_y := offset_mouse_move.y * 0.008
+			var offset_rot_x := offset_mouse_move.x * 0.016 * mouse_sensibility
+			var offset_rot_y := offset_mouse_move.y * 0.016 * mouse_sensibility
 			target_rotation.rotation += Vector3(-offset_rot_y * rot_y_speed, -offset_rot_x * rot_x_speed, 0)
 			var effective_min_rot_x := -90.0 if is_fps else min_rot_x
 			var effective_max_rot_x := 90.0 if is_fps else max_rot_x
@@ -149,7 +151,7 @@ func _physics_process(delta: float) -> void:
 			target_rotation.rotation.y = snappedf(target_rotation.rotation.y, PI / 4)
 
 		if is_move:
-			var offset_move := Utils.v2_to_v3(-offset_mouse_move)
+			var offset_move := Utils.v2_to_v3(-offset_mouse_move) * 2 * mouse_sensibility
 			var velocity := offset_move.rotated(Vector3.UP, target_rotation.rotation.y)
 			target_position.velocity = velocity * delta * move_speed * (2 + zoom) * 8
 		else:
@@ -188,8 +190,9 @@ func _process(delta: float) -> void:
 	if _has_changed:
 		_has_changed = false
 		floor_projection = Vector3(eyes.global_position.x, 0, eyes.global_position.z)
-		const color = Color(0.25, 0.25, 0.25, 0.5)
-		focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
+		if show_focus_point:
+			const color = Color(0.25, 0.25, 0.25, 0.5)
+			focus_hint_3d_material.albedo_color = focus_hint_3d_material.albedo_color.lerp(color, swing_speed * delta)
 		changed.emit()
 	else:
 		const color = Color(0.25, 0.25, 0.25, 0)
@@ -215,7 +218,7 @@ func _process_transform(delta: float) -> void:
 		_has_changed = true
 
 	# zoom
-	if is_ortogonal:
+	if is_orthogonal:
 		if not is_equal_approx(eyes.size, zoom):
 			eyes.position.z = 2 + zoom * 2
 			eyes.size = lerpf(eyes.size, zoom, swing_speed * delta)
@@ -283,7 +286,7 @@ func _unhandled_input(event):
 				is_move = true
 			if event.button_index == MOUSE_BUTTON_WHEEL_UP:
 				zoom -= zoom_step * (1 + zoom * 0.1)
-				zoom = maxf(zoom, 1) if is_ortogonal else maxf(zoom, min_zoom)
+				zoom = maxf(zoom, 1) if is_orthogonal else maxf(zoom, min_zoom)
 			if event.button_index == MOUSE_BUTTON_WHEEL_DOWN:
 				zoom += zoom_step * (1 + zoom * 0.1)
 				zoom = minf(zoom, max_zoom)

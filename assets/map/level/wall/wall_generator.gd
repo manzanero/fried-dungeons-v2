@@ -57,11 +57,12 @@ func update_wall():
 	
 	var mesh := st.commit()
 	wall.mesh_instance_3d.mesh = mesh
-	if curve.point_count > 1:
-		var prop := mesh.create_trimesh_shape()
-		if prop:
-			prop.backface_collision = true
-		wall.collider.shape = prop
+	wall.collider.shape = null
+	if curve.point_count > 2 or not wall.is_empty:
+		var shape := mesh.create_trimesh_shape()
+		if shape:
+			shape.backface_collision = true
+			wall.collider.shape = shape
 		
 	wall.line_renderer_3d.points.resize(curve.point_count)
 	

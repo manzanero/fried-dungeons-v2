@@ -5,6 +5,8 @@ var level: Level
 var map: Map
 var selector: Selector
 
+var prevent_exit := false
+
 
 func _enter_state(previous_state: String) -> void:
 	level = get_target()
@@ -15,6 +17,7 @@ func _enter_state(previous_state: String) -> void:
 
 
 func _exit_state(next_state: String) -> void:
+	prevent_exit = false
 	Debug.print_info_message("Level %s of map \"%s\" entering state: %s" % [level.index, map.slug, next_state])
 
 
@@ -28,7 +31,7 @@ func _process_state(_delta: float) -> String:
 	
 	# end with right clik with no movement
 	if not Input.is_action_pressed("right_click") and Game.ui.scene_tab_has_focus:
-		if not mouse_move and Input.is_action_just_released("right_click"):
+		if not prevent_exit and not mouse_move and Input.is_action_just_released("right_click"):
 			Game.modes.reset()
 			return Level.State.GO_IDLE
 		mouse_move = false

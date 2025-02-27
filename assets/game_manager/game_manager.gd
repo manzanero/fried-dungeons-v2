@@ -8,6 +8,8 @@ signal map_loaded(slug: String)
 const UI_SCENE := preload("res://ui/ui.tscn")
 const TAB_SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
 
+const PLAY_SCENE_ICON := preload("res://resources/icons/play_scene_icon.png")
+const SCENE_ICON := preload("res://resources/icons/scene_icon.png")
 
 @onready var server: Node = $ServerManager
 @onready var preloader: ResourcePreloader = $ResourcePreloader
@@ -88,10 +90,13 @@ func _on_tab_changed(tab: int):
 	# disable process in hidden and non players tab
 	for i in Game.ui.scene_tabs.get_tab_count():
 		var tab_scene: TabScene = Game.ui.scene_tabs.get_tab_control(i)
-		if i == tab or Game.ui.tab_world.players_map == tab_scene.map.slug:
+		var players_map := Game.ui.tab_world.players_map
+		if i == tab or players_map == tab_scene.map.slug:
 			tab_scene.process_mode = PROCESS_MODE_ALWAYS
 		else:
 			tab_scene.process_mode = PROCESS_MODE_DISABLED
+		
+	refresh_tabs()
 	
 	if Game.ui.selected_map:
 		Game.flow.players_in_scene = Game.ui.selected_map.slug == Game.ui.tab_world.players_map
@@ -103,6 +108,12 @@ func refresh_tabs():
 		var tab_scene: TabScene = Game.ui.scene_tabs.get_tab_control(i)
 		var map := tab_scene.map
 		Game.maps[map.slug] = map
+		
+		var players_map := Game.ui.tab_world.players_map
+		if players_map == tab_scene.map.slug:
+			Game.ui.scene_tabs.get_tab_bar().set_tab_icon(i, PLAY_SCENE_ICON)
+		else:
+			Game.ui.scene_tabs.get_tab_bar().set_tab_icon(i, SCENE_ICON)
 
 
 func _on_new_campaign(new_campaign_data: Dictionary, steam: bool) -> void:
@@ -395,12 +406,15 @@ func remove_resource(resource_path: String) -> void:
 
 
 func safe_quit():
-	save_campaign()
-	
-	Game.ui.exit_window.visible = true
-	Game.ui.exit_window.exit_type = "Fried Dungeons"
-	var response = await Game.ui.exit_window.response
-	if response:
+	if Game.campaign:
+		Game.ui.exit_window.visible = true
+		Game.ui.exit_window.exit_type = "Fried Dungeons"
+		var response = await Game.ui.exit_window.response
+		if response:
+			save_campaign()
+			get_tree().quit()
+	else:
+		save_campaign()
 		get_tree().quit()
 	
 

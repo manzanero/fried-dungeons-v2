@@ -2,6 +2,7 @@ class_name Element
 extends CharacterBody3D
 
 
+signal moved
 signal property_changed(property_name: StringName, old_value: Variant, new_value: Variant)
 
 
@@ -263,6 +264,7 @@ func _physics_process(delta: float) -> void:
 		_dragged_process(delta)
 	
 	if is_moving_to_target:
+		moved.emit()
 		var vector_to_target := target_position - global_position
 		if vector_to_target.length() > 0.001:
 			var distance_to_target := vector_to_target.length()
@@ -296,6 +298,7 @@ func _physics_process(delta: float) -> void:
 			
 			
 func _preview_process(delta: float) -> void:
+	moved.emit()
 	if not Game.ui.is_mouse_over_scene_tab:
 		global_position = Game.ui.selected_map.camera.focus_hint_3d.global_position
 		return
@@ -320,6 +323,7 @@ func _flip_process() -> void:
 
 
 func _dragged_process(delta: float) -> void:
+	moved.emit()
 	is_rotated = Input.is_action_pressed("rotate")
 	#is_rotated = Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	

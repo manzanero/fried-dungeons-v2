@@ -78,6 +78,12 @@ func _ready() -> void:
 	stop_button.pressed.connect(_on_stop_button_pressed)
 	#flow_border.border_color = Color.TRANSPARENT
 	flow_border.border_color = PLAY_COLOR
+	
+	changed.connect(func (): 
+		var root := Game.ui.tab_players.players_tree.get_root()
+		if root:
+			Game.ui.tab_players._set_flow(root, state)
+	)
 
 
 func _on_reset_button_pressed() -> void:
@@ -87,6 +93,7 @@ func _on_reset_button_pressed() -> void:
 
 func _on_scene_button_pressed() -> void:
 	Game.ui.tab_world.send_players_to_map(Game.ui.selected_map.slug)
+	Game.manager.refresh_tabs()
 	players_in_scene = true
 
 

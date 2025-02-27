@@ -1,7 +1,6 @@
 class_name NavBar
 extends Control
 
-const SCENE := preload("res://ui/nav_bar/nav_bar.tscn")
 
 enum MenuItemType {
 	SEPARATOR,
@@ -47,15 +46,15 @@ var campaign_menu_items := [
 	{"type": MenuItemType.BUTTON, "label": CAMPAIGN_MENU_ITEM_QUIT, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_Q},
 ]
 
-signal preferences_sounds_pressed
-signal preferences_styles_pressed
+signal preferences_audio_pressed
+signal preferences_video_pressed
 
-const PREFERENCES_MENU_ITEM_SOUNDS := "Sounds..."
-const PREFERENCES_MENU_ITEM_STYLES := "Styles..."
+const PREFERENCES_MENU_ITEM_AUDIO := "Audio..."
+const PREFERENCES_MENU_ITEM_VIDEO := "Video..."
 
 var preferences_menu_items := [
-	{"type": MenuItemType.BUTTON, "label": PREFERENCES_MENU_ITEM_SOUNDS, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_U},
-	{"type": MenuItemType.BUTTON, "label": PREFERENCES_MENU_ITEM_STYLES, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_Y},
+	{"type": MenuItemType.BUTTON, "label": PREFERENCES_MENU_ITEM_AUDIO, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_U},
+	{"type": MenuItemType.BUTTON, "label": PREFERENCES_MENU_ITEM_VIDEO, "shortcut": KEY_MASK_CTRL | KEY_MASK_SHIFT | KEY_Y},
 ]
 
 signal help_how_to_start_pressed
@@ -79,7 +78,8 @@ var help_menu_items := [
 @onready var help_menu: PopupMenu = %Help
 
 @onready var flow_controller: FlowController = %FlowController
-@onready var master_volume_controller: HBoxContainer = %MasterVolumeController
+@onready var sound_controller: PanelContainer = %SoundController
+@onready var master_volume_controller: VolumeController = %MasterVolumeController
 
 
 var _campaign_menu_ids := {}
@@ -127,6 +127,8 @@ func _ready() -> void:
 	help_menu.get_window().transparent = true
 	
 	set_profile()
+	
+	
 
 
 func set_profile() -> void:
@@ -147,6 +149,11 @@ func set_profile() -> void:
 		set_help_menu_item_disabled(HELP_MENU_ITEM_MANUAL, true)
 	
 	flow_controller.set_profile()
+	
+	if Game.campaign:
+		sound_controller.visible = true
+	else:
+		sound_controller.visible = false
 
 
 func _on_campaing_menu_id_pressed(id: int):
@@ -164,8 +171,8 @@ func _on_campaing_menu_id_pressed(id: int):
 func _on_preferences_menu_id_pressed(id: int):
 	var item_label := preferences_menu.get_item_text(id)
 	match item_label:
-		PREFERENCES_MENU_ITEM_SOUNDS: preferences_sounds_pressed.emit()
-		PREFERENCES_MENU_ITEM_STYLES: preferences_styles_pressed.emit()
+		PREFERENCES_MENU_ITEM_AUDIO: preferences_audio_pressed.emit()
+		PREFERENCES_MENU_ITEM_VIDEO: preferences_video_pressed.emit()
 
 func _on_help_menu_id_pressed(id: int):
 	var item_label := help_menu.get_item_text(id)
