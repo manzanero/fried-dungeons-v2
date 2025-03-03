@@ -1,13 +1,6 @@
 class_name Light
 extends Element
 
-
-var cached_light: Color :
-	set(value): cached_light = value; 
-	
-var is_watched: bool : 
-	get: return cached_light.a
-
 ## properties
 var range_radius := 5.0 :
 	set(value):
@@ -89,12 +82,13 @@ var selector_disabled := false : set = _set_selector_disabled
 
 ## properties
 const LABEL := "label"
-const COLOR = "color"
+const COLOR := "color"
 const DESCRIPTION := "description"
 const BLUEPRINT := "blueprint"
-const ACTIVE = "active"
-const RANGE = "range"
-const HIDDEN = "hidden"
+const ACTIVE := "active"
+const RANGE := "range"
+const HIDDEN := "hidden"
+const SHOW_LABEL := "show_label"
 
 const light_init_properties = {
 	LABEL: {
@@ -146,6 +140,12 @@ const light_init_properties = {
 		"params": {},
 		"default": true,
 	},
+	SHOW_LABEL: {
+		"container": "graphics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": false,
+	},
 }
 
 func _ready() -> void:
@@ -154,10 +154,16 @@ func _ready() -> void:
 	
 	is_ceiling_element = true
 	element_velocity = 10
+	height = 1.0
 	
 	cached_light = level.get_light(position_2d)
 	level.light_texture_updated.connect(_on_light_texture_updated)
+	map.camera.changed.connect(_on_position_in_viewport_changed)
+	map.tab_scene.sub_viewport.size_changed.connect(_on_position_in_viewport_changed)
+	moved.connect(_on_position_in_viewport_changed)
 	Game.ui.tab_players.control_changed.connect(update_light)
+	
+	info.label_label.label_settings.font_size = Game.video_preferences.get_font_size()
 	
 	line_renderer_3d.disabled = true
 	line_renderer_3d.points.clear()
@@ -188,13 +194,22 @@ static func parse_raw_property_values(raw_property_values: Dictionary) -> Dictio
 
 func change_property(property_name: String, new_value: Variant) -> void:
 	match property_name:
-		LABEL: label = new_value
+		LABEL: label = new_value; info.label_label.text = new_value
 		DESCRIPTION: description = new_value
-		COLOR: light_color = new_value
+		COLOR: 
+			light_color = new_value
+			var color_label = new_value
+			color_label.a = 1
+			info.label_label.label_settings.font_color = color_label
+			info.label_label.label_settings.outline_color = Utils.get_outline_color(color_label)
 		BLUEPRINT: _set_blueprint(new_value)
 		ACTIVE: active = new_value
 		RANGE: range_radius = new_value
 		HIDDEN: hidden = new_value
+		SHOW_LABEL: 
+			show_label = new_value
+			info.label_label.visible = new_value
+			update_light()
 
 
 func _on_light_texture_updated():
@@ -204,11 +219,21 @@ func _on_light_texture_updated():
 		update_light()
 
 
+func update():
+	update_light()
+
+
 func update_light():
-	if not Game.player_is_master or Game.master_is_player:
-		body.visible = is_watched and not hidden and active
-	else:
+	_on_position_in_viewport_changed()
+	
+	if Game.player_is_master and not Game.master_is_player:
 		body.visible = true
+		return
+		
+	if is_watched and not hidden:
+		body.visible = true
+	else:
+		body.visible = false
 		
 
 func _set_selector_disabled(value: bool) -> void:
@@ -227,6 +252,11 @@ func _set_selected(value: bool) -> void:
 	line_renderer_3d.disabled = not value
 
 
+func _on_label_vision_changed(label_vision: float):
+	info.visible = label_vision
+	_on_position_in_viewport_changed()
+
+
 func remove():
 	super.remove()
 	
@@ -237,17 +267,13 @@ func remove():
 #region Serializing
 
 func json():
-	var values := {}
-	for property in properties:
-		values[property] = properties[property].get_raw()
-		
 	return {
 		"type": type,
 		"id": id,
+		"favourite": is_favourite,
 		"position": Utils.v3_to_a2(global_position),
 		"rotation": snappedf(rotation_y, 0.001),
-		"properties": values,
+		"properties": get_raw_property_values(),
 	}
-
 
 #endregion

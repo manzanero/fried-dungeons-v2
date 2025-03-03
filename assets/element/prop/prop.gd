@@ -9,15 +9,10 @@ const SHAPE_SLICE := preload("res://assets/element/prop/shape_slice/shape_slice.
 @export var material: ShaderMaterial
 
 
-var cached_light: Color
 var body_color: Color :
 	set(value): body_color = value; material.set_shader_parameter("albedo", body_color)
 var transparency := 0. : 
 	set(value): transparency = value; material.set_shader_parameter("transparency", transparency)
-var luminance: float :
-	get: return cached_light.v
-var is_watched: bool : 
-	get: return cached_light.a
 
 
 # properties
@@ -30,8 +25,6 @@ var light_color := Color.WHITE :
 		light_color = value
 		ligth_mesh.material_override.albedo_color = value
 		omni_light_3d.light_color = value
-var show_label: bool :
-	set(value): show_label = value; canvas_layer.visible = value
 var texture_resource_path := "" : set = _set_texture_resource_path
 var frame := 0 :
 	set(value): frame = value; dirty_mesh = true
@@ -57,9 +50,6 @@ var selector_disabled := false : set = _set_selector_disabled
 @onready var collider_shape: BoxShape3D = collider.shape
 @onready var ligth_mesh: MeshInstance3D = %LigthMesh
 @onready var omni_light_3d: OmniLight3D = %OmniLight3D
-@onready var canvas_layer: CanvasLayer = %CanvasLayer
-@onready var info: Control = %Info
-@onready var label_label: Label = %LabelLabel
 
 
 ## properties
@@ -202,9 +192,10 @@ func _ready() -> void:
 	map.tab_scene.sub_viewport.size_changed.connect(_on_position_in_viewport_changed)
 	moved.connect(_on_position_in_viewport_changed)
 	
-	label_label.label_settings.font_size = Game.video_preferences.get_font_size()
+	info.label_label.label_settings.font_size = Game.video_preferences.get_font_size()
 	
 	collider.disabled = true
+	map.label_vision_enabled.connect(_on_label_vision_changed)
 	map.darkvision_enabled.connect(func (_value):
 		cached_light = level.get_light(position_2d)
 		update_light()
@@ -237,14 +228,14 @@ func change_property(property_name: String, new_value: Variant) -> void:
 	match property_name:
 		
 		# element properties
-		LABEL: label = new_value; label_label.text = new_value
+		LABEL: label = new_value; info.label_label.text = new_value
 		DESCRIPTION: description = new_value
 		COLOR:
 			color = new_value
 			var color_label = new_value
 			color_label.a = 1
-			label_label.label_settings.font_color = color_label
-			label_label.label_settings.outline_color = Utils.get_outline_color(color_label)
+			info.label_label.label_settings.font_color = color_label
+			info.label_label.label_settings.outline_color = Utils.get_outline_color(color_label)
 		BLUEPRINT: _set_blueprint(new_value)
 
 		# prop properties
@@ -255,6 +246,7 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		SOLID: is_solid = new_value
 		SHOW_LABEL: 
 			show_label = new_value
+			info.label_label.visible = new_value
 			update_light()
 		HIDDEN: hidden = new_value
 		TEXTURE: texture_resource_path = new_value
@@ -303,11 +295,6 @@ func _on_light_texture_updated():
 		
 	if dirty_mesh:
 		update_mesh()
-		
-
-func _on_position_in_viewport_changed():
-	const unproject_correction := Vector3.UP * 0.001  # bug: x axis points cannot be unproject
-	info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
 
 
 func update():
@@ -317,18 +304,12 @@ func update():
 
 func update_light():
 	dirty_light = false
+	_on_position_in_viewport_changed()
 	
 	if is_watched:
-		if show_label:
-			if level.map.camera.is_fps:
-				info.visible = false
-			else:
-				info.visible = not level.map.camera.eyes.is_position_behind(position)
-		
 		material.set_shader_parameter("light", cached_light)
 	else:
 		material.set_shader_parameter("light", Color.TRANSPARENT)
-		info.visible = false
 
 
 func update_mesh():
@@ -446,6 +427,11 @@ func _set_preview(value: bool) -> void:
 		transparency = 0.25
 	else:
 		transparency = 0
+
+
+func _on_label_vision_changed(label_vision: float):
+	info.visible = label_vision
+	_on_position_in_viewport_changed()
 		
 		
 ###############
@@ -453,14 +439,12 @@ func _set_preview(value: bool) -> void:
 ###############
 
 func json():
-	var values := {}
-	for property in properties:
-		values[property] = properties[property].get_raw()
-	
 	return {
 		"type": type,
 		"id": id,
-		"position": Utils.v3_to_a2(global_position),
+		"favourite": is_favourite,
+		"position": Utils.v2_to_a2(position_2d),
 		"rotation": snappedf(rotation_y, 0.001),
-		"properties": values,
+		"flipped": flipped,
+		"properties": get_raw_property_values(),
 	}

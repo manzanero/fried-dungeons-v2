@@ -79,7 +79,7 @@ func _ready() -> void:
 	players_tree.button_clicked.connect(_on_player_item_button_clicked)
 	players_tree.item_selected.connect(_on_player_item_selected)
 	players_tree.item_activated.connect(_on_open_vision_button_pressed)
-	players_tree.empty_clicked.connect(players_tree.deselect_all.unbind(2))
+	players_tree.empty_clicked.connect(_on_player_empty_clicked)
 	
 	persmissions_tree.button_clicked.connect(_on_persmission_item_button_clicked)
 	persmissions_tree.empty_clicked.connect(persmissions_tree.deselect_all.unbind(2))
@@ -155,7 +155,9 @@ func reset():
 		var player_item := players_root.create_child()
 		player_item.set_text(0, player_username)
 		player_item.set_icon(0, SQUARE_ICON)
-		player_item.set_icon_modulate(0, Utils.html_color_to_color(player_data.get_or_add("color", "ffffff")))
+		var html_color: String = player_data.get("color", Utils.color_to_html_color(Color.WHITE))
+		var color := Utils.color_for_dark_bg(Utils.html_color_to_color(html_color))
+		player_item.set_icon_modulate(0, color)
 		
 		#player_item.set_custom_color(0, Color.BROWN)
 		player_item.set_tooltip_text(0, player_slug)
@@ -172,7 +174,7 @@ func _on_player_item_selected():
 	persmissions_tree.clear()
 	persmissions_tree.create_item()
 	var player_item := players_tree.get_selected()
-	if player_item == players_tree.get_root():
+	if not player_item or player_item == players_tree.get_root():
 		Game.player = null
 		return
 		
@@ -398,8 +400,10 @@ func _on_open_vision_button_pressed():
 	var map := Game.ui.selected_map
 	if not map:
 		return
-	
 	var level := map.selected_level
+	if not level:
+		return
+	
 	var item_selected := players_tree.get_selected()
 	if not item_selected or item_selected == players_tree.get_root() or Game.master_is_player:
 		level.set_master_control()
@@ -415,7 +419,12 @@ func _on_open_vision_button_pressed():
 	Game.master_is_player = Game.player
 	control_changed.emit()
 	item_selected.set_custom_color(0, Color.GREEN)
-		
+
+
+func _on_player_empty_clicked(_click_position: Vector2, _mouse_button_index: int):
+	players_tree.deselect_all()
+	_on_player_item_selected()
+	
 
 func reset_colors():
 	for item: TreeItem in player_items.values():

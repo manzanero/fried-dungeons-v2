@@ -1,4 +1,4 @@
-[gd_scene load_steps=16 format=3 uid="uid://lye1ti1uqjjr"]
+[gd_scene load_steps=17 format=3 uid="uid://lye1ti1uqjjr"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_world/tab_world.gd" id="1_75xg6"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_gsh8i"]
@@ -9,6 +9,7 @@
 [ext_resource type="PackedScene" uid="uid://gy2c5q5o665" path="res://ui/fried_button/fried_button_yellow.tscn" id="5_8d3rr"]
 [ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="6_f0ols"]
 [ext_resource type="PackedScene" uid="uid://b3d83roncqixw" path="res://ui/fried_button/fried_button_blue.tscn" id="7_0hdh1"]
+[ext_resource type="Texture2D" uid="uid://bs1udfpmwy6a" path="res://resources/icons/filter_icon.png" id="7_ideem"]
 [ext_resource type="Texture2D" uid="uid://7bghben36eue" path="res://resources/icons/scene_icon.png" id="9_pluau"]
 [ext_resource type="Texture2D" uid="uid://bvvr7ldnyv7yg" path="res://resources/icons/play_scene_icon.png" id="10_b4ehh"]
 [ext_resource type="Texture2D" uid="uid://ph36o52jrb1h" path="res://resources/icons/cross_icon.png" id="11_je5yx"]
@@ -39,27 +40,40 @@ script = ExtResource("1_75xg6")
 [node name="V" type="VBoxContainer" parent="."]
 layout_mode = 2
 
-[node name="C2" parent="V" instance=ExtResource("2_wulm4")]
+[node name="C3" parent="V" instance=ExtResource("2_wulm4")]
 layout_mode = 2
 
-[node name="H" type="HBoxContainer" parent="V/C2"]
-custom_minimum_size = Vector2(0, 25)
+[node name="HBoxContainer" type="HBoxContainer" parent="V/C3"]
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="NewButton" parent="V/C2/H" instance=ExtResource("3_tve3t")]
+[node name="NewButton" parent="V/C3/HBoxContainer" instance=ExtResource("3_tve3t")]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 1
 icon = ExtResource("2_h77nd")
 
-[node name="FoldersButton" parent="V/C2/H" instance=ExtResource("5_8d3rr")]
+[node name="FoldersButton" parent="V/C3/HBoxContainer" instance=ExtResource("5_8d3rr")]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
+size_flags_horizontal = 1
 icon = ExtResource("6_f0ols")
 
-[node name="ScanButton" parent="V/C2/H" instance=ExtResource("7_0hdh1")]
+[node name="TitleLineEdit" type="LineEdit" parent="V/C3/HBoxContainer"]
 unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "Label..."
+clear_button_enabled = true
+right_icon = ExtResource("7_ideem")
+
+[node name="ScanButton" parent="V/C3/HBoxContainer" instance=ExtResource("7_0hdh1")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 1
 
 [node name="C" type="PanelContainer" parent="V"]
 layout_mode = 2
@@ -71,19 +85,12 @@ layout_mode = 2
 theme_override_constants/separation = 0
 
 [node name="C2" type="MarginContainer" parent="V/C/V"]
+visible = false
 layout_mode = 2
 theme_override_constants/margin_left = 4
 theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
-
-[node name="TitleLineEdit" type="LineEdit" parent="V/C/V/C2"]
-unique_name_in_owner = true
-custom_minimum_size = Vector2(0, 25)
-layout_mode = 2
-size_flags_horizontal = 3
-placeholder_text = "Title..."
-clear_button_enabled = true
 
 [node name="Tree" parent="V/C/V" instance=ExtResource("2_gsh8i")]
 unique_name_in_owner = true

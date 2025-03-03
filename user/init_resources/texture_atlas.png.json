@@ -1,0 +1,13 @@
+{
+  "timestamp": 1735485538,
+  "type": "texture",
+  "import_as": "texture_index",
+  "attributes": {
+    "size": [
+      16,
+      16
+    ],
+    "textures": 64,
+    "frames": 8
+  }
+}

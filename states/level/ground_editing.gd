@@ -32,6 +32,7 @@ func _exit_state(next_state: String) -> void:
 	super(next_state)
 	Game.ui.build_border.visible = false
 	
+	selector.area.visible = false
 	selector.wall.mesh = null
 	selector.grid.visible = false
 	selector.column.visible = false
@@ -43,15 +44,12 @@ func _process_state(_delta: float) -> String:
 		
 		
 func _physics_process_state(_delta: float) -> String:
-	if not map.is_selected or not level.is_selected:
-		return Level.State.GO_BACKGROUND
-	
-	process_ground_hitted()
-	process_change_grid()
-	
 	if Input.is_action_just_pressed("key_c"):
 		Game.ui.tab_builder.material_index_selected = level.cells[level.tile_hovered].index
-	
+		
+	process_ground_hitted()
+	process_change_grid()
+		
 	match Game.modes.mode:
 		ModeController.Mode.GROUND_PAINT_TILE:
 			process_build_point()
@@ -84,7 +82,9 @@ func process_build_point() -> void:
 
 
 func process_build_rect() -> void:
-	if Input.is_action_just_pressed("right_click"):
+	prevent_exit = _is_rect_being_builded
+	
+	if Input.is_action_just_released("right_click"):
 		selector.area.visible = false
 		_is_rect_being_builded = false
 		
@@ -117,7 +117,9 @@ func process_build_rect() -> void:
 
 
 func process_erase_rect() -> void:
-	if Input.is_key_pressed(KEY_ESCAPE):
+	prevent_exit = _is_rect_being_builded
+	
+	if Input.is_action_just_released("right_click"):
 		selector.area.visible = false
 		_is_rect_being_builded = false
 		
@@ -125,6 +127,7 @@ func process_erase_rect() -> void:
 		_click_origin_position = level.position_hovered
 		_is_rect_being_builded = true
 		selector.area.visible = true
+		prevent_exit = true
 		
 	if Input.is_action_pressed("left_click") and Game.ui.scene_tab_has_focus:
 		selector.tiled_move_area_to(_click_origin_position, level.position_hovered)
@@ -132,6 +135,7 @@ func process_erase_rect() -> void:
 	if Input.is_action_just_released("left_click") and _is_rect_being_builded:
 		selector.area.visible = false
 		_is_rect_being_builded = false
+		prevent_exit = false
 		
 		var init_x := int(_click_origin_position.floor().x)
 		var init_y := int(_click_origin_position.floor().y)

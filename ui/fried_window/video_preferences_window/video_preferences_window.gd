@@ -7,6 +7,12 @@ signal video_prefernces_changed
 static var element_label_settings := preload("res://resources/themes/main/element_label_settings.tres")
 
 
+var start_maximized: bool :
+	set(value): start_maximized_field.property_value = value; _on_video_preferences_changed()
+	get: return start_maximized_field.property_value
+var start_on_monitor: int :
+	set(value): start_on_monitor_field.property_value = value; _on_video_preferences_changed()
+	get: return start_on_monitor_field.property_value
 var visible_camera_pivot: bool :
 	set(value): visible_camera_pivot_field.property_value = value; _on_video_preferences_changed()
 	get: return visible_camera_pivot_field.property_value
@@ -22,20 +28,30 @@ var crt_filter: bool :
 var low_quality_shadows: bool :
 	set(value): low_quality_shadows_field.property_value = value; _on_video_preferences_changed()
 	get: return low_quality_shadows_field.property_value
+var scene_resolution: float :
+	set(value): scene_resolution_field.property_value = value * 100; _on_video_preferences_changed()
+	get: return scene_resolution_field.property_value / 100
 
 
+@onready var start_maximized_field: BoolField = %StartMaximized
+@onready var start_on_monitor_field: IntegerField = %StartOnMonitor
 @onready var visible_camera_pivot_field: BoolField = %VisibleCameraPivot
 @onready var mouse_sensibility_field: FloatField = %MouseSensibility
 @onready var label_size_field: FloatField = %LabelSize
 @onready var crt_filter_field: BoolField = %CRTFilter
 @onready var low_quality_shadows_field: BoolField = %LowQualityShadows
-
+@onready var scene_resolution_field: FloatField = %SceneResolution
 
 
 func _ready() -> void:
 	super._ready()
 	Game.video_preferences = self
 	read_preferences()
+	
+	start_maximized_field.value_changed.connect(_on_visible_camera_pivot_changed.unbind(2))
+	start_maximized_field.value_changed.connect(_on_video_preferences_changed.unbind(2))
+	start_on_monitor_field.value_changed.connect(_on_mouse_sensibility_changed.unbind(2))
+	start_on_monitor_field.value_changed.connect(_on_video_preferences_changed.unbind(2))
 	visible_camera_pivot_field.value_changed.connect(_on_visible_camera_pivot_changed.unbind(2))
 	visible_camera_pivot_field.value_changed.connect(_on_video_preferences_changed.unbind(2))
 	mouse_sensibility_field.value_changed.connect(_on_mouse_sensibility_changed.unbind(2))
@@ -46,6 +62,8 @@ func _ready() -> void:
 	crt_filter_field.value_changed.connect(_on_video_preferences_changed.unbind(2))
 	low_quality_shadows_field.value_changed.connect(_on_low_quality_shadows_changed.unbind(2))
 	low_quality_shadows_field.value_changed.connect(_on_video_preferences_changed.unbind(2))
+	scene_resolution_field.value_changed.connect(_on_scene_resolution_changed.unbind(2))
+	scene_resolution_field.value_changed.connect(_on_video_preferences_changed.unbind(2))
 	visibility_changed.connect(_on_visibility_changed)
 	
 
@@ -85,7 +103,13 @@ func _on_low_quality_shadows_changed() -> void:
 
 func get_positional_shadow_atlas_size():
 	return 1024 if low_quality_shadows else 8192
-	
+
+
+func _on_scene_resolution_changed() -> void:
+	for i in Game.ui.scene_tabs.get_tab_count():
+		var scene_tab: TabScene = Game.ui.scene_tabs.get_tab_control(i)
+		scene_tab.sub_viewport.scaling_3d_scale = scene_resolution
+		
 
 var scheduled_save := false
 
@@ -104,18 +128,24 @@ func _on_video_preferences_changed() -> void:
 
 func save():
 	Utils.dump_json("user://preferences/video.json", {
+		"start_maximized": start_maximized,
+		"start_on_monitor": start_on_monitor,
 		"visible_camera_pivot": visible_camera_pivot,
 		"mouse_sensibility": mouse_sensibility,
 		"label_size": label_size,
 		"crt_filter": crt_filter,
 		"low_quality_shadows": low_quality_shadows,
+		"scene_resolution": scene_resolution,
 	}, 2)
 	
 	
 func read_preferences():
 	var video_preferences = Utils.load_json("user://preferences/video.json")
+	start_maximized = video_preferences.get("start_maximized", true)
+	start_on_monitor = video_preferences.get("start_on_monitor", 0)
 	visible_camera_pivot = video_preferences.get("visible_camera_pivot", true)
 	mouse_sensibility = video_preferences.get("mouse_sensibility", 0.5)
 	label_size = video_preferences.get("label_size", 0.25)
 	crt_filter = video_preferences.get("crt_filter", true) 
 	low_quality_shadows = video_preferences.get("low_quality_shadows", false)
+	scene_resolution = video_preferences.get("scene_resolution", 1.0)

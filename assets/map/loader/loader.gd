@@ -254,16 +254,16 @@ func load_map(map_data: Dictionary):
 	Debug.print_info_message("Loading map: " + map_data.label)
 	
 	map.label = map_data.label
-	map.description = map_data.description
+	map.description = map_data.get_or_add("description", "")
 	
 	if map_data.has("settings"):
 		var atlas_texture_path: String = map_data.settings.get("atlas_texture", "")
 		map.atlas_texture_resource = Game.manager.get_resource(CampaignResource.Type.TEXTURE, atlas_texture_path)
 		
-		map.ambient_light = map_data.settings.ambient_light
-		map.ambient_color = Utils.html_color_to_color(map_data.settings.ambient_color)
-		map.master_ambient_light = map_data.settings.master_ambient_light
-		map.master_ambient_color = Utils.html_color_to_color(map_data.settings.master_ambient_color)
+		map.ambient_light = map_data.settings.get("ambient_light", 0)
+		map.ambient_color = Utils.html_color_to_color(map_data.settings.get("ambient_color", "ffffffff"))
+		map.master_ambient_light = map_data.settings.get("master_ambient_light", 0.25)
+		map.master_ambient_color = Utils.html_color_to_color(map_data.settings.get("master_ambient_color", "ffffffff"))
 		map.override_ambient_light = map_data.settings.get("override_ambient_light", true)
 		map.override_ambient_color = map_data.settings.get("override_ambient_color", false)
 		
@@ -290,7 +290,10 @@ func load_map(map_data: Dictionary):
 		var tile_data := {"i": 1, "f": 0}
 		level.cells[tile] = Level.Cell.new(tile_data.i, tile_data.f)
 		tile_map.set_cell(0, tile, 0, Vector2i(tile_data.f, tile_data.i), 0)
-		map.instancer.create_entity(level, Utils.random_string(8, true), Vector2(0.5, 0.5))
+		var properties := {}
+		if Game.campaign.resource_file_exists("heroes.png"):
+			properties = {"body_texture": "heroes.png"}
+		map.instancer.create_entity(level, Utils.random_string(8, true), Vector2(0.5, 0.5), properties)
 		map.instancer.create_light(level, Utils.random_string(8, true), Vector2(0.5, 0.5))
 		
 	else:
@@ -334,23 +337,32 @@ func load_map(map_data: Dictionary):
 					
 			# elements
 			for element_data in level_data.get("elements", []):
+				if not element_data:
+					continue
+				
 				var rotation_y: float = element_data.get("rotation", 0.0)
-				var flipped: float = element_data.get("flipped", false)
-				var blueprint_id: String = element_data.properties.get("blueprint", "")
+				var flipped: bool = element_data.get("flipped", false)
+				var is_favourite: bool = element_data.get("favourite", false)
+				var raw_properties: Dictionary = element_data.get("properties", {})
+				var blueprint_id: String = raw_properties.get("blueprint", "")
 				var properties: Dictionary
+				
+				if raw_properties.label == "Marinero":
+					pass
+					
 				if blueprint_id:
 					var blueprint: CampaignBlueprint = Game.blueprints.get(blueprint_id)
 					if blueprint:
-						properties = blueprint.properties
-						properties["label"] = element_data.properties["label"]
+						properties = blueprint.properties.duplicate()
+						properties["label"] = raw_properties["label"]
 						properties["blueprint"] = blueprint
 				if not properties:
 					match element_data.type:
-						"light": properties = Light.parse_raw_property_values(element_data.properties)
-						"entity": properties = Entity.parse_raw_property_values(element_data.properties)
-						"prop": properties = Prop.parse_raw_property_values(element_data.properties)
+						"light": properties = Light.parse_raw_property_values(raw_properties)
+						"entity": properties = Entity.parse_raw_property_values(raw_properties)
+						"prop": properties = Prop.parse_raw_property_values(raw_properties)
 						_: properties = {}
 				map.instancer.create_element(element_data.type, level, element_data.id, 
-						Utils.a2_to_v2(element_data.position), properties, rotation_y, flipped)
+						Utils.a2_to_v2(element_data.position), properties, rotation_y, flipped, false, is_favourite)
 	
 	map.selected_level = map.levels_parent.get_children()[0]

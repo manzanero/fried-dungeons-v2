@@ -5,7 +5,7 @@ const SOUND_ICON := preload("res://resources/icons/sound_icon.png")
 const STOP_ICON := preload("res://resources/icons/stop_icon.png")
 const PLAY_ICON := preload("res://resources/icons/play_icon.png")
 const LOOP_ICON := preload("res://resources/icons/reload_icon.png")
-
+const EDIT_ICON = preload("res://resources/icons/edit_icon.png")
 
 var root: TreeItem
 var now_playing := {}  # {CampaignResource: TreeItem}
@@ -75,6 +75,7 @@ func add_sound(sound: CampaignResource, from_position := 0.0) -> TreeItem:
 	var index := 0
 	for child in root.get_children():
 		if music_path == child.get_text(0):
+			Utils.temp_warning_tooltip("Theme already loaded")
 			return
 		if music_path < child.get_text(0):
 			break
@@ -85,9 +86,12 @@ func add_sound(sound: CampaignResource, from_position := 0.0) -> TreeItem:
 	music_item.set_tooltip_text(0, sound.path)
 	music_item.set_metadata(0, sound)
 	
-	music_item.add_button(0, PLAY_ICON, 0)
+	music_item.set_icon(0, SOUND_ICON)
+	music_item.add_button(0, EDIT_ICON, 0)
+	music_item.add_button(0, PLAY_ICON, 1)
+	music_item.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
+	music_item.set_button_color(0, 1, Game.TREE_BUTTON_OFF_COLOR)
 	music_item.set_button_tooltip_text(0, 0, "Play this music for all players")
-	music_item.set_button_color(0, 0, Color.DARK_GRAY)
 	if from_position:
 		_set_playing(music_item, true, from_position)
 	
@@ -131,15 +135,7 @@ func get_data():
 
 
 func _on_item_activated():
-	if not sound_selected: return
-	
-	var resources_tab := Game.ui.tab_resources
-	resources_tab.visible = true
-	var resource_item := resources_tab.resource_items.get(sound_selected.path) as TreeItem
-	resource_item.uncollapse_tree()
-	resource_item.select(0)
-	var resource_tree := resource_item.get_tree()
-	resource_tree.item_activated.emit()
+	play_selected()
 	
 
 func _set_playing(sound_item: TreeItem, is_playing: bool, from_position := 0.0) -> void:
@@ -149,22 +145,43 @@ func _set_playing(sound_item: TreeItem, is_playing: bool, from_position := 0.0) 
 		return
 		
 	if is_playing:
-		sound_item.set_button_color(0, 0, Color.GREEN)
+		sound_item.set_custom_color(0, Color.GREEN)
 		now_playing.clear()
 		now_playing[sound] = sound_item
 		audio.file_path = sound.abspath
 		set_audio_attributes(sound)
 		audio.play(from_position)
 	elif sound in now_playing:
-		sound_item.set_button_color(0, 0, Color.DARK_GRAY)
+		sound_item.clear_custom_color(0)
 		now_playing.clear()
 		audio.stop()
 
 
-func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int) -> void:
+func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_index: int) -> void:
+	item.select(0)
+	if id == 0:
+		edit_selected()
+	elif id == 1:
+		play_selected()
+
+func edit_selected():
+	if not sound_selected: return
+	
+	var resources_tab := Game.ui.tab_resources
+	resources_tab.visible = true
+	var resource_item := resources_tab.resource_items.get(sound_selected.path) as TreeItem
+	resource_item.uncollapse_tree()
+	resource_item.select(0)
+	var resource_tree := resource_item.get_tree()
+	resource_tree.scroll_to_item(resource_item)
+	resource_tree.item_activated.emit()
+	
+
+func play_selected():
+	var item := tree.get_selected()
 	var sound := item_resource(item)
 
-	item.select(column)
+	item.select(0)
 		
 	if sound in now_playing:
 		for sound_playing in now_playing: 
@@ -178,7 +195,7 @@ func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_ind
 			
 		_set_playing(item, true)
 		Game.server.rpcs.play_theme_song.rpc(sound.path, muted)
-	
+		
 
 func _on_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int):
 	item_selected = tree.get_selected()
@@ -201,13 +218,13 @@ func _on_stop_button_pressed() -> void:
 		_set_playing(now_playing[sound_playing], false)
 		
 	Game.server.rpcs.play_theme_song.rpc("")
-	Debug.print_info_message("Sounds stopped")
+	Debug.print_info_message("Songs stopped")
 	
 
 func _on_resouce_button_pressed():
 	if not item_selected:
 		Game.ui.tab_resources.visible = true
-		Utils.temp_warning_tooltip("Select a Sound to see source")
+		Utils.temp_warning_tooltip("Select a Song to see source")
 		return
 	
 	_on_item_activated()
@@ -218,7 +235,7 @@ func _on_import_button_pressed():
 	var resource: CampaignResource = resources_tab.resource_selected
 	if not resource or resource.resource_type != CampaignResource.Type.SOUND:
 		resources_tab.visible = true
-		Utils.temp_warning_tooltip("Select a Sound to import")
+		Utils.temp_warning_tooltip("Select a Song to import")
 		return
 	
 	var sound_item := add_sound(resource)
@@ -234,8 +251,9 @@ func _on_import_button_pressed():
 
 
 func _on_clear_button_pressed():
+	tree.grab_focus()
 	if not item_selected: 
-		Utils.temp_error_tooltip("Select a Sound forget")
+		Utils.temp_error_tooltip("Select a Song")
 		return
 	
 	for sound in now_playing:
@@ -247,9 +265,9 @@ func _on_clear_button_pressed():
 	Debug.print_info_message("Songs removed")
 
 
-func _on_items_dropped(drop_data: Dictionary, _item_at_position: TreeItem, _drop_section: int):
+func _on_items_dropped(_type: String, items: Array, _item_at_position: TreeItem, _drop_section: int):
 	var sounds := []
-	for item in drop_data.items:
+	for item in items:
 		var resource: CampaignResource = item.get_metadata(0)
 		sounds.append(resource)
 		if resource.resource_type != CampaignResource.Type.SOUND:
@@ -269,3 +287,12 @@ func reset():
 	tree.clear()
 	root = tree.create_item()
 	root.set_text(0, "Music")
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.pressed:
+			if tree.has_focus():
+				if event.keycode == KEY_DELETE:
+					_on_clear_button_pressed()
+					get_viewport().set_input_as_handled()

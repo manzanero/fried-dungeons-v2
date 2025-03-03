@@ -4,7 +4,8 @@ extends Control
 signal save_campaign_button_pressed
 signal reload_campaign_button_pressed
 
-
+@onready var app_music: AudioStreamPlayer = $AppMusic
+@onready var home_animation: HomeAnimation = $HomeAnimation
 @onready var nav_bar: NavBar = %NavBar
 @onready var flow_border: Panel = %FlowBorder
 @onready var ide: MarginContainer = %IDE
@@ -51,15 +52,19 @@ signal reload_campaign_button_pressed
 @onready var build_border: Panel = %BuildBorder
 @onready var dicer: Dicer = %Dicer
 
-@onready var mode_controller: ModeController = %ModeController
-@onready var darkvision_button: Button = %DarkvisionButton
-
-@onready var state_label_value: Label = %StateLabelValue
-@onready var player_label_value: Label = %PlayerLabelValue
 @onready var tab_builder: TabBuilder = %Materials
 @onready var tab_resources: TabResources = %Resources
 @onready var minimize_down_button: Button = %MinimizeDownButton
 @onready var restore_down_button: Button = %RestoreDownButton
+
+# Utilities
+@onready var mode_controller: ModeController = %ModeController
+@onready var label_vision_button: Button = %LabelVisionButton
+@onready var darkvision_button: Button = %DarkvisionButton
+
+# debug
+@onready var state_label_value: Label = %StateLabelValue
+@onready var player_label_value: Label = %PlayerLabelValue
 
 
 var selected_scene_tab: TabScene :
@@ -70,15 +75,18 @@ var selected_map: Map :
 		
 var is_mouse_over_scene_tab: bool :
 	get: 
-		return selected_scene_tab.is_mouse_over
+		return selected_scene_tab and selected_scene_tab.is_mouse_over
 		
 var scene_tab_has_focus: bool :
 	get: 
-		return selected_scene_tab.scene_has_focus and not Game.control_uses_keyboard
+		return selected_scene_tab and selected_scene_tab.scene_has_focus and not Game.control_uses_keyboard
 
 
 var darkvision_enabled: bool :
 	get: return darkvision_button.button_pressed
+
+var label_vision_enabled: bool :
+	get: return label_vision_button.button_pressed
 	
 
 func init() -> UI:
@@ -118,6 +126,7 @@ func _ready() -> void:
 	minimize_down_button.pressed.connect(_on_minimize_down_pressed.bind(true))
 	restore_down_button.pressed.connect(_on_minimize_down_pressed.bind(false))
 	
+	label_vision_button.pressed.connect(_on_label_vision_button_pressed)
 	darkvision_button.pressed.connect(_on_darkvision_button_pressed)
 	
 	nav_bar.campaign_new_pressed.connect(_on_campaign_new_pressed)
@@ -135,6 +144,11 @@ func _ready() -> void:
 	nav_bar.help_how_to_start_pressed.connect(_on_help_how_to_start_pressed)
 	nav_bar.help_manual_pressed.connect(_on_help_manual_pressed)
 	nav_bar.help_about_pressed.connect(_on_help_about_pressed)
+	
+	home_animation.start()
+	Game.manager.campaign_loaded.connect(home_animation.stop)
+	app_music.finished.connect(app_music.play)
+	Game.manager.campaign_loaded.connect(app_music.stop)
 	
 	
 
@@ -231,10 +245,14 @@ func _on_help_about_pressed():
 
 func quit():
 	Game.manager.safe_quit()
-	
+
 
 func _on_darkvision_button_pressed():
 	Game.ui.selected_map.is_darkvision_view = darkvision_enabled
+	
+
+func _on_label_vision_button_pressed():
+	Game.ui.selected_map.label_vision_enabled.emit(label_vision_enabled)
 
 
 func _unhandled_input(event: InputEvent) -> void:
@@ -244,4 +262,8 @@ func _unhandled_input(event: InputEvent) -> void:
 				if Game.campaign:
 					darkvision_button.button_pressed = not darkvision_button.button_pressed
 					_on_darkvision_button_pressed()
+			if event.keycode == KEY_N:
+				if Game.campaign:
+					label_vision_button.button_pressed = not label_vision_button.button_pressed
+					_on_label_vision_button_pressed()
 	

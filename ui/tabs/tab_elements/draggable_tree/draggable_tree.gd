@@ -97,7 +97,7 @@ func _drop_data(at_position: Vector2, drop_data: Variant) -> void:
 	var drop_section := get_drop_section_at_position(at_position)
 	var item_at_position := get_item_at_position(at_position)
 	drop_mode_flags = Tree.DROP_MODE_DISABLED
-	if not item_at_position:
+	if not item_at_position and drop_section != -100:
 		Debug.print_error_message("Error on drop")
 		return
 	items_dropped.emit(drop_data.type, drop_data.items, item_at_position, drop_section)

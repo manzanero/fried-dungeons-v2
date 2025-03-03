@@ -12,6 +12,8 @@ var _dragged := false
 func set_scene_volume(muted: bool, volume: float):
 	master_volume_slider.set_value_no_signal( volume * 100)
 	master_mute_volume.button_pressed = muted
+	_on_mute_volume_pressed()
+	_set_master_volume(volume)
 
 
 func _ready() -> void:

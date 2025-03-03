@@ -7,6 +7,7 @@ signal map_loaded(slug: String)
 
 const UI_SCENE := preload("res://ui/ui.tscn")
 const TAB_SCENE := preload("res://ui/tabs/tab_scene/tab_scene.tscn")
+const HOME_ANIMATION = preload("res://ui/home_animation/home_animation.tscn")
 
 const PLAY_SCENE_ICON := preload("res://resources/icons/play_scene_icon.png")
 const SCENE_ICON := preload("res://resources/icons/scene_icon.png")
@@ -60,12 +61,38 @@ func _ready() -> void:
 	ui.scene_tabs.tab_changed.connect(_on_tab_changed)
 	ui.scene_tabs.child_order_changed.connect(refresh_tabs)
 	
+	#var home_animation: HomeAnimation = HOME_ANIMATION.instantiate()
+	#Game.manager.add_child(home_animation)
+	#campaign_loaded.connect(func (): ui.app_music.stop())
+	
 	reset()
 	
 	autosave()
 	
 	get_viewport().gui_focus_changed.connect(_on_focus_changed)
 	
+	# audio preferences
+	AudioServer.set_bus_volume_db(
+		AudioServer.get_bus_index("Master"), linear_to_db(Game.audio_preferences.master_volume))
+	if Game.audio_preferences.app_music:
+		Game.ui.app_music.play()
+	Game.ui.nav_bar.master_volume_controller.set_scene_volume(
+		not Game.audio_preferences.scene_sounds, Game.audio_preferences.scene_volume)
+	
+	# video preferences
+	var monitor := Game.video_preferences.start_on_monitor
+	monitor = clampi(monitor, 0, DisplayServer.get_screen_count())
+	if monitor:
+		var window_size := DisplayServer.window_get_size()
+		var screen_size := DisplayServer.screen_get_size(monitor)
+		var screen_position := DisplayServer.screen_get_position(monitor)
+		var window_position_x := screen_size.x / 2.0 - window_size.x / 2.0 + screen_position.x
+		var window_position_y := screen_size.y / 2.0 - window_size.y / 2.0 + screen_position.y
+		DisplayServer.window_set_current_screen(monitor)
+		DisplayServer.window_set_position(Vector2(window_position_x, window_position_y))
+	if Game.video_preferences.start_maximized:
+		DisplayServer.window_set_mode(DisplayServer.WINDOW_MODE_MAXIMIZED)
+
 	
 func _on_tab_changed(tab: int):
 	Game.ui.tab_world.reset()
@@ -82,9 +109,12 @@ func _on_tab_changed(tab: int):
 		if Game.master_is_player:
 			Game.ui.selected_map.selected_level.set_control(Game.master_is_player.elements)
 			Game.ui.selected_map.is_master_view = false
-		else:
+		elif Game.player_is_master:
 			Game.ui.selected_map.selected_level.set_master_control()
 			Game.ui.selected_map.is_master_view = true
+		else:
+			Game.ui.selected_map.selected_level.set_control(Game.player.elements)
+			Game.ui.selected_map.is_master_view = false
 		Game.ui.selected_map.is_darkvision_view = Game.ui.darkvision_enabled
 	
 	# disable process in hidden and non players tab
@@ -132,6 +162,11 @@ func _on_new_campaign(new_campaign_data: Dictionary, steam: bool) -> void:
 		},
 		"state": 1,
 	}
+	if new_campaign_data.get("example_resources"):
+		campaign_data["jukebox"] = {}
+		campaign_data["jukebox"]["music"] = {}
+		campaign_data["jukebox"]["music"]["Fried Dungeons Theme"] = {}
+		campaign_data["jukebox"]["music"]["Fried Dungeons Theme"]["resource"] = "Fried Dungeons Theme.mp3"
 	Utils.dump_json(campaign_path.path_join("campaign.json"), campaign_data, 2)
 	
 	var map_label := "Untitled"
@@ -140,10 +175,23 @@ func _on_new_campaign(new_campaign_data: Dictionary, steam: bool) -> void:
 	var map_data := {
 		"label": map_label
 	}
+	if new_campaign_data.get("example_resources"):
+		map_data["settings"] = {}
+		map_data["settings"]["atlas_texture"] = "texture_atlas.png"
 	Utils.dump_json(map_path.path_join("map.json"), map_data, 2)
 	
 	Utils.make_dirs(campaign_path.path_join("players"))
 	Utils.make_dirs(campaign_path.path_join("resources"))
+	
+	if new_campaign_data.get("example_resources"):
+		for files in [
+			["res://user/init_resources/heroes.png", campaign_path.path_join("resources").path_join("heroes.png")],
+			["res://user/init_resources/heroes.png.json", campaign_path.path_join("resources").path_join("heroes.png.json")],
+			["res://user/init_resources/texture_atlas.png", campaign_path.path_join("resources").path_join("texture_atlas.png")],
+			["res://user/init_resources/texture_atlas.png.json", campaign_path.path_join("resources").path_join("texture_atlas.png.json")],
+			["res://resources/music/FRIED-DUNGEONS_MAIN-v01_PRE.mp3", campaign_path.path_join("resources").path_join("Fried Dungeons Theme.mp3")],
+		]:
+			Utils.copy(files[0], files[1])
 	
 	_on_host_campaign(campaign_slug, campaign_data, steam)
 

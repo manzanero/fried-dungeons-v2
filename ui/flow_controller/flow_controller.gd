@@ -168,4 +168,20 @@ func stop() -> void:
 	Game.ui.flow_border.visible = true
 	if not Game.campaign.is_master:
 		Game.ui.master_cover.cover(0)
-	
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not Game.player_is_master:
+		return
+
+	if event is InputEventKey:
+		if event.pressed:
+			if event.keycode == KEY_SPACE:
+				if Game.control_uses_keyboard:
+					return
+				if not is_paused:
+					pause()
+					return
+				if is_paused:
+					play()
+					return

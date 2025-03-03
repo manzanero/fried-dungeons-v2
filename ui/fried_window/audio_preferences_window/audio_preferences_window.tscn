@@ -61,7 +61,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/MasterVolume/H" index="0"]
-text = "Master volume"
+text = "Master Volume"
 
 [node name="NumberEdit" parent="M/VBoxContainer/Body/V/C/M/Fields/MasterVolume/H" index="1"]
 suffix = "%"
@@ -70,15 +70,15 @@ max_value = 100.0
 step = 5.0
 text = "75"
 
-[node name="AppSounds" parent="M/VBoxContainer/Body/V/C/M/Fields" index="1" instance=ExtResource("4_dwpfx")]
+[node name="AppMusic" parent="M/VBoxContainer/Body/V/C/M/Fields" index="1" instance=ExtResource("4_dwpfx")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 1
 
-[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/AppSounds/H" index="0"]
-text = "App sounds"
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/AppMusic/H" index="0"]
+text = "App Music"
 
-[node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/AppSounds/H/FriedConvexPanel" index="0"]
+[node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/AppMusic/H/FriedConvexPanel" index="0"]
 button_pressed = true
 
 [node name="SceneSounds" parent="M/VBoxContainer/Body/V/C/M/Fields" index="2" instance=ExtResource("4_dwpfx")]
@@ -87,7 +87,7 @@ layout_mode = 2
 size_flags_vertical = 1
 
 [node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/SceneSounds/H" index="0"]
-text = "Scene sounds"
+text = "Scene Sounds"
 
 [node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/SceneSounds/H/FriedConvexPanel" index="0"]
 button_pressed = true
@@ -107,6 +107,6 @@ step = 5.0
 text = "75"
 
 [editable path="M/VBoxContainer/Body/V/C/M/Fields/MasterVolume"]
-[editable path="M/VBoxContainer/Body/V/C/M/Fields/AppSounds"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/AppMusic"]
 [editable path="M/VBoxContainer/Body/V/C/M/Fields/SceneSounds"]
 [editable path="M/VBoxContainer/Body/V/C/M/Fields/SceneVolume"]

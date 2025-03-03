@@ -363,6 +363,10 @@ func get_outline_color(color: Color) -> Color:
 	return Color.WHITE if color.get_luminance() < 0.33 else Color.BLACK
 
 
+func color_for_dark_bg(color: Color) -> Color:
+	return color.clamp(Color(0.2, 0.2, 0.2, 0), Color(0.8, 0.8, 0.8, 1))
+	
+
 #endregion
 
 #region text tool
@@ -474,6 +478,13 @@ func rename(from: String, to: String) -> Error:
 	var error := DirAccess.rename_absolute(from, to)
 	if error:
 		printerr("Error renaming (%s): %s" % [error, error_string(error)])
+	return error
+
+
+func copy(from: String, to: String) -> Error:
+	var error := DirAccess.copy_absolute(from, to)
+	if error:
+		printerr("Error copying (%s): %s" % [error, error_string(error)])
 	return error
 
 

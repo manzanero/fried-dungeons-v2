@@ -27,7 +27,7 @@ func get_children() -> Array[CampaignBlueprint]:
 var path: String :
 	get: return Game.ui.tab_blueprints.get_tree_path(id)
 
-var name: String :
+var label: String :
 	get: return Game.ui.tab_blueprints.blueprint_items[id].get_text(0)
 	
 var type: String

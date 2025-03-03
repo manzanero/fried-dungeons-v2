@@ -1,6 +1,7 @@
-[gd_scene load_steps=2 format=3 uid="uid://c546it4fefagq"]
+[gd_scene load_steps=3 format=3 uid="uid://c546it4fefagq"]
 
 [ext_resource type="Script" path="res://assets/element/element.gd" id="1_gx72e"]
+[ext_resource type="PackedScene" uid="uid://blukfp887yh7v" path="res://assets/element/element_info/element_info.tscn" id="2_yi4w6"]
 
 [node name="Element" type="CharacterBody3D" groups=["elements"]]
 collision_layer = 65536
@@ -10,3 +11,7 @@ axis_lock_angular_z = true
 script = ExtResource("1_gx72e")
 
 [node name="Elements" type="Node3D" parent="."]
+unique_name_in_owner = true
+
+[node name="Info" parent="." instance=ExtResource("2_yi4w6")]
+unique_name_in_owner = true

@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=3 uid="uid://83d8jfjfqtrl"]
+[gd_scene load_steps=25 format=3 uid="uid://83d8jfjfqtrl"]
 
 [ext_resource type="Script" path="res://ui/flow_controller/flow_controller.gd" id="1_154cc"]
 [ext_resource type="Texture2D" uid="uid://djhtp0rlxmu50" path="res://resources/icons/play_icon.png" id="1_onlkp"]
@@ -23,6 +23,20 @@ corner_radius_bottom_left = 6
 corner_detail = 1
 shadow_size = 2
 shadow_offset = Vector2(0, 1)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_df46y"]
+content_margin_top = 0.0
+content_margin_bottom = 0.0
+bg_color = Color(0.0142752, 0.0142752, 0.0142752, 1)
+border_width_top = 8
+border_width_bottom = 8
+border_color = Color(0.0807833, 0.0807834, 0.0807833, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ue4d1"]
 content_margin_left = 8.0
@@ -207,6 +221,15 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_dmvp8")
 script = ExtResource("1_154cc")
 
 [node name="H" type="HBoxContainer" parent="."]
+layout_mode = 2
+theme_override_constants/separation = 0
+
+[node name="C" type="PanelContainer" parent="H"]
+visible = false
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_df46y")
+
+[node name="C" type="HBoxContainer" parent="H/C"]
 layout_mode = 2
 theme_override_constants/separation = 0
 

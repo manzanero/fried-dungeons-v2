@@ -35,7 +35,7 @@ func _process_state(_delta: float) -> String:
 	return super(_delta)
 
 
-func _physics_process_state(_delta: float) -> String:		
+func _physics_process_state(_delta: float) -> String:
 	if Input.is_action_just_pressed("key_c") and wall_hovered:
 		Game.ui.tab_builder.material_index_selected = wall_hovered.material_index
 		

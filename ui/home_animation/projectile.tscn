@@ -1,0 +1,26 @@
+[gd_scene load_steps=3 format=3 uid="uid://y1pclh5ewrkj"]
+
+[ext_resource type="Script" path="res://ui/home_animation/projectile.gd" id="1_3glwh"]
+[ext_resource type="Texture2D" uid="uid://dbxhuhcj3ltf4" path="res://resources/images/barbaro.png" id="1_w8ufv"]
+
+[node name="Projectile" type="RigidBody2D" node_paths=PackedStringArray("visible_on_screen_notifier_2d", "sprite_2d")]
+process_priority = 1
+process_physics_priority = 1
+process_thread_group = 2
+process_thread_group_order = 1
+process_thread_messages = 3
+physics_interpolation_mode = 1
+gravity_scale = 0.25
+script = ExtResource("1_3glwh")
+visible_on_screen_notifier_2d = NodePath("VisibleOnScreenNotifier2D")
+sprite_2d = NodePath("Sprite2D")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+physics_interpolation_mode = 1
+texture_filter = 6
+scale = Vector2(2, 2)
+texture = ExtResource("1_w8ufv")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+position = Vector2(11.5, -8.5)
+scale = Vector2(27.15, 28.85)

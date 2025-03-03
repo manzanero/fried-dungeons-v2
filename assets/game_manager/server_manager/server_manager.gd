@@ -429,6 +429,8 @@ func load_campaign(campaign_slug: String, campaign_data: Dictionary, is_steam_ca
 	
 	# init map
 	request_map.rpc_id(1, campaign_data.players_map)
+	
+	Game.manager.campaign_loaded.emit()
 
 
 # player

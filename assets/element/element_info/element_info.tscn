@@ -1,0 +1,31 @@
+[gd_scene load_steps=3 format=3 uid="uid://blukfp887yh7v"]
+
+[ext_resource type="Script" path="res://assets/element/element_info/element_info.gd" id="1_6ch6v"]
+[ext_resource type="LabelSettings" uid="uid://ywtmta1ah3jd" path="res://resources/themes/main/element_label_settings.tres" id="1_aqsor"]
+
+[node name="Info" type="Control" node_paths=PackedStringArray("label_label") groups=["info"]]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+script = ExtResource("1_6ch6v")
+label_label = NodePath("VBoxContainer/LabelLabel")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -16.0
+offset_right = 16.0
+offset_bottom = 16.0
+grow_horizontal = 2
+
+[node name="LabelLabel" type="Label" parent="VBoxContainer"]
+unique_name_in_owner = true
+layout_mode = 2
+text = "Unkown"
+label_settings = ExtResource("1_aqsor")
+horizontal_alignment = 1
+
+[node name="BarsContainer" type="VBoxContainer" parent="VBoxContainer"]
+layout_mode = 2

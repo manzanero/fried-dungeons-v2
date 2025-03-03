@@ -61,7 +61,8 @@ const NULL_TILE := Vector2i.ONE * 999999
 
 #region ui
 const TREE_TEXT_OFF_COLOR := Color(0.5, 0.5, 0.5)
-const TREE_BUTTON_OFF_COLOR := Color(0.25, 0.25, 0.25)
+const TREE_BUTTON_ON_COLOR := Color(0.8, 0.8, 0.8)
+const TREE_BUTTON_OFF_COLOR := Color(0.2, 0.2, 0.2)
 const WHITE_PIXEL: Texture2D = preload("res://resources/icons/white_pixel.png")
 
 #endregion

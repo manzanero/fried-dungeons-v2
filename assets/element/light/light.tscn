@@ -1,8 +1,9 @@
-[gd_scene load_steps=11 format=3 uid="uid://pkib2j8f0521"]
+[gd_scene load_steps=12 format=3 uid="uid://pkib2j8f0521"]
 
 [ext_resource type="Script" path="res://assets/element/light/light.gd" id="1_j4ayf"]
 [ext_resource type="Shader" path="res://assets/element/light/sphere.gdshader" id="3_cc4i3"]
 [ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="3_dc0qo"]
+[ext_resource type="PackedScene" uid="uid://blukfp887yh7v" path="res://assets/element/element_info/element_info.tscn" id="4_bn0su"]
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_q4m0d"]
 resource_local_to_scene = true
@@ -18,7 +19,7 @@ disable_ambient_light = true
 disable_fog = true
 albedo_color = Color(0.745098, 0.752941, 0.752941, 0.756863)
 
-[sub_resource type="ImmediateMesh" id="ImmediateMesh_bdty8"]
+[sub_resource type="ImmediateMesh" id="ImmediateMesh_peafs"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_3dj65"]
 radius = 0.25
@@ -55,6 +56,7 @@ transform = Transform3D(0.125, 0, 0, 0, 0.125, 0, 0, 0, 0.125, 0, 1, 0)
 shape = SubResource("CylinderShape3D_q4m0d")
 
 [node name="Elements" type="Node3D" parent="."]
+unique_name_in_owner = true
 
 [node name="OmniLight3D" type="OmniLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
@@ -71,7 +73,7 @@ material_override = SubResource("StandardMaterial3D_aqxnx")
 cast_shadow = 0
 ignore_occlusion_culling = true
 gi_mode = 0
-mesh = SubResource("ImmediateMesh_bdty8")
+mesh = SubResource("ImmediateMesh_peafs")
 script = ExtResource("3_dc0qo")
 start_thickness = 0.031
 end_thickness = 0.031
@@ -110,3 +112,6 @@ collision_mask = 0
 [node name="CollisionShape3D" type="CollisionShape3D" parent="SelectorCollider"]
 transform = Transform3D(2, 0, 0, 0, 2, 0, 0, 0, 2, 0, 0, 0)
 shape = SubResource("SphereShape3D_66866")
+
+[node name="Info" parent="." instance=ExtResource("4_bn0su")]
+unique_name_in_owner = true

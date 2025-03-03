@@ -5,6 +5,7 @@
 [ext_resource type="Texture2D" uid="uid://oitqjwhnc6e7" path="res://resources/icons/paint_icon.png" id="2_2o6pb"]
 [ext_resource type="Texture2D" uid="uid://bflwvyf02ftuv" path="res://resources/icons/paint_rect_icon.png" id="3_kf1h2"]
 [ext_resource type="Texture2D" uid="uid://cf2qu7kd2ps63" path="res://resources/icons/bucket_icon.png" id="3_qri2x"]
+[ext_resource type="Texture2D" uid="uid://c6mon70wvso7o" path="res://resources/icons/edit_point_icon.png" id="4_345ks"]
 [ext_resource type="Texture2D" uid="uid://dhtm7760o8rtn" path="res://resources/icons/tile_icon.png" id="5_kcjrc"]
 [ext_resource type="Texture2D" uid="uid://dnmh2fdchypqf" path="res://resources/icons/bound_icon.png" id="5_vy005"]
 [ext_resource type="Texture2D" uid="uid://b3fnrkka8imdn" path="res://resources/icons/fence_icon.png" id="6_3qg6s"]
@@ -26,7 +27,6 @@
 [ext_resource type="Texture2D" uid="uid://jyxcyp17m0mt" path="res://resources/icons/passage_icon.png" id="17_0fr0p"]
 [ext_resource type="Texture2D" uid="uid://ddo02qovt2ukm" path="res://resources/icons/move_icon.png" id="17_qct3b"]
 [ext_resource type="Texture2D" uid="uid://1b7cvgs3dip3" path="res://resources/icons/copy_icon.png" id="21_2msfg"]
-[ext_resource type="Texture2D" uid="uid://i6h6m0ag23n1" path="res://resources/icons/selection_icon.png" id="21_y5fyx"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_0eybk"]
 content_margin_left = 2.0
@@ -160,7 +160,7 @@ tooltip_text = "Wall Editing"
 focus_mode = 0
 toggle_mode = true
 button_group = SubResource("ButtonGroup_6c6o5")
-icon = ExtResource("21_y5fyx")
+icon = ExtResource("4_345ks")
 
 [node name="LightButton" type="Button" parent="V/C2/HBoxContainer/C/Modes"]
 unique_name_in_owner = true
@@ -208,18 +208,37 @@ layout_mode = 2
 size_flags_horizontal = 0
 theme_override_constants/margin_left = 12
 
-[node name="ModesOptions" type="PanelContainer" parent="V/C"]
+[node name="H" type="HBoxContainer" parent="V/C"]
+layout_mode = 2
+
+[node name="ModifiersButtons" type="PanelContainer" parent="V/C/H"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 0
+size_flags_vertical = 0
+theme_override_styles/panel = SubResource("StyleBoxFlat_xc5mm")
+
+[node name="FlippedButton" type="Button" parent="V/C/H/ModifiersButtons"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "(Shift + F) Reverve Mode"
+focus_mode = 0
+toggle_mode = true
+icon = ExtResource("13_1ju8h")
+
+[node name="ModesOptions" type="PanelContainer" parent="V/C/H"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 0
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_xc5mm")
 
-[node name="V" type="VBoxContainer" parent="V/C/ModesOptions"]
+[node name="V" type="VBoxContainer" parent="V/C/H/ModesOptions"]
 layout_mode = 2
 theme_override_constants/separation = 2
 
-[node name="GroundOptions" type="HBoxContainer" parent="V/C/ModesOptions/V"]
+[node name="GroundOptions" type="HBoxContainer" parent="V/C/H/ModesOptions/V"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
@@ -227,7 +246,7 @@ size_flags_horizontal = 0
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="PaintTileButton" type="Button" parent="V/C/ModesOptions/V/GroundOptions"]
+[node name="PaintTileButton" type="Button" parent="V/C/H/ModesOptions/V/GroundOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -237,7 +256,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_nyg8b")
 icon = ExtResource("2_2o6pb")
 
-[node name="RectButton" type="Button" parent="V/C/ModesOptions/V/GroundOptions"]
+[node name="RectButton" type="Button" parent="V/C/H/ModesOptions/V/GroundOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -247,7 +266,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_nyg8b")
 icon = ExtResource("3_kf1h2")
 
-[node name="BucketButton" type="Button" parent="V/C/ModesOptions/V/GroundOptions"]
+[node name="BucketButton" type="Button" parent="V/C/H/ModesOptions/V/GroundOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -257,7 +276,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_nyg8b")
 icon = ExtResource("3_qri2x")
 
-[node name="EraseButton" type="Button" parent="V/C/ModesOptions/V/GroundOptions"]
+[node name="EraseButton" type="Button" parent="V/C/H/ModesOptions/V/GroundOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -267,7 +286,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_nyg8b")
 icon = ExtResource("6_vgurn")
 
-[node name="WallOptions" type="HBoxContainer" parent="V/C/ModesOptions/V"]
+[node name="WallOptions" type="HBoxContainer" parent="V/C/H/ModesOptions/V"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
@@ -275,7 +294,7 @@ size_flags_horizontal = 0
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="BoundButton" type="Button" parent="V/C/ModesOptions/V/WallOptions"]
+[node name="BoundButton" type="Button" parent="V/C/H/ModesOptions/V/WallOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -285,7 +304,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_p7v7q")
 icon = ExtResource("5_vy005")
 
-[node name="FenceButton" type="Button" parent="V/C/ModesOptions/V/WallOptions"]
+[node name="FenceButton" type="Button" parent="V/C/H/ModesOptions/V/WallOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -295,7 +314,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_p7v7q")
 icon = ExtResource("6_3qg6s")
 
-[node name="BarrierButton" type="Button" parent="V/C/ModesOptions/V/WallOptions"]
+[node name="BarrierButton" type="Button" parent="V/C/H/ModesOptions/V/WallOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -305,7 +324,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_p7v7q")
 icon = ExtResource("7_88rql")
 
-[node name="BoxButton" type="Button" parent="V/C/ModesOptions/V/WallOptions"]
+[node name="BoxButton" type="Button" parent="V/C/H/ModesOptions/V/WallOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -315,7 +334,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_p7v7q")
 icon = ExtResource("8_lge2m")
 
-[node name="PassageButton" type="Button" parent="V/C/ModesOptions/V/WallOptions"]
+[node name="PassageButton" type="Button" parent="V/C/H/ModesOptions/V/WallOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -325,7 +344,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_p7v7q")
 icon = ExtResource("17_0fr0p")
 
-[node name="WallEditOptions" type="HBoxContainer" parent="V/C/ModesOptions/V"]
+[node name="WallEditOptions" type="HBoxContainer" parent="V/C/H/ModesOptions/V"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
@@ -333,7 +352,7 @@ size_flags_horizontal = 0
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="SelectWallButton" type="Button" parent="V/C/ModesOptions/V/WallEditOptions"]
+[node name="SelectWallButton" type="Button" parent="V/C/H/ModesOptions/V/WallEditOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -343,7 +362,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_nyg8b")
 icon = ExtResource("17_qct3b")
 
-[node name="ReverseWallButton" type="Button" parent="V/C/ModesOptions/V/WallEditOptions"]
+[node name="ReverseWallButton" type="Button" parent="V/C/H/ModesOptions/V/WallEditOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -353,7 +372,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_nyg8b")
 icon = ExtResource("13_1ju8h")
 
-[node name="ChangeWallButton" type="Button" parent="V/C/ModesOptions/V/WallEditOptions"]
+[node name="ChangeWallButton" type="Button" parent="V/C/H/ModesOptions/V/WallEditOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -363,7 +382,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_nyg8b")
 icon = ExtResource("21_2msfg")
 
-[node name="PaintWallButton" type="Button" parent="V/C/ModesOptions/V/WallEditOptions"]
+[node name="PaintWallButton" type="Button" parent="V/C/H/ModesOptions/V/WallEditOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -373,7 +392,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_nyg8b")
 icon = ExtResource("1_ho4gg")
 
-[node name="CutWallButton" type="Button" parent="V/C/ModesOptions/V/WallEditOptions"]
+[node name="CutWallButton" type="Button" parent="V/C/H/ModesOptions/V/WallEditOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -383,7 +402,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_nyg8b")
 icon = ExtResource("13_hpqhh")
 
-[node name="LightOptions" type="HBoxContainer" parent="V/C/ModesOptions/V"]
+[node name="LightOptions" type="HBoxContainer" parent="V/C/H/ModesOptions/V"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
@@ -391,7 +410,7 @@ size_flags_horizontal = 0
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="OmniLightButton" type="Button" parent="V/C/ModesOptions/V/LightOptions"]
+[node name="OmniLightButton" type="Button" parent="V/C/H/ModesOptions/V/LightOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -401,7 +420,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_4wjwj")
 icon = ExtResource("9_v4b77")
 
-[node name="EntityOptions" type="HBoxContainer" parent="V/C/ModesOptions/V"]
+[node name="EntityOptions" type="HBoxContainer" parent="V/C/H/ModesOptions/V"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
@@ -409,7 +428,7 @@ size_flags_horizontal = 0
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Entity3DButton" type="Button" parent="V/C/ModesOptions/V/EntityOptions"]
+[node name="Entity3DButton" type="Button" parent="V/C/H/ModesOptions/V/EntityOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -419,7 +438,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_alxa2")
 icon = ExtResource("10_o80du")
 
-[node name="BillboardButton" type="Button" parent="V/C/ModesOptions/V/EntityOptions"]
+[node name="BillboardButton" type="Button" parent="V/C/H/ModesOptions/V/EntityOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -429,7 +448,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_alxa2")
 icon = ExtResource("11_ehnmh")
 
-[node name="PropOptions" type="HBoxContainer" parent="V/C/ModesOptions/V"]
+[node name="PropOptions" type="HBoxContainer" parent="V/C/H/ModesOptions/V"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
@@ -437,7 +456,7 @@ size_flags_horizontal = 0
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="Prop3DButton" type="Button" parent="V/C/ModesOptions/V/PropOptions"]
+[node name="Prop3DButton" type="Button" parent="V/C/H/ModesOptions/V/PropOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -447,7 +466,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_alxa2")
 icon = ExtResource("12_cloxs")
 
-[node name="DecalButton" type="Button" parent="V/C/ModesOptions/V/PropOptions"]
+[node name="DecalButton" type="Button" parent="V/C/H/ModesOptions/V/PropOptions"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
@@ -457,7 +476,7 @@ toggle_mode = true
 button_group = SubResource("ButtonGroup_alxa2")
 icon = ExtResource("13_aieav")
 
-[node name="AreaOptions" type="HBoxContainer" parent="V/C/ModesOptions/V"]
+[node name="AreaOptions" type="HBoxContainer" parent="V/C/H/ModesOptions/V"]
 unique_name_in_owner = true
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2

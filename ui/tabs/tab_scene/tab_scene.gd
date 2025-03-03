@@ -39,11 +39,13 @@ func init(map_slug: String, map_data: Dictionary, send_players := false):
 	
 	name = map_data.label
 	sub_viewport.positional_shadow_atlas_size = Game.video_preferences.get_positional_shadow_atlas_size()
+	sub_viewport.scaling_3d_scale = Game.video_preferences.scene_resolution
 	
-	Game.ui.tab_properties.settings.reset()  # ???
+	Game.ui.tab_properties.settings.reset()
 	
-	visibility_changed.connect(_on_visibility_changed)
-	_on_visibility_changed()
+	crt.visible = visible and Game.video_preferences.crt_filter
+	#visibility_changed.connect(_on_visibility_changed)
+	#_on_visibility_changed()
 	
 	item_rect_changed.connect(func ():
 		crt.material.set_shader_parameter("resolution", sub_viewport.size)
@@ -53,8 +55,8 @@ func init(map_slug: String, map_data: Dictionary, send_players := false):
 	return self
 	
 
-func _on_visibility_changed():
-	crt.visible = visible and Game.video_preferences.crt_filter
+#func _on_visibility_changed():
+	#crt.visible = visible and Game.video_preferences.crt_filter
 
 
 func remove():
@@ -100,10 +102,7 @@ func _on_mouse_entered():
 	# prevent trigger keys while writting or using a control
 	if Game.control_uses_keyboard:
 		return
-		 
-	#focus_mode = FOCUS_ALL
-	#grab_focus()
-	#focus_mode = FOCUS_NONE
+
 	get_viewport().gui_release_focus()
 	scene_has_focus = true
 	map.camera.is_operated = true
@@ -146,7 +145,8 @@ func _input(event: InputEvent) -> void:
 			scene_has_focus = is_mouse_over
 			map.camera.is_operated = is_mouse_over
 			if is_mouse_over:
-				focus_mode = FOCUS_ALL
-				grab_focus()
-				focus_mode = FOCUS_NONE
+				get_viewport().gui_release_focus()
+				#focus_mode = FOCUS_ALL
+				#grab_focus()
+				#focus_mode = FOCUS_NONE
 			

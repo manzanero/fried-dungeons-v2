@@ -13,6 +13,8 @@ var unsaved_blueprints: Array[CampaignBlueprint] = []
 
 
 func _set_element_selected(element: Element):
+	Game.ui.tab_elements.select_element(element)
+	
 	Utils.safe_queue_free(root_container)
 	containers_tree.clear()
 	if not element:
@@ -83,11 +85,14 @@ func _on_field_value_changed(property_name: String, new_value: Variant):
 	var blueprint := element_selected.blueprint
 	if blueprint and property_name != "label":
 		blueprint.set_property(property_name, new_value)
+		
 		if property_name == "color":
-			Game.ui.tab_blueprints.set_item_color(blueprint.id, new_value)
+			Game.ui.tab_blueprints.changed_blueprint(blueprint)
+			
 		if not unsaved_blueprints.has(blueprint):
 			unsaved_blueprints.append(blueprint)
 			save_blueprints()
+			
 	else:
 		element_selected.set_property_value(property_name, new_value)
 		var level := element_selected.level

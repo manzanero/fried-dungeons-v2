@@ -10,6 +10,9 @@ enum {
 var mode: int
 var material_index_selected: int :
 	get: return Game.ui.tab_builder.material_index_selected
+var flipped: bool :
+	get: return Game.modes.flipped
+
 
 var st := SurfaceTool.new()
 
@@ -53,19 +56,12 @@ func _process_state(_delta: float) -> String:
 
 
 func _physics_process_state(_delta: float) -> String:
-	if not level.is_selected:
-		return Level.State.GO_BACKGROUND
-	
 	if Input.is_action_just_pressed("key_c"):
 		var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.wall_ray)
 		if hit_info:
 			Game.ui.tab_builder.material_index_selected = hit_info.collider.get_parent().material_index
 	
 	process_ground_hitted()
-	
-	if Input.is_action_just_pressed("ui_cancel"):
-		Game.modes.reset()
-		return Level.State.GO_IDLE
 	
 	match mode:
 		ONE_SIDED:
@@ -79,19 +75,19 @@ func _physics_process_state(_delta: float) -> String:
 		BARRIER:
 			process_change_grid()
 			process_change_column(Game.SNAPPING_QUARTER)
-			process_build_barrier(0.25, true)
+			process_build_barrier(0.25, not flipped)
 		PASSAGE:
 			process_change_grid()
 			process_change_column()
-			process_build_passage(0.5, false)
+			process_build_passage(0.5, flipped)
 		ROOM:
 			process_change_grid()
 			process_change_column()
-			process_build_room()
+			process_build_room(not flipped)
 		OBSTACLE:
 			process_change_grid()
 			process_change_column()
-			process_build_room(true)
+			process_build_room(flipped)
 			
 		PAINT_WALL:
 			process_hover_wall()
@@ -224,7 +220,7 @@ func process_build_one_sided_start(two_sided := false) -> void:
 		
 		
 func process_build_one_sided_next_point() -> void:
-	var origin := Utils.v2_to_v3(_click_origin_position)
+	var origin := _wall_being_builded.points[0 if flipped else -1].position_3d
 	var destiny: Vector3 = selector.column.position
 	_create_temp_wall(origin, destiny)
 		
@@ -236,9 +232,6 @@ func process_build_one_sided_new_point() -> void:
 		if not mouse_move and Input.is_action_just_released("right_click"):
 			_stop_creating_wall()
 		mouse_move = false
-		
-	#if Input.is_action_just_pressed("right_click"):
-		#_stop_creating_wall()
 	
 	if Input.is_action_just_pressed("left_click"):
 		var destiny := Utils.v3_to_v2(selector.column.position)
@@ -246,7 +239,10 @@ func process_build_one_sided_new_point() -> void:
 			_stop_creating_wall()
 		else:
 			_click_origin_position = Utils.v3_to_v2(selector.column.position)
-			_wall_being_builded.add_point(_click_origin_position)
+			if flipped:
+				_wall_being_builded.add_point(_click_origin_position, 0)
+			else:
+				_wall_being_builded.add_point(_click_origin_position)
 			
 			Game.server.rpcs.set_wall_points.rpc(map.slug, level.index, 
 					_wall_being_builded.id, 
@@ -255,9 +251,14 @@ func process_build_one_sided_new_point() -> void:
 			Debug.print_info_message("Wall \"%s\" changed" % _wall_being_builded.id)
 			
 			# detect if closed
-			if _click_origin_position == _wall_being_builded.points_position_2d[0]:
-				_wall_being_builded.is_closed = true  # no need to send this to players?
-				_stop_creating_wall()
+			if flipped:
+				if _click_origin_position == _wall_being_builded.points_position_2d[-1]:
+					_wall_being_builded.is_closed = true  # no need to send this to players?
+					_stop_creating_wall()
+			else:
+				if _click_origin_position == _wall_being_builded.points_position_2d[0]:
+					_wall_being_builded.is_closed = true  # no need to send this to players?
+					_stop_creating_wall()
 			
 			
 func _stop_creating_wall():
@@ -358,7 +359,9 @@ func process_cut_start() -> void:
 		
 
 func process_build_room(wall_outside := false) -> void:
-	if Input.is_action_just_pressed("right_click"):
+	prevent_exit = _is_rect_being_builded
+	
+	if Input.is_action_just_released("right_click"):
 		selector.area.visible = false
 		selector.wall.visible = false
 		_is_rect_being_builded = false
@@ -451,8 +454,10 @@ func _create_temp_room_face(index_offset: int, origin: Vector3, destiny: Vector3
 	st.add_index(index_offset + 2)
 		
 
-func process_build_barrier(thickness := 0.25, wall_outside := true) -> void:
-	if Input.is_action_just_pressed("right_click"):
+func process_build_barrier(thickness := 0.25, _flipped := false) -> void:
+	prevent_exit = _is_rect_being_builded
+	
+	if Input.is_action_just_released("right_click"):
 		selector.area.visible = false
 		selector.wall.visible = false
 		_is_rect_being_builded = false
@@ -479,17 +484,12 @@ func process_build_barrier(thickness := 0.25, wall_outside := true) -> void:
 			
 		var direction := origin.direction_to(destiny)
 		var pdir := Vector2(-direction.y, direction.x)
-			
-		var points := [
-			origin,
-			origin - pdir * thickness, 
-			destiny - pdir * thickness,
-			destiny, 
-			origin,
-		]
 		
-		if wall_outside:
-			points.reverse()
+		var points: Array
+		if _flipped:
+			points = [origin, destiny, destiny - pdir * thickness, origin - pdir * thickness, origin]
+		else:
+			points = [origin, origin + pdir * thickness, destiny + pdir * thickness, destiny, origin]
 		
 		var point_snap := Game.SNAPPING_QUARTER
 		if Input.is_key_pressed(KEY_ALT):
@@ -515,12 +515,21 @@ func _create_temp_barrier(origin: Vector3, destiny: Vector3, thickness: float) -
 	var index_offset := 0
 	var direction := origin.direction_to(destiny)
 	var pdir := Vector3(-direction.z, 0, direction.x)
-	var faces := [
-		{"origin": origin, "destiny": destiny},
-		{"origin": destiny, "destiny": destiny - pdir * thickness},
-		{"origin": destiny - pdir * thickness, "destiny": origin - pdir * thickness},
-		{"origin": origin - pdir * thickness, "destiny": origin},
-	]
+	var faces: Array
+	if flipped:
+		faces = [
+			{"origin": origin, "destiny": destiny},
+			{"origin": destiny, "destiny": destiny + pdir * thickness},
+			{"origin": destiny + pdir * thickness, "destiny": origin + pdir * thickness},
+			{"origin": origin + pdir * thickness, "destiny": origin},
+		]
+	else:
+		faces = [
+			{"origin": origin, "destiny": destiny},
+			{"origin": destiny, "destiny": destiny - pdir * thickness},
+			{"origin": destiny - pdir * thickness, "destiny": origin - pdir * thickness},
+			{"origin": origin - pdir * thickness, "destiny": origin},
+		]
 	
 	st.clear()
 	st.begin(Mesh.PRIMITIVE_TRIANGLES)
@@ -534,7 +543,9 @@ func _create_temp_barrier(origin: Vector3, destiny: Vector3, thickness: float) -
 	
 
 func process_build_passage(thickness := 0.5, wall_outside := false) -> void:
-	if Input.is_action_just_pressed("right_click"):
+	prevent_exit = _is_rect_being_builded
+	
+	if Input.is_action_just_released("right_click"):
 		selector.area.visible = false
 		selector.wall.visible = false
 		_is_rect_being_builded = false
@@ -592,7 +603,7 @@ func process_build_passage(thickness := 0.5, wall_outside := false) -> void:
 				wall_2.material_index, wall_2.material_seed, wall_2.material_layer, wall_2.two_sided)
 			
 		Debug.print_info_message("Wall \"%s\" created" % wall_2.id)
-		
+
 
 func _create_temp_passage(origin: Vector3, destiny: Vector3, thickness: float) -> void:
 	var point_snap := Game.SNAPPING_QUARTER

@@ -34,7 +34,7 @@ void fragment() {
 
 void light() {
 	vec3 color = LIGHT_COLOR;
-	if (is_darkvision_view) 
+	if (is_darkvision_view)
 		color = vec3(pow((color.r * color.g * color.b), 0.33));
 
 	// if fragment is seen

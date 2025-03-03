@@ -73,6 +73,7 @@ func _on_texture_button_pressed():
 	resource_item.uncollapse_tree()
 	resource_item.select(0)
 	var tree := resource_item.get_tree()
+	tree.scroll_to_item(resource_item)
 	tree.item_activated.emit()
 	
 	var resource: CampaignResource = resource_item.get_metadata(0)

@@ -130,7 +130,6 @@ theme_override_constants/draw_relationship_lines = 0
 theme_override_styles/selected = SubResource("StyleBoxFlat_0akgd")
 theme_override_styles/selected_focus = SubResource("StyleBoxFlat_0akgd")
 hide_folding = true
-hide_root = false
 scroll_horizontal_enabled = false
 allow_drop_on_item = true
 drop_types_allowed = ["element"]

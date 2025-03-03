@@ -43,6 +43,7 @@ func get_tree_path(id: String) -> String:
 
 @onready var new_button: MenuButton = %NewButton
 @onready var folder_button: Button = %FolderButton
+@onready var label_line_edit: LineEdit = %LabelLineEdit
 @onready var scan_button: Button = %ScanButton
 
 @onready var tree: DraggableTree = %DraggableTree
@@ -59,6 +60,7 @@ func _ready() -> void:
 	new_popup.get_window().transparent = true
 	new_popup.id_pressed.connect(_on_new_popup_id_pressed)
 	folder_button.pressed.connect(_on_folder_button_pressed)
+	label_line_edit.text_changed.connect(_on_label_filter_changed.unbind(1))
 	scan_button.pressed.connect(_on_scan_button_pressed)
 	
 	instance_button.pressed.connect(_on_instance_button_pressed)
@@ -117,6 +119,23 @@ func _on_new_popup_id_pressed(id: int) -> void:
 
 func _on_folder_button_pressed() -> void:
 	Utils.open_in_file_manager(blueprint_selected.abspath)
+	
+
+func _on_label_filter_changed():
+	var visibles: Array[TreeItem] = [root]
+	var filter := label_line_edit.text.to_lower()
+	for item: TreeItem in blueprint_items.values():
+		var label := item.get_text(0)
+		if filter and filter not in label.to_lower():
+			item.visible = false
+		else:
+			item.visible = true
+			visibles.append(item)
+			var parent := item.get_parent()
+			while parent not in visibles:
+				parent.visible = true
+				parent = parent.get_parent()
+	root.visible = true
 
 
 func _on_scan_button_pressed() -> void:
@@ -262,11 +281,12 @@ func reset() -> void:
 	root.set_tooltip_text(0, " ")
 	var root_blueprint = CampaignBlueprint.new(CampaignBlueprint.Type.FOLDER, "")
 	root.set_metadata(0, root_blueprint)
-	blueprint_items[""] = root
-	Game.blueprints[""] = root_blueprint
+	#blueprint_items[""] = root
+	#Game.blueprints[""] = root_blueprint
 	
 	walk_dirs(root, Game.campaign.blueprints_path)
 	sort_children(root)
+	_on_label_filter_changed()
 	_regenerate_selection()
 
 
@@ -308,7 +328,7 @@ func add_blueprint(parent: TreeItem, blueprint_name: String, blueprint: Campaign
 		_: blueprint_item.set_icon(0, GODOT_ICON)
 	
 	var color: Color = blueprint.properties.get("color", Color.WHITE)
-	blueprint_item.set_icon_modulate(0, Color.WHITE if color.get_luminance() < 0.1 else color)
+	blueprint_item.set_icon_modulate(0, Utils.color_for_dark_bg(color))
 	
 	blueprint_items[blueprint.id] = blueprint_item
 	Game.blueprints[blueprint.id] = blueprint
@@ -316,20 +336,20 @@ func add_blueprint(parent: TreeItem, blueprint_name: String, blueprint: Campaign
 	return blueprint_item
 
 
+func changed_blueprint(blueprint: CampaignBlueprint):
+	var blueprint_item: TreeItem = blueprint_items.get(blueprint.id)
+	if not blueprint_item:
+		return
+	
+	var color: Color = blueprint.properties.get("color", Color.WHITE)
+	blueprint_item.set_icon_modulate(0, Utils.color_for_dark_bg(color))
+
+
 func _on_button_clicked(item: TreeItem, column: int, _id: int, _mouse_button_index: int):
-	#tree.deselect_all()
 	item.select(column)
 	item.set_button_disabled(0, 0, true)
 	_on_edit_button_pressed()
 	tree.deselect_all()
-
-
-
-func set_item_color(id: String, color: Color):
-	var blueprint_item: TreeItem = blueprint_items.get(id)
-	if not blueprint_item:
-		return
-	blueprint_item.set_icon_modulate(0, Color.WHITE if color.get_luminance() < 0.1 else color)
 
 
 func walk_dirs(parent: TreeItem, path: String):
@@ -362,7 +382,7 @@ func _on_instance_button_pressed(detached := false):
 		Utils.temp_error_tooltip("Select a Blueprint")
 		return
 	
-	blueprint.set_property("label", item_selected.get_text(0))
+	var label := item_selected.get_text(0)
 	
 	if blueprint.type == CampaignBlueprint.Type.FOLDER:
 		item_selected.collapsed = not item_selected.collapsed
@@ -373,6 +393,7 @@ func _on_instance_button_pressed(detached := false):
 		CampaignBlueprint.Type.LIGHT: Game.modes.change_mode(ModeController.Mode.LIGHT_OMNILIGHT)
 		CampaignBlueprint.Type.PROP: Game.modes.change_mode(ModeController.Mode.PROP_3D_SHAPE)
 		
+	level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).preview_label = label
 	level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).preview_blueprint = blueprint
 	level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).detached_blueprint = detached
 
@@ -420,10 +441,12 @@ func _on_remove_button_pressed():
 
 	var response = true
 	if not Input.is_key_pressed(KEY_SHIFT):
+		tree.release_focus()
 		Game.ui.delete_window.visible = true
 		Game.ui.delete_window.item_type = "Blueprints"
 		Game.ui.delete_window.item_selected = "\n".join(labels)
 		response = await Game.ui.delete_window.response
+		tree.grab_focus()
 		
 	if not response:
 		return
@@ -505,9 +528,14 @@ func sort_children(item: TreeItem):
 		item.remove_child(child)
 	for child in sorted_children:
 		item.add_child(child)
-	
 
-func _input(event: InputEvent) -> void:
+
+func _unhandled_input(event: InputEvent) -> void:
 	if event is InputEventKey:
-		if event.keycode == KEY_F2:
-			edit_button.pressed.emit()
+		if event.pressed:
+			if tree.has_focus():
+				if event.keycode == KEY_F2:
+					edit_button.pressed.emit()
+				elif event.keycode == KEY_DELETE:
+					_on_remove_button_pressed()
+					get_viewport().set_input_as_handled()

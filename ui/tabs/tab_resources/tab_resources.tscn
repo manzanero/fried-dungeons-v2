@@ -1,4 +1,4 @@
-[gd_scene load_steps=14 format=3 uid="uid://c3oq3t62qadp0"]
+[gd_scene load_steps=15 format=3 uid="uid://c3oq3t62qadp0"]
 
 [ext_resource type="Script" path="res://ui/tabs/tab_resources/tab_resources.gd" id="1_yoq87"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="2_8hd1k"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://d2x02vgtidrgn" path="res://ui/tabs/tab_resources/import_texture/import_texture.tscn" id="3_m6jp2"]
 [ext_resource type="PackedScene" uid="uid://bwmhcqk0qsymk" path="res://ui/tabs/tab_resources/import_sound/import_sound.tscn" id="4_f6n13"]
 [ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="4_yy1xd"]
+[ext_resource type="Texture2D" uid="uid://bs1udfpmwy6a" path="res://resources/icons/filter_icon.png" id="5_7s3vo"]
 [ext_resource type="PackedScene" uid="uid://b3d83roncqixw" path="res://ui/fried_button/fried_button_blue.tscn" id="5_7v1sg"]
 
 [sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_d531e"]
@@ -138,16 +139,28 @@ layout_mode = 2
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 
-[node name="FolderButton" parent="C/S2/V/C2/H" instance=ExtResource("3_8xoag")]
-unique_name_in_owner = true
-layout_mode = 2
-tooltip_text = "Open Resouces folder in file explorer"
-icon = ExtResource("4_yy1xd")
-
 [node name="ScanButton" parent="C/S2/V/C2/H" instance=ExtResource("5_7v1sg")]
 unique_name_in_owner = true
 layout_mode = 2
+size_flags_horizontal = 1
 tooltip_text = "Scan Resources folder"
+
+[node name="FolderButton" parent="C/S2/V/C2/H" instance=ExtResource("3_8xoag")]
+unique_name_in_owner = true
+visible = false
+layout_mode = 2
+size_flags_horizontal = 1
+tooltip_text = "Open Resouces folder in file explorer"
+icon = ExtResource("4_yy1xd")
+
+[node name="LabelLineEdit" type="LineEdit" parent="C/S2/V/C2/H"]
+unique_name_in_owner = true
+custom_minimum_size = Vector2(0, 25)
+layout_mode = 2
+size_flags_horizontal = 3
+placeholder_text = "File..."
+clear_button_enabled = true
+right_icon = ExtResource("5_7s3vo")
 
 [node name="C" type="PanelContainer" parent="C/S2/V"]
 layout_mode = 2
@@ -159,6 +172,7 @@ theme_override_styles/panel = SubResource("StyleBoxFlat_553t8")
 unique_name_in_owner = true
 custom_minimum_size = Vector2(100, 0)
 layout_mode = 2
+hide_root = false
 scroll_horizontal_enabled = false
 allow_drag = true
 drag_type = "campaign_resouce_items"

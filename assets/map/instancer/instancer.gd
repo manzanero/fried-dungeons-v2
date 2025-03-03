@@ -22,18 +22,23 @@ func create_wall(level: Level, id: String, points_position_2d: Array[Vector2],
 
 
 func create_element(type: String, level: Level, id: String, position_2d: Vector2,
-		properties := {}, rotation_y := 0.0, flipped := false) -> Element:
+		properties := {}, rotation_y := 0.0, flipped := false, 
+		is_preview := false, is_favourite := false) -> Element:
 	var element: Element
 	match type:
 		"entity": 
-			element = ENTITY.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
+			element = ENTITY.instantiate().init(level, id, position_2d, 
+			properties, rotation_y, flipped, is_preview, is_favourite)
 		"light": 
-			element = LIGHT.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
+			element = LIGHT.instantiate().init(level, id, position_2d, 
+			properties, rotation_y, flipped, is_preview, is_favourite)
 		"prop", "shape": 
-			element = PROP.instantiate().init(level, id, position_2d, properties, rotation_y, flipped)
-			
+			element = PROP.instantiate().init(level, id, position_2d, 
+			properties, rotation_y, flipped, is_preview, is_favourite)
+	
 	level.elements[id] = element
-	Game.ui.tab_elements.add_element(element)
+	if not is_preview:
+		Game.ui.tab_elements.add_element(element)
 	
 	Debug.print_info_message(element.get_class() + " \"%s\" created" % element.id)
 	
@@ -41,16 +46,22 @@ func create_element(type: String, level: Level, id: String, position_2d: Vector2
 		
 
 func create_entity(level: Level, id: String, position_2d: Vector2,
-		properties := {}, rotation_y := 0.0, flipped := false) -> Entity:
-	return create_element("entity", level, id, position_2d, properties, rotation_y, flipped)
+		properties := {}, rotation_y := 0.0, flipped := false, 
+		is_preview := false, is_favourite := false) -> Entity:
+	return create_element("entity", 
+			level, id, position_2d, properties, rotation_y, flipped, is_preview, is_favourite)
 
 func create_light(level: Level, id: String, position_2d: Vector2,
-		properties := {}, rotation_y := 0.0, flipped := false) -> Light:
-	return create_element("light", level, id, position_2d, properties, rotation_y, flipped)
+		properties := {}, rotation_y := 0.0, flipped := false, 
+		is_preview := false, is_favourite := false) -> Light:
+	return create_element("light", 
+			level, id, position_2d, properties, rotation_y, flipped, is_preview, is_favourite)
 
 func create_prop(level: Level, id: String, position_2d: Vector2,
-		properties := {}, rotation_y := 0.0, flipped := false) -> Prop:
-	return create_element("prop", level, id, position_2d, properties, rotation_y, flipped)
+		properties := {}, rotation_y := 0.0, flipped := false, 
+		is_preview := false, is_favourite := false) -> Prop:
+	return create_element("prop", 
+			level, id, position_2d, properties, rotation_y, flipped, is_preview, is_favourite)
 
 func create_player_signal(level: Level, position_2d: Vector2, color: Color) -> PlayerSignal:
 	return PLAYER_SIGNAL.instantiate().init(level, position_2d, color)

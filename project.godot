@@ -14,9 +14,9 @@ config/name="Fried Dungeons"
 run/main_scene="res://assets/game_manager/game_manager.tscn"
 config/use_custom_user_dir=true
 config/features=PackedStringArray("4.3", "Forward Plus")
-boot_splash/show_image=false
-boot_splash/use_filter=false
-config/icon="res://icon.svg"
+boot_splash/image="res://resources/images/patatas.png"
+boot_splash/fullsize=false
+config/icon="res://resources/images/patatas_icon_128.png"
 
 [autoload]
 
@@ -38,11 +38,11 @@ window/size/viewport_height=720
 window/size/initial_position_type=2
 window/dpi/allow_hidpi=false
 mouse_cursor/custom_image="res://resources/cursors/cursor.png"
-mouse_cursor/custom_image_hotspot=Vector2(15, 15)
+mouse_cursor/custom_image_hotspot=Vector2(16, 16)
 
 [editor_plugins]
 
-enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/dice_syntax/plugin.cfg", "res://addons/multirun/plugin.cfg", "res://addons/path_mesh_instance_3d/plugin.cfg", "res://addons/sprite_mesh/plugin.cfg", "res://addons/state_machine_nodes/plugin.cfg")
+enabled=PackedStringArray("res://addons/LineRenderer/plugin.cfg", "res://addons/debug_menu/plugin.cfg", "res://addons/dice_syntax/plugin.cfg", "res://addons/path_mesh_instance_3d/plugin.cfg", "res://addons/sprite_mesh/plugin.cfg", "res://addons/state_machine_nodes/plugin.cfg")
 
 [global_group]
 
@@ -54,8 +54,6 @@ lights=""
 [gui]
 
 theme/custom="res://resources/themes/main/main_theme.tres"
-theme/default_font_subpixel_positioning=0
-theme/lcd_subpixel_layout=0
 
 [input]
 
@@ -166,7 +164,9 @@ key_s={
 
 [physics]
 
+2d/physics_engine="GodotPhysics2D"
 3d/physics_engine="JoltPhysics3D"
+common/physics_interpolation=true
 
 [rendering]
 

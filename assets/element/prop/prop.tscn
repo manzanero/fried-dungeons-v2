@@ -4,6 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://upfcm5wo63fj" path="res://assets/element/prop/shape_slice/shape_slice.tscn" id="2_4juhu"]
 [ext_resource type="Shader" uid="uid://ccvt7m473m6ql" path="res://assets/element/prop/materials/shader.tres" id="2_r2us3"]
 [ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="4_3klkt"]
+[ext_resource type="PackedScene" uid="uid://blukfp887yh7v" path="res://assets/element/element_info/element_info.tscn" id="5_7b7bb"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_86s78"]
 resource_local_to_scene = true
@@ -13,7 +14,7 @@ shader_parameter/albedo = Color(1, 1, 1, 1)
 shader_parameter/light = null
 shader_parameter/transparency = null
 
-[sub_resource type="ArrayMesh" id="ArrayMesh_ofaq4"]
+[sub_resource type="ArrayMesh" id="ArrayMesh_aes63"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ieev2"]
 
@@ -52,12 +53,6 @@ height = 0.5
 radial_segments = 16
 rings = 8
 
-[sub_resource type="LabelSettings" id="LabelSettings_mchtc"]
-resource_local_to_scene = true
-font_size = 8
-outline_size = 8
-outline_color = Color(0, 0, 0, 1)
-
 [node name="Prop" type="CharacterBody3D" node_paths=PackedStringArray("slices_parent")]
 collision_layer = 589825
 axis_lock_linear_y = true
@@ -68,12 +63,13 @@ slices_parent = NodePath("Slices")
 material = SubResource("ShaderMaterial_86s78")
 
 [node name="Elements" type="Node3D" parent="."]
+unique_name_in_owner = true
 
 [node name="Slices" type="Node3D" parent="."]
 unique_name_in_owner = true
 
 [node name="SpriteMeshInstance" parent="Slices" instance=ExtResource("2_4juhu")]
-mesh = SubResource("ArrayMesh_ofaq4")
+mesh = SubResource("ArrayMesh_aes63")
 generated_sprite_mesh = SubResource("Resource_ofkfa")
 
 [node name="SelectorMeshInstance" type="MeshInstance3D" parent="."]
@@ -109,31 +105,5 @@ light_specular = 0.0
 light_cull_mask = 4294967291
 shadow_enabled = true
 
-[node name="CanvasLayer" type="CanvasLayer" parent="."]
+[node name="Info" parent="." instance=ExtResource("5_7b7bb")]
 unique_name_in_owner = true
-
-[node name="Info" type="Control" parent="CanvasLayer" groups=["info"]]
-unique_name_in_owner = true
-layout_mode = 3
-anchors_preset = 0
-mouse_filter = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Info"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-grow_horizontal = 2
-
-[node name="LabelLabel" type="Label" parent="CanvasLayer/Info/VBoxContainer"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Unkown"
-label_settings = SubResource("LabelSettings_mchtc")
-horizontal_alignment = 1
-
-[node name="BarsContainer" type="VBoxContainer" parent="CanvasLayer/Info/VBoxContainer"]
-layout_mode = 2

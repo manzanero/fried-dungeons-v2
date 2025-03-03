@@ -18,6 +18,7 @@ var path_field: StringField
 var icon_field: StringField
 var master_name_field: StringField
 var master_color_field: ColorField
+var example_resources_field: BoolField
 
 func _ready() -> void:
 	super._ready()
@@ -57,6 +58,11 @@ func _ready() -> void:
 	master_color_field.label.text = "Master Color"
 	master_color_field.color_edit.color = Color.WHITE
 	
+	example_resources_field = BoolField.SCENE.instantiate()
+	fields.add_child(example_resources_field)
+	example_resources_field.label.text = "Example Resources"
+	example_resources_field.check_box.button_pressed = true
+	
 	reset()
 
 
@@ -82,6 +88,7 @@ func _on_created_button_pressed() -> void:
 		#"icon": icon_field.property_value,
 		"master_name": master_name_field.property_value,
 		"master_color": master_color_field.property_value,
+		"example_resources": example_resources_field.property_value,
 	}
 	new_campaign_created.emit(new_campaign_data, steam_button.button_pressed)
 	

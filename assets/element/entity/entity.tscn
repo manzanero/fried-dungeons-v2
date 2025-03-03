@@ -1,4 +1,4 @@
-[gd_scene load_steps=24 format=4 uid="uid://cfu5gxos3nxx7"]
+[gd_scene load_steps=23 format=4 uid="uid://cfu5gxos3nxx7"]
 
 [ext_resource type="PackedScene" uid="uid://c546it4fefagq" path="res://assets/element/element.tscn" id="1_fqk2b"]
 [ext_resource type="Script" path="res://assets/element/entity/entity.gd" id="1_scptp"]
@@ -10,7 +10,6 @@
 [ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="7_ih4st"]
 [ext_resource type="Material" uid="uid://c1nel0ayea611" path="res://assets/element/entity/materials/sprite.tres" id="8_b4q87"]
 [ext_resource type="PackedScene" uid="uid://bg2g2ca2xolm6" path="res://assets/element/entity/eye/eye.tscn" id="9_5arlo"]
-[ext_resource type="LabelSettings" uid="uid://ywtmta1ah3jd" path="res://resources/themes/main/element_label_settings.tres" id="11_pcpoc"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_o5im7"]
 resource_local_to_scene = true
@@ -188,31 +187,3 @@ shadow_enabled = true
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.5, 0)
 visible = false
 entitiy = NodePath("..")
-
-[node name="CanvasLayer" type="CanvasLayer" parent="." index="7"]
-
-[node name="Info" type="Control" parent="CanvasLayer" index="0" groups=["info"]]
-unique_name_in_owner = true
-layout_mode = 3
-anchors_preset = 0
-mouse_filter = 2
-
-[node name="VBoxContainer" type="VBoxContainer" parent="CanvasLayer/Info" index="0"]
-layout_mode = 1
-anchors_preset = 5
-anchor_left = 0.5
-anchor_right = 0.5
-offset_left = -16.0
-offset_right = 16.0
-offset_bottom = 16.0
-grow_horizontal = 2
-
-[node name="LabelLabel" type="Label" parent="CanvasLayer/Info/VBoxContainer" index="0"]
-unique_name_in_owner = true
-layout_mode = 2
-text = "Unkown"
-label_settings = ExtResource("11_pcpoc")
-horizontal_alignment = 1
-
-[node name="BarsContainer" type="VBoxContainer" parent="CanvasLayer/Info/VBoxContainer" index="1"]
-layout_mode = 2

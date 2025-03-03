@@ -92,23 +92,23 @@ func refresh_tree():
 		map_item.set_text(0, map_data.label)
 		map_item.set_tooltip_text(0, map_slug)
 		map_item.set_metadata(0, map_data)
+		map_item.set_icon(0, SCENE_ICON)
 		map_item.add_button(0, PLAY_ICON, 0)
+		map_item.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
 		map_item.set_button_tooltip_text(0, 0, "Send players to map")
-
+			
+		if players_map == map_slug:
+			map_item.set_icon(0, PLAY_SCENE_ICON)
+			
+		if map_slug in Game.maps:
+			map_item.set_icon_modulate(0, Color.WHITE.darkened(0.2))
+		else:
+			map_item.set_icon_modulate(0, Game.TREE_BUTTON_OFF_COLOR)
+			
 		if Game.ui.selected_map and Game.ui.selected_map.slug == map_slug:
 			map_item.set_custom_color(0, Color.GREEN)
 		else:
 			map_item.clear_custom_color(0)
-			
-		if players_map == map_slug:
-			map_item.set_button(0, 0, PLAY_SCENE_ICON)
-			map_item.set_button_color(0, 0, Color.GREEN)
-		else:
-			map_item.set_button(0, 0, SCENE_ICON)
-			if map_slug in Game.maps:
-				map_item.set_button_color(0, 0, Color.WHITE)
-			else:
-				map_item.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
 			
 		if cached_slug == map_slug:
 			map_item.select(0)
@@ -155,6 +155,7 @@ func send_players_to_map(map_slug: String):
 	Game.server.request_map_notification.rpc(players_map)
 	
 	refresh_tree()
+	Game.manager.refresh_tabs()
 
 
 func _on_open_button_pressed() -> void:
@@ -215,10 +216,12 @@ func _on_remove_button_pressed():
 	
 	var response = true
 	if not Input.is_key_pressed(KEY_SHIFT):
+		tree.release_focus()
 		Game.ui.delete_window.visible = true
 		Game.ui.delete_window.item_type = "Map"
 		Game.ui.delete_window.item_selected = map_item.get_text(0)
 		response = await Game.ui.delete_window.response
+		tree.grab_focus()
 		
 	if response:
 		_close_map(selected_map_slug)
@@ -229,3 +232,13 @@ func _on_remove_button_pressed():
 func reset():
 	scan(campaign_selected)
 	refresh_tree()
+	
+	
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventKey:
+		if event.pressed:
+			if event.keycode == KEY_DELETE:
+				if tree.has_focus():
+					tree.release_focus()
+					_on_remove_button_pressed()
+					get_viewport().set_input_as_handled()

@@ -272,7 +272,7 @@ func _unhandled_input(event):
 	
 		if event.is_pressed() and is_windows_focused:
 			
-			#prevent move camera while dragging
+			#prevent move camera while dragging, TODO I want this in build mode?
 			if Input.is_mouse_button_pressed(MOUSE_BUTTON_LEFT):
 				is_rotate = false
 				is_move = false

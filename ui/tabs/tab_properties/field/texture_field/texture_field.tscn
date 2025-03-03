@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://xgr6imtskgmc"]
+[gd_scene load_steps=9 format=3 uid="uid://xgr6imtskgmc"]
 
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_5606e"]
 [ext_resource type="Script" path="res://ui/tabs/tab_properties/field/texture_field/texture_field.gd" id="2_cohox"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_umdt8"]
 [ext_resource type="Texture2D" uid="uid://noi6i8fmrepx" path="res://resources/icons/open_folder_icon.png" id="3_y7udq"]
 [ext_resource type="Texture2D" uid="uid://ph36o52jrb1h" path="res://resources/icons/cross_icon.png" id="4_kfe3x"]
+[ext_resource type="PackedScene" uid="uid://cq6rcy2ktpx36" path="res://ui/fried_button/fried_button_red.tscn" id="7_gkgh2"]
 
 [node name="TextureField" instance=ExtResource("1_5606e")]
 size_flags_vertical = 4
@@ -45,11 +46,8 @@ focus_mode = 0
 icon = ExtResource("3_y7udq")
 icon_alignment = 1
 
-[node name="ClearButton" type="Button" parent="H/FriedConvexPanel/HBoxContainer" index="3"]
+[node name="ClearButton" parent="H/FriedConvexPanel/HBoxContainer" index="3" instance=ExtResource("7_gkgh2")]
 unique_name_in_owner = true
 layout_mode = 2
-size_flags_horizontal = 3
 tooltip_text = "Clear Texture"
-focus_mode = 0
 icon = ExtResource("4_kfe3x")
-icon_alignment = 1

@@ -6,13 +6,17 @@ signal moved
 signal property_changed(property_name: StringName, old_value: Variant, new_value: Variant)
 
 
+class Type:
+	const LIGHT = "light"
+	const ENTITY = "entity"
+	const PROP = "prop"
+	
+
 var map: Map
 var level: Level
 
-
 var snapping := Game.SNAPPING_QUARTER 
 var is_ceiling_element: bool
-var blueprint: CampaignBlueprint
 
 var init_properties := {}
 var properties := {} :
@@ -26,8 +30,11 @@ var id: String :
 
 var type := "element"
 var label := "Unknown"
-var color := Color.BLUE
 var description := ""
+var color := Color.BLUE
+var show_label := false
+var blueprint: CampaignBlueprint
+var is_favourite := false
 var icon: Texture2D = null
 
 
@@ -37,7 +44,7 @@ var is_selected: bool : set = _set_selected
 var is_preview: bool : set = _set_preview
 var is_rotated: bool : set = _set_rotated
 
-var next_update_ticks_msec := Time.get_ticks_msec()
+var next_update_ticks_msec := 0
 var target_position: Vector3
 var is_moving_to_target: bool
 var position_2d: Vector2 :
@@ -46,6 +53,7 @@ var rotation_y: float :
 	get: return snappedf(rotation.y, 0.001)
 var flipped := false : set = _set_flipped
 var element_velocity := 5.0
+var height := 0.0
 
 var properties_values: Dictionary :
 	get:
@@ -56,11 +64,18 @@ var properties_values: Dictionary :
 
 var parent: Element : set = _set_parent
 
-@onready var elements_parent: Node3D = $Elements
+var cached_light: Color
+var is_watched: bool : 
+	get: return cached_light.a
+var luminance: float :
+	get: return cached_light.v
+
+@onready var elements_parent: Node3D = %Elements
+@onready var info: ElementInfo = %Info
 
 
 func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {}, 
-		_rotation_y := 0.0, _flipped := false):
+		_rotation_y := 0.0, _flipped := false, _is_preview := false, _is_favourite := false):
 	id = _id
 	level = _level
 	map = level.map
@@ -68,11 +83,30 @@ func init(_level: Level, _id: String, _position_2d: Vector2, _properties := {},
 	global_position = Vector3(_position_2d.x, 0, _position_2d.y)
 	rotation.y = _rotation_y
 	flipped = _flipped
+	is_preview = _is_preview
+	is_preview = _is_preview
+	is_favourite = _is_favourite
 	is_selectable = Game.campaign.is_master
 	_init_property_list(_properties)
 	property_changed.connect(_on_property_changed)
 	update()
 	return self
+
+
+func _on_position_in_viewport_changed():
+	if show_label and is_watched:
+		if not Game.ui.label_vision_enabled:
+			info.visible = false
+		elif level.map.camera.is_fps:
+			info.visible = false
+		else:
+			info.visible = not level.map.camera.eyes.is_position_behind(position)
+			const unproject_correction := 0.001  # bug: x axis points cannot be unproject
+			var project_position := position + Vector3.UP * (height + unproject_correction)
+			info.position = level.map.camera.eyes.unproject_position(project_position)
+	else:
+		info.visible = false
+			
 
 # override 
 func update():
@@ -115,7 +149,7 @@ func set_property_value(property_name: String, new_value: Variant) -> Property:
 	property.value = new_value
 	property_changed.emit(property_name, old_value, new_value)
 	
-	if property_name == "label":
+	if property_name in ["label", "color"]:
 		Game.ui.tab_elements.changed_element(self)
 		
 	return property
@@ -127,10 +161,17 @@ func set_raw_property_value(property_name: String, new_value: Variant) -> Proper
 	var parsed_new_value: Variant = property.set_raw(new_value)
 	if old_value == parsed_new_value:
 		return
-
+		
 	property.value = parsed_new_value
 	property_changed.emit(property_name, old_value, parsed_new_value)
 	return property
+
+
+func get_property_values() -> Dictionary:
+	var _properties := {}
+	for property_name in properties:
+		_properties[property_name] = properties[property_name].value
+	return _properties
 
 
 func set_property_values(property_values: Dictionary) -> Dictionary:
@@ -252,7 +293,6 @@ func snap_direction_to_angle(direction: Vector3, step: float) -> Vector3:
 	return Vector3(sin(snapped_angle), 0, cos(snapped_angle))  # Convert back to a direction
 
 
-
 func _physics_process(delta: float) -> void:
 	if is_preview:
 		_preview_process(delta)
@@ -370,13 +410,14 @@ func _set_parent(value: Element):
 func remove():
 	for element: Element in elements_parent.get_children():
 		element.remove()
-		
-	Game.ui.tab_elements.remove_element(self)
+	
 	Game.ui.tab_properties.reset()
+	if not is_preview:
+		Game.ui.tab_elements.remove_element(self)
 	
 	level.elements.erase(id)
-	
 	queue_free()
+	Debug.print_info_message("Removed element item of \"%s\"" % id)
 	
 	
 func _set_blueprint(_blueprint: CampaignBlueprint) -> void:

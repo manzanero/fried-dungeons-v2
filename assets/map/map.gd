@@ -4,6 +4,7 @@ extends Node3D
 
 signal master_view_enabled(value: bool)
 signal darkvision_enabled(value: bool)
+@warning_ignore("unused_signal") signal label_vision_enabled(value: bool)  
 signal map_visibility_changed(value: float)
 
 const DEFAULT_ATLAS_TEXTURE := preload("res://user/defaults/atlas/default.png")
@@ -106,8 +107,9 @@ func _on_atlas_texture_resource_changed():
 
 func _ready():
 	is_master_view = Game.campaign.is_master
-	current_ambient_light = master_ambient_light if Game.campaign.is_master else ambient_light
-	camera.allow_fp = Game.campaign.is_master
+	if is_master_view:
+		current_ambient_light = master_ambient_light if override_ambient_light else ambient_light
+		current_ambient_color = master_ambient_color if override_ambient_color else ambient_color
 
 
 #region Serializing
@@ -121,6 +123,11 @@ func json() -> Dictionary:
 		"label": label,
 		"description": description,
 		"levels": levels_data,
+		#"camera": {
+			#"position": Utils.v3_to_a3(camera.position_3d),
+			#"rotation": Utils.v3_to_a3(camera.rotation_3d),
+			#"zoom": snappedf(camera.zoom, 0.001),
+		#},
 		"settings": {
 			"atlas_texture": atlas_texture_resource.path if atlas_texture_resource else "",
 			"ambient_light": ambient_light,

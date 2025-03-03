@@ -2,9 +2,11 @@ class_name TabResources
 extends Control
 
 const DIRECTORY_ICON = preload("res://resources/icons/directory_icon.png")
+const OPEN_FOLDER_ICON = preload("res://resources/icons/open_folder_icon.png")
 const TEXTURE_ICON = preload("res://resources/icons/texture_icon.png")
 const SOUND_ICON = preload("res://resources/icons/sound_icon.png")
 const FILE_ICON = preload("res://resources/icons/file_icon.png")
+const EDIT_ICON = preload("res://resources/icons/edit_icon.png")
 
 var root: TreeItem
 var item_selected: TreeItem :
@@ -25,6 +27,7 @@ var orphan_resource_data := []
 
 @onready var scan_button: Button = %ScanButton
 @onready var folder_button: Button = %FolderButton
+@onready var label_line_edit: LineEdit = %LabelLineEdit
 
 #@onready var entity_button: Button = %EntityButton
 #@onready var light_button: Button = %LightButton
@@ -39,11 +42,13 @@ var orphan_resource_data := []
 func _ready() -> void:
 	scan_button.pressed.connect(reset)
 	folder_button.pressed.connect(_on_folder_button_pressed)
+	label_line_edit.text_changed.connect(_on_label_filter_changed.unbind(1))
 	
 	visibility_changed.connect(_on_visibility_changed)
 	
 	tree.item_mouse_selected.connect(_on_item_mouse_selected)
 	tree.item_activated.connect(_on_item_activated)
+	tree.button_clicked.connect(_on_button_clicked)
 	tree.item_collapsed.connect(_on_item_collapsed)
 	texture_container.visible = false
 	texture_container.attributes_changed.connect(_on_attributes_changed)
@@ -61,6 +66,23 @@ func _on_folder_button_pressed() -> void:
 	match resource.resource_type:
 		CampaignResource.Type.DIRECTORY: Utils.open_in_file_manager(resource.abspath)
 		_: Utils.open_in_file_manager(resource.abspath.get_base_dir())
+	
+
+func _on_label_filter_changed():
+	var visibles: Array[TreeItem] = [root]
+	var filter := label_line_edit.text.to_lower()
+	for item: TreeItem in resource_items.values():
+		var label := item.get_text(0)
+		if filter and filter not in label.to_lower():
+			item.visible = false
+		else:
+			item.visible = true
+			visibles.append(item)
+			var parent := item.get_parent()
+			while parent not in visibles:
+				parent.visible = true
+				parent = parent.get_parent()
+	root.visible = true
 
 
 func _on_visibility_changed():
@@ -74,15 +96,27 @@ func add_resource(parent: TreeItem, resource: CampaignResource) -> TreeItem:
 		CampaignResource.Type.DIRECTORY:
 			resource_item.set_icon(0, DIRECTORY_ICON)
 			resource_item.set_text(0, resource.path.get_file())
+			resource_item.add_button(0, OPEN_FOLDER_ICON, 0)
+			resource_item.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
 		CampaignResource.Type.TEXTURE:
 			resource_item.set_icon(0, TEXTURE_ICON)
 			resource_item.set_text(0, resource.path.get_file().get_basename())
+			resource_item.add_button(0, EDIT_ICON, 0)
+			resource_item.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
+			resource_item.add_button(0, OPEN_FOLDER_ICON, 1)
+			resource_item.set_button_color(0, 1, Game.TREE_BUTTON_OFF_COLOR)
 		CampaignResource.Type.SOUND:
 			resource_item.set_icon(0, SOUND_ICON)
 			resource_item.set_text(0, resource.path.get_file().get_basename())
+			resource_item.add_button(0, EDIT_ICON, 0)
+			resource_item.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
+			resource_item.add_button(0, OPEN_FOLDER_ICON, 1)
+			resource_item.set_button_color(0, 1, Game.TREE_BUTTON_OFF_COLOR)
 		_:
 			resource_item.set_icon(0, FILE_ICON)
 			resource_item.set_text(0, resource.path.get_file())
+			resource_item.add_button(0, OPEN_FOLDER_ICON, 0)
+			resource_item.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
 	
 	resource_item.set_tooltip_text(0, resource.path)
 	resource_item.set_metadata(0, resource)
@@ -121,10 +155,22 @@ func _on_item_activated():
 	var resource: CampaignResource = item_selected.get_metadata(0)
 	Debug.print_info_message("Resource \"%s\" activated" % resource.path)
 	
+	#var is_activated := item_selected.get_custom_color(0) == Color.GREEN
+	
+	for item in resource_items.values():
+		item.clear_custom_color(0)
+	#if not is_activated and resource.resource_type != CampaignResource.Type.DIRECTORY: 
+		#item_selected.set_custom_color(0, Color.GREEN)
+	item_selected.set_custom_color(0, Color.GREEN)
+	
 	texture_container.visible = false
 	texture_container.resource = null
 	sound_container.visible = false
 	sound_container.resource = null
+	
+	#if is_activated:
+		#return
+		
 	match resource.resource_type:
 		CampaignResource.Type.DIRECTORY: 
 			item_selected.collapsed = not item_selected.collapsed
@@ -134,6 +180,25 @@ func _on_item_activated():
 		CampaignResource.Type.SOUND:
 			sound_container.visible = true
 			sound_container.resource = resource
+
+
+func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_index: int) -> void:
+	var resource: CampaignResource = item.get_metadata(0)
+	item.select(0)
+
+	match resource.resource_type:
+		CampaignResource.Type.DIRECTORY: 
+			_on_folder_button_pressed()
+		CampaignResource.Type.TEXTURE:
+			if id == 0:
+				_on_item_activated()
+			else:
+				_on_folder_button_pressed()
+		CampaignResource.Type.SOUND:
+			if id == 0:
+				_on_item_activated()
+			else:
+				_on_folder_button_pressed()
 
 
 func _on_items_moved(items: Array[TreeItem], _index: int):
@@ -150,6 +215,8 @@ func reset() -> void:
 	root = tree.create_item()
 	root.set_icon(0, DIRECTORY_ICON)
 	root.set_text(0, "Resources")
+	root.add_button(0, OPEN_FOLDER_ICON)
+	root.set_button_color(0, 0, Game.TREE_BUTTON_OFF_COLOR)
 	root.set_tooltip_text(0, " ")
 	
 	if not Game.campaign:

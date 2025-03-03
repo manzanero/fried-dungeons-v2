@@ -12,9 +12,11 @@ var material_index_selected: int :
 	get: return Game.ui.tab_builder.material_index_selected
 
 
+var preview_label: String
 var preview_blueprint: CampaignBlueprint
 var detached_blueprint: bool
 var preview_rotation: float
+var preview_flipped: bool
 var preview_properties := {}
 #var instance_once := false
 
@@ -25,10 +27,11 @@ func _enter_state(previous_state: String) -> void:
 	selector.grid.visible = true
 	selector.column.visible = false
 	selector.position_2d = Game.NULL_POSITION_2D
+	preview_label = ""
 	preview_blueprint = null
-	
 	preview_properties = {}
 	preview_rotation = 0.0
+	preview_flipped = false
 	level.preview_element = null
 	#instance_once = false
 
@@ -75,9 +78,12 @@ func process_instance_entity():
 	var entity := level.preview_element as Entity if is_instance_valid(level.preview_element) else null
 	if not entity:
 		if preview_blueprint:
-			preview_properties = preview_blueprint.properties
+			preview_properties = preview_blueprint.properties.duplicate()
+		if not preview_label:
+			preview_label = "New Entity"
+		preview_properties["label"] = _valid_element_label(preview_label)
 		entity = map.instancer.create_entity(level, Utils.random_string(8, true), 
-				selector.position_2d, preview_properties, preview_rotation)
+				selector.position_2d, preview_properties, preview_rotation, preview_flipped, true)
 		if not detached_blueprint:
 			entity.set_property_value("blueprint", preview_blueprint)
 		entity.is_preview = true
@@ -95,8 +101,12 @@ func process_instance_entity():
 				collider = collider.get_parent()
 			var hovered_entity := collider as Entity
 			if hovered_entity:
-				entity.properties = hovered_entity.properties
-				Game.ui.tab_properties.element_selected = entity
+				entity.set_property_values(hovered_entity.get_property_values())
+				preview_label = hovered_entity.label
+				entity.set_property_value("label", _valid_element_label(hovered_entity.label))
+				entity.update()
+				entity.selector_disabled = true
+				Game.ui.tab_properties.refresh()
 	
 	if Input.is_action_just_released("left_click") and Game.ui.scene_tab_has_focus:
 		var id = Utils.random_string(8, true)
@@ -105,15 +115,20 @@ func process_instance_entity():
 	
 		Game.server.rpcs.create_entity.rpc(map.slug, level.index, id, 
 				entity.position_2d, entity.get_raw_property_values(), entity.rotation_y)
+				
+		entity.set_property_value("label", _valid_element_label(preview_label))
 	
 
 func process_instance_light():
 	var light := level.preview_element as Light if is_instance_valid(level.preview_element) else null
 	if not light:
 		if preview_blueprint:
-			preview_properties = preview_blueprint.properties
+			preview_properties = preview_blueprint.properties.duplicate()
+		if not preview_label:
+			preview_label = "New Light"
+		preview_properties["label"] = _valid_element_label(preview_label)
 		light = map.instancer.create_light(level, Utils.random_string(8, true), 
-				selector.position_2d, preview_properties)
+				selector.position_2d, preview_properties, preview_rotation, preview_flipped, true)
 		if not detached_blueprint:
 			light.set_property_value("blueprint", preview_blueprint)
 		light.is_preview = true
@@ -126,8 +141,12 @@ func process_instance_light():
 		if hit_info:
 			var hovered_light := hit_info.collider.get_parent() as Light
 			if hovered_light:
-				light.properties = hovered_light.properties
-				Game.ui.tab_properties.element_selected = light
+				light.properties = hovered_light.properties.duplicate()
+				preview_label = _valid_element_label(hovered_light.label)
+				light.set_property_value("label", _valid_element_label(hovered_light.label))
+				light.update()
+				light.selector_disabled = true
+				Game.ui.tab_properties.refresh()
 	
 	if Input.is_action_just_released("left_click") and Game.ui.scene_tab_has_focus:
 		var id = Utils.random_string(8, true)
@@ -136,18 +155,23 @@ func process_instance_light():
 		
 		Game.server.rpcs.create_light.rpc(map.slug, level.index, id, 
 				light.position_2d, light.properties_values, light.rotation_y)
+				
+		light.set_property_value("label", _valid_element_label(preview_label))
+		light.set_property_value("label", _valid_element_label(preview_label))
 
 
 func process_instance_prop():
 	var prop := level.preview_element as Prop if is_instance_valid(level.preview_element) else null
 	if not prop:
 		if preview_blueprint:
-			preview_properties = preview_blueprint.properties
+			preview_properties = preview_blueprint.properties.duplicate()
+		if not preview_label:
+			preview_label = "New Prop"
+		preview_properties["label"] = _valid_element_label(preview_label)
 		prop = map.instancer.create_prop(level, Utils.random_string(8, true), 
-				selector.position_2d, preview_properties, preview_rotation)
+				selector.position_2d, preview_properties, preview_rotation, preview_flipped, true)
 		if not detached_blueprint:
 			prop.set_property_value("blueprint", preview_blueprint)
-		prop.is_preview = true
 		prop.selector_disabled = true
 		level.select(prop)
 		level.preview_element = prop
@@ -160,8 +184,12 @@ func process_instance_prop():
 				collider = collider.get_parent()
 			var hovered_prop := collider as Prop
 			if hovered_prop:
-				prop.properties = hovered_prop.properties
-				Game.ui.tab_properties.element_selected = prop
+				prop.properties = hovered_prop.properties.duplicate()
+				preview_label = _valid_element_label(hovered_prop.label)
+				prop.set_property_value("label", _valid_element_label(hovered_prop.label))
+				prop.update()
+				prop.selector_disabled = true
+				Game.ui.tab_properties.refresh()
 		
 	prop.is_rotated = Input.is_action_pressed("rotate")
 	
@@ -172,3 +200,34 @@ func process_instance_prop():
 	
 		Game.server.rpcs.create_prop.rpc(map.slug, level.index, id,
 				prop.position_2d, prop.properties_values, prop.rotation_y)
+				
+		prop.set_property_value("label", _valid_element_label(preview_label))
+
+
+func _valid_element_label(label: String) -> String:
+	if not _element_label_exist(label):
+		return label
+	
+	var regex = RegEx.new()
+	regex.compile(r"^(.*?)(?:\s+(\d+))?$")
+	var matches := regex.search(label)
+	var base_name := label.strip_edges()
+	var siblins := 1
+	if matches:
+		base_name = matches.get_string(1).strip_edges()
+		if matches.get_string(2):
+			siblins = int(matches.get_string(2))
+		
+	siblins += 1
+	var candidate = "%s %d" % [base_name, siblins]
+	while _element_label_exist(candidate):
+		siblins += 1
+		candidate = "%s %d" % [base_name, siblins]
+	return candidate
+
+func _element_label_exist(label: String) -> bool:
+	for element: Element in level.elements.values():
+		if element.label == label:
+			return true
+	return false
+	

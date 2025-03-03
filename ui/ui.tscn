@@ -1,14 +1,16 @@
-[gd_scene load_steps=53 format=3 uid="uid://bo0uwbj6jw1oj"]
+[gd_scene load_steps=55 format=3 uid="uid://bo0uwbj6jw1oj"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_607li"]
 [ext_resource type="Script" path="res://ui/ui.gd" id="2_axtiy"]
 [ext_resource type="PackedScene" uid="uid://b4l1ilsp0i1is" path="res://ui/tabs/tab_elements/tab_elements.tscn" id="3_636ai"]
 [ext_resource type="PackedScene" uid="uid://lye1ti1uqjjr" path="res://ui/tabs/tab_world/tab_world.tscn" id="3_e6fcj"]
 [ext_resource type="PackedScene" uid="uid://dfwkx5bxrpk35" path="res://assets/dicer/dicer.tscn" id="3_hqwy8"]
+[ext_resource type="AudioStream" uid="uid://ccops277um7kj" path="res://resources/music/FRIED-DUNGEONS_MAIN-v01_PRE.mp3" id="3_snuxe"]
 [ext_resource type="PackedScene" uid="uid://b1i1ky18bbaqf" path="res://ui/tabs/tab_debug/tab_debug.tscn" id="4_g7vlm"]
 [ext_resource type="PackedScene" uid="uid://dgyjhnnjkhl20" path="res://ui/nav_bar/nav_bar.tscn" id="4_x3c88"]
 [ext_resource type="Texture2D" uid="uid://dk4i0euhe2t1q" path="res://resources/icons/arrow_down.png" id="5_5f26e"]
 [ext_resource type="PackedScene" uid="uid://cd6g3qduls3n1" path="res://ui/tabs/tab_properties/tab_properties.tscn" id="5_groax"]
+[ext_resource type="PackedScene" uid="uid://d214e2hbsgu0o" path="res://ui/home_animation/home_animation.tscn" id="5_rdk47"]
 [ext_resource type="PackedScene" uid="uid://bgemyy0f7bxdq" path="res://ui/tabs/tab_players/tab_players.tscn" id="5_w7n2g"]
 [ext_resource type="PackedScene" uid="uid://b4oy5ukjusdyj" path="res://ui/tabs/tab_builder/tab_builder.tscn" id="6_jy8ng"]
 [ext_resource type="PackedScene" uid="uid://pojmf4m23i0" path="res://addons/fade_transition/fade_transition.tscn" id="6_mw1aj"]
@@ -23,6 +25,7 @@
 [ext_resource type="Texture2D" uid="uid://dwfkjnyl85tqn" path="res://resources/icons/stop_icon.png" id="13_4613w"]
 [ext_resource type="PackedScene" uid="uid://da81cp8j448wv" path="res://ui/mode_controller/mode_controller.tscn" id="14_yiu68"]
 [ext_resource type="Texture2D" uid="uid://b7fqssqprjci4" path="res://resources/icons/visibility_xray_icon.png" id="16_0jukb"]
+[ext_resource type="Texture2D" uid="uid://bia148yvjqrcj" path="res://resources/icons/font_size_icon.png" id="16_t5ln4"]
 [ext_resource type="StyleBox" uid="uid://kfbbn8gligsk" path="res://ui/flow_controller/flow_border.tres" id="19_xvfg2"]
 [ext_resource type="PackedScene" uid="uid://c32tijiy5co8o" path="res://ui/fried_window/new_campaign_window/new_campaign_window.tscn" id="20_ecsro"]
 [ext_resource type="PackedScene" uid="uid://cxb7ssvks0wlj" path="res://ui/fried_window/host_campaign_window/host_campaign_window.tscn" id="21_677rs"]
@@ -77,12 +80,11 @@ corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_knwtu"]
 draw_center = false
-border_width_left = 24
-border_width_top = 24
-border_width_right = 24
-border_width_bottom = 24
+border_width_left = 2
+border_width_top = 2
+border_width_right = 2
+border_width_bottom = 2
 border_color = Color(1, 1, 1, 1)
-border_blend = true
 corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_402ae"]
@@ -233,9 +235,6 @@ corner_detail = 1
 shadow_size = 2
 shadow_offset = Vector2(0, 1)
 
-[sub_resource type="ButtonGroup" id="ButtonGroup_qel18"]
-allow_unpress = true
-
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ujvvg"]
 bg_color = Color(0, 0, 0, 0.25)
 
@@ -251,11 +250,18 @@ theme = ExtResource("1_607li")
 theme_override_styles/panel = SubResource("StyleBoxEmpty_yr7b3")
 script = ExtResource("2_axtiy")
 
+[node name="AppMusic" type="AudioStreamPlayer" parent="."]
+stream = ExtResource("3_snuxe")
+volume_db = -4.522
+bus = &"App"
+
 [node name="FlowBorder" type="Panel" parent="."]
 unique_name_in_owner = true
 layout_mode = 2
 mouse_filter = 2
 theme_override_styles/panel = ExtResource("19_xvfg2")
+
+[node name="HomeAnimation" parent="." instance=ExtResource("5_rdk47")]
 
 [node name="V" type="VBoxContainer" parent="."]
 layout_mode = 2
@@ -333,16 +339,15 @@ size_flags_vertical = 3
 current_tab = 0
 tab_focus_mode = 0
 
-[node name="Blueprints" parent="V/IDE/H/H/Left/LeftDown/LeftDownTabs" instance=ExtResource("8_4jyo6")]
+[node name="World" parent="V/IDE/H/H/Left/LeftDown/LeftDownTabs" instance=ExtResource("3_e6fcj")]
 unique_name_in_owner = true
 layout_mode = 2
 metadata/_tab_index = 0
 
-[node name="World" parent="V/IDE/H/H/Left/LeftDown/LeftDownTabs" instance=ExtResource("3_e6fcj")]
+[node name="Blueprints" parent="V/IDE/H/H/Left/LeftDown/LeftDownTabs" instance=ExtResource("8_4jyo6")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
-metadata/_tab_index = 1
 
 [node name="Middle" type="VSplitContainer" parent="V/IDE/H/H"]
 custom_minimum_size = Vector2(256, 0)
@@ -355,7 +360,7 @@ theme_override_constants/separation = 0
 [node name="V" type="HSplitContainer" parent="V/IDE/H/H/Middle"]
 layout_mode = 2
 size_flags_vertical = 3
-size_flags_stretch_ratio = 2.0
+size_flags_stretch_ratio = 3.0
 theme_override_constants/separation = 0
 
 [node name="ManualContainer" parent="V/IDE/H/H/Middle/V" instance=ExtResource("9_uc1vt")]
@@ -479,7 +484,7 @@ stretch = true
 own_world_3d = true
 transparent_bg = true
 handle_input_locally = false
-size = Vector2i(411, 411)
+size = Vector2i(2, 2)
 render_target_update_mode = 4
 
 [node name="Dicer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/AspectRatioContainer/SubViewportContainer/SubViewport" instance=ExtResource("3_hqwy8")]
@@ -578,29 +583,38 @@ theme_override_constants/margin_top = 4
 theme_override_constants/margin_right = 4
 theme_override_constants/margin_bottom = 4
 
-[node name="HBoxContainer" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities"]
+[node name="H" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities"]
 layout_mode = 2
 
-[node name="C" type="PanelContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/HBoxContainer"]
+[node name="C" type="PanelContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/H"]
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 3
 theme_override_styles/panel = SubResource("StyleBoxFlat_8hryt")
 
-[node name="Modes" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/HBoxContainer/C"]
+[node name="Modes" type="HBoxContainer" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/H/C"]
 custom_minimum_size = Vector2(0, 25)
 layout_mode = 2
 theme_override_constants/separation = 0
 alignment = 1
 
-[node name="DarkvisionButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/HBoxContainer/C/Modes"]
+[node name="LabelVisionButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/H/C/Modes"]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-tooltip_text = "Darkvision mode"
+tooltip_text = "(N) Label vision mode"
 focus_mode = 0
 toggle_mode = true
-button_group = SubResource("ButtonGroup_qel18")
+button_pressed = true
+icon = ExtResource("16_t5ln4")
+
+[node name="DarkvisionButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs/SceneCoverings/Utilities/H/C/Modes"]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 3
+tooltip_text = "(Q) Darkvision mode"
+focus_mode = 0
+toggle_mode = true
 icon = ExtResource("16_0jukb")
 
 [node name="RestoreDownButton" type="Button" parent="V/IDE/H/H/Middle/V/MiddleUp/MiddleUpTabs"]

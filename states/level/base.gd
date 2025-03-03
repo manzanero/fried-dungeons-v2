@@ -156,7 +156,7 @@ func process_ceilling_hitted():
 		var hit_position = hit_info["position"]
 		level.exact_ceilling_hovered = Utils.v3_to_v2(hit_position)
 		level.ceilling_hovered = level.exact_ceilling_hovered.snappedf(Game.U)
-		
+
 
 var mouse_move: bool
 

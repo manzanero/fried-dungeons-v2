@@ -1,0 +1,16 @@
+{
+  "timestamp": 1732397625,
+  "type": "texture",
+  "import_as": "sliced_shape",
+  "attributes": {
+    "size": [
+      32,
+      32
+    ],
+    "frames": 5,
+    "slices": 4,
+    "thickness": 1,
+    "scale": 1,
+    "direction": "front"
+  }
+}

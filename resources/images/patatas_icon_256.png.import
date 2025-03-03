@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bb8hayf3q488j"
-path="res://.godot/imported/sprite.png-eeea6709d70b20f7d27f2b60996e8201.ctex"
+uid="uid://cf1tmmbha5eok"
+path="res://.godot/imported/patatas_icon_256.png-8571904665b2915a5a0d7ad5063e3357.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://addons/state_machine_nodes/examples/state_machine_nodes/sprite.png"
-dest_files=["res://.godot/imported/sprite.png-eeea6709d70b20f7d27f2b60996e8201.ctex"]
+source_file="res://resources/images/patatas_icon_256.png"
+dest_files=["res://.godot/imported/patatas_icon_256.png-8571904665b2915a5a0d7ad5063e3357.ctex"]
 
 [params]
 

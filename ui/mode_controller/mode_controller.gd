@@ -39,6 +39,7 @@ var mode_str: String :
 func mode_to_str(_mode: Mode) -> String:
 	return str(Mode.keys()[_mode]).capitalize()
 
+var flipped := false
 
 @onready var modes: Control = %Modes
 @onready var modes_button_group := Utils.create_button_group(modes.get_children(), true)
@@ -70,6 +71,9 @@ func mode_to_str(_mode: Mode) -> String:
 @onready var mode_hint: Control = %ModeHint
 @onready var mode_label: Label = %ModeLabel
 
+@onready var modifiers_buttons: Control = %ModifiersButtons
+@onready var flipped_button: Button = %FlippedButton
+
 @onready var nodes = [
 	[ground_options_button, ground_options, ground_button_group, GROUND_MODES],
 	[wall_options_button, wall_options, wall_button_group, WALL_MODES],
@@ -90,12 +94,15 @@ func reset():
 	
 
 func _reset_mode():
+	modifiers_buttons.visible = false
 	for options in modes_options.get_child(0).get_children():
 		options.visible = false
 
 
 func _ready() -> void:
 	modes_options.visible = false
+	flipped_button.pressed.connect(flip)
+	
 	mode_hint.modulate = Color.TRANSPARENT
 	_reset_mode()
 	
@@ -162,7 +169,9 @@ func _on_options_button_pressed(modes_index: int, mode_button_index: int = 0, wi
 		change_mode(_modes[mode_button_index])
 	else:
 		change_mode(Mode.NONE)
-	
+		
+	modifiers_buttons.visible = mode in WALL_MODES
+
 
 func _on_mode_button_pressed(mode_button_index: int):
 	match modes_button_group.get_pressed_button():
@@ -213,20 +222,33 @@ func show_mode():
 		mode_hint.modulate = Color.TRANSPARENT
 		tween.kill()
 		return
-		
-	mode_label.text = mode_str
+	
+	show_hint(mode_str)
+
+
+func show_hint(text: String):
+	mode_label.text = text
 	mode_hint.modulate = Color.WHITE
 	tween = get_tree().create_tween()
 	tween.tween_property(mode_hint, "modulate", Color.WHITE, 1.0)
 	tween.tween_property(mode_hint, "modulate", Color.TRANSPARENT, 1.0)
 	tween.set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
-	
+
+
+func flip():
+	flipped = not flipped
+	flipped_button.button_pressed = flipped
+	show_hint("Reverse Mode: %s" % ("ON" if flipped else "OFF"))
+
 
 var _last_input: Key
 
 func _unhandled_input(event: InputEvent) -> void:
 	if not Game.campaign or not Game.campaign.is_master:
 		return
+		
+	if event.is_action_pressed("flip") and mode in WALL_MODES:
+		flip()
 
 	if event is InputEventKey:
 		if event.is_released():

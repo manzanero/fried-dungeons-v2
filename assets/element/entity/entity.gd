@@ -7,15 +7,10 @@ const SHAPE_SLICE := preload("res://assets/element/prop/shape_slice/shape_slice.
 @export var material: ShaderMaterial
 
 
-var cached_light: Color
 var base_color: Color :
 	set(value): base_color = value; base_mesh_instance.material_override.set_shader_parameter("albedo", base_color)
 var body_color: Color :
 	set(value): body_color = value; material.set_shader_parameter("albedo", body_color)
-var luminance: float :
-	get: return cached_light.v
-var is_watched: bool : 
-	get: return cached_light.a
 var transparency := 0. :
 	set(value):
 		transparency = value
@@ -42,10 +37,6 @@ var light_color := Color.WHITE :
 var texture_resource_path := "" : set = _set_texture_resource_path
 var frame := 0 :
 	set(value): frame = value; dirty_mesh = true
-var show_label: bool :
-	set(value): show_label = value; label_label.visible = value
-var show_base: bool :
-	set(value): show_base = value; base_mesh_instance.visible = value
 
 
 var texture_resource: CampaignResource
@@ -64,8 +55,6 @@ var selector_disabled := false : set = _set_selector_disabled
 @onready var ligth_mesh: MeshInstance3D = %LigthMesh
 @onready var light: OmniLight3D = %OmniLight3D
 @onready var eye: Eye = $Eye
-@onready var info: Control = %Info
-@onready var label_label: Label = %LabelLabel
 
 
 ## properties
@@ -183,12 +172,6 @@ const entity_init_properties = {
 		"params": {},
 		"default": true,
 	},
-	SHOW_BASE: {
-		"container": "graphics",
-		"hint": Hint.BOOL,
-		"params": {},
-		"default": true,
-	},
 	BODY_TEXTURE: {
 		"container": "graphics",
 		"hint": Hint.TEXTURE,
@@ -221,6 +204,12 @@ const entity_init_properties = {
 		},
 		"default": 1.0,
 	},
+	SHOW_BASE: {
+		"container": "graphics",
+		"hint": Hint.BOOL,
+		"params": {},
+		"default": true,
+	},
 	BASE_SIZE: {
 		"container": "graphics",
 		"hint": Hint.FLOAT,
@@ -249,9 +238,10 @@ func _ready() -> void:
 	map.tab_scene.sub_viewport.size_changed.connect(_on_position_in_viewport_changed)
 	moved.connect(_on_position_in_viewport_changed)
 	
-	label_label.label_settings.font_size = Game.video_preferences.get_font_size()
+	info.label_label.label_settings.font_size = Game.video_preferences.get_font_size()
 	
 	map.map_visibility_changed.connect(_on_map_visibility_changed)
+	map.label_vision_enabled.connect(_on_label_vision_changed)
 	map.darkvision_enabled.connect(func (value):
 		cached_light = level.get_light(position_2d)
 		update_light()
@@ -286,14 +276,14 @@ func change_property(property_name: String, new_value: Variant) -> void:
 	match property_name:
 		
 		# element properties
-		LABEL: label = new_value; label_label.text = new_value
+		LABEL: label = new_value; info.label_label.text = new_value
 		DESCRIPTION: description = new_value
 		COLOR:
 			color = new_value
 			var color_label = new_value
 			color_label.a = 1
-			label_label.label_settings.font_color = color_label
-			label_label.label_settings.outline_color = Utils.get_outline_color(color_label)
+			info.label_label.label_settings.font_color = color_label
+			info.label_label.label_settings.outline_color = Utils.get_outline_color(color_label)
 			base_color = color
 		BLUEPRINT: _set_blueprint(new_value)
 
@@ -306,6 +296,7 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		VELOCITY: element_velocity = new_value
 		SHOW_LABEL: 
 			show_label = new_value
+			info.label_label.visible = new_value
 			update_light()
 		SHOW_BODY: body.visible = new_value
 		SHOW_BASE: base.visible = new_value
@@ -369,11 +360,6 @@ func _process(_delta: float) -> void:
 	body.position.y = 1. / 16. + 1. / 128. * (1 + Game.wave_global)
 
 
-func _on_position_in_viewport_changed():
-	const unproject_correction := Vector3.UP * 0.001  # bug: x axis points cannot be unproject
-	info.position = level.map.camera.eyes.unproject_position(position + unproject_correction)
-
-
 func update():
 	update_mesh()
 	update_light()
@@ -382,18 +368,8 @@ func update():
 func update_light():
 	dirty_light = false
 	
-	if show_label and is_watched:
-		if level.map.camera.is_fps:
-			info.visible = false
-		else:
-			info.visible = not level.map.camera.eyes.is_position_behind(position)
-	
 	if is_watched:
-		if show_label:
-			if level.map.camera.is_fps:
-				info.visible = false
-			else:
-				info.visible = not level.map.camera.eyes.is_position_behind(position)
+		_on_position_in_viewport_changed()
 		
 		base_mesh_instance.material_override.set_shader_parameter("light", Color(luminance, luminance, luminance))
 		material.set_shader_parameter("light", cached_light)
@@ -509,19 +485,9 @@ func _on_map_visibility_changed(visibility_range: float):
 	eye.visibility_range = visibility_range
 
 
-#func update_darkvision():
-	#var enabled := map.is_darkvision_view
-	#var darkvision: float = get_property(DARKVISION).value
-	#var has_darkvision: bool = darkvision > 0
-	#if enabled:
-		##eye.omni_light_3d.visible = false
-		#eye.darkvision_light.visible = has_darkvision
-		#if has_darkvision:
-			#eye.darkvision_light.omni_range = darkvision * 100
-			##eye.darkvision_light.light_specular = min(visibility_range * darkvision ** 2.75, eye.omni_light_3d.light_specular)
-	#else:
-		##eye.omni_light_3d.visible = true
-		#eye.darkvision_light.visible = false
+func _on_label_vision_changed(label_vision: float):
+	info.visible = label_vision
+	_on_position_in_viewport_changed()
 	
 
 ###############
@@ -532,6 +498,7 @@ func json():
 	return {
 		"type": type,
 		"id": id,
+		"favourite": is_favourite,
 		"position": Utils.v2_to_a2(position_2d),
 		"rotation": snappedf(rotation_y, 0.001),
 		"flipped": flipped,

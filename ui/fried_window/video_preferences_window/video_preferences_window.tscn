@@ -1,8 +1,9 @@
-[gd_scene load_steps=6 format=3 uid="uid://c3vwuxrfaun3p"]
+[gd_scene load_steps=7 format=3 uid="uid://c3vwuxrfaun3p"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_g03ne"]
 [ext_resource type="Script" path="res://ui/fried_window/video_preferences_window/video_preferences_window.gd" id="2_acgwu"]
 [ext_resource type="PackedScene" uid="uid://ddbco64u43nkk" path="res://ui/tabs/tab_properties/field/float_field/float_field.tscn" id="3_m5wac"]
+[ext_resource type="PackedScene" uid="uid://cvlbw6pjdx7sd" path="res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn" id="4_hwen6"]
 [ext_resource type="PackedScene" uid="uid://d0ch44utbuhby" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn" id="4_i0gds"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
@@ -56,7 +57,31 @@ unique_name_in_owner = true
 layout_mode = 2
 theme_override_constants/separation = 0
 
-[node name="VisibleCameraPivot" parent="M/VBoxContainer/Body/V/C/M/Fields" index="0" instance=ExtResource("4_i0gds")]
+[node name="StartMaximized" parent="M/VBoxContainer/Body/V/C/M/Fields" index="0" instance=ExtResource("4_i0gds")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 1
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/StartMaximized/H" index="0"]
+text = "Start Maximized"
+
+[node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/StartMaximized/H/FriedConvexPanel" index="0"]
+text = "No"
+
+[node name="StartOnMonitor" parent="M/VBoxContainer/Body/V/C/M/Fields" index="1" instance=ExtResource("4_hwen6")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/StartOnMonitor/H" index="0"]
+text = "Start On Monitor
+"
+
+[node name="NumberEdit" parent="M/VBoxContainer/Body/V/C/M/Fields/StartOnMonitor/H" index="1"]
+has_slider = false
+max_value = 3.0
+text = "0"
+
+[node name="VisibleCameraPivot" parent="M/VBoxContainer/Body/V/C/M/Fields" index="2" instance=ExtResource("4_i0gds")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 1
@@ -67,7 +92,7 @@ text = "Visible Camera Pivot"
 [node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/VisibleCameraPivot/H/FriedConvexPanel" index="0"]
 button_pressed = true
 
-[node name="MouseSensibility" parent="M/VBoxContainer/Body/V/C/M/Fields" index="1" instance=ExtResource("3_m5wac")]
+[node name="MouseSensibility" parent="M/VBoxContainer/Body/V/C/M/Fields" index="3" instance=ExtResource("3_m5wac")]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -82,7 +107,7 @@ max_value = 100.0
 step = 5.0
 text = "50"
 
-[node name="OrthogonalCamera" parent="M/VBoxContainer/Body/V/C/M/Fields" index="2" instance=ExtResource("4_i0gds")]
+[node name="OrthogonalCamera" parent="M/VBoxContainer/Body/V/C/M/Fields" index="4" instance=ExtResource("4_i0gds")]
 unique_name_in_owner = true
 visible = false
 layout_mode = 2
@@ -94,7 +119,7 @@ text = "Orthogonal Camera"
 [node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/OrthogonalCamera/H/FriedConvexPanel" index="0"]
 text = "No"
 
-[node name="LabelSize" parent="M/VBoxContainer/Body/V/C/M/Fields" index="3" instance=ExtResource("3_m5wac")]
+[node name="LabelSize" parent="M/VBoxContainer/Body/V/C/M/Fields" index="5" instance=ExtResource("3_m5wac")]
 unique_name_in_owner = true
 layout_mode = 2
 
@@ -109,7 +134,7 @@ max_value = 100.0
 step = 5.0
 text = "25"
 
-[node name="CRTFilter" parent="M/VBoxContainer/Body/V/C/M/Fields" index="4" instance=ExtResource("4_i0gds")]
+[node name="CRTFilter" parent="M/VBoxContainer/Body/V/C/M/Fields" index="6" instance=ExtResource("4_i0gds")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 1
@@ -120,7 +145,7 @@ text = "CRT Filter"
 [node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/CRTFilter/H/FriedConvexPanel" index="0"]
 button_pressed = true
 
-[node name="LowQualityShadows" parent="M/VBoxContainer/Body/V/C/M/Fields" index="5" instance=ExtResource("4_i0gds")]
+[node name="LowQualityShadows" parent="M/VBoxContainer/Body/V/C/M/Fields" index="7" instance=ExtResource("4_i0gds")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_vertical = 1
@@ -131,9 +156,27 @@ text = "Low Quality Shadows"
 [node name="CheckBox" parent="M/VBoxContainer/Body/V/C/M/Fields/LowQualityShadows/H/FriedConvexPanel" index="0"]
 text = "No"
 
+[node name="SceneResolution" parent="M/VBoxContainer/Body/V/C/M/Fields" index="8" instance=ExtResource("3_m5wac")]
+unique_name_in_owner = true
+layout_mode = 2
+
+[node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/SceneResolution/H" index="0"]
+text = "Scene Resolution"
+
+[node name="NumberEdit" parent="M/VBoxContainer/Body/V/C/M/Fields/SceneResolution/H" index="1"]
+suffix = "%"
+rounded = true
+min_value = 25.0
+max_value = 100.0
+step = 25.0
+text = "25"
+
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/StartMaximized"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/StartOnMonitor"]
 [editable path="M/VBoxContainer/Body/V/C/M/Fields/VisibleCameraPivot"]
 [editable path="M/VBoxContainer/Body/V/C/M/Fields/MouseSensibility"]
 [editable path="M/VBoxContainer/Body/V/C/M/Fields/OrthogonalCamera"]
 [editable path="M/VBoxContainer/Body/V/C/M/Fields/LabelSize"]
 [editable path="M/VBoxContainer/Body/V/C/M/Fields/CRTFilter"]
 [editable path="M/VBoxContainer/Body/V/C/M/Fields/LowQualityShadows"]
+[editable path="M/VBoxContainer/Body/V/C/M/Fields/SceneResolution"]
