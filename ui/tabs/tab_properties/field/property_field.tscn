@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://boiuirawcqx84"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/property_field.gd" id="1_a3754"]
+[ext_resource type="Script" uid="uid://drvmh1rggudma" path="res://ui/tabs/tab_properties/field/property_field.gd" id="1_a3754"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_ue04p"]
 content_margin_left = 8.0

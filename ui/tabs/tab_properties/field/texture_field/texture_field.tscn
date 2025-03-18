@@ -1,7 +1,7 @@
 [gd_scene load_steps=9 format=3 uid="uid://xgr6imtskgmc"]
 
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_5606e"]
-[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/texture_field/texture_field.gd" id="2_cohox"]
+[ext_resource type="Script" uid="uid://cf3cbkadupgis" path="res://ui/tabs/tab_properties/field/texture_field/texture_field.gd" id="2_cohox"]
 [ext_resource type="Texture2D" uid="uid://clpptfcqgf1ox" path="res://resources/icons/empty_texture_icon.png" id="3_4mw8o"]
 [ext_resource type="PackedScene" uid="uid://cqy80g0rwe4vj" path="res://ui/tabs/tab_properties/field/texture_field/droppable_texture_button/droppable_texture_button.tscn" id="3_bm7do"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_umdt8"]

@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://beu3804c1md5t"]
 
-[ext_resource type="Script" path="res://addons/fade_transition/examples/initially_covered_example/initially_covered_example.gd" id="1_2vbcw"]
+[ext_resource type="Script" uid="uid://b2tlpbuellgf6" path="res://addons/fade_transition/examples/initially_covered_example/initially_covered_example.gd" id="1_2vbcw"]
 [ext_resource type="PackedScene" uid="uid://pojmf4m23i0" path="res://addons/fade_transition/fade_transition.tscn" id="2_dkkv8"]
 
 [node name="InitiallyCoveredExample" type="Node"]

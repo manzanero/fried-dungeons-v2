@@ -1,6 +1,6 @@
 [gd_scene load_steps=7 format=3 uid="uid://d2i15cdabp3yy"]
 
-[ext_resource type="Script" path="res://ui/fried_window/fried_window.gd" id="1_3o5ga"]
+[ext_resource type="Script" uid="uid://cil5jhwhian34" path="res://ui/fried_window/fried_window.gd" id="1_3o5ga"]
 [ext_resource type="Texture2D" uid="uid://ph36o52jrb1h" path="res://resources/icons/cross_icon.png" id="2_yb28n"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_t7qnq"]

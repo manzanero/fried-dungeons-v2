@@ -1,9 +1,9 @@
 [gd_scene load_steps=10 format=3 uid="uid://cfyusau8c7lt0"]
 
-[ext_resource type="Script" path="res://assets/map/map.gd" id="1_jrnr7"]
-[ext_resource type="Script" path="res://assets/map/loader/loader.gd" id="2_l8wwe"]
+[ext_resource type="Script" uid="uid://e3fk1add3ydk" path="res://assets/map/map.gd" id="1_jrnr7"]
+[ext_resource type="Script" uid="uid://ddvi08dxb2wsn" path="res://assets/map/loader/loader.gd" id="2_l8wwe"]
 [ext_resource type="PackedScene" uid="uid://djn7mwvra11fw" path="res://assets/camera/camera.tscn" id="2_ty8om"]
-[ext_resource type="Script" path="res://assets/map/instancer/instancer.gd" id="3_grhhp"]
+[ext_resource type="Script" uid="uid://ccfroalx442ma" path="res://assets/map/instancer/instancer.gd" id="3_grhhp"]
 [ext_resource type="Theme" uid="uid://bbmp4uwlx25jx" path="res://resources/themes/pixel_ui_theme/PixelTheme_paper.tres" id="4_1lesj"]
 [ext_resource type="Environment" uid="uid://drd07quupnr1b" path="res://assets/map/map_environment.tres" id="4_okbi2"]
 [ext_resource type="FontFile" uid="uid://sph0kotu777o" path="res://resources/themes/pixel_ui_theme/m5x7.ttf" id="7_fupde"]
@@ -25,7 +25,7 @@ tracks/0/keys = {
 
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_wchhy"]
 _data = {
-"RESET": SubResource("Animation_g0h8x")
+&"RESET": SubResource("Animation_g0h8x")
 }
 
 [node name="Map" type="Node3D" node_paths=PackedStringArray("loader", "instancer", "levels_parent", "camera")]

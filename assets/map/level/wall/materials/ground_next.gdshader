@@ -25,8 +25,8 @@ void fragment() {
 
 	if (is_darkvision_view) {
 		vec3 color = ALBEDO.rgb;
-		float brightness = pow((color.r * color.g * color.b), 0.33);
-		ALBEDO = vec3(brightness, brightness, brightness);
+		float brightness = dot(color, vec3(0.2126, 0.7152, 0.0722));
+		ALBEDO = vec3(brightness);
 	}
 }
 
@@ -35,7 +35,7 @@ const float bool_true = 0.0001;
 void light() {
 	vec3 color = LIGHT_COLOR;
 	if (is_darkvision_view)
-		color = vec3(pow((color.r * color.g * color.b), 0.33));
+		color = vec3(dot(color, vec3(0.2126, 0.7152, 0.0722)));
 
 	DIFFUSE_LIGHT += ATTENUATION * color;
 

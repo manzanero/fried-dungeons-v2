@@ -18,7 +18,6 @@ var detached_blueprint: bool
 var preview_rotation: float
 var preview_flipped: bool
 var preview_properties := {}
-#var instance_once := false
 
 
 func _enter_state(previous_state: String) -> void:
@@ -33,14 +32,16 @@ func _enter_state(previous_state: String) -> void:
 	preview_rotation = 0.0
 	preview_flipped = false
 	level.preview_element = null
-	#instance_once = false
-
+	for element: Element in level.elements_selected.values():
+		element.is_selected = false
 
 func _exit_state(next_state: String) -> void:
 	super(next_state)
 	Game.ui.build_border.visible = false
 	if is_instance_valid(level.preview_element):
-		level.preview_element.call_deferred("remove")
+		level.preview_element.remove()
+	#if is_instance_valid(level.preview_element):
+		#level.preview_element.call_deferred("remove")
 	level.preview_element = null
 
 
@@ -86,14 +87,16 @@ func process_instance_entity():
 				selector.position_2d, preview_properties, preview_rotation, preview_flipped, true)
 		if not detached_blueprint:
 			entity.set_property_value("blueprint", preview_blueprint)
-		entity.is_preview = true
+		entity.is_selected = true
+		entity.edit_properties()
+		entity.cached_light = level.get_element_light(selector.position_2d)
+		entity.update_light()
 		entity.selector_disabled = true
-		level.select(entity)
 		level.preview_element = entity
 		
 	entity.is_rotated = Input.is_action_pressed("rotate")
 		
-	if Input.is_action_just_pressed("key_c"):
+	if Input.is_action_just_released("middle_click") and not level.mouse_move:
 		var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.selector_ray)
 		if hit_info:
 			var collider = hit_info.collider
@@ -131,12 +134,14 @@ func process_instance_light():
 				selector.position_2d, preview_properties, preview_rotation, preview_flipped, true)
 		if not detached_blueprint:
 			light.set_property_value("blueprint", preview_blueprint)
-		light.is_preview = true
+		light.is_selected = true
+		light.edit_properties()
+		light.cached_light = level.get_element_light(selector.position_2d)
+		light.update_light()
 		light.selector_disabled = true
-		level.select(light)
 		level.preview_element = light
 		
-	if Input.is_action_just_pressed("key_c"):
+	if Input.is_action_just_released("middle_click") and not level.mouse_move:
 		var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.selector_ray)
 		if hit_info:
 			var hovered_light := hit_info.collider.get_parent() as Light
@@ -172,11 +177,14 @@ func process_instance_prop():
 				selector.position_2d, preview_properties, preview_rotation, preview_flipped, true)
 		if not detached_blueprint:
 			prop.set_property_value("blueprint", preview_blueprint)
+		prop.is_selected = true
+		prop.edit_properties()
+		prop.cached_light = level.get_element_light(selector.position_2d)
+		prop.update_light()
 		prop.selector_disabled = true
-		level.select(prop)
 		level.preview_element = prop
 		
-	if Input.is_action_just_pressed("key_c"):
+	if Input.is_action_just_released("middle_click") and not level.mouse_move:
 		var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.selector_ray)
 		if hit_info:
 			var collider = hit_info.collider
@@ -195,12 +203,15 @@ func process_instance_prop():
 	
 	if Input.is_action_just_released("left_click") and Game.ui.scene_tab_has_focus:
 		var id = Utils.random_string(8, true)
-		map.instancer.create_prop(level, id, 
+		var new_prop := map.instancer.create_prop(level, id, 
 				prop.position_2d, prop.properties_values, prop.rotation_y)
+				
+		new_prop.cached_light = level.get_element_light(selector.position_2d)
+		new_prop.update_light()
 	
 		Game.server.rpcs.create_prop.rpc(map.slug, level.index, id,
 				prop.position_2d, prop.properties_values, prop.rotation_y)
-				
+	
 		prop.set_property_value("label", _valid_element_label(preview_label))
 
 

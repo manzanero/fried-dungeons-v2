@@ -232,7 +232,7 @@ func _ready() -> void:
 	init_properties = entity_init_properties
 	
 	selector_mesh_instance.visible = false
-	cached_light = level.get_light(position_2d)
+	cached_light = level.get_element_light(position_2d)
 	level.light_texture_updated.connect(_on_light_texture_updated)
 	map.camera.changed.connect(_on_position_in_viewport_changed)
 	map.tab_scene.sub_viewport.size_changed.connect(_on_position_in_viewport_changed)
@@ -241,9 +241,10 @@ func _ready() -> void:
 	info.label_label.label_settings.font_size = Game.video_preferences.get_font_size()
 	
 	map.map_visibility_changed.connect(_on_map_visibility_changed)
+	_on_map_visibility_changed(map.visibility)
 	map.label_vision_enabled.connect(_on_label_vision_changed)
 	map.darkvision_enabled.connect(func (value):
-		cached_light = level.get_light(position_2d)
+		cached_light = level.get_element_light(position_2d)
 		update_light()
 		
 		eye.darkvision_enabled = value
@@ -304,7 +305,7 @@ func change_property(property_name: String, new_value: Variant) -> void:
 		BODY_FRAME: frame = new_value
 		BODY_SIZE: 
 			body.scale = (Vector3.ONE * new_value).clampf(0.1, 64)
-			body.scale.x *= -1 if flipped else 1
+			#body.scale.x *= -1 if flipped else 1
 		BASE_SIZE:
 			base_mesh_instance.scale = Vector3(new_value * 2, 1, new_value * 2).clampf(0.1, 64)
 			selector_collider.scale = (Vector3.ONE * new_value * 2).clampf(0.1, 64)
@@ -347,7 +348,7 @@ func _on_texture_resource_changed() -> void:
 
 
 func _on_light_texture_updated():
-	var ligth := level.get_light(position_2d)
+	var ligth := level.get_element_light(position_2d)
 	if ligth != cached_light:
 		cached_light = ligth
 		update_light()
@@ -357,6 +358,7 @@ func _on_light_texture_updated():
 
 
 func _process(_delta: float) -> void:
+	super(_delta)
 	body.position.y = 1. / 16. + 1. / 128. * (1 + Game.wave_global)
 
 
@@ -393,7 +395,7 @@ func update_mesh():
 	if not texture:
 		texture = preload("res://resources/icons/entities_white_icon.png")  # preload("res://resources/icons/godot_icon.png")
 		texture_attributes.get_or_add("scale", 0.5)
-		
+	
 	material.set_shader_parameter("texture_albedo", texture)
 		
 	var size: Vector2 = Utils.a2_to_v2(texture_attributes.size) if "size" in texture_attributes else texture.get_size()
@@ -432,6 +434,7 @@ func update_mesh():
 		slice.depth = thickness
 		slice.double_sided = true
 		slice.pixel_size = Game.U
+		slice.flip_h = flipped
 		slice.texture = texture
 		slice.region_enabled = true
 		slice.region_rect = Rect2(size.x * effective_frame, size.y * i, size.x, size.y)
@@ -467,9 +470,12 @@ func _set_selected(value: bool) -> void:
 
 
 func _set_flipped(value: bool) -> void:
+	if flipped == value:
+		return
+
 	super._set_flipped(value)
-	
-	body.scale.x = -1 if flipped else 1
+
+	update_mesh()
 
 
 func _set_preview(value: bool) -> void:

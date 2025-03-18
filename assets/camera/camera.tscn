@@ -1,6 +1,6 @@
 [gd_scene load_steps=5 format=3 uid="uid://djn7mwvra11fw"]
 
-[ext_resource type="Script" path="res://assets/camera/camera.gd" id="1_45b4q"]
+[ext_resource type="Script" uid="uid://b8ek2ulgi8qai" path="res://assets/camera/camera.gd" id="1_45b4q"]
 
 [sub_resource type="SphereMesh" id="SphereMesh_hp6ey"]
 radius = 0.063
@@ -21,6 +21,7 @@ height = 1.0
 radius = 0.249
 
 [node name="Camera" type="Node3D"]
+physics_interpolation_mode = 2
 script = ExtResource("1_45b4q")
 init_x = 24.0
 init_z = 24.0

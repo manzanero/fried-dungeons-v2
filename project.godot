@@ -13,9 +13,9 @@ config_version=5
 config/name="Fried Dungeons"
 run/main_scene="res://assets/game_manager/game_manager.tscn"
 config/use_custom_user_dir=true
-config/features=PackedStringArray("4.3", "Forward Plus")
-boot_splash/image="res://resources/images/patatas.png"
+config/features=PackedStringArray("4.4", "Forward Plus")
 boot_splash/fullsize=false
+boot_splash/image="res://resources/images/patatas.png"
 config/icon="res://resources/images/patatas_icon_128.png"
 
 [autoload]
@@ -165,8 +165,7 @@ key_s={
 [physics]
 
 2d/physics_engine="GodotPhysics2D"
-3d/physics_engine="JoltPhysics3D"
-common/physics_interpolation=true
+3d/physics_engine="Jolt Physics"
 
 [rendering]
 

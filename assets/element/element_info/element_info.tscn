@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://blukfp887yh7v"]
 
-[ext_resource type="Script" path="res://assets/element/element_info/element_info.gd" id="1_6ch6v"]
+[ext_resource type="Script" uid="uid://ccadgn8pfjpxm" path="res://assets/element/element_info/element_info.gd" id="1_6ch6v"]
 [ext_resource type="LabelSettings" uid="uid://ywtmta1ah3jd" path="res://resources/themes/main/element_label_settings.tres" id="1_aqsor"]
 
 [node name="Info" type="Control" node_paths=PackedStringArray("label_label") groups=["info"]]

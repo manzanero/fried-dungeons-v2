@@ -33,6 +33,7 @@ func _ready() -> void:
 func _on_visibility_changed() -> void:
 	if visible:
 		Game.ui.mouse_blocker.visible = true
+		delete_button.grab_focus()
 
 
 func _on_cancel_button_pressed() -> void:

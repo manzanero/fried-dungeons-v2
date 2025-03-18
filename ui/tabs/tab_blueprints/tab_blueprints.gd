@@ -396,6 +396,8 @@ func _on_instance_button_pressed(detached := false):
 	level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).preview_label = label
 	level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).preview_blueprint = blueprint
 	level.state_machine.get_state_node(Level.State.GO_ELEMENT_INSTANCING).detached_blueprint = detached
+	
+	get_viewport().gui_release_focus()
 
 
 func _on_edit_button_pressed():

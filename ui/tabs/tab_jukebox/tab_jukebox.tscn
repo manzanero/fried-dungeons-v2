@@ -1,7 +1,7 @@
 [gd_scene load_steps=12 format=3 uid="uid://bxt6nwjxeo4i8"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_jukebox/tab_jukebox.gd" id="1_enohi"]
-[ext_resource type="Script" path="res://assets/game_manager/audio/audio.gd" id="2_eujgv"]
+[ext_resource type="Script" uid="uid://bqpfks56b6srr" path="res://ui/tabs/tab_jukebox/tab_jukebox.gd" id="1_enohi"]
+[ext_resource type="Script" uid="uid://rfxm5cou1rw2" path="res://assets/game_manager/audio/audio.gd" id="2_eujgv"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_o2hp0"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_kqjd4"]
 [ext_resource type="Texture2D" uid="uid://dufx3biipbvha" path="res://resources/icons/mute_icon.png" id="3_mxqcy"]
@@ -76,7 +76,6 @@ drag_type = "Jukebox_tab_music_items"
 allow_drop_blank = true
 allow_drop_on_item = true
 allow_drop_inbetween = true
-drop_types_allowed = ["campaign_resouce_items"]
 
 [node name="MarginContainer" type="MarginContainer" parent="C/C/C"]
 layout_mode = 2

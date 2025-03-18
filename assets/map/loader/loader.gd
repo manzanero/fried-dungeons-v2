@@ -275,7 +275,9 @@ func load_map(map_data: Dictionary):
 				map.current_ambient_light = map.master_ambient_light
 			if map.override_ambient_color:
 				map.current_ambient_color = map.master_ambient_color
-				
+		
+		map.visibility = map_data.settings.get("visibility", 1.0)
+
 	
 	# It is an empty map
 	if not map_data.has("levels"):

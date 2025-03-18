@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://b6q5i32b5tq6y"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_she4e"]
-[ext_resource type="Script" path="res://ui/fried_window/delete_element_window/delete_element_window.gd" id="2_dxc2y"]
+[ext_resource type="Script" uid="uid://dfemr31adtm60" path="res://ui/fried_window/delete_element_window/delete_element_window.gd" id="2_dxc2y"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
 bg_color = Color(0.0117647, 0.0117647, 0.0117647, 1)
@@ -73,10 +73,10 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 focus_neighbor_left = NodePath(".")
-focus_neighbor_top = NodePath("../../../../../TitleBar/H/CloseButton")
+focus_neighbor_top = NodePath("../CancelButton")
 focus_neighbor_right = NodePath("../CancelButton")
-focus_neighbor_bottom = NodePath(".")
-focus_next = NodePath(".")
+focus_neighbor_bottom = NodePath("../CancelButton")
+focus_next = NodePath("../CancelButton")
 focus_previous = NodePath(".")
 text = "Delete"
 
@@ -85,7 +85,7 @@ unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
 focus_neighbor_left = NodePath("../DeleteButton")
-focus_neighbor_top = NodePath("../../../../../TitleBar/H/CloseButton")
+focus_neighbor_top = NodePath(".")
 focus_neighbor_right = NodePath(".")
 focus_neighbor_bottom = NodePath(".")
 focus_next = NodePath(".")

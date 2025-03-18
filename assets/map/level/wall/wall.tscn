@@ -1,9 +1,9 @@
 [gd_scene load_steps=10 format=3 uid="uid://dua75cywy3bao"]
 
-[ext_resource type="Script" path="res://assets/map/level/wall/wall.gd" id="1_8fylx"]
-[ext_resource type="Script" path="res://assets/map/level/wall/wall_generator.gd" id="2_jgfiy"]
+[ext_resource type="Script" uid="uid://cs1jgud2yjomf" path="res://assets/map/level/wall/wall.gd" id="1_8fylx"]
+[ext_resource type="Script" uid="uid://cwjb8rgu81twd" path="res://assets/map/level/wall/wall_generator.gd" id="2_jgfiy"]
 [ext_resource type="Material" uid="uid://clywb03l5sixi" path="res://assets/map/level/wall/materials/front.tres" id="4_uwf0c"]
-[ext_resource type="Script" path="res://addons/LineRenderer/line_renderer.gd" id="5_70oql"]
+[ext_resource type="Script" uid="uid://dx14hypmy0h7t" path="res://addons/LineRenderer/line_renderer.gd" id="5_70oql"]
 [ext_resource type="Material" uid="uid://dxpyjh03moe17" path="res://assets/map/level/wall/materials/back.tres" id="5_p44x4"]
 
 [sub_resource type="Curve3D" id="Curve3D_kyr6i"]

@@ -11,7 +11,9 @@ var elements := {}
 func _init(_slug: String, _data: Dictionary):
 	slug = _slug
 	username = _data.username
-	color = Utils.html_color_to_color(_data.color) if _data.has("color") else Color.WHITE
+	color = Color.WHITE
+	if _data.has("color"):
+		color = Utils.color_no_alpha(Utils.html_color_to_color(_data.color))
 	elements = _data.get("elements", {})
 	
 

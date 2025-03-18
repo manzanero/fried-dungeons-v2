@@ -5,7 +5,12 @@ var level: Level
 var map: Map
 var selector: Selector
 
+var is_selecting := false
+var is_moving := false
+var _selection_origin := Game.NULL_POSITION_2D
+
 var prevent_exit := false
+
 
 
 func _enter_state(previous_state: String) -> void:
@@ -77,38 +82,76 @@ func process_wall_selection():
 
 
 func process_element_selection():
-	if not Game.ui.is_mouse_over_scene_tab or Game.handled_input:
+	if is_moving:
 		return
-	
-	if not Input.is_action_just_pressed("left_click"):
-		return
-	
+		
+	if Input.is_action_just_pressed("left_click") and Game.ui.scene_tab_has_focus:
+		var element_hitted := get_element_hitted()
+		Game.ui.tab_properties.element_selected = element_hitted
+			
+		if element_hitted and not element_hitted.is_selected and not Input.is_key_pressed(KEY_CTRL):
+			for element: Element in level.elements_selected.values():
+				element.is_selected = false
+		
+		if element_hitted:
+			element_hitted.is_selected = true
+			is_moving = true
+			_selection_origin = level.position_hovered
+			return
+		
+		is_selecting = true
+		_selection_origin = level.position_hovered
+		selector.position_2d = Game.NULL_POSITION_2D
+		selector.move_grid_to(Game.NULL_POSITION_2D)
+		
+		if not Input.is_key_pressed(KEY_CTRL):
+			for element: Element in level.elements_selected.values():
+				if element_hitted != element:
+					element.is_selected = false
+		
+	if is_selecting and Game.ui.scene_tab_has_focus:
+		selector.area.visible = true
+		selector.move_area_to(_selection_origin, level.position_hovered)
+		
+	if Input.is_action_just_released("left_click") and is_selecting:
+		selector.area.visible = false
+		is_selecting = false
+		
+		var selection_rect := Rect2(_selection_origin, level.position_hovered - _selection_origin).abs()
+		var elements := level.elements.values()
+		for element: Element in elements:
+			if selection_rect.has_point(element.position_2d):
+				element.is_selected = element.is_selectable
+		#if Game.player_is_master and not Game.master_is_player:
+			#for element: Element in elements:
+				#if selection_rect.has_point(element.position_2d):
+					#element.is_selected = true
+		#else:
+			#for element: Element in elements:
+				#if selection_rect.has_point(element.position_2d):
+					#element.is_selected = element.is_selectable
+		
+
+func get_element_hitted() -> Element:
 	var hit_info := Utils.get_mouse_hit(map.camera.eyes, map.camera.is_fps, Game.selector_ray)
 	if hit_info:
 		var collider = hit_info["collider"]
 		while not collider is Element:
 			collider = collider.get_parent()
+		return collider
+	return null
 		
-		var element_hitted: Element = collider
-		level.select(element_hitted)
-		Game.handled_input = true
-		
-		Debug.print_debug_message("Element hitted \"%s\"" % element_hitted.id)
-		
-	elif is_instance_valid(level.element_selected): 
-		level.element_selected.is_selected = false
-		level.element_selected = null
-
 
 func process_element_movement():
-	if not level.element_selected:
-		return
-	if not level.element_selected.is_selected:
+	if not is_moving:
 		return
 		
 	if Input.is_action_just_released("left_click"):
-		level.element_selected.is_dragged = false
+		for element: Element in level.elements_selected.values():
+			element.is_dragged = false
+			element.is_moving_to_target = false
 		level.drag_offset = Vector2.ZERO
+		is_moving = false
 	
 	if not Game.ui.is_mouse_over_scene_tab:
 		return
@@ -117,11 +160,14 @@ func process_element_movement():
 		return
 	
 	if Input.is_action_just_pressed("left_click"):
-		level.element_selected.is_dragged = true
 		if level.element_selected.is_ceiling_element:
 			level.drag_offset = level.exact_ceilling_hovered - level.element_selected.position_2d
 		else:
 			level.drag_offset = level.exact_position_hovered - level.element_selected.position_2d
+			
+		for element: Element in level.elements_selected.values():
+			element.is_dragged = true
+			element.target_offset = element.position - level.element_selected.position
 		
 
 func process_entity_follow():

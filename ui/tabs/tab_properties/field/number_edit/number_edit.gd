@@ -72,7 +72,7 @@ func set_value_no_signal(_value: float):
 	value = _value
 	_emit_signal = true
 	
-	line_edit.text = str(_value)
+	line_edit.text = str(roundi(_value)) if rounded else str(_value)
 	slider.set_value_no_signal(_value)
 	
 
@@ -170,7 +170,7 @@ func _on_left_button_pressed() -> void:
 		_value = max_value
 	value = _value
 	
-	line_edit.text = str(value)
+	line_edit.text = str(roundi(value)) if rounded else str(value)
 	slider.set_value_no_signal(value)
 
 
@@ -184,7 +184,7 @@ func _on_right_button_pressed() -> void:
 		_value = max_value
 	value = _value
 	
-	line_edit.text = str(value)
+	line_edit.text = str(roundi(value)) if rounded else str(value)
 	slider.set_value_no_signal(value)
 
 

@@ -26,10 +26,12 @@ func _ready():
 
 func start():
 	visible = true
+	process_mode = Node.PROCESS_MODE_ALWAYS
 	reset()
 	
 func stop():
 	visible = false
+	process_mode = Node.PROCESS_MODE_DISABLED
 	spawn_timer.stop()
 
 

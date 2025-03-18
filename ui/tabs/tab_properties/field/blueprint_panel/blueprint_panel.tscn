@@ -1,6 +1,6 @@
 [gd_scene load_steps=14 format=3 uid="uid://bslrfxbdnkrpb"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/blueprint_field/blueprint_field.gd" id="2_eucs4"]
+[ext_resource type="Script" uid="uid://bmpt6wnoyw0pw" path="res://ui/tabs/tab_properties/field/blueprint_field/blueprint_field.gd" id="2_eucs4"]
 [ext_resource type="PackedScene" uid="uid://c2n75w65cr7gu" path="res://ui/tabs/tab_properties/field/blueprint_field/droppable_blueprint_button/droppable_blueprint_button.tscn" id="4_dbin8"]
 [ext_resource type="Texture2D" uid="uid://cmjv1nfv6da8u" path="res://resources/icons/unlink_icon.png" id="5_kod10"]
 [ext_resource type="Texture2D" uid="uid://mdaepaknysud" path="res://resources/icons/link_icon.png" id="6_pk8jj"]

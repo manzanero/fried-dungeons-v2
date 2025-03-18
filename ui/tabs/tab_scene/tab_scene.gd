@@ -13,8 +13,8 @@ const SCENE_ICON := preload("res://resources/icons/scene_icon.png")
 @onready var map: Map = %Map
 
 @onready var fade_transition: FadeTransition = %FadeTransition
-
 @onready var cursor_control: Control = $CursorControl
+
 
 var is_mouse_over := false
 var scene_has_focus := false
@@ -43,9 +43,7 @@ func init(map_slug: String, map_data: Dictionary, send_players := false):
 	
 	Game.ui.tab_properties.settings.reset()
 	
-	crt.visible = visible and Game.video_preferences.crt_filter
-	#visibility_changed.connect(_on_visibility_changed)
-	#_on_visibility_changed()
+	crt.visible = Game.video_preferences.crt_filter
 	
 	item_rect_changed.connect(func ():
 		crt.material.set_shader_parameter("resolution", sub_viewport.size)
@@ -53,10 +51,6 @@ func init(map_slug: String, map_data: Dictionary, send_players := false):
 	
 	loaded.emit()
 	return self
-	
-
-#func _on_visibility_changed():
-	#crt.visible = visible and Game.video_preferences.crt_filter
 
 
 func remove():
@@ -65,8 +59,6 @@ func remove():
 
 
 func _ready() -> void:
-	cursor_control.visible = true
-	
 	mouse_entered.connect(_on_mouse_entered)
 	mouse_exited.connect(_on_mouse_exited)
 	cursor_control.gui_input.connect(_on_gui_input)
@@ -96,27 +88,28 @@ func _on_camera_fps_enabled(_value: bool):
 
 
 func _on_mouse_entered(): 
-	is_mouse_over = true
-	cursor_control.visible = false  # prevent have cursor previous shape
-	
 	# prevent trigger keys while writting or using a control
-	if Game.control_uses_keyboard:
+	if Game.control_uses_keyboard or Input.is_action_pressed("left_click"):
 		return
+		
+	scene_grab_focus()
 
-	get_viewport().gui_release_focus()
+
+func scene_grab_focus():
+	is_mouse_over = true
 	scene_has_focus = true
+	cursor_control.visible = false
 	map.camera.is_operated = true
+	get_viewport().gui_release_focus()
 
 
 func _on_mouse_exited():
 	is_mouse_over = false
-	cursor_control.visible = true  # prevent have cursor previous shape
+	cursor_control.visible = true
 		
 		
 func _on_gui_input(_event: InputEvent):
 	is_mouse_over = true
-	cursor_control.visible = false
-	map.camera.is_operated = true
 	
 	
 func _can_drop_data(_at_position: Vector2, drop_data: Variant) -> bool:
@@ -137,16 +130,17 @@ func _drop_data(_at_position: Vector2, drop_data: Variant) -> void:
 			Utils.temp_error_tooltip("Drop an Element", 2, true)
 		_:
 			Game.ui.tab_blueprints.tree.item_activated.emit()
+	scene_grab_focus()
 
 
 func _input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		if event.pressed:
-			scene_has_focus = is_mouse_over
-			map.camera.is_operated = is_mouse_over
 			if is_mouse_over:
-				get_viewport().gui_release_focus()
-				#focus_mode = FOCUS_ALL
-				#grab_focus()
-				#focus_mode = FOCUS_NONE
-			
+				scene_grab_focus()
+				#scene_has_focus = true
+				#map.camera.is_operated = true
+				#get_viewport().gui_release_focus()
+			else:
+				scene_has_focus = false
+				map.camera.is_operated = false

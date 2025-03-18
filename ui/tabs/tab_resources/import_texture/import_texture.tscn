@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://d2x02vgtidrgn"]
 
 [ext_resource type="PackedScene" uid="uid://dl0m5fa0feqgj" path="res://ui/tabs/tab_properties/container/property_container.tscn" id="1_0a7i1"]
-[ext_resource type="Script" path="res://ui/tabs/tab_resources/import_texture/import_texture.gd" id="1_2wa7l"]
+[ext_resource type="Script" uid="uid://8w8u5mubw6j7" path="res://ui/tabs/tab_resources/import_texture/import_texture.gd" id="1_2wa7l"]
 [ext_resource type="Texture2D" uid="uid://j04vtki4o5mi" path="res://resources/textures/bookshelf.png" id="5_c56ql"]
 [ext_resource type="PackedScene" uid="uid://cj4varycy448i" path="res://ui/tabs/tab_properties/field/choice_field/choice_field.tscn" id="7_5m7st"]
 [ext_resource type="Texture2D" uid="uid://deshy6dmtqy4c" path="res://resources/entity_textures/monsters/field/field_501.png" id="7_8agyp"]

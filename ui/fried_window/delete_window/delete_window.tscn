@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://dl5jls6tc7a2t"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_a5gcj"]
-[ext_resource type="Script" path="res://ui/fried_window/delete_window/delete_window.gd" id="2_61652"]
+[ext_resource type="Script" uid="uid://btkl7dcn8sk12" path="res://ui/fried_window/delete_window/delete_window.gd" id="2_61652"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_t052o"]
 [ext_resource type="PackedScene" uid="uid://cq6rcy2ktpx36" path="res://ui/fried_button/fried_button_red.tscn" id="4_8618b"]
 
@@ -74,6 +74,9 @@ theme_override_constants/separation = 0
 [node name="DeleteButton" parent="M/VBoxContainer/Body/V/M/FriedConvexPanel/H" index="0" instance=ExtResource("4_8618b")]
 unique_name_in_owner = true
 layout_mode = 2
+focus_neighbor_right = NodePath("../CancelButton")
+focus_next = NodePath("../CancelButton")
+focus_mode = 2
 text = "Delete"
 icon = null
 alignment = 1
@@ -82,9 +85,10 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-focus_neighbor_top = NodePath("../../../../../../TitleBar/H/CloseButton")
+focus_neighbor_left = NodePath("../DeleteButton")
+focus_neighbor_top = NodePath(".")
 focus_neighbor_right = NodePath(".")
 focus_neighbor_bottom = NodePath(".")
 focus_next = NodePath(".")
-focus_mode = 0
+focus_previous = NodePath("../DeleteButton")
 text = "Cancel"

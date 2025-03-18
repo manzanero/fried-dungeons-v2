@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://cqbd6ya1w441y"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_7i672"]
-[ext_resource type="Script" path="res://ui/fried_window/exit_window/exit_window.gd" id="2_f2l16"]
+[ext_resource type="Script" uid="uid://dv2uc5iuf2he4" path="res://ui/fried_window/exit_window/exit_window.gd" id="2_f2l16"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_s1ncp"]
 [ext_resource type="PackedScene" uid="uid://cq6rcy2ktpx36" path="res://ui/fried_button/fried_button_red.tscn" id="4_c44hp"]
 
@@ -48,6 +48,9 @@ theme_override_constants/separation = 0
 [node name="ExitButton" parent="M/VBoxContainer/Body/V/M/FriedConvexPanel/H" index="0" instance=ExtResource("4_c44hp")]
 unique_name_in_owner = true
 layout_mode = 2
+focus_neighbor_right = NodePath("../CancelButton")
+focus_next = NodePath("../CancelButton")
+focus_mode = 2
 text = "Exit"
 icon = null
 alignment = 1
@@ -56,9 +59,10 @@ alignment = 1
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 3
-focus_neighbor_top = NodePath("../../../../../../TitleBar/H/CloseButton")
+focus_neighbor_left = NodePath("../ExitButton")
+focus_neighbor_top = NodePath(".")
 focus_neighbor_right = NodePath(".")
 focus_neighbor_bottom = NodePath(".")
 focus_next = NodePath(".")
-focus_mode = 0
+focus_previous = NodePath("../ExitButton")
 text = "Cancel"

@@ -1,6 +1,6 @@
 [gd_resource type="ShaderMaterial" load_steps=2 format=3 uid="uid://bdttdlr5gxswr"]
 
-[ext_resource type="Shader" path="res://assets/map/level/wall/materials/back_solid.gdshader" id="1_hj6fp"]
+[ext_resource type="Shader" uid="uid://fpcv2e73wadk" path="res://assets/map/level/wall/materials/back_solid.gdshader" id="1_hj6fp"]
 
 [resource]
 render_priority = 1

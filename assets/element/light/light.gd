@@ -156,7 +156,7 @@ func _ready() -> void:
 	element_velocity = 10
 	height = 1.0
 	
-	cached_light = level.get_light(position_2d)
+	cached_light = level.get_element_light(position_2d)
 	level.light_texture_updated.connect(_on_light_texture_updated)
 	map.camera.changed.connect(_on_position_in_viewport_changed)
 	map.tab_scene.sub_viewport.size_changed.connect(_on_position_in_viewport_changed)
@@ -213,7 +213,7 @@ func change_property(property_name: String, new_value: Variant) -> void:
 
 
 func _on_light_texture_updated():
-	var ligth := level.get_light(position_2d)
+	var ligth := level.get_element_light(position_2d)
 	if ligth != cached_light:
 		cached_light = ligth
 		update_light()

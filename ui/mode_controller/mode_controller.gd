@@ -220,7 +220,8 @@ func show_mode():
 	if mode == Mode.NONE:
 		mode_label.text = ""
 		mode_hint.modulate = Color.TRANSPARENT
-		tween.kill()
+		if tween:
+			tween.kill()
 		return
 	
 	show_hint(mode_str)

@@ -1,7 +1,7 @@
 [gd_scene load_steps=16 format=3 uid="uid://uo3ugi4hm5ry"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_e85sc"]
-[ext_resource type="Script" path="res://ui/fried_window/campaign_players_window/campaign_players_window.gd" id="2_awqrg"]
+[ext_resource type="Script" uid="uid://di6wstkfdfkxj" path="res://ui/fried_window/campaign_players_window/campaign_players_window.gd" id="2_awqrg"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_hpfc1"]
 [ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="3_pttfv"]
 [ext_resource type="PackedScene" uid="uid://dndmjccb14xki" path="res://ui/tabs/tab_properties/field/color_edit/color_edit.tscn" id="4_5n1v1"]

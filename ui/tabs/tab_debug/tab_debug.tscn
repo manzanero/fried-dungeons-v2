@@ -1,7 +1,7 @@
 [gd_scene load_steps=8 format=3 uid="uid://b1i1ky18bbaqf"]
 
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_rsj42"]
-[ext_resource type="Script" path="res://ui/tabs/tab_debug/tab_debug.gd" id="2_oqyqe"]
+[ext_resource type="Script" uid="uid://no35rpx3v18b" path="res://ui/tabs/tab_debug/tab_debug.gd" id="2_oqyqe"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8jh3g"]
 content_margin_left = 4.0

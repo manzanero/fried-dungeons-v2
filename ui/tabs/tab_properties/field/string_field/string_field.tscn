@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://d2b5jq45q2pl3"]
 
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_271ju"]
-[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/string_field/string_field.gd" id="2_t30o5"]
+[ext_resource type="Script" uid="uid://cb8ahde7ns73i" path="res://ui/tabs/tab_properties/field/string_field/string_field.gd" id="2_t30o5"]
 
 [node name="StringField" instance=ExtResource("1_271ju")]
 offset_bottom = 31.0

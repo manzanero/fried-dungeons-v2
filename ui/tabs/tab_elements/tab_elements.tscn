@@ -1,6 +1,6 @@
 [gd_scene load_steps=21 format=3 uid="uid://b4l1ilsp0i1is"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_elements/tab_elements.gd" id="1_7e7qs"]
+[ext_resource type="Script" uid="uid://cuo10l37ub57t" path="res://ui/tabs/tab_elements/tab_elements.gd" id="1_7e7qs"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="2_lfn1m"]
 [ext_resource type="PackedScene" uid="uid://b6o13q7qteh2i" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.tscn" id="2_ryb6d"]
 [ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="3_hxmhb"]
@@ -144,6 +144,7 @@ icon_alignment = 1
 item_count = 3
 popup/item_0/text = "New light"
 popup/item_0/icon = ExtResource("5_asrco")
+popup/item_0/id = 0
 popup/item_1/text = "New Entity"
 popup/item_1/icon = ExtResource("6_slfmy")
 popup/item_1/id = 1
@@ -163,7 +164,7 @@ right_icon = ExtResource("3_lkhpt")
 [node name="PinnedButton" type="Button" parent="C/C2/H"]
 unique_name_in_owner = true
 layout_mode = 2
-tooltip_text = "Duplicate selected Blueprint"
+tooltip_text = "Go to pinned elements"
 focus_mode = 0
 icon = ExtResource("8_5nxko")
 icon_alignment = 1

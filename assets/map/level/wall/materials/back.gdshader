@@ -38,7 +38,7 @@ void fragment() {
 
 	if (is_darkvision_view) {
 		vec3 color = ALBEDO.rgb;
-		float brightness = pow((color.r * color.g * color.b), 0.33);
+		float brightness = dot(color, vec3(0.2126, 0.7152, 0.0722));
 		ALBEDO = vec3(brightness);
 	}
 }

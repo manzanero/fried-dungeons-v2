@@ -1,7 +1,7 @@
 [gd_scene load_steps=5 format=3 uid="uid://vnstceqbrj3b"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_vxuih"]
-[ext_resource type="Script" path="res://ui/fried_window/credits_window/credits_window.gd" id="2_f6q00"]
+[ext_resource type="Script" uid="uid://d0ho5fjco6k34" path="res://ui/fried_window/credits_window/credits_window.gd" id="2_f6q00"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_05vpd"]
 content_margin_left = 4.0

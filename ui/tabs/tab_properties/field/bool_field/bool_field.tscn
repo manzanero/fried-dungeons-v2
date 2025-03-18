@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://d0ch44utbuhby"]
 
 [ext_resource type="PackedScene" uid="uid://boiuirawcqx84" path="res://ui/tabs/tab_properties/field/property_field.tscn" id="1_bsggv"]
-[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.gd" id="2_tbtjr"]
+[ext_resource type="Script" uid="uid://ctqmp0a40hodm" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.gd" id="2_tbtjr"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="3_lf2io"]
 
 [node name="BoolField" instance=ExtResource("1_bsggv")]

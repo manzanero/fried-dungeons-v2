@@ -1,6 +1,6 @@
 [gd_scene load_steps=11 format=3 uid="uid://qg2jutjaad46"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_settings/tab_settings.gd" id="1_3vbe7"]
+[ext_resource type="Script" uid="uid://dn6qtb4rwl40p" path="res://ui/tabs/tab_settings/tab_settings.gd" id="1_3vbe7"]
 [ext_resource type="Theme" uid="uid://03nuasohg4fh" path="res://resources/themes/main/main_theme.tres" id="1_8qf14"]
 [ext_resource type="PackedScene" uid="uid://dl0m5fa0feqgj" path="res://ui/tabs/tab_properties/container/property_container.tscn" id="3_46uht"]
 [ext_resource type="PackedScene" uid="uid://d2b5jq45q2pl3" path="res://ui/tabs/tab_properties/field/string_field/string_field.tscn" id="4_pvmar"]
@@ -101,6 +101,12 @@ layout_mode = 2
 [node name="Label" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/GraphicsContainer/M/PropertyFields/AtlasTextureField/H" index="0"]
 text = "Atlas Texture"
 
+[node name="EmptyTextureButton" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/GraphicsContainer/M/PropertyFields/AtlasTextureField/H/FriedConvexPanel/HBoxContainer" index="0"]
+visible = true
+
+[node name="TextureButton" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/GraphicsContainer/M/PropertyFields/AtlasTextureField/H/FriedConvexPanel/HBoxContainer" index="1"]
+visible = false
+
 [node name="AmbientContainer" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers" instance=ExtResource("3_46uht")]
 unique_name_in_owner = true
 layout_mode = 2
@@ -193,8 +199,7 @@ layout_mode = 2
 size_flags_horizontal = 3
 
 [node name="Label" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields/MasterAmbientColorField/H" index="0"]
-text = "Master Color
-"
+text = "Master Color"
 
 [node name="VisibilityField" parent="MarginContainer/PanelContainer/ScrollContainer/PropertyContainers/AmbientContainer/M/PropertyFields" index="7" instance=ExtResource("5_boduf")]
 unique_name_in_owner = true

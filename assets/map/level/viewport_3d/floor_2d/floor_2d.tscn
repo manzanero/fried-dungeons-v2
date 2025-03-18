@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://c7kw2qqn2s7gb"]
 
-[ext_resource type="Script" path="res://assets/map/level/viewport_3d/floor_2d/floor_2d.gd" id="1_4hluh"]
+[ext_resource type="Script" uid="uid://c0g6vjqnmopwb" path="res://assets/map/level/viewport_3d/floor_2d/floor_2d.gd" id="1_4hluh"]
 [ext_resource type="TileSet" uid="uid://bfrgh3eo6clt7" path="res://resources/tile_maps/floor_tile_set.tres" id="2_3orm1"]
 
 [node name="Floor2D" type="Node2D"]

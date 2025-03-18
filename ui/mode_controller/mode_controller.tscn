@@ -1,6 +1,6 @@
 [gd_scene load_steps=37 format=3 uid="uid://da81cp8j448wv"]
 
-[ext_resource type="Script" path="res://ui/mode_controller/mode_controller.gd" id="1_abku6"]
+[ext_resource type="Script" uid="uid://023d4wi55lt4" path="res://ui/mode_controller/mode_controller.gd" id="1_abku6"]
 [ext_resource type="Texture2D" uid="uid://b4j3w7qpbmtuj" path="res://resources/icons/clear_icon.png" id="1_ho4gg"]
 [ext_resource type="Texture2D" uid="uid://oitqjwhnc6e7" path="res://resources/icons/paint_icon.png" id="2_2o6pb"]
 [ext_resource type="Texture2D" uid="uid://bflwvyf02ftuv" path="res://resources/icons/paint_rect_icon.png" id="3_kf1h2"]
@@ -440,6 +440,7 @@ icon = ExtResource("10_o80du")
 
 [node name="BillboardButton" type="Button" parent="V/C/H/ModesOptions/V/EntityOptions"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Billboard"
@@ -468,6 +469,7 @@ icon = ExtResource("12_cloxs")
 
 [node name="DecalButton" type="Button" parent="V/C/H/ModesOptions/V/PropOptions"]
 unique_name_in_owner = true
+visible = false
 layout_mode = 2
 size_flags_horizontal = 3
 tooltip_text = "Decal"

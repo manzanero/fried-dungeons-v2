@@ -1,13 +1,13 @@
 [gd_scene load_steps=23 format=4 uid="uid://cfu5gxos3nxx7"]
 
 [ext_resource type="PackedScene" uid="uid://c546it4fefagq" path="res://assets/element/element.tscn" id="1_fqk2b"]
-[ext_resource type="Script" path="res://assets/element/entity/entity.gd" id="1_scptp"]
+[ext_resource type="Script" uid="uid://biroytu5l23b3" path="res://assets/element/entity/entity.gd" id="1_scptp"]
 [ext_resource type="Texture2D" uid="uid://crmobcm0up3ug" path="res://resources/entity_textures/monsters/undead/undead_102.png" id="2_4djgx"]
 [ext_resource type="Shader" uid="uid://dvmjmk47dugh6" path="res://assets/element/entity/materials/base_shader.tres" id="3_cs5ne"]
 [ext_resource type="SphereMesh" uid="uid://djpa5djoxbvsd" path="res://assets/element/entity/entity_base_mesh.tres" id="3_q4myc"]
 [ext_resource type="Shader" uid="uid://4ntj7s3bdcgf" path="res://assets/element/entity/materials/body_shader.tres" id="4_esgyb"]
-[ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh_instance.gd" id="6_b77m4"]
-[ext_resource type="Script" path="res://addons/sprite_mesh/sprite_mesh.gd" id="7_ih4st"]
+[ext_resource type="Script" uid="uid://iag8ulm8vli4" path="res://addons/sprite_mesh/sprite_mesh_instance.gd" id="6_b77m4"]
+[ext_resource type="Script" uid="uid://ct60hegeyvgim" path="res://addons/sprite_mesh/sprite_mesh.gd" id="7_ih4st"]
 [ext_resource type="Material" uid="uid://c1nel0ayea611" path="res://assets/element/entity/materials/sprite.tres" id="8_b4q87"]
 [ext_resource type="PackedScene" uid="uid://bg2g2ca2xolm6" path="res://assets/element/entity/eye/eye.tscn" id="9_5arlo"]
 
@@ -16,8 +16,8 @@ resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("4_esgyb")
 shader_parameter/albedo = Color(1, 1, 1, 1)
-shader_parameter/light = null
-shader_parameter/transparency = null
+shader_parameter/light = Color(0, 0, 0, 1)
+shader_parameter/transparency = 0.0
 
 [sub_resource type="CylinderShape3D" id="CylinderShape3D_6qsiy"]
 resource_local_to_scene = true
@@ -31,7 +31,7 @@ render_priority = 1
 shader = ExtResource("3_cs5ne")
 shader_parameter/albedo = Color(1, 1, 1, 1)
 shader_parameter/light = Color(0, 0, 0, 1)
-shader_parameter/transparency = null
+shader_parameter/transparency = 0.0
 
 [sub_resource type="TorusMesh" id="TorusMesh_e2f1x"]
 resource_local_to_scene = true
@@ -53,7 +53,7 @@ resource_local_to_scene = true
 render_priority = 1
 shader = ExtResource("4_esgyb")
 shader_parameter/albedo = Color(1, 1, 1, 1)
-shader_parameter/light = null
+shader_parameter/light = Color(0, 0, 0, 1)
 shader_parameter/transparency = 0.0
 shader_parameter/texture_albedo = ExtResource("2_4djgx")
 

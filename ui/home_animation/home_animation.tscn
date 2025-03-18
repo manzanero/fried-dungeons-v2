@@ -1,11 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://d214e2hbsgu0o"]
 
-[ext_resource type="Script" path="res://ui/home_animation/home_animation.gd" id="1_ssqxi"]
+[ext_resource type="Script" uid="uid://dpn26elb2dhdl" path="res://ui/home_animation/home_animation.gd" id="1_ssqxi"]
 
 [node name="HomeAnimation" type="Node2D"]
-process_priority = 1
-process_physics_priority = 1
-physics_interpolation_mode = 1
 script = ExtResource("1_ssqxi")
 
 [node name="SpawnTimer" type="Timer" parent="."]

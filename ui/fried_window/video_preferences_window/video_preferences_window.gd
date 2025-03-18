@@ -84,9 +84,9 @@ func _on_label_size_changed() -> void:
 		for level: Level in map.levels.values():
 			for element: Element in level.elements.values():
 				if element is Entity:
-					element.label_label.label_settings.font_size = get_font_size()
+					element.info.label_label.label_settings.font_size = get_font_size()
 				elif element is Prop:
-					element.label_label.label_settings.font_size = get_font_size()
+					element.info.label_label.label_settings.font_size = get_font_size()
 
 func get_font_size():
 	return label_size * 24

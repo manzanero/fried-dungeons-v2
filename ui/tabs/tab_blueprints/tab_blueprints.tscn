@@ -1,6 +1,6 @@
 [gd_scene load_steps=27 format=3 uid="uid://cf4l6g0krsom"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_blueprints/tab_blueprints.gd" id="1_rfbpj"]
+[ext_resource type="Script" uid="uid://tf2kj7r3j1xo" path="res://ui/tabs/tab_blueprints/tab_blueprints.gd" id="1_rfbpj"]
 [ext_resource type="PackedScene" uid="uid://bdnh40tn0t5yx" path="res://ui/fried_convex_panel/fried_convex_panel.tscn" id="2_fhnj6"]
 [ext_resource type="Texture2D" uid="uid://bj4xmtdtphxee" path="res://resources/icons/plus_icon.png" id="2_idk65"]
 [ext_resource type="Texture2D" uid="uid://b1e1eujkhkv8p" path="res://resources/icons/sun_icon.png" id="3_gjuor"]
@@ -148,6 +148,7 @@ icon_alignment = 1
 item_count = 4
 popup/item_0/text = "New Folder"
 popup/item_0/icon = ExtResource("4_04mv5")
+popup/item_0/id = 0
 popup/item_1/text = "New light"
 popup/item_1/icon = ExtResource("3_gjuor")
 popup/item_1/id = 1

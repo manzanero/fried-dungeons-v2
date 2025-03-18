@@ -186,7 +186,7 @@ func _ready() -> void:
 	
 	element_velocity = 5
 	
-	cached_light = level.get_light(position_2d)
+	cached_light = level.get_element_light(position_2d)
 	level.light_texture_updated.connect(_on_light_texture_updated)
 	map.camera.changed.connect(_on_position_in_viewport_changed)
 	map.tab_scene.sub_viewport.size_changed.connect(_on_position_in_viewport_changed)
@@ -197,7 +197,7 @@ func _ready() -> void:
 	collider.disabled = true
 	map.label_vision_enabled.connect(_on_label_vision_changed)
 	map.darkvision_enabled.connect(func (_value):
-		cached_light = level.get_light(position_2d)
+		cached_light = level.get_element_light(position_2d)
 		update_light()
 	)
 
@@ -288,7 +288,7 @@ func _on_texture_resource_changed() -> void:
 
 
 func _on_light_texture_updated():
-	var ligth := level.get_light(position_2d)
+	var ligth := level.get_element_light(position_2d)
 	if ligth != cached_light:
 		cached_light = ligth
 		update_light()
@@ -387,6 +387,7 @@ func update_mesh():
 		slice.depth = thickness
 		slice.double_sided = true
 		slice.pixel_size = Game.U
+		slice.flip_h = flipped
 		slice.texture = texture
 		slice.region_enabled = true
 		slice.region_rect = Rect2(size.x * effective_frame, size.y * i, size.x, size.y)
@@ -418,6 +419,15 @@ func _set_selected(value: bool) -> void:
 	super._set_selected(value)
 		
 	selector_mesh_instance.visible = value
+
+
+func _set_flipped(value: bool) -> void:
+	if flipped == value:
+		return
+
+	super._set_flipped(value)
+
+	update_mesh()
 		
 
 func _set_preview(value: bool) -> void:

@@ -13,6 +13,10 @@ var unsaved_blueprints: Array[CampaignBlueprint] = []
 
 
 func _set_element_selected(element: Element):
+	if element_selected == element:
+		return
+	element_selected = element
+	
 	Game.ui.tab_elements.select_element(element)
 	
 	Utils.safe_queue_free(root_container)
@@ -24,7 +28,6 @@ func _set_element_selected(element: Element):
 		return
 	
 	element_properties.visible = true
-	element_selected = element
 	Debug.print_info_message("Element \"%s\" selected" % element_selected.name) 
 		
 	root_container = PropertyContainer.SCENE.instantiate().init(property_containers)
@@ -35,6 +38,7 @@ func _set_element_selected(element: Element):
 	_make_containers_tree(properties)
 	
 	for property_name in properties:
+		#await get_tree().process_frame
 		var property: Element.Property = properties[property_name]
 		var property_container: PropertyContainer = containers_tree[property.container]
 		var field: PropertyField

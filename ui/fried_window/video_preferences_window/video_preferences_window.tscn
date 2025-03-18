@@ -1,7 +1,7 @@
 [gd_scene load_steps=7 format=3 uid="uid://c3vwuxrfaun3p"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_g03ne"]
-[ext_resource type="Script" path="res://ui/fried_window/video_preferences_window/video_preferences_window.gd" id="2_acgwu"]
+[ext_resource type="Script" uid="uid://djqlgv1mkaoh3" path="res://ui/fried_window/video_preferences_window/video_preferences_window.gd" id="2_acgwu"]
 [ext_resource type="PackedScene" uid="uid://ddbco64u43nkk" path="res://ui/tabs/tab_properties/field/float_field/float_field.tscn" id="3_m5wac"]
 [ext_resource type="PackedScene" uid="uid://cvlbw6pjdx7sd" path="res://ui/tabs/tab_properties/field/integer_field/integer_field.tscn" id="4_hwen6"]
 [ext_resource type="PackedScene" uid="uid://d0ch44utbuhby" path="res://ui/tabs/tab_properties/field/bool_field/bool_field.tscn" id="4_i0gds"]
@@ -73,8 +73,7 @@ unique_name_in_owner = true
 layout_mode = 2
 
 [node name="Label" parent="M/VBoxContainer/Body/V/C/M/Fields/StartOnMonitor/H" index="0"]
-text = "Start On Monitor
-"
+text = "Start On Screen"
 
 [node name="NumberEdit" parent="M/VBoxContainer/Body/V/C/M/Fields/StartOnMonitor/H" index="1"]
 has_slider = false

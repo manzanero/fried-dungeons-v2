@@ -56,13 +56,14 @@ func move_grid_to(new_position: Vector2) -> void:
 	_has_changed = true
 	
 	var new_position_3d := Utils.v2_to_v3(new_position)
-	grid.position = new_position_3d.floor() + Vector3.UP * 0.0
+	grid.position = new_position_3d.floor()
+	grid.position.y = 0
 	grid_material.set_shader_parameter("mouse_position", new_position_3d)
 
 
 func tiled_move_area_to(new_position_origin: Vector2, new_position_destiny: Vector2) -> void:
-	if _cached_area_position == new_position_destiny:
-		return
+	#if _cached_area_position == new_position_destiny:
+		#return
 	
 	_cached_area_position = new_position_destiny
 	_has_changed = true
@@ -76,8 +77,8 @@ func tiled_move_area_to(new_position_origin: Vector2, new_position_destiny: Vect
 
 
 func move_area_to(new_position_origin: Vector2, new_position_destiny: Vector2) -> void:
-	if _cached_area_position == new_position_destiny:
-		return
+	#if _cached_area_position == new_position_destiny:
+		#return
 	
 	_cached_area_position = new_position_destiny
 	_has_changed = true

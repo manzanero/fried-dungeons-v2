@@ -25,11 +25,16 @@ var darkvision := 1.0 :
 @onready var darkvision_light: OmniLight3D = %DarkvisionLight
 
 
+var visibility_range_tween: Tween = null
 var darkvision_light_tween: Tween = null
 
 func _set_vision():
+	if visibility_range_tween:
+		visibility_range_tween.kill()
+	visibility_range_tween = create_tween()
+	visibility_range_tween.tween_property(vision_range_light, "light_specular", 
+			LIGHT_SPECULAR * visibility_range ** ATTENUATION, 0.1)
 	vision_range_light.visible = not blindness
-	vision_range_light.light_specular = LIGHT_SPECULAR * visibility_range ** ATTENUATION
 	
 	blindness_range_light.visible = blindness and darkvision_enabled
 	blindness_range_light.light_specular = LIGHT_SPECULAR * 0.1 ** ATTENUATION

@@ -27,8 +27,9 @@ var refresh_light_frecuency := 0.1
 
 var index := 0
 var cells := {}
-var elements := {}
 var walls := {}
+var elements: Dictionary[String, Element] = {}
+var elements_selected := {}
 
 var rect: Rect2i : 
 	set(value): viewport_3d.rect = value
@@ -159,10 +160,15 @@ func _ready():
 func _on_refreshed_light():
 	if not is_selected:
 		return
-	
+		
 	# if not real time
+	refresh_light()
+
+
+func refresh_light():
 	light_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
 	floor_viewport.render_target_update_mode = SubViewport.UPDATE_ONCE
+	await get_tree().process_frame
 	light_sample_2d = light_texture.get_image()
 	light_texture_updated.emit()
 
@@ -176,7 +182,23 @@ func _on_camera_changed():
 				follower_entity.target_position, follower_entity.rotation)
 
 
-func get_light(point: Vector2) -> Color:
+func get_element_light(point: Vector2) -> Color:
+	#return get_point_light(point)
+	
+	const NE_POINT := Vector2(Game.U, Game.U)
+	const SE_POINT := Vector2(Game.U, -Game.U)
+	const SW_POINT := Vector2(-Game.U, -Game.U)
+	const NW_POINT := Vector2(-Game.U, Game.U)
+	var ne := get_point_light(point + NE_POINT)
+	var se := get_point_light(point + SE_POINT)
+	var sw := get_point_light(point + SW_POINT)
+	var nw := get_point_light(point + NW_POINT)
+	return Color(
+			max(ne.r, se.r, sw.r, nw.r), max(ne.g, se.g, sw.g, nw.g), 
+			max(ne.b, se.b, sw.b, nw.b), max(ne.a, se.a, sw.a, nw.a))
+
+
+func get_point_light(point: Vector2) -> Color:
 	if not light_sample_2d:
 		return Color.TRANSPARENT
 	var pixel_position := (point - Vector2(rect.position)) * 4
@@ -189,7 +211,7 @@ func get_light(point: Vector2) -> Color:
 
 
 func is_watched(point: Vector2) -> bool:
-	return get_light(point).a > 0.001
+	return get_point_light(point).a > 0.001
 	
 
 func update_mode():
@@ -299,7 +321,7 @@ func _process(_delta: float) -> void:
 	if next_update_ticks_msec < Game.ticks_msec and next_update_process_frame < Game.process_frame:
 		next_update_ticks_msec = Game.ticks_msec + 100
 		next_update_process_frame = Game.process_frame + 6
-		_on_refreshed_light()
+		refresh_light()
 		
 		# can i improve this?
 		map.camera.allow_fp = [
@@ -322,13 +344,6 @@ func remove_cell(tile: Vector2i):
 		
 
 func select(thing):
-	if thing is Element:
-		thing.is_selected = true
-	else:
-		if is_instance_valid(element_selected):
-			element_selected.is_selected = false
-		element_selected = null
-			
 	if thing is Wall:
 		thing.is_selected = true
 		selected_wall = thing
@@ -343,14 +358,19 @@ func select(thing):
 
 
 func set_master_control():
-	for entity in Game.ui.selected_map.selected_level.elements.values():
+	for entity: Element in Game.ui.selected_map.selected_level.elements.values():
 		entity.is_selectable = true
 		if entity is Entity:
 			entity.eye.visible = false
+			
+	#Game.ui.selected_map.selected_level.refresh_light()
+	#for element: Element in Game.ui.selected_map.selected_level.elements.values():
+		#element.update_light()
+	
 
 func set_control(control_elements: Dictionary):
 	var elements_under_control := control_elements.keys()
-	for entity in Game.ui.selected_map.selected_level.elements.values():
+	for entity: Element in Game.ui.selected_map.selected_level.elements.values():
 		if entity is Entity:
 			if entity.label in elements_under_control:
 				var entity_control_data: Dictionary = control_elements[entity.label]
@@ -365,17 +385,21 @@ func set_control(control_elements: Dictionary):
 		else:
 			entity.is_selectable = false
 
+	#Game.ui.selected_map.selected_level.refresh_light()
+	#for element: Element in Game.ui.selected_map.selected_level.elements.values():
+		#element.update_light()
+
 
 #region input
 
 func _input(event):
 	if event is InputEventMouseButton:
-		if event.button_index == MOUSE_BUTTON_LEFT and event.pressed:
-			Debug.print_debug_message("Tile clicked: %s" % tile_hovered)
-		mouse_move = false
+		if event.pressed:
+			mouse_move = false
 			
 	elif event is InputEventMouseMotion:
-		mouse_move = event.relative != Vector2.ZERO
+		mouse_move = true
+		#mouse_move = event.relative != Vector2.ZERO
 
 #endregion
 

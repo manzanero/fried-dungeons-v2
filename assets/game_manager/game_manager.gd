@@ -104,18 +104,36 @@ func _on_tab_changed(tab: int):
 	Game.modes.reset()
 	Game.ui.build_border.visible = false
 	
-	if Game.ui.selected_map and Game.ui.selected_map.selected_level:
-		Game.ui.selected_map.selected_level.change_state(Level.State.GO_IDLE)
+	var map := Game.ui.selected_map
+	if map and map.selected_level:
+		map.current_ambient_light = map.ambient_light
+		map.current_ambient_color = map.ambient_color
+		if Game.campaign.is_master:
+			if map.override_ambient_light:
+				map.current_ambient_light = map.master_ambient_light
+			if map.override_ambient_color:
+				map.current_ambient_color = map.master_ambient_color
+		
+		map.selected_level.change_state(Level.State.GO_IDLE)
 		if Game.master_is_player:
-			Game.ui.selected_map.selected_level.set_control(Game.master_is_player.elements)
-			Game.ui.selected_map.is_master_view = false
+			map.selected_level.set_control(Game.master_is_player.elements)
+			map.is_master_view = false
 		elif Game.player_is_master:
-			Game.ui.selected_map.selected_level.set_master_control()
-			Game.ui.selected_map.is_master_view = true
+			map.selected_level.set_master_control()
+			map.is_master_view = true
 		else:
-			Game.ui.selected_map.selected_level.set_control(Game.player.elements)
-			Game.ui.selected_map.is_master_view = false
-		Game.ui.selected_map.is_darkvision_view = Game.ui.darkvision_enabled
+			map.selected_level.set_control(Game.player.elements)
+			map.is_master_view = false
+
+		if Game.ui.selected_scene_tab.fade_transition._current_tween:
+			Game.ui.selected_scene_tab.fade_transition._current_tween.kill()
+		Game.ui.selected_scene_tab.fade_transition.cover(0)
+		get_tree().create_timer(0.2).timeout.connect(func ():
+			Game.ui.selected_scene_tab.fade_transition.uncover(1)
+		)
+
+		for level: Level in map.levels.values():
+			level.refresh_light()
 	
 	# disable process in hidden and non players tab
 	for i in Game.ui.scene_tabs.get_tab_count():
@@ -158,7 +176,7 @@ func _on_new_campaign(new_campaign_data: Dictionary, steam: bool) -> void:
 		"label": campaign_label,
 		"master": {
 			"username": new_campaign_data.master_name,
-			"color": Utils.color_to_html_color(new_campaign_data.master_color),
+			"color": Utils.color_no_alpha(Utils.color_to_html_color(new_campaign_data.master_color)),
 		},
 		"state": 1,
 	}
@@ -175,6 +193,8 @@ func _on_new_campaign(new_campaign_data: Dictionary, steam: bool) -> void:
 	var map_data := {
 		"label": map_label
 	}
+	
+	# master chooses init resources
 	if new_campaign_data.get("example_resources"):
 		map_data["settings"] = {}
 		map_data["settings"]["atlas_texture"] = "texture_atlas.png"
@@ -185,11 +205,11 @@ func _on_new_campaign(new_campaign_data: Dictionary, steam: bool) -> void:
 	
 	if new_campaign_data.get("example_resources"):
 		for files in [
-			["res://user/init_resources/heroes.png", campaign_path.path_join("resources").path_join("heroes.png")],
-			["res://user/init_resources/heroes.png.json", campaign_path.path_join("resources").path_join("heroes.png.json")],
-			["res://user/init_resources/texture_atlas.png", campaign_path.path_join("resources").path_join("texture_atlas.png")],
-			["res://user/init_resources/texture_atlas.png.json", campaign_path.path_join("resources").path_join("texture_atlas.png.json")],
-			["res://resources/music/FRIED-DUNGEONS_MAIN-v01_PRE.mp3", campaign_path.path_join("resources").path_join("Fried Dungeons Theme.mp3")],
+			["./init_resources/heroes.png", campaign_path.path_join("resources").path_join("heroes.png")],
+			["./init_resources/heroes.png.json", campaign_path.path_join("resources").path_join("heroes.png.json")],
+			["./init_resources/texture_atlas.png", campaign_path.path_join("resources").path_join("texture_atlas.png")],
+			["./init_resources/texture_atlas.png.json", campaign_path.path_join("resources").path_join("texture_atlas.png.json")],
+			["./init_resources/music/FRIED-DUNGEONS_MAIN-v01_PRE.mp3", campaign_path.path_join("resources").path_join("Fried Dungeons Theme.mp3")],
 		]:
 			Utils.copy(files[0], files[1])
 	

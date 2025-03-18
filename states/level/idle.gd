@@ -39,8 +39,6 @@ func _physics_process_state(_delta: float) -> String:
 			map.distance_label.position.x -= map.distance_label.size.x
 			map.distance_label.position.y += map.distance_label.size.y
 			
-	if Input.is_action_just_pressed("left_click"):
-		drag_origin = level.position_hovered
 	if Input.is_action_just_released("left_click"):
 		drag_origin = Vector2.ZERO
 	if Input.is_action_just_released("right_click"):
@@ -49,12 +47,14 @@ func _physics_process_state(_delta: float) -> String:
 	process_element_selection()
 	process_element_movement()
 	process_entity_follow()
-		
+	
 	if Input.is_action_just_pressed("left_click"):
+		selector.column.visible = false
+		drag_origin = level.position_hovered
 		selector.position_2d = level.position_hovered
 		if is_instance_valid(level.element_selected):
 			selector.position_2d = level.element_selected.position_2d
-	
+			
 	_process_delete()
 	
 	return Level.State.KEEP

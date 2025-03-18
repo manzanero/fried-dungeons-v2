@@ -1,6 +1,6 @@
 [gd_scene load_steps=9 format=3 uid="uid://bkcl57vwjmf07"]
 
-[ext_resource type="Script" path="res://ui/manual/manual.gd" id="1_cwvte"]
+[ext_resource type="Script" uid="uid://bk363gsul4qeo" path="res://ui/manual/manual.gd" id="1_cwvte"]
 [ext_resource type="Texture2D" uid="uid://ph36o52jrb1h" path="res://resources/icons/cross_icon.png" id="1_wtjxg"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_emw88"]

@@ -320,9 +320,11 @@ func process_cutted_wall():
 
 func process_cut_wall() -> void:
 	if _wall_being_builded:
+		prevent_exit = true
 		process_cut_next_point()
 		process_cut()
 	else:
+		prevent_exit = false
 		process_cut_start()
 
 
@@ -338,7 +340,7 @@ func process_cut_next_point() -> void:
 
 
 func process_cut() -> void:
-	if Input.is_action_just_pressed("right_click"):
+	if Input.is_action_just_released("right_click"):
 		_stop_creating_wall()
 	
 	if Input.is_action_just_released("left_click"):

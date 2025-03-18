@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://b0plnb6bswbdy"]
 
-[ext_resource type="Script" path="res://assets/map/level/wall/wall_point/wall_point.gd" id="1_awbn3"]
+[ext_resource type="Script" uid="uid://c7hid6v1ypbd7" path="res://assets/map/level/wall/wall_point/wall_point.gd" id="1_awbn3"]
 [ext_resource type="PackedScene" uid="uid://c1qx8a8ifjil7" path="res://assets/map/level/wall/wall_point_selector/wall_point_selector.tscn" id="3_koilt"]
 
 [node name="WallPoint" type="Node3D"]

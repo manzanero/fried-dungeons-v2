@@ -46,6 +46,7 @@ var is_rotated: bool : set = _set_rotated
 
 var next_update_ticks_msec := 0
 var target_position: Vector3
+var target_offset: Vector3
 var is_moving_to_target: bool
 var position_2d: Vector2 :
 	get: return Utils.v3_to_v2(global_position)
@@ -110,6 +111,11 @@ func _on_position_in_viewport_changed():
 
 # override 
 func update():
+	update_light()
+
+
+# override 
+func update_light():
 	pass
 
 
@@ -233,22 +239,19 @@ func _set_selectable(value: bool) -> void:
 
 ## override
 func _set_selected(value: bool) -> void:
-	var current_element_selected := level.element_selected
-	if is_instance_valid(current_element_selected) and current_element_selected != self:
-		level.element_selected = null
-		current_element_selected.is_selected = false
-
 	is_selected = value
 	
 	if value:
+		level.elements_selected[id] = self
 		level.element_selected = self
-		Game.ui.tab_properties.element_selected = self
 		
 	else:
+		level.elements_selected.erase(id)
 		is_dragged = false
-		
-		if Game.ui.tab_properties.element_selected == self:
-			Game.ui.tab_properties.element_selected = null
+
+
+func edit_properties():
+	Game.ui.tab_properties.element_selected = self
 
 
 func _get_target_hovered() -> Vector3:
@@ -262,7 +265,7 @@ func _get_target_hovered() -> Vector3:
 	else:
 		drag_position = drag_position.snappedf(snapping)
 		
-	return Utils.v2_to_v3(drag_position)
+	return Utils.v2_to_v3(drag_position) + target_offset
 
 
 func look_target(delta: float, target_hovered: Vector3):
@@ -274,7 +277,7 @@ func look_target(delta: float, target_hovered: Vector3):
 	if not Input.is_key_pressed(KEY_ALT):
 		snapped_direction = snap_direction_to_angle(direction, PI / 4)
 	
-	var current_quat := Quaternion(global_transform.basis)
+	var current_quat := global_transform.basis.get_rotation_quaternion()
 	var target_quat := Quaternion(Basis.looking_at(snapped_direction, Vector3.UP))
 	
 	if basis.z.angle_to(-snapped_direction) < PI / 32:
@@ -291,6 +294,11 @@ func snap_direction_to_angle(direction: Vector3, step: float) -> Vector3:
 	var angle = atan2(direction.x, direction.z)  # Get current yaw angle
 	var snapped_angle = snapped(angle, step)  # Snap to nearest step
 	return Vector3(sin(snapped_angle), 0, cos(snapped_angle))  # Convert back to a direction
+	
+	
+func _process(_delta: float) -> void:
+	if is_moving_to_target:
+		moved.emit()
 
 
 func _physics_process(delta: float) -> void:
@@ -304,7 +312,6 @@ func _physics_process(delta: float) -> void:
 		_dragged_process(delta)
 	
 	if is_moving_to_target:
-		moved.emit()
 		var vector_to_target := target_position - global_position
 		if vector_to_target.length() > 0.001:
 			var distance_to_target := vector_to_target.length()
@@ -367,10 +374,6 @@ func _dragged_process(delta: float) -> void:
 	is_rotated = Input.is_action_pressed("rotate")
 	#is_rotated = Input.is_mouse_button_pressed(MOUSE_BUTTON_RIGHT)
 	
-	#if not level.mouse_move:
-		#return
-	#level.mouse_move = false
-	
 	var target_hovered := _get_target_hovered()
 	
 	# forced change
@@ -416,6 +419,7 @@ func remove():
 		Game.ui.tab_elements.remove_element(self)
 	
 	level.elements.erase(id)
+	level.elements_selected.erase(id)
 	queue_free()
 	Debug.print_info_message("Removed element item of \"%s\"" % id)
 	

@@ -1,6 +1,6 @@
 [gd_scene load_steps=2 format=3 uid="uid://pojmf4m23i0"]
 
-[ext_resource type="Script" path="res://addons/fade_transition/fade_transition.gd" id="1_4dvqj"]
+[ext_resource type="Script" uid="uid://c3lcpdj0atmnd" path="res://addons/fade_transition/fade_transition.gd" id="1_4dvqj"]
 
 [node name="FadeTransition" type="ColorRect"]
 visible = false

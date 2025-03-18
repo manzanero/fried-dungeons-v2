@@ -126,6 +126,7 @@ func open_map(map_slug: String):
 	if Game.ui.scene_tabs.get_tab_count() == 2:
 		for slug in Game.maps:
 			if slug != players_map:
+				Game.manager.save_map(Game.maps[slug])
 				_close_map(slug)
 	
 	var tab_scene: TabScene = TAB_SCENE.instantiate().init(map_slug, cached_maps[map_slug])
@@ -200,6 +201,7 @@ func _on_close_selected_map_pressed():
 		Utils.temp_error_tooltip("Send player them to another map")
 		return
 		
+	Game.manager.save_map(Game.maps[selected_map_slug])
 	_close_map(selected_map_slug)
 	reset()
 
@@ -224,6 +226,7 @@ func _on_remove_button_pressed():
 		tree.grab_focus()
 		
 	if response:
+		Game.manager.save_map(Game.maps[selected_map_slug])
 		_close_map(selected_map_slug)
 		Utils.move_to_trash(campaign_selected.get_map_path(selected_map_slug))
 		reset()

@@ -183,11 +183,18 @@ func _on_item_mouse_selected(_mouse_position: Vector2, mouse_button_index: int):
 	element_selected.emit(item_selected)
 	var element: Element = item_selected.get_metadata(0)
 	
+	
 	if mouse_button_index == MOUSE_BUTTON_LEFT:
-		Game.ui.tab_builder.reset()
+		Game.modes.change_mode(ModeController.Mode.NONE)
+		
+		if element.level.element_selected == element:
+			return
+			
 		if is_instance_valid(element.level.element_selected):
 			element.level.element_selected.is_selected = false
 		element.is_selected = true
+		element.edit_properties()
+		
 	
 	if mouse_button_index == MOUSE_BUTTON_RIGHT:
 		DisplayServer.clipboard_set(element.id)
@@ -210,6 +217,8 @@ func _on_item_activated():
 		activate_element(element)
 	
 	element.map.camera.position_3d = element.position
+	
+	get_viewport().gui_release_focus()
 
 
 func _on_button_clicked(item: TreeItem, _column: int, _id: int, _mouse_button_index: int):
@@ -217,8 +226,6 @@ func _on_button_clicked(item: TreeItem, _column: int, _id: int, _mouse_button_in
 	element.is_favourite = not element.is_favourite
 	item.set_button_color(0, 0, Game.TREE_BUTTON_ON_COLOR if element.is_favourite else Game.TREE_BUTTON_OFF_COLOR)
 	sort_children(root)
-	#tree.scroll_to_item(item)
-	#item.select(0)
 	
 
 func _on_items_dropped(_drop_data: Dictionary, _item_at_position: TreeItem, _drop_section: int):
@@ -238,8 +245,6 @@ func reset():
 			if not is_instance_valid(element):
 				Debug.print_warning_message("Element \"%s\" was freed" % element.id)
 				continue
-			
-			#if element.is_preview
 				
 			add_element(element)
 	

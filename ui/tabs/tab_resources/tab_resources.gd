@@ -185,6 +185,10 @@ func _on_item_activated():
 func _on_button_clicked(item: TreeItem, _column: int, id: int, _mouse_button_index: int) -> void:
 	var resource: CampaignResource = item.get_metadata(0)
 	item.select(0)
+	
+	if item == root:
+		_on_folder_button_pressed()
+		return
 
 	match resource.resource_type:
 		CampaignResource.Type.DIRECTORY: 

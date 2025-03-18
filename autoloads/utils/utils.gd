@@ -105,8 +105,13 @@ func aaa2_to_atpv2(array: Array) -> Array[PackedVector2Array]:
 	return apv2
 
 
-func color_to_html_color(color : Color) -> String:
+func color_to_html_color(color: Color) -> String:
 	return color.to_html()
+
+
+func color_no_alpha(color: Color) -> Color:
+	color.a = 1
+	return color
 	
 	
 func html_color_to_color(string : String) -> Color:
@@ -337,7 +342,7 @@ func action_shortcut(action_name):
 	return shortcut
 
 
-func png_to_texture(path: String) -> Texture2D:
+func png_to_texture(path: String, flip_x := false) -> Texture2D:
 	if not FileAccess.file_exists(path):
 		return
 		
@@ -345,7 +350,9 @@ func png_to_texture(path: String) -> Texture2D:
 	if not image:
 		printerr("PNG load failed")
 		return
-
+	
+	if flip_x:
+		image.flip_x()
 	return ImageTexture.create_from_image(image)
 
 

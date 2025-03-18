@@ -1,7 +1,7 @@
 [gd_scene load_steps=4 format=3 uid="uid://mbh4bgg0t31y"]
 
 [ext_resource type="Texture2D" uid="uid://ckd03gcqkho3n" path="res://resources/icons/sound_icon.png" id="1_jo6ik"]
-[ext_resource type="Script" path="res://ui/master_volume_controller/master_volume_controller.gd" id="1_mi2re"]
+[ext_resource type="Script" uid="uid://cd0cq82mhruh0" path="res://ui/master_volume_controller/master_volume_controller.gd" id="1_mi2re"]
 [ext_resource type="Texture2D" uid="uid://djrrjy2inqvtq" path="res://resources/icons/cross_red_icon.png" id="2_s8j74"]
 
 [node name="MasterVolumeController" type="HBoxContainer"]

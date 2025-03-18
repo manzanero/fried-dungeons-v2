@@ -1,7 +1,7 @@
 [gd_scene load_steps=6 format=3 uid="uid://df6f4gleuroml"]
 
 [ext_resource type="PackedScene" uid="uid://d2i15cdabp3yy" path="res://ui/fried_window/fried_window.tscn" id="1_teghs"]
-[ext_resource type="Script" path="res://ui/fried_window/how_to_start_window/how_to_start_window.gd" id="2_6n064"]
+[ext_resource type="Script" uid="uid://dja8isruj5236" path="res://ui/fried_window/how_to_start_window/how_to_start_window.gd" id="2_6n064"]
 
 [sub_resource type="ButtonGroup" id="ButtonGroup_gl4sp"]
 

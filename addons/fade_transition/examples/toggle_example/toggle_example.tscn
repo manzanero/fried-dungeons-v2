@@ -1,6 +1,6 @@
 [gd_scene load_steps=3 format=3 uid="uid://st3gvg10oxae"]
 
-[ext_resource type="Script" path="res://addons/fade_transition/examples/toggle_example/toggle_example.gd" id="1_1vh51"]
+[ext_resource type="Script" uid="uid://cbww0d2ilncat" path="res://addons/fade_transition/examples/toggle_example/toggle_example.gd" id="1_1vh51"]
 [ext_resource type="PackedScene" uid="uid://pojmf4m23i0" path="res://addons/fade_transition/fade_transition.tscn" id="2_6hmlo"]
 
 [node name="ToggleExample" type="Node"]

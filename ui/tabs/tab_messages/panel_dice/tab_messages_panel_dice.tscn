@@ -1,6 +1,6 @@
 [gd_scene load_steps=6 format=3 uid="uid://6pq2k4jg8hbv"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_messages/panel_dice/tab_messages_panel_dice.gd" id="1_5k1u0"]
+[ext_resource type="Script" uid="uid://b3c8gc6sqhlj4" path="res://ui/tabs/tab_messages/panel_dice/tab_messages_panel_dice.gd" id="1_5k1u0"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8jh3g"]
 content_margin_left = 4.0

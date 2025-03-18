@@ -1,6 +1,6 @@
 [gd_scene load_steps=10 format=3 uid="uid://fk4ms248dm5y"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_builder/atlas_texture_button/atlas_texture_button.gd" id="1_kqpbx"]
+[ext_resource type="Script" uid="uid://t7bcubm6rdy" path="res://ui/tabs/tab_builder/atlas_texture_button/atlas_texture_button.gd" id="1_kqpbx"]
 
 [sub_resource type="CompressedTexture2D" id="CompressedTexture2D_q4rxl"]
 load_path = "res://.godot/imported/default.png-0e9f675106827d23bc6cc997654100b9.ctex"

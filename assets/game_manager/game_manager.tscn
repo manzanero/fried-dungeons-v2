@@ -1,8 +1,8 @@
 [gd_scene load_steps=13 format=3 uid="uid://bncfy5dln4vea"]
 
-[ext_resource type="Script" path="res://assets/game_manager/game_manager.gd" id="1_5812a"]
-[ext_resource type="Script" path="res://assets/game_manager/server_manager/server_manager.gd" id="2_k74hc"]
-[ext_resource type="Script" path="res://assets/game_manager/server_manager/rpcs/rpcs.gd" id="3_cutg1"]
+[ext_resource type="Script" uid="uid://c7bavs6mybvn7" path="res://assets/game_manager/game_manager.gd" id="1_5812a"]
+[ext_resource type="Script" uid="uid://lgqlyn0rx4q7" path="res://assets/game_manager/server_manager/server_manager.gd" id="2_k74hc"]
+[ext_resource type="Script" uid="uid://fxkjmlh2nxbb" path="res://assets/game_manager/server_manager/rpcs/rpcs.gd" id="3_cutg1"]
 [ext_resource type="Texture2D" uid="uid://dbxhuhcj3ltf4" path="res://resources/images/barbaro.png" id="4_0qqfq"]
 [ext_resource type="Texture2D" uid="uid://dbmwhb8t68mu8" path="res://resources/images/caballero.png" id="5_v5gcj"]
 [ext_resource type="Texture2D" uid="uid://ceykqorueo5m7" path="res://resources/images/hamburguesa.png" id="6_j1xby"]

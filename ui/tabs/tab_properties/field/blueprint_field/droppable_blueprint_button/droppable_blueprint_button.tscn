@@ -1,7 +1,7 @@
 [gd_scene load_steps=3 format=3 uid="uid://c2n75w65cr7gu"]
 
 [ext_resource type="Texture2D" uid="uid://ck7mi0v3had7i" path="res://resources/icons/texture_icon.png" id="1_74k2b"]
-[ext_resource type="Script" path="res://ui/tabs/tab_properties/field/blueprint_field/droppable_blueprint_button/droppable_blueprint_button.gd" id="2_dxqmn"]
+[ext_resource type="Script" uid="uid://dyq0kh8exik1c" path="res://ui/tabs/tab_properties/field/blueprint_field/droppable_blueprint_button/droppable_blueprint_button.gd" id="2_dxqmn"]
 
 [node name="DroppableBlueprintButton" type="Button"]
 size_flags_horizontal = 3

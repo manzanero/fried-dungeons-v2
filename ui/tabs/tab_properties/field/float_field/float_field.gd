@@ -1,3 +1,4 @@
+@tool
 class_name FloatField
 extends PropertyField
 

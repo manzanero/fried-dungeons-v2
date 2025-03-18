@@ -1,12 +1,6 @@
-[gd_scene load_steps=10 format=3 uid="uid://b6o13q7qteh2i"]
+[gd_scene load_steps=13 format=3 uid="uid://b6o13q7qteh2i"]
 
-[ext_resource type="Script" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.gd" id="1_cmxne"]
-
-[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l4ilt"]
-content_margin_left = 4.0
-content_margin_top = 4.0
-content_margin_right = 4.0
-content_margin_bottom = 4.0
+[ext_resource type="Script" uid="uid://bt5usrbrft1ny" path="res://ui/tabs/tab_elements/draggable_tree/draggable_tree.gd" id="1_cmxne"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_vnh2n"]
 content_margin_left = 8.0
@@ -30,6 +24,12 @@ border_color = Color(0.0732555, 0.0678819, 0.0625079, 1)
 border_blend = true
 corner_detail = 1
 
+[sub_resource type="StyleBoxEmpty" id="StyleBoxEmpty_l4ilt"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dmrn3"]
 bg_color = Color(0.878431, 0.878431, 0.878431, 1)
 draw_center = false
@@ -46,6 +46,42 @@ expand_margin_left = 1.0
 expand_margin_top = 1.0
 expand_margin_right = 1.0
 expand_margin_bottom = 1.0
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_yjy2i"]
+bg_color = Color(0.216, 0.204, 0.196, 0.5)
+border_width_top = 6
+border_width_bottom = 6
+border_color = Color(0.312, 0.296, 0.286, 0.5)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_gg26b"]
+bg_color = Color(0.216, 0.204, 0.196, 0.25)
+border_width_top = 6
+border_width_bottom = 6
+border_color = Color(0.312, 0.296, 0.286, 0.25)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_01gec"]
+bg_color = Color(0.215686, 0.203922, 0.196078, 1)
+border_width_top = 6
+border_width_bottom = 6
+border_color = Color(0.311952, 0.296448, 0.286115, 1)
+border_blend = true
+corner_radius_top_left = 4
+corner_radius_top_right = 4
+corner_radius_bottom_right = 4
+corner_radius_bottom_left = 4
+corner_detail = 1
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_6d2qt"]
 bg_color = Color(0.215686, 0.203922, 0.196078, 1)
@@ -112,25 +148,28 @@ expand_margin_bottom = 1.0
 size_flags_horizontal = 3
 size_flags_vertical = 3
 theme_override_colors/parent_hl_line_color = Color(0.215686, 0.203922, 0.196078, 1)
+theme_override_constants/v_separation = 2
+theme_override_constants/inner_item_margin_left = 4
 theme_override_constants/inner_item_margin_right = 8
 theme_override_constants/button_margin = 0
-theme_override_constants/inner_item_margin_left = 4
 theme_override_constants/draw_guides = 0
 theme_override_constants/draw_relationship_lines = 1
 theme_override_constants/relationship_line_width = 2
 theme_override_constants/parent_hl_line_width = 4
 theme_override_constants/children_hl_line_width = 2
 theme_override_constants/parent_hl_line_margin = 4
-theme_override_constants/v_separation = 2
-theme_override_styles/panel = SubResource("StyleBoxEmpty_l4ilt")
 theme_override_styles/title_button_hover = SubResource("StyleBoxFlat_vnh2n")
 theme_override_styles/title_button_pressed = SubResource("StyleBoxFlat_pe258")
 theme_override_styles/title_button_normal = SubResource("StyleBoxFlat_pe258")
+theme_override_styles/panel = SubResource("StyleBoxEmpty_l4ilt")
 theme_override_styles/focus = SubResource("StyleBoxFlat_dmrn3")
-theme_override_styles/selected = SubResource("StyleBoxFlat_6d2qt")
+theme_override_styles/hovered = SubResource("StyleBoxFlat_yjy2i")
+theme_override_styles/hovered_dimmed = SubResource("StyleBoxFlat_gg26b")
+theme_override_styles/selected = SubResource("StyleBoxFlat_01gec")
 theme_override_styles/selected_focus = SubResource("StyleBoxFlat_6d2qt")
 theme_override_styles/cursor = SubResource("StyleBoxFlat_ih0ou")
 theme_override_styles/cursor_unfocused = SubResource("StyleBoxFlat_w7u0y")
+theme_override_styles/button_hover = SubResource("StyleBoxFlat_yjy2i")
 theme_override_styles/button_pressed = SubResource("StyleBoxFlat_gct8e")
 allow_rmb_select = true
 hide_root = true
